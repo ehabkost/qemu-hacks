@@ -54,6 +54,7 @@ struct virtio_console_header {
 #define VIRTIO_CONSOLE_CONSOLE_PORT	1
 #define VIRTIO_CONSOLE_RESIZE		2
 #define VIRTIO_CONSOLE_PORT_OPEN	3
+#define VIRTIO_CONSOLE_PORT_NAME	4
 
 /* == In-qemu interface == */
 
@@ -86,6 +87,13 @@ struct VirtIOSerialPort {
     VirtIOSerial *vser;
 
     VirtQueue *ivq, *ovq;
+
+    /*
+     * This name is sent to the guest and exported via sysfs.
+     * The guest could create symlinks based on this information.
+     * The name is in the reverse fqdn format, like org.qemu.console.0
+     */
+    char *name;
 
     /*
      * This id helps identify ports between the guest and the host.
