@@ -13,7 +13,7 @@ QEMU_CFLAGS+=-I.. -I$(SRC_PATH)/fpu
 
 obj-y =
 obj-y += loader.o
-obj-y += virtio.o
+obj-y += virtio.o virtio-serial.o
 obj-y += fw_cfg.o
 obj-y += watchdog.o
 obj-$(CONFIG_ECC) += ecc.o
