@@ -106,3 +106,38 @@ static void virtconsole_register(void)
     virtio_serial_port_qdev_register(&virtconsole_info);
 }
 device_init(virtconsole_register)
+
+/* Generic Virtio Serial Ports */
+static int virtserialport_initfn(VirtIOSerialDevice *dev)
+{
+    VirtIOSerialPort *port = DO_UPCAST(VirtIOSerialPort, dev, &dev->qdev);
+    VirtConsole *vcon = DO_UPCAST(VirtConsole, port, port);
+
+    port->info = dev->info;
+
+    if (vcon->chr) {
+        qemu_chr_add_handlers(vcon->chr, chr_can_read, chr_read, chr_event,
+                              vcon);
+    }
+    return 0;
+}
+
+static VirtIOSerialPortInfo virtserialport_info = {
+    .qdev.name     = "virtserialport",
+    .qdev.size     = sizeof(VirtConsole),
+    .init          = virtserialport_initfn,
+    .exit          = virtconsole_exitfn,
+    .have_data     = flush_buf,
+    .qdev.props = (Property[]) {
+        DEFINE_PROP_CHR("chardev", VirtConsole, chr),
+        DEFINE_PROP_STRING("name", VirtConsole, port.name),
+        DEFINE_PROP_UINT64("byte_limit", VirtConsole, port.byte_limit, 0),
+        DEFINE_PROP_END_OF_LIST(),
+    },
+};
+
+static void virtserialport_register(void)
+{
+    virtio_serial_port_qdev_register(&virtserialport_info);
+}
+device_init(virtserialport_register)
