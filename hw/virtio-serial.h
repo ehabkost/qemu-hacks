@@ -45,16 +45,13 @@ struct virtio_console_control {
     uint16_t value;		/* Extra information for the key */
 };
 
-struct virtio_console_header {
-    uint32_t flags;		/* Some message between host and guest */
-};
-
 /* Some events for the internal messages (control packets) */
 #define VIRTIO_CONSOLE_PORT_READY	0
 #define VIRTIO_CONSOLE_CONSOLE_PORT	1
 #define VIRTIO_CONSOLE_RESIZE		2
 #define VIRTIO_CONSOLE_PORT_OPEN	3
 #define VIRTIO_CONSOLE_PORT_NAME	4
+#define VIRTIO_CONSOLE_THROTTLE_PORT	5
 
 /* == In-qemu interface == */
 
@@ -96,12 +93,32 @@ struct VirtIOSerialPort {
     char *name;
 
     /*
+     * This list holds buffers pushed by the guest in case the guest
+     * sent incomplete messages or the host connection was down and
+     * the device requested to cache the data.
+     */
+    QTAILQ_HEAD(, VirtIOSerialPortBuffer) unflushed_buffers;
+
+    /*
      * This id helps identify ports between the guest and the host.
      * The guest sends a "header" with this id with each data packet
      * that it sends and the host can then find out which associated
      * device to send out this data to
      */
     uint32_t id;
+
+    /*
+     * Each port can specify the limit on number of bytes that can be
+     * outstanding in the unread buffers. This is to prevent any OOM
+     * situtation if a rogue process on the guest keeps injecting
+     * data.
+     */
+    size_t byte_limit;
+
+    /*
+     * The number of bytes we have queued up in our unread queue
+     */
+    size_t nr_bytes;
 
     /* Identify if this is a port that binds with hvc in the guest */
     uint8_t is_console;
@@ -110,6 +127,11 @@ struct VirtIOSerialPort {
     bool guest_connected;
     /* Is this device open for IO on the host? */
     bool host_connected;
+    /* Have we sent a throttle message to the guest? */
+    bool host_throttled;
+
+    /* Did this port get data in the recent handle_output call? */
+    bool has_activity;
 };
 
 struct VirtIOSerialPortInfo {

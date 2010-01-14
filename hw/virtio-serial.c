@@ -68,12 +68,6 @@ static int virtconsole_initfn(VirtIOSerialDevice *dev)
 
     port->is_console = true;
 
-    /*
-     * For console ports, just assume the guest is ready to accept our
-     * data.
-     */
-    port->guest_connected = true;
-
     if (vcon->chr) {
         qemu_chr_add_handlers(vcon->chr, chr_can_read, chr_read, chr_event,
                               vcon);

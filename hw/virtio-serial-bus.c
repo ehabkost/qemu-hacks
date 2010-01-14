@@ -44,6 +44,18 @@ struct VirtIOSerial {
     struct virtio_console_config config;
 };
 
+/* This struct holds individual buffers received for each port */
+typedef struct VirtIOSerialPortBuffer {
+    QTAILQ_ENTRY(VirtIOSerialPortBuffer) next;
+
+    uint8_t *buf;
+
+    size_t len; /* length of the buffer */
+    size_t offset; /* offset from which to consume data in the buffer */
+
+    bool previous_failure; /* Did sending out this buffer fail previously? */
+} VirtIOSerialPortBuffer;
+
 static VirtIOSerialPort *find_port_by_id(VirtIOSerial *vser, uint32_t id)
 {
     VirtIOSerialPort *port;
@@ -75,11 +87,9 @@ static size_t write_to_port(VirtIOSerialPort *port,
                             const uint8_t *buf, size_t size)
 {
     VirtQueueElement elem;
-    struct virtio_console_header header;
     VirtQueue *vq;
     size_t offset = 0;
     size_t len = 0;
-    int header_len;
 
     vq = port->ivq;
     if (!virtio_queue_ready(vq)) {
@@ -88,8 +98,6 @@ static size_t write_to_port(VirtIOSerialPort *port,
     if (!size) {
         return 0;
     }
-    header.flags = 0;
-    header_len = use_multiport(port->vser) ? sizeof(header) : 0;
 
     while (offset < size) {
         int i;
@@ -97,26 +105,14 @@ static size_t write_to_port(VirtIOSerialPort *port,
         if (!virtqueue_pop(vq, &elem)) {
             break;
         }
-        if (elem.in_sg[0].iov_len < header_len) {
-            /* We can't even store our port number in this buffer. Bug? */
-            qemu_error("virtio-serial: size %zd less than expected\n",
-                    elem.in_sg[0].iov_len);
-            exit(1);
-        }
-        if (header_len) {
-            memcpy(elem.in_sg[0].iov_base, &header, header_len);
-        }
 
         for (i = 0; offset < size && i < elem.in_num; i++) {
-            /* Copy the header only in the first sg. */
-            len = MIN(elem.in_sg[i].iov_len - header_len, size - offset);
+            len = MIN(elem.in_sg[i].iov_len, size - offset);
 
-            memcpy(elem.in_sg[i].iov_base + header_len, buf + offset, len);
+            memcpy(elem.in_sg[i].iov_base, buf + offset, len);
             offset += len;
-            header_len = 0;
         }
-        header_len = use_multiport(port->vser) ? sizeof(header) : 0;
-        virtqueue_push(vq, &elem, len + header_len);
+        virtqueue_push(vq, &elem, len);
     }
 
     virtio_notify(&port->vser->vdev, vq);
@@ -157,6 +153,96 @@ static size_t send_control_event(VirtIOSerialPort *port, uint16_t event,
     return send_control_msg(port, &cpkt, sizeof(cpkt));
 }
 
+static void init_buf(VirtIOSerialPortBuffer *buf, uint8_t *buffer, size_t len)
+{
+    buf->buf = buffer;
+    buf->len = len;
+    buf->offset = 0;
+    buf->previous_failure = false;
+}
+
+static VirtIOSerialPortBuffer *alloc_buf(size_t len)
+{
+    VirtIOSerialPortBuffer *buf;
+
+    buf = qemu_malloc(sizeof(*buf));
+    buf->buf = qemu_malloc(len);
+
+    init_buf(buf, buf->buf, len);
+
+    return buf;
+}
+
+static void free_buf(VirtIOSerialPortBuffer *buf)
+{
+    qemu_free(buf->buf);
+    qemu_free(buf);
+}
+
+static void flush_queue(VirtIOSerialPort *port)
+{
+    VirtIOSerialPortBuffer *buf;
+    size_t out_size;
+    ssize_t ret;
+
+    while ((buf = QTAILQ_FIRST(&port->unflushed_buffers))) {
+        QTAILQ_REMOVE(&port->unflushed_buffers, buf, next);
+
+        out_size = buf->len - buf->offset;
+        if (!port->host_connected) {
+            port->nr_bytes -= buf->len + buf->offset;
+            free_buf(buf);
+            continue;
+        }
+
+        ret = port->info->have_data(port, buf->buf + buf->offset, out_size);
+        if (ret < out_size) {
+            QTAILQ_INSERT_HEAD(&port->unflushed_buffers, buf, next);
+        }
+        if (ret <= 0) {
+            /* We're not progressing at all */
+            if (buf->previous_failure) {
+                break;
+            }
+            buf->previous_failure = true;
+        } else {
+            buf->offset += ret;
+            port->nr_bytes -= ret;
+            buf->previous_failure = false;
+        }
+        if (!(buf->len - buf->offset)) {
+            free_buf(buf);
+        }
+    }
+
+    if (port->host_throttled && port->nr_bytes < port->byte_limit) {
+        port->host_throttled = false;
+        send_control_event(port, VIRTIO_CONSOLE_THROTTLE_PORT, 0);
+    }
+}
+
+static void flush_all_ports(VirtIOSerial *vser)
+{
+    struct VirtIOSerialPort *port;
+
+    QTAILQ_FOREACH(port, &vser->ports, next) {
+        if (port->has_activity) {
+            port->has_activity = false;
+            flush_queue(port);
+        }
+    }
+}
+
+static void remove_port_buffers(VirtIOSerialPort *port)
+{
+    struct VirtIOSerialPortBuffer *buf, *buf2;
+
+    QTAILQ_FOREACH_SAFE(buf, &port->unflushed_buffers, next, buf2) {
+        QTAILQ_REMOVE(&port->unflushed_buffers, buf, next);
+        free_buf(buf);
+    }
+}
+
 /* Functions for use inside qemu to open and read from/write to ports */
 int virtio_serial_open(VirtIOSerialPort *port)
 {
@@ -176,6 +262,7 @@ int virtio_serial_close(VirtIOSerialPort *port)
     port->host_connected = false;
     send_control_event(port, VIRTIO_CONSOLE_PORT_OPEN, 0);
 
+    remove_port_buffers(port);
     return 0;
 }
 
@@ -196,10 +283,6 @@ ssize_t virtio_serial_write(VirtIOSerialPort *port, const uint8_t *buf,
 size_t virtio_serial_guest_ready(VirtIOSerialPort *port)
 {
     VirtQueue *vq = port->ivq;
-    size_t size, header_len;
-
-    header_len = use_multiport(port->vser)
-        ? sizeof(struct virtio_console_header) : 0;
 
     if (!virtio_queue_ready(vq) ||
         !(port->vser->vdev.status & VIRTIO_CONFIG_S_DRIVER_OK) ||
@@ -210,13 +293,11 @@ size_t virtio_serial_guest_ready(VirtIOSerialPort *port)
         return 0;
     }
 
-    size = 4096;
-    if (virtqueue_avail_bytes(vq, size, 0)) {
-        return size - header_len;
+    if (virtqueue_avail_bytes(vq, 4096, 0)) {
+        return 4096;
     }
-    size = header_len + 1;
-    if (virtqueue_avail_bytes(vq, size, 0)) {
-        return size - header_len;
+    if (virtqueue_avail_bytes(vq, 1, 0)) {
+        return 1;
     }
     return 0;
 }
@@ -263,6 +344,7 @@ static void handle_control_message(VirtIOSerial *vser, void *buf)
             send_control_msg(port, buffer, buffer_len);
             qemu_free(buffer);
         }
+
         if (port->host_connected) {
             send_control_event(port, VIRTIO_CONSOLE_PORT_OPEN, 1);
         }
@@ -310,6 +392,10 @@ static void control_out(VirtIODevice *vdev, VirtQueue *vq)
 
 /*
  * Guest wrote something to some port.
+ *
+ * Flush the data in the entire chunk that we received rather than
+ * splitting it into multiple buffers. VNC clients don't consume split
+ * buffers
  */
 static void handle_output(VirtIODevice *vdev, VirtQueue *vq)
 {
@@ -320,14 +406,8 @@ static void handle_output(VirtIODevice *vdev, VirtQueue *vq)
 
     while (virtqueue_pop(vq, &elem)) {
         VirtIOSerialPort *port;
-        struct virtio_console_header header;
-        int header_len;
+        VirtIOSerialPortBuffer *buf;
 
-        header_len = use_multiport(vser) ? sizeof(header) : 0;
-
-        if (elem.out_sg[0].iov_len < header_len) {
-            goto next_buf;
-        }
         port = find_port_by_vq(vser, vq);
         if (!port) {
             goto next_buf;
@@ -342,13 +422,24 @@ static void handle_output(VirtIODevice *vdev, VirtQueue *vq)
         }
 
         /* The guest always sends only one sg */
-        port->info->have_data(port, elem.out_sg[0].iov_base + header_len,
-                              elem.out_sg[0].iov_len - header_len);
+        buf = alloc_buf(elem.out_sg[0].iov_len);
+        memcpy(buf->buf, elem.out_sg[0].iov_base, buf->len);
 
+        QTAILQ_INSERT_TAIL(&port->unflushed_buffers, buf, next);
+        port->nr_bytes += buf->len;
+        port->has_activity = true;
+
+        if (!port->host_throttled && port->byte_limit &&
+            port->nr_bytes >= port->byte_limit) {
+
+            port->host_throttled = true;
+            send_control_event(port, VIRTIO_CONSOLE_THROTTLE_PORT, 1);
+        }
     next_buf:
         virtqueue_push(vq, &elem, elem.out_sg[0].iov_len);
     }
     virtio_notify(vdev, vq);
+    flush_all_ports(vser);
 }
 
 static void handle_input(VirtIODevice *vdev, VirtQueue *vq)
@@ -381,6 +472,7 @@ static void virtio_serial_save(QEMUFile *f, void *opaque)
     VirtIOSerial *s = opaque;
     VirtIOSerialPort *port;
     uint32_t nr_active_ports;
+    unsigned int nr_bufs;
 
     /* The virtio device */
     virtio_save(&s->vdev, f);
@@ -403,14 +495,33 @@ static void virtio_serial_save(QEMUFile *f, void *opaque)
      * Items in struct VirtIOSerialPort.
      */
     QTAILQ_FOREACH(port, &s->ports, next) {
+        VirtIOSerialPortBuffer *buf;
+
         /*
          * We put the port number because we may not have an active
          * port at id 0 that's reserved for a console port, or in case
          * of ports that might have gotten unplugged
          */
         qemu_put_be32s(f, &port->id);
+        qemu_put_be64s(f, &port->byte_limit);
+        qemu_put_be64s(f, &port->nr_bytes);
         qemu_put_byte(f, port->guest_connected);
+        qemu_put_byte(f, port->host_throttled);
 
+        /* All the pending buffers from active ports */
+        nr_bufs = 0;
+        QTAILQ_FOREACH(buf, &port->unflushed_buffers, next) {
+            nr_bufs++;
+        }
+        qemu_put_be32s(f, &nr_bufs);
+        if (!nr_bufs) {
+            continue;
+        }
+        QTAILQ_FOREACH(buf, &port->unflushed_buffers, next) {
+            qemu_put_be64s(f, &buf->len);
+            qemu_put_be64s(f, &buf->offset);
+            qemu_put_buffer(f, buf->buf, buf->len);
+        }
     }
 }
 
@@ -443,13 +554,33 @@ static int virtio_serial_load(QEMUFile *f, void *opaque, int version_id)
 
     /* Items in struct VirtIOSerialPort */
     for (i = 0; i < nr_active_ports; i++) {
+        VirtIOSerialPortBuffer *buf;
         uint32_t id;
+        unsigned int nr_bufs;
 
         id = qemu_get_be32(f);
         port = find_port_by_id(s, id);
 
+        port->byte_limit = qemu_get_be64(f);
+        port->nr_bytes   = qemu_get_be64(f);
         port->guest_connected = qemu_get_byte(f);
+        port->host_throttled = qemu_get_byte(f);
 
+        /* All the pending buffers from active ports */
+        qemu_get_be32s(f, &nr_bufs);
+        if (!nr_bufs) {
+            continue;
+        }
+        for (; nr_bufs; nr_bufs--) {
+            size_t len;
+
+            qemu_get_be64s(f, &len);
+            buf = alloc_buf(len);
+
+            qemu_get_be64s(f, &buf->offset);
+            qemu_get_buffer(f, buf->buf, buf->len);
+            QTAILQ_INSERT_TAIL(&port->unflushed_buffers, buf, next);
+        }
     }
 
     return 0;
@@ -485,6 +616,10 @@ static void virtser_bus_dev_print(Monitor *mon, DeviceState *qdev, int indent)
                    indent, "", port->guest_connected);
     monitor_printf(mon, "%*s dev-prop-int: host_connected: %d\n",
                    indent, "", port->host_connected);
+    monitor_printf(mon, "%*s dev-prop-int: host_throttled: %d\n",
+                   indent, "", port->host_throttled);
+    monitor_printf(mon, "%*s dev-prop-int: nr_bytes: %zu\n",
+                   indent, "", port->nr_bytes);
 }
 
 static int virtser_port_qdev_init(DeviceState *qdev, DeviceInfo *base)
@@ -515,6 +650,7 @@ static int virtser_port_qdev_init(DeviceState *qdev, DeviceInfo *base)
     if (ret) {
         return ret;
     }
+    QTAILQ_INIT(&port->unflushed_buffers);
 
     port->id = plugging_port0 ? 0 : port->vser->config.nr_ports++;
 
@@ -564,6 +700,8 @@ static int virtser_port_qdev_exit(DeviceState *qdev)
 
     if (port->info->exit)
         port->info->exit(dev);
+
+    remove_port_buffers(port);
 
     return 0;
 }
