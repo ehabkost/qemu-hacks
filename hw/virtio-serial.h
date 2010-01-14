@@ -52,6 +52,7 @@ struct virtio_console_control {
 #define VIRTIO_CONSOLE_PORT_OPEN	3
 #define VIRTIO_CONSOLE_PORT_NAME	4
 #define VIRTIO_CONSOLE_THROTTLE_PORT	5
+#define VIRTIO_CONSOLE_PORT_REMOVE	6
 
 /* == In-qemu interface == */
 
