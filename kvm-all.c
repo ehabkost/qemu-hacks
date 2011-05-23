@@ -195,24 +195,46 @@ int kvm_pit_in_kernel(void)
     return kvm_state->pit_in_kernel;
 }
 
-int kvm_init_vcpu(CPUState *env)
+/* env->kvm_state is needed early by kvm_check_extension()
+ * break it out so it may be setup early where needed
+ */
+int kvm_early_init_vcpu(CPUState *env)
+
 {
     KVMState *s = kvm_state;
+    int ret;
+
+    DPRINTF("kvm_early_init_vcpu\n");
+
+    if (env->kvm_state) {      /* already setup */
+        return 0;
+    }
+
+    ret = kvm_vm_ioctl(s, KVM_CREATE_VCPU, env->cpu_index);
+    if (ret < 0) {
+        DPRINTF("kvm_create_vcpu failed\n");
+    } else {
+        env->kvm_fd = ret;
+        env->kvm_state = s;
+        env->kvm_vcpu_dirty = 1;
+    }
+    return ret;
+}
+
+int kvm_init_vcpu(CPUState *env)
+{
+    KVMState *s;
     long mmap_size;
     int ret;
 
     DPRINTF("kvm_init_vcpu\n");
 
-    ret = kvm_vm_ioctl(s, KVM_CREATE_VCPU, env->cpu_index);
+    ret = kvm_early_init_vcpu(env);
     if (ret < 0) {
-        DPRINTF("kvm_create_vcpu failed\n");
         goto err;
     }
 
-    env->kvm_fd = ret;
-    env->kvm_state = s;
-    env->kvm_vcpu_dirty = 1;
-
+    s = env->kvm_state;
     mmap_size = kvm_ioctl(s, KVM_GET_VCPU_MMAP_SIZE, 0);
     if (mmap_size < 0) {
         ret = mmap_size;

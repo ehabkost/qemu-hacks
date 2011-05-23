@@ -53,6 +53,7 @@ int kvm_has_xcrs(void);
 int kvm_has_many_ioeventfds(void);
 
 #ifdef NEED_CPU_H
+int kvm_early_init_vcpu(CPUState *env);
 int kvm_init_vcpu(CPUState *env);
 
 int kvm_cpu_exec(CPUState *env);
