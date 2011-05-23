@@ -939,18 +939,49 @@ static CPUState *pc_new_cpu(const char *cpu_model)
     return env;
 }
 
+/* CLI cpu model name which expands to the actual configuration default
+ */
+#define CMDEF_KEYWORD     "default"
+#define CMDEF_KEYWORD_LN (sizeof(CMDEF_KEYWORD) - 1)
+
+/* set configuration default cpu model if current model string is
+ * uninitialized, or if user explicitly requests use of the config'ed
+ * default by specifying a cpu model name of "default".
+ * Use of "default" as a cpu model pseudo-name exists primarily to
+ * ease treatment of qualifier flags requested by the user without
+ * requiring knowledge of all cpu model names in advance of full "-cpu"
+ * option parsing.
+ */
+static const char *setdef_cpu_model(const char *model_str,
+    const char *default_str)
+{
+    int default_str_ln = strlen(default_str);
+
+    if (!model_str || !*model_str) {
+        return default_str;
+    } else if (strncmp(model_str, CMDEF_KEYWORD, CMDEF_KEYWORD_LN)) {
+        return model_str;
+    } else {
+        char *new = qemu_malloc(strlen(model_str) - CMDEF_KEYWORD_LN +
+            default_str_ln + 1);
+
+        strcpy(new, default_str);
+        strcpy(new + default_str_ln, model_str + CMDEF_KEYWORD_LN);
+        return new;
+    }
+}
+
 void pc_cpus_init(const char *cpu_model)
 {
     int i;
 
     /* init CPUs */
-    if (cpu_model == NULL) {
+    cpu_model = setdef_cpu_model(cpu_model,
 #ifdef TARGET_X86_64
-        cpu_model = "qemu64";
+        "qemu64");
 #else
-        cpu_model = "qemu32";
+        "qemu32");
 #endif
-    }
 
     for(i = 0; i < smp_cpus; i++) {
         pc_new_cpu(cpu_model);
