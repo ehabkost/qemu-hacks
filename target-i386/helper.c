@@ -1261,6 +1261,7 @@ CPUX86State *cpu_x86_init(const char *cpu_model)
             cpu_set_debug_excp_handler(breakpoint_handler);
 #endif
     }
+    qemu_early_init_vcpu(env);
     if (cpu_x86_register(env, cpu_model) < 0) {
         cpu_x86_close(env);
         return NULL;

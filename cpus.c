@@ -544,6 +544,14 @@ void qemu_main_loop_start(void)
 {
 }
 
+void qemu_early_init_vcpu(void *_env)
+{
+    CPUState *env = _env;
+
+    if (kvm_enabled())
+        kvm_early_init_vcpu(env);
+}
+
 void qemu_init_vcpu(void *_env)
 {
     CPUState *env = _env;
