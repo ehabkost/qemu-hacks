@@ -2059,6 +2059,7 @@ int main(int argc, char **argv, char **envp)
     int show_vnc_port = 0;
 #endif
     int defconfig = 1;
+    int defconfig_verbose = 0;
     const char *trace_file = NULL;
 
     atexit(qemu_run_exit_notifiers);
@@ -2108,6 +2109,12 @@ int main(int argc, char **argv, char **envp)
             case QEMU_OPTION_nodefconfig:
                 defconfig=0;
                 break;
+            case QEMU_OPTION_readconfig:
+                /* pseudo filename "?" enables verbose config file handling */
+                if (!strcmp(optarg, "?")) {
+                    defconfig_verbose = 1;
+                }
+                break;
             }
         }
     }
@@ -2115,12 +2122,13 @@ int main(int argc, char **argv, char **envp)
     if (defconfig) {
         int ret;
 
-        ret = qemu_read_config_file(CONFIG_QEMU_CONFDIR "/qemu.conf");
+        ret = qemu_read_config_file(CONFIG_QEMU_CONFDIR "/qemu.conf",
+                                    defconfig_verbose);
         if (ret < 0 && ret != -ENOENT) {
             exit(1);
         }
 
-        ret = qemu_read_config_file(arch_config_name);
+        ret = qemu_read_config_file(arch_config_name, defconfig_verbose);
         if (ret < 0 && ret != -ENOENT) {
             exit(1);
         }
@@ -2857,11 +2865,9 @@ int main(int argc, char **argv, char **envp)
 #endif
             case QEMU_OPTION_readconfig:
                 {
-                    int ret = qemu_read_config_file(optarg);
-                    if (ret < 0) {
-                        fprintf(stderr, "read config %s: %s\n", optarg,
-                            strerror(-ret));
-                        exit(1);
+                    if (strcmp(optarg, "?") &&
+                        qemu_read_config_file(optarg, defconfig_verbose) < 0) {
+                            exit(1);
                     }
                     break;
                 }

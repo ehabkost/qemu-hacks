@@ -666,21 +666,29 @@ out:
     return res;
 }
 
-int qemu_read_config_file(const char *filename)
+/* attempt to open and parse config file, report problems if vflag
+ */
+int qemu_read_config_file(const char *filename, int vflag)
 {
     FILE *f = fopen(filename, "r");
-    int ret;
+    int rv = 0;
+    const char *err;
 
     if (f == NULL) {
-        return -errno;
+        rv = -errno;
+        err = "open";
+    } else if (qemu_config_parse(f, vm_config_groups, filename) != 0) {
+        rv = -EINVAL;
+        err = "parse";
+    } else if (vflag) {
+        fprintf(stderr, "parsed config file %s\n", filename);
     }
-
-    ret = qemu_config_parse(f, vm_config_groups, filename);
-    fclose(f);
-
-    if (ret == 0) {
-        return 0;
-    } else {
-        return -EINVAL;
+    if (f) {
+        fclose(f);
     }
+    if (rv && vflag) {
+        fprintf(stderr, "can't %s config file %s: %s\n",
+                err, filename, strerror(-rv));
+    }
+    return rv;
 }
