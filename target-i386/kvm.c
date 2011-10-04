@@ -24,6 +24,7 @@
 #include "sysemu.h"
 #include "kvm.h"
 #include "kvm_i386.h"
+#include "kvm-arch.h"
 #include "cpu.h"
 #include "gdbstub.h"
 #include "host-utils.h"
@@ -176,14 +177,17 @@ static struct kvm_cpuid_entry2 *cpuid_find_entry(struct kvm_cpuid2 *cpuid,
 uint32_t kvm_arch_get_supported_cpuid(KVMState *s, uint32_t function,
                                       uint32_t index, int reg)
 {
-    struct kvm_cpuid2 *cpuid;
     uint32_t ret = 0;
     uint32_t cpuid_1_edx;
     bool found = false;
+    struct kvm_arch_state *as = &s->arch_state;
 
-    cpuid = get_supported_cpuid(s);
+    if (!as->host_supported_cpuid) {
+        as->host_supported_cpuid = get_supported_cpuid(s);
+    }
 
-    struct kvm_cpuid_entry2 *entry = cpuid_find_entry(cpuid, function, index);
+    struct kvm_cpuid_entry2 *entry = \
+        cpuid_find_entry(as->host_supported_cpuid, function, index);
     if (entry) {
         found = true;
         ret = cpuid_entry_get_reg(entry, reg);
@@ -206,8 +210,6 @@ uint32_t kvm_arch_get_supported_cpuid(KVMState *s, uint32_t function,
             break;
         }
     }
-
-    g_free(cpuid);
 
     /* fallback for older kernels */
     if ((function == KVM_CPUID_FEATURES) && !found) {
