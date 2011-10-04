@@ -22,6 +22,10 @@
 #include <linux/kvm.h>
 #endif
 
+#ifdef NEED_CPU_H
+#include "kvm-arch.h"
+#endif
+
 extern int kvm_allowed;
 extern bool kvm_kernel_irqchip;
 
@@ -152,6 +156,8 @@ struct KVMState
     QTAILQ_HEAD(msi_hashtab, KVMMSIRoute) msi_hashtab[KVM_MSI_HASHTAB_SIZE];
     bool direct_msi;
 #endif
+    /* arch-specific state */
+    struct kvm_arch_state arch_state;
 };
 
 #endif /* NEED_CPU_H */
