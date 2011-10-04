@@ -7,7 +7,8 @@
 /** This struct carries arch-specific KVMState data for target-i386
  */
 struct kvm_arch_state {
-    /* No arch-specific data by now */
+    /* cpuid bits that are supported by the host */
+    struct kvm_cpuid2 *host_supported_cpuid;
 };
 
 #endif /* _QEMU_I386_KVM_ARCH */
