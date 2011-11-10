@@ -68,11 +68,16 @@ static void buffered_append(QEMUFileBuffered *s,
     s->buffer_size += size;
 }
 
-/** Flush buffer if possible, without waiting for unfreeze
+
+/** Try to write write some buffer contents to the lower-level file
  *
- * There are no guarantees that everything will be flushed.
+ * Freezes output if the lower-level put_buffer function returns -EAGAIN.
+ *
+ * Note that in case of errors qemu_file_set_error() is used instead of
+ * returning an error code, because the caller may need to know how many
+ * bytes were written before the error anyway.
  */
-static void buffered_try_flush(QEMUFileBuffered *s)
+static size_t buffered_try_put_down(QEMUFileBuffered *s, const uint8_t *buffer, size_t size)
 {
     size_t offset = 0;
     int error;
@@ -80,16 +85,16 @@ static void buffered_try_flush(QEMUFileBuffered *s)
     error = qemu_file_get_error(s->file);
     if (error != 0) {
         DPRINTF("flush when error, bailing: %s\n", strerror(-error));
-        return;
+        return 0;
     }
 
-    DPRINTF("flushing %zu byte(s) of data\n", s->buffer_size);
+    DPRINTF("flushing %zu byte(s) of data\n", size);
 
-    while (offset < s->buffer_size) {
+    while (offset < size) {
         ssize_t ret;
 
-        ret = s->put_buffer(s->opaque, s->buffer + offset,
-                            s->buffer_size - offset);
+        ret = s->put_buffer(s->opaque, buffer + offset,
+                            size - offset);
         if (ret == -EAGAIN) {
             DPRINTF("backend not ready, freezing\n");
             s->freeze_output = 1;
@@ -106,9 +111,25 @@ static void buffered_try_flush(QEMUFileBuffered *s)
         }
     }
 
-    DPRINTF("flushed %zu of %zu byte(s)\n", offset, s->buffer_size);
-    memmove(s->buffer, s->buffer + offset, s->buffer_size - offset);
-    s->buffer_size -= offset;
+    DPRINTF("flushed %zu of %zu byte(s)\n", offset, size);
+
+    return offset;
+}
+
+/** Flush buffer if possible, without waiting for unfreeze
+ *
+ * There are no guarantees that everything will be flushed.
+ */
+static void buffered_try_flush(QEMUFileBuffered *s)
+{
+    size_t offset;
+
+    offset = buffered_try_put_down(s, s->buffer, s->buffer_size);
+
+    if (offset > 0) {
+        memmove(s->buffer, s->buffer + offset, s->buffer_size - offset);
+        s->buffer_size -= offset;
+    }
 }
 
 static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, int size)
