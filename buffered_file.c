@@ -172,6 +172,20 @@ static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, in
     return offset;
 }
 
+/** Flush everything, waiting for unfreeze if needed
+ *
+ * Returns 0 on success, or qemu_file_get_error(s->file) if an error happened.
+ */
+static int buffered_flush(QEMUFileBuffered *s)
+{
+    while (!qemu_file_get_error(s->file) && s->buffer_size) {
+        buffered_try_flush(s);
+        if (s->freeze_output)
+            s->wait_for_unfreeze(s->opaque);
+    }
+    return qemu_file_get_error(s->file);
+}
+
 static int buffered_close(void *opaque)
 {
     QEMUFileBuffered *s = opaque;
@@ -179,11 +193,10 @@ static int buffered_close(void *opaque)
 
     DPRINTF("closing\n");
 
-    while (!qemu_file_get_error(s->file) && s->buffer_size) {
-        buffered_try_flush(s);
-        if (s->freeze_output)
-            s->wait_for_unfreeze(s->opaque);
-    }
+    /* we can ignore buffered_flush() errors because it will happen only
+     * if s->file has an error set, and qemu_fclose() will return it.
+     */
+    buffered_flush(s);
 
     ret = s->close(s->opaque);
 
