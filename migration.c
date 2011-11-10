@@ -242,7 +242,10 @@ static ssize_t migrate_fd_put_buffer(void *opaque, const void *data,
     return ret;
 }
 
-static void migrate_fd_put_ready(void *opaque)
+/** Called by MigrationState.file buffered file is ready to get more data
+ *
+ */
+static void migrate_buf_put_ready(void *opaque)
 {
     MigrationState *s = opaque;
     int ret;
@@ -357,7 +360,7 @@ void migrate_fd_connect(MigrationState *s)
     s->file = qemu_fopen_ops_buffered(s,
                                       s->bandwidth_limit,
                                       migrate_fd_put_buffer,
-                                      migrate_fd_put_ready,
+                                      migrate_buf_put_ready,
                                       migrate_fd_wait_for_unfreeze,
                                       migrate_fd_close);
 
@@ -368,7 +371,7 @@ void migrate_fd_connect(MigrationState *s)
         migrate_fd_error(s);
         return;
     }
-    migrate_fd_put_ready(s);
+    migrate_buf_put_ready(s);
 }
 
 static MigrationState *migrate_init(Monitor *mon, int detach, int blk, int inc)
