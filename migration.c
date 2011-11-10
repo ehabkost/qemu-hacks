@@ -207,6 +207,9 @@ static void migrate_fd_completed(MigrationState *s)
     notifier_list_notify(&migration_state_notifiers, s);
 }
 
+/** Called when the actual file descriptor is ready to be written to.
+ *
+ */
 static void migrate_fd_put_notify(void *opaque)
 {
     MigrationState *s = opaque;
