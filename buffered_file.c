@@ -68,7 +68,11 @@ static void buffered_append(QEMUFileBuffered *s,
     s->buffer_size += size;
 }
 
-static void buffered_flush(QEMUFileBuffered *s)
+/** Flush buffer if possible, without waiting for unfreeze
+ *
+ * There are no guarantees that everything will be flushed.
+ */
+static void buffered_try_flush(QEMUFileBuffered *s)
 {
     size_t offset = 0;
     int error;
@@ -124,7 +128,7 @@ static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, in
     DPRINTF("unfreezing output\n");
     s->freeze_output = 0;
 
-    buffered_flush(s);
+    buffered_try_flush(s);
 
     while (!s->freeze_output && offset < size) {
         if (s->bytes_xfer > s->xfer_limit) {
@@ -176,7 +180,7 @@ static int buffered_close(void *opaque)
     DPRINTF("closing\n");
 
     while (!qemu_file_get_error(s->file) && s->buffer_size) {
-        buffered_flush(s);
+        buffered_try_flush(s);
         if (s->freeze_output)
             s->wait_for_unfreeze(s->opaque);
     }
@@ -254,7 +258,7 @@ static void buffered_rate_tick(void *opaque)
 
     s->bytes_xfer = 0;
 
-    buffered_flush(s);
+    buffered_try_flush(s);
 
     /* Add some checks around this */
     s->put_ready(s->opaque);
@@ -278,6 +282,8 @@ QEMUFile *qemu_fopen_ops_buffered(void *opaque,
     s->wait_for_unfreeze = wait_for_unfreeze;
     s->close = close;
 
+    /* the "frontend" QEMUFile interface, exposed to the outside
+     */
     s->file = qemu_fopen_ops(s, buffered_put_buffer, NULL,
                              buffered_close, buffered_rate_limit,
                              buffered_set_rate_limit,
