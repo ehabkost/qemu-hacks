@@ -81,17 +81,21 @@ static size_t buffered_try_put_down(QEMUFileBuffered *s, const uint8_t *buffer, 
 {
     size_t offset = 0;
     int error;
+    ssize_t ret;
 
     error = qemu_file_get_error(s->file);
     if (error != 0) {
-        DPRINTF("flush when error, bailing: %s\n", strerror(-error));
+        DPRINTF("putting buffer down when error, bailing: %s\n", strerror(-error));
         return 0;
     }
 
-    DPRINTF("flushing %zu byte(s) of data\n", size);
+    DPRINTF("putting down %zu byte(s) of data\n", size);
 
-    while (offset < size) {
-        ssize_t ret;
+    while (!s->freeze_output && offset < size) {
+        if (s->bytes_xfer > s->xfer_limit) {
+            DPRINTF("transfer limit exceeded when putting\n");
+            break;
+        }
 
         ret = s->put_buffer(s->opaque, buffer + offset,
                             size - offset);
@@ -102,16 +106,17 @@ static size_t buffered_try_put_down(QEMUFileBuffered *s, const uint8_t *buffer, 
         }
 
         if (ret <= 0) {
-            DPRINTF("error flushing data, %zd\n", ret);
+            DPRINTF("error putting data down, %zd\n", ret);
             qemu_file_set_error(s->file, ret);
             break;
-        } else {
-            DPRINTF("flushed %zd byte(s)\n", ret);
-            offset += ret;
         }
+
+        DPRINTF("put down %zd byte(s)\n", ret);
+        offset += ret;
+        s->bytes_xfer += ret;
     }
 
-    DPRINTF("flushed %zu of %zu byte(s)\n", offset, size);
+    DPRINTF("put down %zu of %zu byte(s)\n", offset, size);
 
     return offset;
 }
