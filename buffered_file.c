@@ -200,6 +200,7 @@ static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, in
 static int buffered_flush(QEMUFileBuffered *s)
 {
     while (!qemu_file_get_error(s->file) && s->buffer_size) {
+        s->freeze_output = 0;
         buffered_try_flush(s);
         if (s->freeze_output)
             s->wait_for_unfreeze(s->opaque);
