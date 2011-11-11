@@ -37,8 +37,9 @@ struct QEMUFile {
     void *opaque;
     int is_write;
 
-    int64_t buf_offset; /* start of buffer when writing, end of buffer
-                           when reading */
+    int64_t cur_offset; /* current read/write offset in the file.
+                           start of buffer when writing,
+                           end of buffer when reading */
     int buf_index;
     int buf_size; /* 0 when writing */
     uint8_t buf[IO_BUF_SIZE];
@@ -306,16 +307,16 @@ static void qemu_file_set_if_error(QEMUFile *f, int ret)
     }
 }
 
-/** Calls f->put_buffer() and updates buf_offset accordingly
+/** Calls f->put_buffer() and updates cur_offset accordingly
  *
  * In case of error, sets file error and returns negative errno value.
  */
 ssize_t qemu_file_put_down(QEMUFile *f, uint8_t *buf, size_t size)
 {
     ssize_t len;
-    len = f->put_buffer(f->opaque, buf, f->buf_offset, size);
+    len = f->put_buffer(f->opaque, buf, f->curf_offset, size);
     if (len >= 0) {
-        f->buf_offset += len;
+        f->cur_offset += len;
     } else {
         qemu_file_set_error(f, len);
     }
@@ -358,11 +359,11 @@ static void qemu_fill_buffer(QEMUFile *f)
     f->buf_index = 0;
     f->buf_size = pending;
 
-    len = f->get_buffer(f->opaque, f->buf + pending, f->buf_offset,
+    len = f->get_buffer(f->opaque, f->buf + pending, f->cur_offset,
                         IO_BUF_SIZE - pending);
     if (len > 0) {
         f->buf_size += len;
-        f->buf_offset += len;
+        f->cur_offset += len;
     } else if (len == 0) {
         f->last_error = -EIO;
     } else if (len != -EAGAIN)
@@ -535,7 +536,7 @@ int qemu_get_byte(QEMUFile *f)
 
 int64_t qemu_ftell(QEMUFile *f)
 {
-    return f->buf_offset - f->buf_size + f->buf_index;
+    return f->cur_offset - f->buf_size + f->buf_index;
 }
 
 int64_t qemu_fseek(QEMUFile *f, int64_t pos, int whence)
@@ -550,9 +551,9 @@ int64_t qemu_fseek(QEMUFile *f, int64_t pos, int whence)
     }
     if (f->put_buffer) {
         qemu_fflush(f);
-        f->buf_offset = pos;
+        f->cur_offset = pos;
     } else {
-        f->buf_offset = pos;
+        f->cur_offset = pos;
         f->buf_index = 0;
         f->buf_size = 0;
     }
