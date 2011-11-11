@@ -319,13 +319,13 @@ void qemu_fflush(QEMUFile *f)
         int len;
 
         len = f->put_buffer(f->opaque, f->buf, f->buf_offset, f->buf_index);
-        if (len > 0)
+        if (len >= 0)
             /*FIXME: this code is not taking into account writes smaller than
              * the requested size.
              */
             f->buf_offset += f->buf_index;
         else
-            qemu_file_set_error(f, -EINVAL);
+            qemu_file_set_error(f, len);
         f->buf_index = 0;
     }
 }
