@@ -306,6 +306,22 @@ static void qemu_file_set_if_error(QEMUFile *f, int ret)
     }
 }
 
+/** Calls f->put_buffer() and updates buf_offset accordingly
+ *
+ * In case of error, sets file error and returns negative errno value.
+ */
+ssize_t qemu_file_put_down(QEMUFile *f, uint8_t *buf, size_t size)
+{
+    ssize_t len;
+    len = f->put_buffer(f->opaque, buf, f->buf_offset, size);
+    if (len >= 0) {
+        f->buf_offset += len;
+    } else {
+        qemu_file_set_error(f, len);
+    }
+    return len;
+}
+
 /** Flushes QEMUFile buffer
  *
  * In case of error, last_error is set.
@@ -316,13 +332,7 @@ void qemu_fflush(QEMUFile *f)
         return;
 
     if (f->is_write && f->buf_index > 0) {
-        int len;
-
-        len = f->put_buffer(f->opaque, f->buf, f->buf_offset, f->buf_index);
-        if (len >= 0)
-            f->buf_offset += len;
-        else
-            qemu_file_set_error(f, len);
+        qemu_file_put_down(f, f->buf, f->buf_index);
         /*FIXME: this code is not taking into account writes smaller than
          * the requested size.
          */
