@@ -140,8 +140,8 @@ static void buffered_try_flush(QEMUFileBuffered *s)
 static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, int size)
 {
     QEMUFileBuffered *s = opaque;
-    int offset = 0, error;
-    ssize_t ret;
+    ssize_t offset, ret;
+    int error;
 
     DPRINTF("putting %d bytes at %" PRId64 "\n", size, pos);
 
@@ -151,42 +151,32 @@ static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, in
         return error;
     }
 
+    /* Try to flush what we already have in the buffer, first: */
     DPRINTF("unfreezing output\n");
     s->freeze_output = 0;
-
     buffered_try_flush(s);
 
-    while (!s->freeze_output && offset < size) {
-        if (s->bytes_xfer > s->xfer_limit) {
-            DPRINTF("transfer limit exceeded when putting\n");
-            break;
-        }
+    /* Also, try to write directly from the buffer without copying
+     * if possible:
+     */
+    offset = buffered_try_put_down(s, buf, size);
 
-        ret = s->put_buffer(s->opaque, buf + offset, size - offset);
-        if (ret == -EAGAIN) {
-            DPRINTF("backend not ready, freezing\n");
-            s->freeze_output = 1;
-            break;
-        }
-
-        if (ret <= 0) {
-            DPRINTF("error putting\n");
-            qemu_file_set_error(s->file, ret);
-            offset = -EINVAL;
-            break;
-        }
-
-        DPRINTF("put %zd byte(s)\n", ret);
-        offset += ret;
-        s->bytes_xfer += ret;
-    }
-
-    if (offset >= 0) {
+    /* In case we got errors above, return it because callers can't handle
+     * partial writes (yet).
+     */
+    error = qemu_file_get_error(s->file);
+    if (error) {
+        ret = error;
+    } else {
+        /* everything is OK, so append the remaining data to the buffer */
         DPRINTF("buffering %d bytes\n", size - offset);
         buffered_append(s, buf + offset, size - offset);
-        offset = size;
+        ret = size;
     }
 
+    /* Special meaning for put_buffer(NULL, 0, 0): try to flush
+     * current buffers and notify client if we're ready.
+     */
     if (pos == 0 && size == 0) {
         DPRINTF("file is ready\n");
         if (s->bytes_xfer <= s->xfer_limit) {
@@ -195,7 +185,7 @@ static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, in
         }
     }
 
-    return offset;
+    return ret;
 }
 
 /** Flush everything, waiting for unfreeze if needed
