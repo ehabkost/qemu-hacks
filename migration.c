@@ -245,7 +245,7 @@ static ssize_t migrate_fd_put_buffer(void *opaque, const void *data,
     return ret;
 }
 
-/** Called by MigrationState.file buffered file is ready to get more data
+/** Called by MigrationState.file buffered file when it is ready to get more data
  *
  */
 static void migrate_buf_put_ready(void *opaque)
