@@ -83,7 +83,11 @@ static int socket_close(void *opaque)
 static int stdio_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, int size)
 {
     QEMUFileStdio *s = opaque;
-    return fwrite(buf, 1, size, s->stdio_file);
+    int r;
+    r = fwrite(buf, 1, size, s->stdio_file);
+    if (ferror(s->stdio_file))
+        r = -errno;
+    return r;
 }
 
 static int stdio_get_buffer(void *opaque, uint8_t *buf, int64_t pos, int size)
@@ -212,8 +216,12 @@ static int file_put_buffer(void *opaque, const uint8_t *buf,
                             int64_t pos, int size)
 {
     QEMUFileStdio *s = opaque;
+    int r;
     fseek(s->stdio_file, pos, SEEK_SET);
-    return fwrite(buf, 1, size, s->stdio_file);
+    r = fwrite(buf, 1, size, s->stdio_file);
+    if (ferror(s->stdio_file))
+        r = -errno;
+    return r;
 }
 
 static int file_get_buffer(void *opaque, uint8_t *buf, int64_t pos, int size)
