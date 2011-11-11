@@ -12,7 +12,7 @@
  */
 
 #include "qemu-common.h"
-#include "hw/hw.h"
+#include "qemu-file.h"
 #include "qemu-timer.h"
 #include "qemu-char.h"
 #include "buffered_file.h"
