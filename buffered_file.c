@@ -137,6 +137,16 @@ static void buffered_try_flush(QEMUFileBuffered *s)
     }
 }
 
+/** Calls put_ready notification function if we're still under the xfer limit
+ */
+static void buffered_notify_up_if_ready(QEMUFileBuffered *s)
+{
+    if (s->bytes_xfer <= s->xfer_limit) {
+        DPRINTF("notifying client\n");
+        s->put_ready(s->opaque);
+    }
+}
+
 static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, int size)
 {
     QEMUFileBuffered *s = opaque;
@@ -179,10 +189,7 @@ static int buffered_put_buffer(void *opaque, const uint8_t *buf, int64_t pos, in
      */
     if (pos == 0 && size == 0) {
         DPRINTF("file is ready\n");
-        if (s->bytes_xfer <= s->xfer_limit) {
-            DPRINTF("notifying client\n");
-            s->put_ready(s->opaque);
-        }
+        buffered_notify_up_if_ready(s);
     }
 
     return ret;
