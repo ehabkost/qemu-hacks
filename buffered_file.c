@@ -297,8 +297,7 @@ static void buffered_rate_tick(void *opaque)
 
     buffered_try_flush(s);
 
-    /* Add some checks around this */
-    s->put_ready(s->opaque);
+    buffered_notify_up_if_ready(s);
 }
 
 QEMUFile *qemu_fopen_ops_buffered(void *opaque,
