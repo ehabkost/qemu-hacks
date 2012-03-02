@@ -21,6 +21,7 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include "cpus.h"
 #include "cpu.h"
 #include "kvm.h"
 
@@ -1745,6 +1746,11 @@ static void x86_cpu_initfn(Object *obj)
                         x86_cpuid_get_tsc_freq,
                         x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
 
+
+    /* smp_cores is from vl.c, not available on user-mode */
+#ifndef CONFIG_USER_ONLY
+    env->nr_cores = smp_cores;
+#endif
     env->cpuid_apic_id = env->cpu_index;
 
     /* init various static tables used in TCG mode */
