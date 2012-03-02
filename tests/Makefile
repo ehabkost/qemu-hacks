@@ -1,3 +1,5 @@
+include tests/test-rules.mak
+
 CHECKS = check-qdict check-qfloat check-qint check-qstring check-qlist
 CHECKS += check-qjson test-qmp-output-visitor test-qmp-input-visitor
 CHECKS += test-string-input-visitor test-string-output-visitor test-coroutine
@@ -5,6 +7,8 @@ CHECKS += test-string-input-visitor test-string-output-visitor test-coroutine
 HW_TESTS=tests/rtc-test
 
 TARGETS=$(patsubst %-softmmu,%, $(filter %-softmmu,$(TARGET_DIRS)))
+
+TARGET_TESTS=$(addprefix check-target-, $(TARGET_DIRS))
 
 check-qint.o check-qstring.o check-qdict.o check-qlist.o check-qfloat.o check-qjson.o test-coroutine.o: $(GENERATED_HEADERS)
 
@@ -79,6 +83,13 @@ check-report.log: check-report-unit.log $(patsubst %,check-report-qtest-%.log, $
 check-report.html: check-report.log
 	$(call quiet-command,gtester-report $< > $@, "  GEN    $@")
 
+# target-specific checks:
+
+check-targets: $(TARGET_TESTS)
+
+check-target-%:
+	$(MAKE) -f ../tests/target-tests.mak -C $(patsubst check-target-%,%,$@) check-target
+
 # Check tests
 
 check-qtest-%: $(HW_TESTS)
@@ -90,12 +101,8 @@ check-qtest-%: $(HW_TESTS)
 
 check-qtest: $(patsubst %,check-qtest-%, $(TARGETS))
 
-check-unit: $(CHECKS)
-	@for test in $^; do \
-	    echo "Running '$$test'..."; \
-	    ./$$test || exit $?; \
-	done
+check-unit: run-checks
 
-check: check-unit check-qtest
+check: check-unit check-qtest check-targets
 
 .PHONY: check-help check-qtest check-unit check
