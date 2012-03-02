@@ -31,7 +31,7 @@ static void test_topo_bits(void)
 {
         struct CPUTopology topo;
         /* 1 thread per core, 1 core per socket */
-        topo_init(&topo, 1, 1);
+        topo_set_cores_threads(&topo, 1, 1);
 
         g_assert_cmpuint(topo_smt_width(&topo), ==, 0);
         g_assert_cmpuint(topo_core_width(&topo), ==, 0);
@@ -44,30 +44,30 @@ static void test_topo_bits(void)
 
         /* Test SMT width calculation for multiple values
          */
-        topo_init(&topo, 1, 2);
+        topo_set_cores_threads(&topo, 1, 2);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 1);
-        topo_init(&topo, 1, 3);
+        topo_set_cores_threads(&topo, 1, 3);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 2);
-        topo_init(&topo, 1, 4);
+        topo_set_cores_threads(&topo, 1, 4);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 2);
 
-        topo_init(&topo, 1, 14);
+        topo_set_cores_threads(&topo, 1, 14);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 4);
-        topo_init(&topo, 1, 15);
+        topo_set_cores_threads(&topo, 1, 15);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 4);
-        topo_init(&topo, 1, 16);
+        topo_set_cores_threads(&topo, 1, 16);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 4);
-        topo_init(&topo, 1, 17);
+        topo_set_cores_threads(&topo, 1, 17);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 5);
 
 
-        topo_init(&topo, 30, 2);
+        topo_set_cores_threads(&topo, 30, 2);
         g_assert_cmpuint(topo_core_width(&topo), ==, 5);
-        topo_init(&topo, 31, 2);
+        topo_set_cores_threads(&topo, 31, 2);
         g_assert_cmpuint(topo_core_width(&topo), ==, 5);
-        topo_init(&topo, 32, 2);
+        topo_set_cores_threads(&topo, 32, 2);
         g_assert_cmpuint(topo_core_width(&topo), ==, 5);
-        topo_init(&topo, 33, 2);
+        topo_set_cores_threads(&topo, 33, 2);
         g_assert_cmpuint(topo_core_width(&topo), ==, 6);
 
 
@@ -76,7 +76,7 @@ static void test_topo_bits(void)
 
         /* This will use 2 bits for thread ID and 3 bits for core ID
          */
-        topo_init(&topo, 6, 3);
+        topo_set_cores_threads(&topo, 6, 3);
         g_assert_cmpuint(topo_smt_width(&topo), ==, 2);
         g_assert_cmpuint(topo_core_width(&topo), ==, 3);
         g_assert_cmpuint(topo_pkg_offset(&topo), ==, 5);
