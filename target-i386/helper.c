@@ -32,6 +32,8 @@
 
 //#define DEBUG_MMU
 
+static int inited;
+
 /* NOTE: must be called outside the CPU execute loop */
 void cpu_reset(CPUX86State *env)
 {
@@ -1254,7 +1256,6 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
 CPUX86State *cpu_x86_init(const char *cpu_model)
 {
     CPUX86State *env;
-    static int inited;
 
     env = g_malloc0(sizeof(CPUX86State));
     cpu_exec_init(env);
