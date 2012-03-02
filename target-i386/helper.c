@@ -1161,7 +1161,7 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
 
 /** CPU initialization code that has to run only once
  */
-void x86_init_cpus(void)
+static void x86_init_cpus(void)
 {
     /* init various static tables used in TCG mode */
     if (tcg_enabled()) {
