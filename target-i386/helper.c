@@ -1253,6 +1253,20 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
     return 1;
 }
 
+/** CPU initialization code that has to run only once
+ */
+void x86_init_cpus(void)
+{
+    /* init various static tables used in TCG mode */
+    if (tcg_enabled()) {
+        optimize_flags_init();
+#ifndef CONFIG_USER_ONLY
+        prev_debug_excp_handler =
+            cpu_set_debug_excp_handler(breakpoint_handler);
+#endif
+    }
+}
+
 CPUX86State *cpu_x86_init(const char *cpu_model)
 {
     CPUX86State *env;
@@ -1263,14 +1277,7 @@ CPUX86State *cpu_x86_init(const char *cpu_model)
 
     if (!inited) {
         inited = 1;
-        /* init various static tables used in TCG mode */
-        if (tcg_enabled()) {
-            optimize_flags_init();
-#ifndef CONFIG_USER_ONLY
-            prev_debug_excp_handler =
-                cpu_set_debug_excp_handler(breakpoint_handler);
-#endif
-        }
+        x86_init_cpus();
     }
     if (cpu_x86_register(env, cpu_model) < 0) {
         cpu_x86_close(env);
