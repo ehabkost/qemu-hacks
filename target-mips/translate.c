@@ -26,6 +26,7 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include "cpus.h"
 #include "cpu.h"
 #include "disas.h"
 #include "tcg-op.h"
@@ -12707,6 +12708,9 @@ CPUMIPSState *cpu_mips_init (const char *cpu_model)
     env = g_malloc0(sizeof(CPUMIPSState));
     env->cpu_model = def;
     env->cpu_model_str = cpu_model;
+#ifndef CONFIG_USER_ONLY
+    env->nr_threads = smp_threads;
+#endif
 
     cpu_exec_init(env);
 #ifndef CONFIG_USER_ONLY

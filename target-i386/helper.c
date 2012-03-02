@@ -1288,6 +1288,7 @@ CPUX86State *cpu_x86_init(const char *cpu_model)
     /* smp_cores is from vl.c, not available on user-mode */
 #ifndef CONFIG_USER_ONLY
     env->nr_cores = smp_cores;
+    env->nr_threads = smp_threads;
 #endif
     env->cpuid_apic_id = env->cpu_index;
     mce_init(env);
