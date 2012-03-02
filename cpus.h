@@ -1,6 +1,8 @@
 #ifndef QEMU_CPUS_H
 #define QEMU_CPUS_H
 
+#include "qemu-common.h"
+
 /* cpus.c */
 void qemu_init_cpu_loop(void);
 void resume_all_vcpus(void);
