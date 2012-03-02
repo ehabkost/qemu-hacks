@@ -12702,6 +12702,9 @@ MIPSCPU *cpu_mips_init(const char *cpu_model)
     env = &cpu->env;
     env->cpu_model = def;
     env->cpu_model_str = cpu_model;
+#ifndef CONFIG_USER_ONLY
+    env->nr_threads = smp_threads;
+#endif
 
 #ifndef CONFIG_USER_ONLY
     mmu_init(env, def);
