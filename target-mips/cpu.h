@@ -466,6 +466,8 @@ struct CPUMIPSState {
 
     CPU_COMMON
 
+    unsigned long nr_threads;
+
     CPUMIPSMVPContext *mvp;
 #if !defined(CONFIG_USER_ONLY)
     CPUMIPSTLBContext *tlb;
