@@ -38,7 +38,7 @@ struct CPUTopology
         uint8_t smt_width, core_width;
 };
 
-void topo_init(struct CPUTopology *t, unsigned int nr_cores, unsigned int nr_threads);
+void topo_set_cores_threads(struct CPUTopology *t, unsigned int nr_cores, unsigned int nr_threads);
 
 /** Return the bit width needed for 'count' IDs
  */
