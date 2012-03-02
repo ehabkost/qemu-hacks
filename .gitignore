@@ -46,6 +46,12 @@ test-qmp-input-visitor
 test-qmp-output-visitor
 test-string-input-visitor
 test-string-output-visitor
+check-qdict
+check-qfloat
+check-qint
+check-qjson
+check-qlist
+check-qstring
 fsdev/virtfs-proxy-helper.1
 fsdev/virtfs-proxy-helper.pod
 .gdbinit
