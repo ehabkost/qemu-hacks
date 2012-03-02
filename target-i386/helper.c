@@ -26,6 +26,9 @@
 
 //#define DEBUG_MMU
 
+static int inited;
+
+
 static void cpu_x86_version(CPUX86State *env, int *family, int *model)
 {
     int cpuver = env->cpuid_version;
@@ -1155,7 +1158,6 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
-    static int inited;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
