@@ -721,6 +721,8 @@ typedef struct CPUX86State {
 
     CPU_COMMON
 
+    unsigned int nr_cores; /* cores per CPU package */
+
     uint64_t pat;
 
     /* processor features (e.g. for CPUID insn) */

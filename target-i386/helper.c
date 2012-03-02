@@ -22,6 +22,7 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include "cpus.h"
 #include "cpu.h"
 #include "qemu-common.h"
 #include "kvm.h"
@@ -1283,6 +1284,11 @@ CPUX86State *cpu_x86_init(const char *cpu_model)
         cpu_x86_close(env);
         return NULL;
     }
+
+    /* smp_cores is from vl.c, not available on user-mode */
+#ifndef CONFIG_USER_ONLY
+    env->nr_cores = smp_cores;
+#endif
     env->cpuid_apic_id = env->cpu_index;
     mce_init(env);
 
