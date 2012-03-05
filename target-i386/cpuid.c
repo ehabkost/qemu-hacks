@@ -1131,8 +1131,8 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         *ebx = (env->cpuid_apic_id << 24) | 8 << 8; /* CLFLUSH size in quad words, Linux wants it. */
         *ecx = env->cpuid_ext_features;
         *edx = env->cpuid_features;
-        if (env->nr_cores * env->nr_threads > 1) {
-            *ebx |= (env->nr_cores * env->nr_threads) << 16;
+        if (env->topology.nr_cores * env->topology.nr_threads > 1) {
+            *ebx |= (env->topology.nr_cores * env->topology.nr_threads) << 16;
             *edx |= 1 << 28;    /* HTT bit */
         }
         break;
@@ -1145,8 +1145,8 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         break;
     case 4:
         /* cache info: needed for Core compatibility */
-        if (env->nr_cores > 1) {
-            *eax = (env->nr_cores - 1) << 26;
+        if (env->topology.nr_cores > 1) {
+            *eax = (env->topology.nr_cores - 1) << 26;
         } else {
             *eax = 0;
         }
@@ -1165,8 +1165,8 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
                 break;
             case 2: /* L2 cache info */
                 *eax |= 0x0000143;
-                if (env->nr_threads > 1) {
-                    *eax |= (env->nr_threads - 1) << 14;
+                if (env->topology.nr_threads > 1) {
+                    *eax |= (env->topology.nr_threads - 1) << 14;
                 }
                 *ebx = 0x3c0003f;
                 *ecx = 0x0000fff;
@@ -1271,7 +1271,7 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
          * discards multiple thread information if it is set.
          * So dont set it here for Intel to make Linux guests happy.
          */
-        if (env->nr_cores * env->nr_threads > 1) {
+        if (env->topology.nr_cores * env->topology.nr_threads > 1) {
             uint32_t tebx, tecx, tedx;
             get_cpuid_vendor(env, &tebx, &tecx, &tedx);
             if (tebx != CPUID_VENDOR_INTEL_1 ||
@@ -1319,8 +1319,8 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         *ebx = 0;
         *ecx = 0;
         *edx = 0;
-        if (env->nr_cores * env->nr_threads > 1) {
-            *ecx |= (env->nr_cores * env->nr_threads) - 1;
+        if (env->topology.nr_cores * env->topology.nr_threads > 1) {
+            *ecx |= (env->topology.nr_cores * env->topology.nr_threads) - 1;
         }
         break;
     case 0x8000000A:

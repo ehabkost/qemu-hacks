@@ -82,7 +82,7 @@ libobj-$(CONFIG_TCG_INTERPRETER) += tci.o
 libobj-y += fpu/softfloat.o
 libobj-y += op_helper.o helper.o
 ifeq ($(TARGET_BASE_ARCH), i386)
-libobj-y += cpuid.o
+libobj-y += cpuid.o topology.o
 endif
 libobj-$(TARGET_SPARC64) += vis_helper.o
 libobj-$(CONFIG_NEED_MMU) += mmu.o

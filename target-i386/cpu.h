@@ -45,7 +45,7 @@
 #define CPUState struct CPUX86State
 
 #include "cpu-defs.h"
-
+#include "topology.h"
 #include "softfloat.h"
 
 #define R_EAX 0
@@ -721,8 +721,7 @@ typedef struct CPUX86State {
 
     CPU_COMMON
 
-    unsigned int nr_cores;   /* cores per CPU package */
-    unsigned int nr_threads; /* threads per core */
+    struct CPUTopology topology; /* Topology information */
 
     uint64_t pat;
 

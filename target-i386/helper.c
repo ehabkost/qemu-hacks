@@ -1286,11 +1286,13 @@ CPUX86State *cpu_x86_init(const char *cpu_model)
     }
 
     /* smp_cores is from vl.c, not available on user-mode */
-#ifndef CONFIG_USER_ONLY
-    env->nr_cores = smp_cores;
-    env->nr_threads = smp_threads;
+#ifdef CONFIG_USER_ONLY
+    topo_set_cores_threads(&env->topology, 1, 1);
+#else
+    topo_set_cores_threads(&env->topology, smp_cores, smp_threads);
 #endif
-    env->cpuid_apic_id = env->cpu_index;
+    env->cpuid_apic_id = topo_make_apicid(&env->topology, env->cpu_index);
+    fprintf(stderr, "APIC ID for CPU %lu: 0x%x\n", (unsigned long)env->cpu_index, env->cpuid_apic_id);
     mce_init(env);
 
     qemu_init_vcpu(env);
