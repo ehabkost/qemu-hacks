@@ -88,7 +88,7 @@ endif
 endif
 libobj-y += helper.o
 ifneq ($(TARGET_BASE_ARCH), ppc)
-libobj-y += cpu.o
+libobj-y += cpu.o topology.o
 endif
 libobj-$(TARGET_SPARC64) += vis_helper.o
 libobj-$(CONFIG_NEED_MMU) += mmu.o
