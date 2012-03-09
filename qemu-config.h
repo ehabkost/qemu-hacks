@@ -14,6 +14,12 @@ void qemu_add_globals(void);
 void qemu_config_write(FILE *fp);
 int qemu_config_parse(FILE *fp, QemuOptsList **lists, const char *fname);
 
-int qemu_read_config_file(const char *filename);
+/* Read config from filename
+ */
+int qemu_read_config_filename(const char *filename);
+
+/* Read config based on key=value options using QemuOpts syntax
+ */
+int qemu_read_config_arg(const char *arg);
 
 #endif /* QEMU_CONFIG_H */

@@ -2655,9 +2655,9 @@ Old param mode (ARM only).
 ETEXI
 
 DEF("readconfig", HAS_ARG, QEMU_OPTION_readconfig,
-    "-readconfig <file>\n", QEMU_ARCH_ALL)
+    "-readconfig [path=]<file>\n", QEMU_ARCH_ALL)
 STEXI
-@item -readconfig @var{file}
+@item -readconfig [type=]@var{file}
 @findex -readconfig
 Read device configuration from @var{file}.
 ETEXI
