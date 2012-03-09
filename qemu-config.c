@@ -816,21 +816,71 @@ out:
     return res;
 }
 
-int qemu_read_config_file(const char *filename)
+/* Not on vm_config_groups because this is not a global option setable by -set
+ * (QEMU_OPTION_set), just settings used to parse -readconfig argument.
+ */
+static QemuOptsList qemu_readconfig_opts = {
+    .name = "readconfig-opts",
+    .implied_opt_name = "path",
+    .head = QTAILQ_HEAD_INITIALIZER(qemu_readconfig_opts.head),
+    .desc = {
+        {
+            .name = "path",
+            .type = QEMU_OPT_STRING,
+        },
+        { /*End of list */ }
+    },
+};
+
+/** Read Qemu config file from open file
+ *
+ * The file will be closed before returning.
+ *
+ * Returns 0 on success, -errno on failure.
+ */
+static int qemu_read_config_file(FILE *f, const char *filename)
+{
+    int ret;
+    if (qemu_config_parse(f, vm_config_groups, filename) == 0) {
+        ret = 0;
+    } else {
+        ret = -EINVAL;
+    }
+    fclose(f);
+    return ret;
+}
+
+/** Read Qemu config file from 'filename'
+ */
+int qemu_read_config_filename(const char *filename)
 {
     FILE *f = fopen(filename, "r");
-    int ret;
-
     if (f == NULL) {
         return -errno;
     }
+    return qemu_read_config_file(f, filename);
+}
 
-    ret = qemu_config_parse(f, vm_config_groups, filename);
-    fclose(f);
-
-    if (ret == 0) {
-        return 0;
-    } else {
+/** Read Qemu config file based on parsed QemuOpts object
+ */
+static int qemu_read_config_opts(QemuOpts *opts)
+{
+    const char *path = qemu_opt_get(opts, "path");
+    if (!path) {
         return -EINVAL;
     }
+    return qemu_read_config_filename(path);
+}
+
+/** Read config file based on option arguments on 'arg'
+ */
+int qemu_read_config_arg(const char *arg)
+{
+    QemuOpts *opts = qemu_opts_parse(&qemu_readconfig_opts, arg, 1);
+    if (!opts) {
+        return -EINVAL;
+    }
+    int r = qemu_read_config_opts(opts);
+    qemu_opts_del(opts);
+    return r;
 }

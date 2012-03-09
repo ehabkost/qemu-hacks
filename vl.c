@@ -2349,12 +2349,12 @@ int main(int argc, char **argv, char **envp)
     if (defconfig) {
         int ret;
 
-        ret = qemu_read_config_file(CONFIG_QEMU_CONFDIR "/qemu.conf");
+        ret = qemu_read_config_filename(CONFIG_QEMU_CONFDIR "/qemu.conf");
         if (ret < 0 && ret != -ENOENT) {
             exit(1);
         }
 
-        ret = qemu_read_config_file(arch_config_name);
+        ret = qemu_read_config_filename(arch_config_name);
         if (ret < 0 && ret != -ENOENT) {
             exit(1);
         }
@@ -3148,7 +3148,7 @@ int main(int argc, char **argv, char **envp)
             }
             case QEMU_OPTION_readconfig:
                 {
-                    int ret = qemu_read_config_file(optarg);
+                    int ret = qemu_read_config_arg(optarg);
                     if (ret < 0) {
                         fprintf(stderr, "read config %s: %s\n", optarg,
                             strerror(-ret));
