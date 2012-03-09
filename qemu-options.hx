@@ -2655,11 +2655,11 @@ Old param mode (ARM only).
 ETEXI
 
 DEF("readconfig", HAS_ARG, QEMU_OPTION_readconfig,
-    "-readconfig <file>\n", QEMU_ARCH_ALL)
+    "-readconfig [path=]<file>|fd=<fd>\n", QEMU_ARCH_ALL)
 STEXI
-@item -readconfig @var{file}
+@item -readconfig [path=]@var{file}|fd=@var{fd}
 @findex -readconfig
-Read device configuration from @var{file}.
+Read device configuration from @var{file}, or from file descriptor @var{fd}.
 ETEXI
 DEF("writeconfig", HAS_ARG, QEMU_OPTION_writeconfig,
     "-writeconfig <file>\n"
