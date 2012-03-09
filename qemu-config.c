@@ -828,6 +828,10 @@ static QemuOptsList qemu_readconfig_opts = {
             .name = "path",
             .type = QEMU_OPT_STRING,
         },
+        {
+            .name = "fd",
+            .type = QEMU_OPT_NUMBER,
+        },
         { /*End of list */ }
     },
 };
@@ -863,17 +867,44 @@ int qemu_read_config_filename(const char *filename)
     return qemu_read_config_file(f, filename);
 }
 
+/* Read Qemu config file from file descriptor
+ *
+ * Returns 0 on success, -errno on failure.
+ */
+static int qemu_read_config_fd(int fd)
+{
+    /* For the "<fd:%d>" pseudo-filename, used only for error messages */
+    char fname[16];
+    FILE *f = fdopen(fd, "r");
+    if (f == NULL) {
+        return -errno;
+    }
+    snprintf(fname, sizeof(fname), "<fd:%d>", fd);
+    return qemu_read_config_file(f, fname);
+}
+
 /* Read Qemu config file based on parsed QemuOpts object
  *
  * Returns 0 on success, -errno on failure.
  */
 static int qemu_read_config_opts(QemuOpts *opts)
 {
+    int fd = -1;
+    uint64_t fd_arg = qemu_opt_get_number(opts, "fd", (uint64_t)-1);
     const char *path = qemu_opt_get(opts, "path");
-    if (!path) {
+
+    if (fd_arg != (uint64_t)-1) {
+        fd = fd_arg;
+    }
+
+    if (path) {
+        return qemu_read_config_filename(path);
+    } else if (fd >= 0) {
+        return qemu_read_config_fd(fd);
+    } else {
+        error_report("no fd or path set for config file");
         return -EINVAL;
     }
-    return qemu_read_config_filename(path);
 }
 
 /* Read config file based on option arguments on 'arg'
