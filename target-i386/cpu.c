@@ -221,7 +221,7 @@ typedef struct x86_def_t {
     uint32_t xlevel;
     char model_id[48];
     int vendor_override;
-    uint32_t flags;
+    bool is_builtin;
     /* Store the results of Centaur's CPUID instructions */
     uint32_t ext4_features;
     uint32_t xlevel2;
@@ -1460,7 +1460,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf, const char *optarg)
         return;
     }
     for (def = x86_defs; def; def = def->next) {
-        snprintf(buf, sizeof(buf), def->flags ? "[%s]" : "%s", def->name);
+        snprintf(buf, sizeof(buf), def->is_builtin ? "[%s]" : "%s", def->name);
         if (model || dump) {
             (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->model_id);
         } else {
@@ -1647,7 +1647,7 @@ void x86_cpudef_setup(void)
     for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
         x86_def_t *def = &builtin_x86_defs[i];
         def->next = x86_defs;
-        def->flags = 1;
+        def->is_builtin = true;
 
         /* Look for specific "cpudef" models that */
         /* have the QEMU version in .model_id */
