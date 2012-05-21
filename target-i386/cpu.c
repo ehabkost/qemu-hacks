@@ -22,6 +22,7 @@
 #include <inttypes.h>
 
 #include "cpu.h"
+#include "cpus.h"
 #include "kvm.h"
 
 #include "qemu-option.h"
