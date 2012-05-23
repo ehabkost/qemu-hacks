@@ -81,6 +81,18 @@ static void init_acpi_tables(void)
     }
 }
 
+/* Resize acpi_tables to fit a new table of size 'newlen'
+ *
+ * acpi_tables_len is _not_ changed, as the table is still incomplete.
+ *
+ * Returns a pointer to the reallocated new table at end of acpi_tables.
+ */
+static char *acpi_newtable_resize(size_t newlen)
+{
+    acpi_tables = g_realloc(acpi_tables, acpi_tables_len + newlen);
+    return acpi_tables + acpi_tables_len;
+}
+
 static int acpi_make_table_header(const char *t, bool has_header, char *f, size_t qemu_len)
 {
     struct acpi_table_header hdr;
@@ -213,7 +225,7 @@ int acpi_table_add(const char *t)
 
     init_acpi_tables();
 
-    acpi_tables = g_realloc(acpi_tables, acpi_tables_len + ACPI_TABLE_HDR_SIZE);
+    acpi_newtable_resize(ACPI_TABLE_HDR_SIZE);
     newlen = has_header ? ACPI_TABLE_PFX_SIZE : ACPI_TABLE_HDR_SIZE;
 
     /* now read in the data files, reallocating buffer as needed */
@@ -232,7 +244,7 @@ int acpi_table_add(const char *t)
             if (r == 0) {
                 break;
             } else if (r > 0) {
-                acpi_tables = g_realloc(acpi_tables, acpi_tables_len + newlen + r);
+                acpi_newtable_resize(newlen + r);
                 memcpy(acpi_tables + acpi_tables_len + newlen, data, r);
                 newlen += r;
             } else if (errno != EINTR) {
