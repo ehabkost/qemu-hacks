@@ -102,12 +102,11 @@ int acpi_table_add(const char *t)
     }
 
     if (!acpi_tables) {
-        allen = sizeof(uint16_t);
-        acpi_tables = g_malloc0(allen);
-    } else {
-        allen = acpi_tables_len;
+        acpi_tables_len = sizeof(uint16_t);
+        acpi_tables = g_malloc0(acpi_tables_len);
     }
 
+    allen = acpi_tables_len;
     start = allen;
     acpi_tables = g_realloc(acpi_tables, start + ACPI_TABLE_HDR_SIZE);
     allen += has_header ? ACPI_TABLE_PFX_SIZE : ACPI_TABLE_HDR_SIZE;
