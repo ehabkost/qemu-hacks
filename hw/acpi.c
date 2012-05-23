@@ -72,6 +72,15 @@ static void strzcpy(char *dst, const char *src, size_t size)
     memcpy(dst, src, len);
 }
 
+/* Init acpi_tables if necessary */
+static void init_acpi_tables(void)
+{
+    if (!acpi_tables) {
+        acpi_tables_len = sizeof(uint16_t);
+        acpi_tables = g_malloc0(acpi_tables_len);
+    }
+}
+
 /* XXX fixme: this function uses obsolete argument parsing interface */
 int acpi_table_add(const char *t)
 {
@@ -101,10 +110,7 @@ int acpi_table_add(const char *t)
         return -1;
     }
 
-    if (!acpi_tables) {
-        acpi_tables_len = sizeof(uint16_t);
-        acpi_tables = g_malloc0(acpi_tables_len);
-    }
+    init_acpi_tables();
 
     allen = acpi_tables_len;
     start = allen;
