@@ -86,7 +86,8 @@ int acpi_table_add(const char *t)
 {
     char buf[1024], *p, *f;
     unsigned long val;
-    size_t len, start, allen;
+    size_t start, allen;
+    size_t qemu_len, acpi_len;
     bool has_header;
     int changed;
     int r;
@@ -150,15 +151,19 @@ int acpi_table_add(const char *t)
     /* now fill in the header fields */
 
     f = acpi_tables + start;   /* start of the table */
+
+    /* length of the whole table, including our prefix */
+    qemu_len = allen - start;
+
     changed = 0;
 
     /* copy the header to temp place to align the fields */
     memcpy(&hdr, has_header ? f : dfl_hdr, ACPI_TABLE_HDR_SIZE);
 
     /* length of the table minus our prefix */
-    len = allen - start - ACPI_TABLE_PFX_SIZE;
+    acpi_len = qemu_len - ACPI_TABLE_PFX_SIZE;
 
-    hdr._length = cpu_to_le16(len);
+    hdr._length = cpu_to_le16(acpi_len);
 
     if (get_param_value(buf, sizeof(buf), "sig", t)) {
         strzcpy(hdr.sig, buf, sizeof(hdr.sig));
@@ -169,16 +174,16 @@ int acpi_table_add(const char *t)
     if (has_header) {
         /* check if actual length is correct */
         val = le32_to_cpu(hdr.length);
-        if (val != len) {
+        if (val != acpi_len) {
             fprintf(stderr,
                 "warning: acpitable has wrong length,"
                 " header says %lu, actual size %zu bytes\n",
-                val, len);
+                val, acpi_len);
             ++changed;
         }
     }
     /* we may avoid putting length here if has_header is true */
-    hdr.length = cpu_to_le32(len);
+    hdr.length = cpu_to_le32(acpi_len);
 
     if (get_param_value(buf, sizeof(buf), "rev", t)) {
         val = strtoul(buf, &p, 0);
@@ -241,7 +246,7 @@ int acpi_table_add(const char *t)
 
     if (changed || !has_header || 1) {
         ((struct acpi_table_header *)f)->checksum =
-            acpi_checksum((uint8_t *)f + ACPI_TABLE_PFX_SIZE, len);
+            acpi_checksum((uint8_t *)f + ACPI_TABLE_PFX_SIZE, acpi_len);
     }
 
     /* increase number of tables */
