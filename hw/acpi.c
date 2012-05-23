@@ -93,6 +93,18 @@ static char *acpi_newtable_resize(size_t newlen)
     return acpi_tables + acpi_tables_len;
 }
 
+/* Increase the acpi_tables table count, and adjust acpi_tables_len
+ */
+static void acpi_newtable_finished(size_t len)
+{
+    /* increase number of tables */
+    (*(uint16_t *)acpi_tables) =
+        cpu_to_le32(le32_to_cpu(*(uint16_t *)acpi_tables) + 1);
+
+    acpi_tables_len += len;    
+}
+
+
 static int acpi_make_table_header(const char *t, bool has_header, char *f, size_t qemu_len)
 {
     struct acpi_table_header hdr;
@@ -262,11 +274,7 @@ int acpi_table_add(const char *t)
     /* now fill in the header fields */
     acpi_make_table_header(newtable, has_header, f, newlen);
 
-    /* increase number of tables */
-    (*(uint16_t *)acpi_tables) =
-        cpu_to_le32(le32_to_cpu(*(uint16_t *)acpi_tables) + 1);
-
-    acpi_tables_len += newlen;
+    acpi_newtable_finished(newlen);
     return 0;
 
 }
