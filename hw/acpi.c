@@ -201,6 +201,7 @@ static int acpi_make_table_header(const char *t, bool has_header, char *f, size_
 int acpi_table_add(const char *t)
 {
     char buf[1024], *f;
+    char *newtable;
     size_t newlen; /* length of the new table */
     bool has_header;
     int r;
@@ -225,7 +226,7 @@ int acpi_table_add(const char *t)
 
     init_acpi_tables();
 
-    acpi_newtable_resize(ACPI_TABLE_HDR_SIZE);
+    newtable = acpi_newtable_resize(ACPI_TABLE_HDR_SIZE);
     newlen = has_header ? ACPI_TABLE_PFX_SIZE : ACPI_TABLE_HDR_SIZE;
 
     /* now read in the data files, reallocating buffer as needed */
@@ -244,8 +245,8 @@ int acpi_table_add(const char *t)
             if (r == 0) {
                 break;
             } else if (r > 0) {
-                acpi_newtable_resize(newlen + r);
-                memcpy(acpi_tables + acpi_tables_len + newlen, data, r);
+                newtable = acpi_newtable_resize(newlen + r);
+                memcpy(newtable + newlen, data, r);
                 newlen += r;
             } else if (errno != EINTR) {
                 fprintf(stderr, "can't read file %s: %s\n",
@@ -259,10 +260,7 @@ int acpi_table_add(const char *t)
     }
 
     /* now fill in the header fields */
-
-    f = acpi_tables + acpi_tables_len;   /* start of the table */
-
-    acpi_make_table_header(t, has_header, f, newlen);
+    acpi_make_table_header(newtable, has_header, f, newlen);
 
     /* increase number of tables */
     (*(uint16_t *)acpi_tables) =
