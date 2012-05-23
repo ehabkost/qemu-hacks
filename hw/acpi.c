@@ -81,81 +81,14 @@ static void init_acpi_tables(void)
     }
 }
 
-/* XXX fixme: this function uses obsolete argument parsing interface */
-int acpi_table_add(const char *t)
+static int acpi_make_table_header(const char *t, bool has_header, char *f, size_t qemu_len)
 {
-    char buf[1024], *p, *f;
-    unsigned long val;
-    size_t start, allen;
-    size_t qemu_len, acpi_len;
-    bool has_header;
-    int changed;
-    int r;
     struct acpi_table_header hdr;
-
-    r = 0;
-    r |= get_param_value(buf, sizeof(buf), "data", t) ? 1 : 0;
-    r |= get_param_value(buf, sizeof(buf), "file", t) ? 2 : 0;
-    switch (r) {
-    case 0:
-        buf[0] = '\0';
-        /* fallthrough for default behavior */
-    case 1:
-        has_header = false;
-        break;
-    case 2:
-        has_header = true;
-        break;
-    default:
-        fprintf(stderr, "acpitable: both data and file are specified\n");
-        return -1;
-    }
-
-    init_acpi_tables();
-
-    allen = acpi_tables_len;
-    start = allen;
-    acpi_tables = g_realloc(acpi_tables, start + ACPI_TABLE_HDR_SIZE);
-    allen += has_header ? ACPI_TABLE_PFX_SIZE : ACPI_TABLE_HDR_SIZE;
-
-    /* now read in the data files, reallocating buffer as needed */
-
-    for (f = strtok(buf, ":"); f; f = strtok(NULL, ":")) {
-        int fd = open(f, O_RDONLY);
-
-        if (fd < 0) {
-            fprintf(stderr, "can't open file %s: %s\n", f, strerror(errno));
-            return -1;
-        }
-
-        for (;;) {
-            char data[8192];
-            r = read(fd, data, sizeof(data));
-            if (r == 0) {
-                break;
-            } else if (r > 0) {
-                acpi_tables = g_realloc(acpi_tables, allen + r);
-                memcpy(acpi_tables + allen, data, r);
-                allen += r;
-            } else if (errno != EINTR) {
-                fprintf(stderr, "can't read file %s: %s\n",
-                        f, strerror(errno));
-                close(fd);
-                return -1;
-            }
-        }
-
-        close(fd);
-    }
-
-    /* now fill in the header fields */
-
-    f = acpi_tables + start;   /* start of the table */
-
-    /* length of the whole table, including our prefix */
-    qemu_len = allen - start;
-
-    changed = 0;
+    size_t acpi_len;
+    char buf[1024];
+    char *p;
+    unsigned long val;
+    int changed = 0;
 
     /* copy the header to temp place to align the fields */
     memcpy(&hdr, has_header ? f : dfl_hdr, ACPI_TABLE_HDR_SIZE);
@@ -248,6 +181,82 @@ int acpi_table_add(const char *t)
         ((struct acpi_table_header *)f)->checksum =
             acpi_checksum((uint8_t *)f + ACPI_TABLE_PFX_SIZE, acpi_len);
     }
+
+    return 0;
+}
+
+/* XXX fixme: this function uses obsolete argument parsing interface */
+int acpi_table_add(const char *t)
+{
+    char buf[1024], *f;
+    size_t start, allen;
+    size_t qemu_len;
+    bool has_header;
+    int r;
+
+    r = 0;
+    r |= get_param_value(buf, sizeof(buf), "data", t) ? 1 : 0;
+    r |= get_param_value(buf, sizeof(buf), "file", t) ? 2 : 0;
+    switch (r) {
+    case 0:
+        buf[0] = '\0';
+        /* fallthrough for default behavior */
+    case 1:
+        has_header = false;
+        break;
+    case 2:
+        has_header = true;
+        break;
+    default:
+        fprintf(stderr, "acpitable: both data and file are specified\n");
+        return -1;
+    }
+
+    init_acpi_tables();
+
+    allen = acpi_tables_len;
+    start = allen;
+    acpi_tables = g_realloc(acpi_tables, start + ACPI_TABLE_HDR_SIZE);
+    allen += has_header ? ACPI_TABLE_PFX_SIZE : ACPI_TABLE_HDR_SIZE;
+
+    /* now read in the data files, reallocating buffer as needed */
+
+    for (f = strtok(buf, ":"); f; f = strtok(NULL, ":")) {
+        int fd = open(f, O_RDONLY);
+
+        if (fd < 0) {
+            fprintf(stderr, "can't open file %s: %s\n", f, strerror(errno));
+            return -1;
+        }
+
+        for (;;) {
+            char data[8192];
+            r = read(fd, data, sizeof(data));
+            if (r == 0) {
+                break;
+            } else if (r > 0) {
+                acpi_tables = g_realloc(acpi_tables, allen + r);
+                memcpy(acpi_tables + allen, data, r);
+                allen += r;
+            } else if (errno != EINTR) {
+                fprintf(stderr, "can't read file %s: %s\n",
+                        f, strerror(errno));
+                close(fd);
+                return -1;
+            }
+        }
+
+        close(fd);
+    }
+
+    /* now fill in the header fields */
+
+    f = acpi_tables + start;   /* start of the table */
+
+    /* length of the whole table, including our prefix */
+    qemu_len = allen - start;
+
+    acpi_make_table_header(t, has_header, f, qemu_len);
 
     /* increase number of tables */
     (*(uint16_t *)acpi_tables) =
