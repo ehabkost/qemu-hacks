@@ -189,7 +189,6 @@ static int acpi_make_table_header(const char *t, bool has_header, char *f, size_
 int acpi_table_add(const char *t)
 {
     char buf[1024], *f;
-    size_t start;
     size_t newlen; /* length of the new table */
     bool has_header;
     int r;
@@ -214,8 +213,7 @@ int acpi_table_add(const char *t)
 
     init_acpi_tables();
 
-    start = acpi_tables_len;
-    acpi_tables = g_realloc(acpi_tables, start + ACPI_TABLE_HDR_SIZE);
+    acpi_tables = g_realloc(acpi_tables, acpi_tables_len + ACPI_TABLE_HDR_SIZE);
     newlen = has_header ? ACPI_TABLE_PFX_SIZE : ACPI_TABLE_HDR_SIZE;
 
     /* now read in the data files, reallocating buffer as needed */
@@ -234,8 +232,8 @@ int acpi_table_add(const char *t)
             if (r == 0) {
                 break;
             } else if (r > 0) {
-                acpi_tables = g_realloc(acpi_tables, start + newlen + r);
-                memcpy(acpi_tables + start + newlen, data, r);
+                acpi_tables = g_realloc(acpi_tables, acpi_tables_len + newlen + r);
+                memcpy(acpi_tables + acpi_tables_len + newlen, data, r);
                 newlen += r;
             } else if (errno != EINTR) {
                 fprintf(stderr, "can't read file %s: %s\n",
@@ -250,7 +248,7 @@ int acpi_table_add(const char *t)
 
     /* now fill in the header fields */
 
-    f = acpi_tables + start;   /* start of the table */
+    f = acpi_tables + acpi_tables_len;   /* start of the table */
 
     acpi_make_table_header(t, has_header, f, newlen);
 
@@ -258,7 +256,7 @@ int acpi_table_add(const char *t)
     (*(uint16_t *)acpi_tables) =
         cpu_to_le32(le32_to_cpu(*(uint16_t *)acpi_tables) + 1);
 
-    acpi_tables_len = start + newlen;
+    acpi_tables_len += newlen;
     return 0;
 
 }
