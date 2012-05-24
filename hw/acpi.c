@@ -272,7 +272,7 @@ int acpi_table_add(const char *t)
     }
 
     /* now fill in the header fields */
-    acpi_make_table_header(newtable, has_header, f, newlen);
+    acpi_make_table_header(t, has_header, newtable, newlen);
 
     acpi_newtable_finished(newlen);
     return 0;
