@@ -69,6 +69,7 @@
 #define FW_CFG_IRQ0_OVERRIDE (FW_CFG_ARCH_LOCAL + 2)
 #define FW_CFG_E820_TABLE (FW_CFG_ARCH_LOCAL + 3)
 #define FW_CFG_HPET (FW_CFG_ARCH_LOCAL + 4)
+#define FW_CFG_LAPIC_INFO (FW_CFG_ARCH_LOCAL + 5)
 
 #define MSI_ADDR_BASE 0xfee00000
 
@@ -84,6 +85,13 @@ struct e820_table {
     uint32_t count;
     struct e820_entry entry[E820_NR_ENTRIES];
 } QEMU_PACKED __attribute((__aligned__(4)));
+
+struct lapic_info_entry {
+    uint8_t apic_id;
+    uint8_t reserved1;
+    uint16_t reserved2;
+    uint32_t reserved3;
+} QEMU_PACKED;
 
 static struct e820_table e820_table;
 struct hpet_fw_config hpet_cfg = {.count = UINT8_MAX};
@@ -649,6 +657,19 @@ static void *bochs_bios_init(void)
     }
     fw_cfg_add_bytes(fw_cfg, FW_CFG_NUMA, (uint8_t *)numa_fw_cfg,
                      (1 + max_cpus + nb_numa_nodes) * 8);
+
+    //FIXME: build struct for max_cpus instead, to make CPU hotplug simpler?
+    // (in this case we have to store the lapic ID table somewhere)
+    size_t lapic_info_size = sizeof(uint64_t) + sizeof(struct lapic_info_entry)*smp_cpus;
+    uint8_t *lapic_info = g_malloc0(lapic_info_size);;
+    struct lapic_info_entry *lapic_entries = (struct lapic_info_entry*)(lapic_info + sizeof(uint64_t));
+    *((uint64_t*)lapic_info) = smp_cpus;
+    for (i = 0; i < smp_cpus; i++) {
+        CPUX86State *env = qemu_get_cpu(i);
+        lapic_entries[i].apic_id = env->cpuid_apic_id;
+    }
+
+    fw_cfg_add_bytes(fw_cfg, FW_CFG_LAPIC_INFO, lapic_info, lapic_info_size);
 
     return fw_cfg;
 }
