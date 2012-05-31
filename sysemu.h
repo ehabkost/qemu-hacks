@@ -9,6 +9,7 @@
 #include "qapi-types.h"
 #include "notify.h"
 #include "main-loop.h"
+#include <sched.h>
 
 /* vl.c */
 
@@ -133,9 +134,10 @@ extern uint8_t qemu_extra_params_fw[2];
 extern QEMUClock *rtc_clock;
 
 #define MAX_NODES 64
+#define KVM_MAX_VCPUS 254
 extern int nb_numa_nodes;
 extern uint64_t node_mem[MAX_NODES];
-extern uint64_t node_cpumask[MAX_NODES];
+extern cpu_set_t *node_cpumask[MAX_NODES];
 
 #define MAX_OPTION_ROMS 16
 typedef struct QEMUOptionRom {
