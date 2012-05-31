@@ -609,6 +609,7 @@ static void *bochs_bios_init(void)
     size_t smbios_len;
     uint64_t *numa_fw_cfg;
     int i, j;
+    size_t size = CPU_ALLOC_SIZE(KVM_MAX_VCPUS);
 
     register_ioport_write(0x400, 1, 2, bochs_bios_write, NULL);
     register_ioport_write(0x401, 1, 2, bochs_bios_write, NULL);
@@ -647,7 +648,7 @@ static void *bochs_bios_init(void)
     numa_fw_cfg[0] = cpu_to_le64(nb_numa_nodes);
     for (i = 0; i < max_cpus; i++) {
         for (j = 0; j < nb_numa_nodes; j++) {
-            if (node_cpumask[j] & (1 << i)) {
+            if (CPU_ISSET_S(i, size, node_cpumask[j])) {
                 numa_fw_cfg[i + 1] = cpu_to_le64(j);
                 break;
             }

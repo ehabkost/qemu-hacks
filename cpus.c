@@ -1140,10 +1140,11 @@ void set_numa_modes(void)
 {
     CPUArchState *env;
     int i;
+    size_t size = CPU_ALLOC_SIZE(KVM_MAX_VCPUS);
 
     for (env = first_cpu; env != NULL; env = env->next_cpu) {
         for (i = 0; i < nb_numa_nodes; i++) {
-            if (node_cpumask[i] & (1 << env->cpu_index)) {
+            if ( CPU_ISSET_S(env->cpu_index, size, node_cpumask[i]) ) {
                 env->numa_node = i;
             }
         }
