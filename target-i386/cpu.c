@@ -1366,9 +1366,11 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
         goto error;
     }
 
-    for (def = x86_defs; def; def = def->next)
-        if (name && !strcmp(name, def->name))
+    for (def = x86_defs; def; def = def->next) {
+        if (name && !strcmp(name, def->name)) {
             break;
+        }
+    }
     if (kvm_enabled() && name && strcmp(name, "host") == 0) {
         cpu_x86_fill_host(x86_cpu_def);
     } else if (!def) {
@@ -1446,18 +1448,18 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf, const char *optarg)
 
     if (cpuid) {
         (*cpu_fprintf)(f, "Recognized CPUID flags:\n");
-        listflags(buf, sizeof (buf), (uint32_t)~0, feature_name, 1);
+        listflags(buf, sizeof(buf), (uint32_t)~0, feature_name, 1);
         (*cpu_fprintf)(f, "  f_edx: %s\n", buf);
-        listflags(buf, sizeof (buf), (uint32_t)~0, ext_feature_name, 1);
+        listflags(buf, sizeof(buf), (uint32_t)~0, ext_feature_name, 1);
         (*cpu_fprintf)(f, "  f_ecx: %s\n", buf);
-        listflags(buf, sizeof (buf), (uint32_t)~0, ext2_feature_name, 1);
+        listflags(buf, sizeof(buf), (uint32_t)~0, ext2_feature_name, 1);
         (*cpu_fprintf)(f, "  extf_edx: %s\n", buf);
-        listflags(buf, sizeof (buf), (uint32_t)~0, ext3_feature_name, 1);
+        listflags(buf, sizeof(buf), (uint32_t)~0, ext3_feature_name, 1);
         (*cpu_fprintf)(f, "  extf_ecx: %s\n", buf);
         return;
     }
     for (def = x86_defs; def; def = def->next) {
-        snprintf(buf, sizeof (buf), def->flags ? "[%s]": "%s", def->name);
+        snprintf(buf, sizeof(buf), def->flags ? "[%s]" : "%s", def->name);
         if (model || dump) {
             (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->model_id);
         } else {
@@ -1470,18 +1472,18 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf, const char *optarg)
                 " vendor \"%s\"\n",
                 def->family, def->model, def->stepping, def->level,
                 def->xlevel, buf);
-            listflags(buf, sizeof (buf), def->features, feature_name, 0);
+            listflags(buf, sizeof(buf), def->features, feature_name, 0);
             (*cpu_fprintf)(f, "  feature_edx %08x (%s)\n", def->features,
                 buf);
-            listflags(buf, sizeof (buf), def->ext_features, ext_feature_name,
+            listflags(buf, sizeof(buf), def->ext_features, ext_feature_name,
                 0);
             (*cpu_fprintf)(f, "  feature_ecx %08x (%s)\n", def->ext_features,
                 buf);
-            listflags(buf, sizeof (buf), def->ext2_features, ext2_feature_name,
+            listflags(buf, sizeof(buf), def->ext2_features, ext2_feature_name,
                 0);
             (*cpu_fprintf)(f, "  extfeature_edx %08x (%s)\n",
                 def->ext2_features, buf);
-            listflags(buf, sizeof (buf), def->ext3_features, ext3_feature_name,
+            listflags(buf, sizeof(buf), def->ext3_features, ext3_feature_name,
                 0);
             (*cpu_fprintf)(f, "  extfeature_ecx %08x (%s)\n",
                 def->ext3_features, buf);
@@ -1500,8 +1502,9 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_find_by_name(cpu, def, cpu_model, &error) < 0)
+    if (cpu_x86_find_by_name(cpu, def, cpu_model, &error) < 0) {
         goto out;
+    }
 
 out:
     if (error_is_set(&error)) {
@@ -1560,7 +1563,7 @@ static int cpudef_setfield(const char *name, const char *str, void *opaque)
         g_free((void *)def->name);
         def->name = g_strdup(str);
     } else if (!strcmp(name, "model_id")) {
-        strncpy(def->model_id, str, sizeof (def->model_id));
+        strncpy(def->model_id, str, sizeof(def->model_id));
     } else if (!strcmp(name, "level")) {
         setscalar(&def->level, str, &err)
     } else if (!strcmp(name, "vendor")) {
@@ -1596,7 +1599,7 @@ static int cpudef_setfield(const char *name, const char *str, void *opaque)
  */
 static int cpudef_register(QemuOpts *opts, void *opaque)
 {
-    x86_def_t *def = g_malloc0(sizeof (x86_def_t));
+    x86_def_t *def = g_malloc0(sizeof(x86_def_t));
 
     qemu_opt_foreach(opts, cpudef_setfield, def, 1);
     def->next = x86_defs;
@@ -1883,17 +1886,17 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         }
         break;
     case 0x8000000A:
-	if (env->cpuid_ext3_features & CPUID_EXT3_SVM) {
-		*eax = 0x00000001; /* SVM Revision */
-		*ebx = 0x00000010; /* nr of ASIDs */
-		*ecx = 0;
-		*edx = env->cpuid_svm_features; /* optional features */
-	} else {
-		*eax = 0;
-		*ebx = 0;
-		*ecx = 0;
-		*edx = 0;
-	}
+        if (env->cpuid_ext3_features & CPUID_EXT3_SVM) {
+            *eax = 0x00000001; /* SVM Revision */
+            *ebx = 0x00000010; /* nr of ASIDs */
+            *ecx = 0;
+            *edx = env->cpuid_svm_features; /* optional features */
+        } else {
+            *eax = 0;
+            *ebx = 0;
+            *ecx = 0;
+            *edx = 0;
+        }
         break;
     case 0xC0000000:
         *eax = env->cpuid_xlevel2;
