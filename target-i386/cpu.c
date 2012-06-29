@@ -1493,8 +1493,9 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_find_by_name(def, cpu_model) < 0)
+    if (cpu_x86_find_by_name(def, cpu_model) < 0) {
         return -1;
+    }
     if (def->vendor1) {
         env->cpuid_vendor1 = def->vendor1;
         env->cpuid_vendor2 = def->vendor2;
@@ -1835,17 +1836,17 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         }
         break;
     case 0x8000000A:
-	if (env->cpuid_ext3_features & CPUID_EXT3_SVM) {
-		*eax = 0x00000001; /* SVM Revision */
-		*ebx = 0x00000010; /* nr of ASIDs */
-		*ecx = 0;
-		*edx = env->cpuid_svm_features; /* optional features */
-	} else {
-		*eax = 0;
-		*ebx = 0;
-		*ecx = 0;
-		*edx = 0;
-	}
+        if (env->cpuid_ext3_features & CPUID_EXT3_SVM) {
+            *eax = 0x00000001; /* SVM Revision */
+            *ebx = 0x00000010; /* nr of ASIDs */
+            *ecx = 0;
+            *edx = env->cpuid_svm_features; /* optional features */
+        } else {
+            *eax = 0;
+            *ebx = 0;
+            *ecx = 0;
+            *edx = 0;
+        }
         break;
     case 0xC0000000:
         *eax = env->cpuid_xlevel2;
