@@ -52,51 +52,6 @@
     do { } while (0)
 #endif
 
-#define KVM_MSI_HASHTAB_SIZE    256
-
-typedef struct KVMSlot
-{
-    target_phys_addr_t start_addr;
-    ram_addr_t memory_size;
-    void *ram;
-    int slot;
-    int flags;
-} KVMSlot;
-
-typedef struct kvm_dirty_log KVMDirtyLog;
-
-struct KVMState
-{
-    KVMSlot slots[32];
-    int fd;
-    int vmfd;
-    int coalesced_mmio;
-    struct kvm_coalesced_mmio_ring *coalesced_mmio_ring;
-    bool coalesced_flush_in_progress;
-    int broken_set_mem_region;
-    int migration_log;
-    int vcpu_events;
-    int robust_singlestep;
-    int debugregs;
-#ifdef KVM_CAP_SET_GUEST_DEBUG
-    struct kvm_sw_breakpoint_head kvm_sw_breakpoints;
-#endif
-    int pit_state2;
-    int xsave, xcrs;
-    int many_ioeventfds;
-    /* The man page (and posix) say ioctl numbers are signed int, but
-     * they're not.  Linux, glibc and *BSD all treat ioctl numbers as
-     * unsigned, and treating them as signed here can break things */
-    unsigned irqchip_inject_ioctl;
-#ifdef KVM_CAP_IRQ_ROUTING
-    struct kvm_irq_routing *irq_routes;
-    int nr_allocated_irq_routes;
-    uint32_t *used_gsi_bitmap;
-    unsigned int gsi_count;
-    QTAILQ_HEAD(msi_hashtab, KVMMSIRoute) msi_hashtab[KVM_MSI_HASHTAB_SIZE];
-    bool direct_msi;
-#endif
-};
 
 KVMState *kvm_state;
 bool kvm_kernel_irqchip;
