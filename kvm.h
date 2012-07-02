@@ -148,6 +148,68 @@ int kvm_on_sigbus(int code, void *addr);
 
 /* internal API */
 
+#define KVM_MSI_HASHTAB_SIZE    256
+
+struct kvm_guest_debug;
+struct kvm_debug_exit_arch;
+
+struct kvm_sw_breakpoint {
+    target_ulong pc;
+    target_ulong saved_insn;
+    int use_count;
+    QTAILQ_ENTRY(kvm_sw_breakpoint) entry;
+};
+
+QTAILQ_HEAD(kvm_sw_breakpoint_head, kvm_sw_breakpoint);
+
+typedef struct KVMSlot
+{
+    target_phys_addr_t start_addr;
+    ram_addr_t memory_size;
+    void *ram;
+    int slot;
+    int flags;
+} KVMSlot;
+
+typedef struct kvm_dirty_log KVMDirtyLog;
+
+#ifdef NEED_CPU_H
+
+struct KVMState
+{
+    KVMSlot slots[32];
+    int fd;
+    int vmfd;
+    int coalesced_mmio;
+    struct kvm_coalesced_mmio_ring *coalesced_mmio_ring;
+    bool coalesced_flush_in_progress;
+    int broken_set_mem_region;
+    int migration_log;
+    int vcpu_events;
+    int robust_singlestep;
+    int debugregs;
+#ifdef KVM_CAP_SET_GUEST_DEBUG
+    struct kvm_sw_breakpoint_head kvm_sw_breakpoints;
+#endif
+    int pit_state2;
+    int xsave, xcrs;
+    int many_ioeventfds;
+    /* The man page (and posix) say ioctl numbers are signed int, but
+     * they're not.  Linux, glibc and *BSD all treat ioctl numbers as
+     * unsigned, and treating them as signed here can break things */
+    unsigned irqchip_inject_ioctl;
+#ifdef KVM_CAP_IRQ_ROUTING
+    struct kvm_irq_routing *irq_routes;
+    int nr_allocated_irq_routes;
+    uint32_t *used_gsi_bitmap;
+    unsigned int gsi_count;
+    QTAILQ_HEAD(msi_hashtab, KVMMSIRoute) msi_hashtab[KVM_MSI_HASHTAB_SIZE];
+    bool direct_msi;
+#endif
+};
+
+#endif /* NEED_CPU_H */
+
 int kvm_ioctl(KVMState *s, int type, ...);
 
 int kvm_vm_ioctl(KVMState *s, int type, ...);
@@ -194,18 +256,6 @@ void kvm_irqchip_add_irq_route(KVMState *s, int gsi, int irqchip, int pin);
 
 void kvm_put_apic_state(DeviceState *d, struct kvm_lapic_state *kapic);
 void kvm_get_apic_state(DeviceState *d, struct kvm_lapic_state *kapic);
-
-struct kvm_guest_debug;
-struct kvm_debug_exit_arch;
-
-struct kvm_sw_breakpoint {
-    target_ulong pc;
-    target_ulong saved_insn;
-    int use_count;
-    QTAILQ_ENTRY(kvm_sw_breakpoint) entry;
-};
-
-QTAILQ_HEAD(kvm_sw_breakpoint_head, kvm_sw_breakpoint);
 
 struct kvm_sw_breakpoint *kvm_find_sw_breakpoint(CPUArchState *env,
                                                  target_ulong pc);
