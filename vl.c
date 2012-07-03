@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <sys/time.h>
 #include <zlib.h>
+#include "bitmap.h"
 
 /* Needed early for CONFIG_BSD etc. */
 #include "config-host.h"
@@ -240,7 +241,7 @@ QTAILQ_HEAD(, FWBootEntry) fw_boot_order = QTAILQ_HEAD_INITIALIZER(fw_boot_order
 
 int nb_numa_nodes;
 uint64_t node_mem[MAX_NODES];
-uint64_t node_cpumask[MAX_NODES];
+uint64_t *node_cpumask[MAX_NODES];
 
 uint8_t qemu_uuid[16];
 
@@ -950,6 +951,9 @@ static void numa_add(const char *optarg)
     char *endptr;
     unsigned long long value, endvalue;
     int nodenr;
+    int i;
+
+    value = endvalue = 0ULL;
 
     optarg = get_opt_name(option, 128, optarg, ',') + 1;
     if (!strcmp(option, "node")) {
@@ -970,27 +974,25 @@ static void numa_add(const char *optarg)
             }
             node_mem[nodenr] = sval;
         }
-        if (get_param_value(option, 128, "cpus", optarg) == 0) {
-            node_cpumask[nodenr] = 0;
-        } else {
+        if (get_param_value(option, 128, "cpus", optarg) != 0) {
             value = strtoull(option, &endptr, 10);
-            if (value >= 64) {
-                value = 63;
-                fprintf(stderr, "only 64 CPUs in NUMA mode supported.\n");
+            if (*endptr == '-') {
+                endvalue = strtoull(endptr+1, &endptr, 10);
             } else {
-                if (*endptr == '-') {
-                    endvalue = strtoull(endptr+1, &endptr, 10);
-                    if (endvalue >= 63) {
-                        endvalue = 62;
-                        fprintf(stderr,
-                            "only 63 CPUs in NUMA mode supported.\n");
-                    }
-                    value = (2ULL << endvalue) - (1ULL << value);
-                } else {
-                    value = 1ULL << value;
-                }
+                endvalue = value;
             }
-            node_cpumask[nodenr] = value;
+
+
+            if (endvalue >= MAX_CPUMASK_BITS) {
+                endvalue = MAX_CPUMASK_BITS - 1;
+                fprintf(stderr,
+                    "A max of %d CPUs are supported in a guest\n",
+                     MAX_CPUMASK_BITS);
+            }
+
+            for (i = value; i <= endvalue; ++i) {
+                set_bit(i, node_cpumask[nodenr]);
+            }
         }
         nb_numa_nodes++;
     }
@@ -2331,7 +2333,7 @@ int main(int argc, char **argv, char **envp)
 
     for (i = 0; i < MAX_NODES; i++) {
         node_mem[i] = 0;
-        node_cpumask[i] = 0;
+        node_cpumask[i] = (unsigned long *)g_malloc0((MAX_CPUMASK_BITS + 7)/8);
     }
 
     nb_numa_nodes = 0;
@@ -3469,8 +3471,9 @@ int main(int argc, char **argv, char **envp)
         }
 
         for (i = 0; i < nb_numa_nodes; i++) {
-            if (node_cpumask[i] != 0)
+            if (!bitmap_empty(node_cpumask[i], MAX_CPUMASK_BITS)) {
                 break;
+            }
         }
         /* assigning the VCPUs round-robin is easier to implement, guest OSes
          * must cope with this anyway, because there are BIOSes out there in
@@ -3478,7 +3481,7 @@ int main(int argc, char **argv, char **envp)
          */
         if (i == nb_numa_nodes) {
             for (i = 0; i < max_cpus; i++) {
-                node_cpumask[i % nb_numa_nodes] |= 1 << i;
+                set_bit(i, node_cpumask[i % nb_numa_nodes]);
             }
         }
     }
