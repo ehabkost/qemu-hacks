@@ -143,3 +143,5 @@ check-qtest: $(patsubst %,check-qtest-%, $(QTEST_TARGETS))
 check-unit: $(patsubst %,check-%, $(check-unit-y))
 check-block: $(patsubst %,check-%, $(check-block-y))
 check: check-unit check-qtest
+
+-include $(wildcard tests/*.d)
