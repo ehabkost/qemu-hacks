@@ -24,6 +24,7 @@
 #include "cpus.h"
 #include "cpu.h"
 #include "kvm.h"
+#include "topology.h"
 
 #include "qemu-option.h"
 #include "qemu-config.h"
@@ -1752,7 +1753,8 @@ static void x86_cpu_initfn(Object *obj)
     env->nr_cores = smp_cores;
     env->nr_threads = smp_threads;
 #endif
-    env->cpuid_apic_id = env->cpu_index;
+    env->cpuid_apic_id = topo_make_apicid(env->nr_cores, env->nr_threads, env->cpu_index);
+    fprintf(stderr, "APIC ID for CPU %lu: 0x%x\n", (unsigned long)env->cpu_index, env->cpuid_apic_id);
 
     /* init various static tables used in TCG mode */
     if (tcg_enabled() && !inited) {
