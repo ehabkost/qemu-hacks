@@ -24,6 +24,10 @@
 #include "cpu.h"
 #include "kvm.h"
 
+#ifndef CONFIG_USER_ONLY
+#include "sysemu.h"
+#endif
+
 #include "qemu-option.h"
 #include "qemu-config.h"
 
@@ -677,6 +681,14 @@ static x86_def_t builtin_x86_defs[] = {
         .model_id = "AMD Opteron 62xx class CPU",
     },
 };
+
+unsigned int apic_id_for_cpu(int cpu_index)
+{
+    /* right now APIC ID == CPU index. this will eventually change to use
+     * the CPU topology configuration properly
+     */
+    return cpu_index;
+}
 
 static int cpu_x86_fill_model_id(char *str)
 {
@@ -2326,7 +2338,7 @@ static void x86_cpu_initfn(Object *obj)
     x86_register_cpuid_properties(obj, kvm_feature_name);
     x86_register_cpuid_properties(obj, svm_feature_name);
 
-    env->cpuid_apic_id = env->cpu_index;
+    env->cpuid_apic_id = apic_id_for_cpu(env->cpu_index);
 
     /* init various static tables used in TCG mode */
     if (tcg_enabled() && !inited) {

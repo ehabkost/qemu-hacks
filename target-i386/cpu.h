@@ -968,6 +968,16 @@ void cpu_clear_apic_feature(CPUX86State *env);
 void host_cpuid(uint32_t function, uint32_t count,
                 uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx);
 
+
+/* Calculates initial APIC ID for a specific CPU index
+ *
+ * Currently we need to be able to calculate the APIC ID from the CPU index
+ * alone, as the QEMU<->Seabios interfaces have no concept of "CPU index",
+ * and the NUMA tables need the APIC ID of all CPUs up to max_cpus.
+ */
+unsigned int apic_id_for_cpu(int cpu_index);
+
+
 /* helper.c */
 int cpu_x86_handle_mmu_fault(CPUX86State *env, target_ulong addr,
                              int is_write, int mmu_idx);
