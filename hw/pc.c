@@ -553,6 +553,21 @@ static void bochs_bios_write(void *opaque, uint32_t addr, uint32_t val)
     }
 }
 
+/* Calculates initial APIC ID for a specific CPU index
+ *
+ * Currently we need to be able to calculate the APIC ID from the CPU index
+ * alone (without requiring a CPU object), as the QEMU<->Seabios interfaces have
+ * no concept of "CPU index", and the NUMA tables on fw_cfg need the APIC ID of
+ * all CPUs up to max_cpus.
+ */
+static uint32_t apic_id_for_cpu(PCInitArgs *args, int cpu_index)
+{
+    /* right now APIC ID == CPU index. this will eventually change to use
+     * the CPU topology configuration properly
+     */
+    return cpu_index;
+}
+
 int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
 {
     int index = le32_to_cpu(e820_table.count);
@@ -869,6 +884,13 @@ static void pc_cpu_init(PCInitArgs *args, int cpu_index)
         fprintf(stderr, "Unable to find x86 CPU definition\n");
         exit(1);
     }
+
+    /* Override the default APIC set by the X86CPU init function.
+     * We need to do that because:
+     * - The APIC ID depends on the CPU topology;
+     * - The exact APIC ID used may depend on the machine-type init arguments.
+     */
+    cpu->env.cpuid_apic_id = apic_id_for_cpu(args, cpu_index);
 
     x86_cpu_realize(OBJECT(cpu), &err);
     if (err) {
