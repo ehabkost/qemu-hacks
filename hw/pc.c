@@ -571,6 +571,21 @@ static void bochs_bios_write(void *opaque, uint32_t addr, uint32_t val)
     }
 }
 
+/* Calculates initial APIC ID for a specific CPU index
+ *
+ * Currently we need to be able to calculate the APIC ID from the CPU index
+ * alone, as the QEMU<->Seabios interfaces have no concept of "CPU index",
+ * and the NUMA tables need the APIC ID of all CPUs up to max_cpus.
+ */
+static uint32_t apic_id_for_cpu(int cpu_index)
+{
+    /* right now APIC ID == CPU index. this will eventually change to use
+     * the CPU topology configuration properly
+     */
+    return cpu_index;
+}
+
+
 int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
 {
     int index = le32_to_cpu(e820_table.count);
@@ -944,7 +959,7 @@ void pc_cpus_init(const char *cpu_model)
     }
 
     for(i = 0; i < smp_cpus; i++) {
-        pc_new_cpu(cpu_model, i);
+        pc_new_cpu(cpu_model, apic_id_for_cpu(i));
     }
 }
 
