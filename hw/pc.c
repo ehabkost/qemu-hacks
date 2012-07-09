@@ -524,6 +524,21 @@ static void handle_a20_line_change(void *opaque, int irq, int level)
     cpu_x86_set_a20(cpu, level);
 }
 
+/* Calculates initial APIC ID for a specific CPU index
+ *
+ * Currently we need to be able to calculate the APIC ID from the CPU index
+ * alone (without requiring a CPU object), as the QEMU<->Seabios interfaces have
+ * no concept of "CPU index", and the NUMA tables on fw_cfg need the APIC ID of
+ * all CPUs up to max_cpus.
+ */
+static uint32_t apic_id_for_cpu(int cpu_index)
+{
+    /* right now APIC ID == CPU index. this will eventually change to use
+     * the CPU topology configuration properly
+     */
+    return cpu_index;
+}
+
 int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
 {
     int index = le32_to_cpu(e820_table.count);
@@ -827,9 +842,23 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
 static X86CPU *pc_cpu_init(const char *cpu_model)
 {
     X86CPU *cpu = NULL;
+    CPUState *cs;
     Error *error = NULL;
+    uint32_t apic_id;
 
     cpu = cpu_x86_create(cpu_model, &error);
+    if (error) {
+        goto error;
+    }
+    cs = CPU(cpu);
+
+    /* Override the default APIC set by the X86CPU init function.
+     * We need to do that because:
+     * - The APIC ID depends on the CPU topology;
+     * - The exact APIC ID used may depend on the machine-type init arguments.
+     */
+    apic_id = apic_id_for_cpu(cs->cpu_index);
+    object_property_set_int(OBJECT(cpu), apic_id, "apic-id", &error);
     if (error) {
         goto error;
     }
