@@ -388,6 +388,10 @@ static QEMUMachine pc_machine_v1_2 = {
             .driver   = "virtio-blk-pci",\
             .property = "config-wce",\
             .value    = "off",\
+        },{\
+            .driver   = "PC",\
+            .property = "contiguous_apic_ids",\
+            .value    = "true",\
         }
 
 static QEMUMachine pc_machine_v1_1 = {
