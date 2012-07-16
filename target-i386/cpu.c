@@ -23,9 +23,11 @@
 
 #include "cpu.h"
 #include "kvm.h"
+#include "topology.h"
 
 #ifndef CONFIG_USER_ONLY
-#include "sysemu.h"
+#include "hw/qdev.h"
+#include "cpus.h"
 #endif
 
 #include "qemu-option.h"
@@ -682,13 +684,37 @@ static x86_def_t builtin_x86_defs[] = {
     },
 };
 
+#ifdef CONFIG_USER_ONLY
 unsigned int apic_id_for_cpu(int cpu_index)
 {
-    /* right now APIC ID == CPU index. this will eventually change to use
-     * the CPU topology configuration properly
-     */
+    /* *-user doesn't have any CPU topology settings, just use the CPU index */
     return cpu_index;
 }
+#else
+unsigned int apic_id_for_cpu(int cpu_index)
+{
+    const char *contig;
+    bool is_contiguous;
+    unsigned int correct_id;
+    static bool warned = false;
+
+    /* Global property SMP.contiguous_apic_ids=true will keep bug compatibility
+     * with the old behavior when calculating APIC IDs
+     */
+    contig = qemu_global_get("SMP", "contiguous_apic_ids");
+    is_contiguous = contig && !strcmp(contig, "true");
+    correct_id = topo_apicid_for_cpu(smp_cores, smp_threads, cpu_index);
+    if (is_contiguous) {
+        if (cpu_index != correct_id && !warned) {
+            fprintf(stderr, "warning: CPU topology in compatibility mode, it will not match the requested topology\n");
+            warned = true;
+        }
+        return cpu_index;
+    } else {
+        return correct_id;
+    }
+}
+#endif
 
 static int cpu_x86_fill_model_id(char *str)
 {
