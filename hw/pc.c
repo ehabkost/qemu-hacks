@@ -52,6 +52,9 @@
 #include "arch_init.h"
 #include "bitmap.h"
 #include "vga-pci.h"
+#include "global-props.h"
+#include "topology.h"
+#include "cpus.h"
 
 /* debug PC/ISA interrupts */
 //#define DEBUG_IRQ
@@ -558,10 +561,24 @@ static void bochs_bios_write(void *opaque, uint32_t addr, uint32_t val)
  */
 static uint32_t apic_id_for_cpu(int cpu_index)
 {
-    /* right now APIC ID == CPU index. this will eventually change to use
-     * the CPU topology configuration properly
+    bool contig;
+    unsigned int correct_id;
+    static bool warned = false;
+
+    /* Global property PC.contiguous_apic_ids=true will keep bug compatibility
+     * with the old behavior when calculating APIC IDs
      */
-    return cpu_index;
+    contig = qemu_global_get_bool("PC", "contiguous_apic_ids", NULL);
+    correct_id = topo_apicid_for_cpu(smp_cores, smp_threads, cpu_index);
+    if (contig) {
+        if (cpu_index != correct_id && !warned) {
+            fprintf(stderr, "warning: CPU topology in compatibility mode, it will not match the requested topology\n");
+            warned = true;
+        }
+        return cpu_index;
+    } else {
+        return correct_id;
+    }
 }
 
 
