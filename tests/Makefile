@@ -46,6 +46,8 @@ gcov-files-test-aio-$(CONFIG_POSIX) = aio-posix.c
 check-unit-y += tests/test-thread-pool$(EXESUF)
 gcov-files-test-thread-pool-y = thread-pool.c
 
+check-unit-i386-y += tests/test-x86-cpuid$(EXESUF)
+
 check-block-$(CONFIG_POSIX) += tests/qemu-iotests-quick.sh
 
 # All QTests for now are POSIX-only, but the dependencies are
@@ -69,6 +71,7 @@ test-obj-y = tests/check-qint.o tests/check-qstring.o tests/check-qdict.o \
 	tests/test-string-input-visitor.o tests/test-qmp-output-visitor.o \
 	tests/test-qmp-input-visitor.o tests/test-qmp-input-strict.o \
 	tests/test-qmp-commands.o tests/test-visitor-serialization.o
+test-obj-i386-y = tests/test-x86-cpuid.o
 
 test-qapi-obj-y =  $(qobject-obj-y) $(qapi-obj-y) qemu-tool.o
 test-qapi-obj-y += tests/test-qapi-visit.o tests/test-qapi-types.o
@@ -84,6 +87,7 @@ tests/test-coroutine$(EXESUF): tests/test-coroutine.o $(coroutine-obj-y) $(tools
 tests/test-aio$(EXESUF): tests/test-aio.o $(coroutine-obj-y) $(tools-obj-y) $(block-obj-y) libqemustub.a
 tests/test-thread-pool$(EXESUF): tests/test-thread-pool.o $(coroutine-obj-y) $(tools-obj-y) $(block-obj-y) libqemustub.a
 tests/test-iov$(EXESUF): tests/test-iov.o iov.o
+tests/test-x86-cpuid$(EXESUF): tests/test-x86-cpuid.o
 
 tests/test-qapi-types.c tests/test-qapi-types.h :\
 $(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-types.py
