@@ -112,9 +112,21 @@ tests/fdc-test$(EXESUF): tests/fdc-test.o
 tests/hd-geo-test$(EXESUF): tests/hd-geo-test.o
 tests/tmp105-test$(EXESUF): tests/tmp105-test.o
 
-# QTest rules
+# unit test rules:
 
 TARGETS=$(patsubst %-softmmu,%, $(filter %-softmmu,$(TARGET_DIRS)))
+
+# target-specific tests/objs:
+
+test-obj-y += $(foreach TARGET,$(TARGETS), $(test-obj-$(TARGET)-y))
+check-unit-y += $(foreach TARGET,$(TARGETS), $(check-unit-$(TARGET)-y))
+
+$(foreach TARGET,$(TARGETS),$(eval $(test-obj-$(TARGET)-y): QEMU_INCLUDES += -Itarget-$(TARGET)))
+
+$(test-obj-y): QEMU_INCLUDES += -Itests
+
+# QTest rules
+
 QTEST_TARGETS=$(foreach TARGET,$(TARGETS), $(if $(check-qtest-$(TARGET)-y), $(TARGET),))
 check-qtest-$(CONFIG_POSIX)=$(foreach TARGET,$(TARGETS), $(check-qtest-$(TARGET)-y))
 
