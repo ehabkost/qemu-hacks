@@ -40,8 +40,6 @@ test-qapi-obj-y =  $(qobject-obj-y) $(qapi-obj-y) $(tools-obj-y)
 test-qapi-obj-y += tests/test-qapi-visit.o tests/test-qapi-types.o
 test-qapi-obj-y += module.o
 
-$(test-obj-y): QEMU_INCLUDES += -Itests
-
 tests/check-qint$(EXESUF): tests/check-qint.o qint.o $(tools-obj-y)
 tests/check-qstring$(EXESUF): tests/check-qstring.o qstring.o $(tools-obj-y)
 tests/check-qdict$(EXESUF): tests/check-qdict.o qdict.o qfloat.o qint.o qstring.o qbool.o qlist.o $(tools-obj-y)
@@ -75,9 +73,21 @@ tests/m48t59-test$(EXESUF): tests/m48t59-test.o $(trace-obj-y)
 tests/fdc-test$(EXESUF): tests/fdc-test.o tests/libqtest.o $(trace-obj-y)
 tests/hd-geo-test$(EXESUF): tests/hd-geo-test.o tests/libqtest.o $(trace-obj-y)
 
-# QTest rules
+# unit test rules:
 
 TARGETS=$(patsubst %-softmmu,%, $(filter %-softmmu,$(TARGET_DIRS)))
+
+# target-specific tests/objs:
+test-obj-y += $(foreach TARGET,$(TARGETS), $(test-obj-$(TARGET)-y))
+check-unit-y += $(foreach TARGET,$(TARGETS), $(check-unit-$(TARGET)-y))
+
+$(foreach TARGET,$(TARGETS),$(eval $(test-obj-$(TARGET)-y): QEMU_INCLUDES += -Itarget-$(TARGET)))
+
+
+$(test-obj-y): QEMU_INCLUDES += -Itests
+
+# QTest rules
+
 QTEST_TARGETS=$(foreach TARGET,$(TARGETS), $(if $(check-qtest-$(TARGET)-y), $(TARGET),))
 check-qtest-$(CONFIG_POSIX)=$(foreach TARGET,$(TARGETS), $(check-qtest-$(TARGET)-y))
 
