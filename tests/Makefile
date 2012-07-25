@@ -15,6 +15,7 @@ check-unit-y += tests/test-string-output-visitor$(EXESUF)
 check-unit-y += tests/test-coroutine$(EXESUF)
 check-unit-y += tests/test-visitor-serialization$(EXESUF)
 check-unit-y += tests/test-iov$(EXESUF)
+check-unit-i386-y += tests/test-x86-cpuid$(EXESUF)
 
 check-block-$(CONFIG_POSIX) += tests/qemu-iotests-quick.sh
 
@@ -35,6 +36,7 @@ test-obj-y = tests/check-qint.o tests/check-qstring.o tests/check-qdict.o \
 	tests/test-string-input-visitor.o tests/test-qmp-output-visitor.o \
 	tests/test-qmp-input-visitor.o tests/test-qmp-input-strict.o \
 	tests/test-qmp-commands.o tests/test-visitor-serialization.o
+test-obj-i386-y = tests/test-x86-cpuid.o
 
 test-qapi-obj-y =  $(qobject-obj-y) $(qapi-obj-y) $(tools-obj-y)
 test-qapi-obj-y += tests/test-qapi-visit.o tests/test-qapi-types.o
@@ -48,6 +50,7 @@ tests/check-qfloat$(EXESUF): tests/check-qfloat.o qfloat.o $(tools-obj-y)
 tests/check-qjson$(EXESUF): tests/check-qjson.o $(qobject-obj-y) $(tools-obj-y)
 tests/test-coroutine$(EXESUF): tests/test-coroutine.o $(coroutine-obj-y) $(tools-obj-y)
 tests/test-iov$(EXESUF): tests/test-iov.o iov.o
+tests/test-x86-cpuid$(EXESUF): tests/test-x86-cpuid.o
 
 tests/test-qapi-types.c tests/test-qapi-types.h :\
 $(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-types.py
