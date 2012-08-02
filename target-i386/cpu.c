@@ -1411,17 +1411,12 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf, const char *optarg)
     }
 }
 
-int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
+/* Initialize CPU object from X86CPUDefinition struct */
+static int cpu_x86_init_from_def(X86CPU *cpu, X86CPUDefinition *def)
 {
     CPUX86State *env = &cpu->env;
-    X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
 
-    memset(def, 0, sizeof(*def));
-
-    if (cpu_x86_build_from_name(def, cpu_model) < 0) {
-        return -1;
-    }
     if (def->vendor1) {
         env->cpuid_vendor1 = def->vendor1;
         env->cpuid_vendor2 = def->vendor2;
@@ -1464,6 +1459,24 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
         error_free(error);
         return -1;
     }
+
+    return 0;
+}
+
+int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
+{
+    X86CPUDefinition def1, *def = &def1;
+
+    memset(def, 0, sizeof(*def));
+
+    if (cpu_x86_build_from_name(def, cpu_model) < 0) {
+        return -1;
+    }
+
+    if (cpu_x86_init_from_def(cpu, def) < 0) {
+        return -1;
+    }
+
     return 0;
 }
 
