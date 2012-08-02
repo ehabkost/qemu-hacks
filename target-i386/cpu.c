@@ -271,9 +271,11 @@ static void add_flagname_to_bitmaps(const char *flagname, uint32_t *features,
             fprintf(stderr, "CPU feature %s not found\n", flagname);
 }
 
+/* Data for a specific CPU definition
+ * This struct cshould eventually go away and be replaced by default values
+ * for the properties on each CPU class.
+ */
 typedef struct X86CPUDefinition {
-    struct X86CPUDefinition *next;
-    const char *name;
     uint32_t level;
     uint32_t vendor1, vendor2, vendor3;
     int family;
@@ -331,10 +333,37 @@ typedef struct X86CPUDefinition {
 #define TCG_7_0_EBX_FEATURES (CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_SMAP)
 
 
-/* CPU model initialization functions */
+/* TYPE_X86_DEFCPU: abstract class for predefined CPU models */
 
-static void cpudef_init_qemu64(X86CPUDefinition *def)
+#define TYPE_X86_DEFCPU (TYPE_X86_CPU "-predefined")
+
+#define X86_DEFCPU_CLASS(klass) \
+    OBJECT_CLASS_CHECK(X86DEFCPUClass, (klass), TYPE_X86_DEFCPU)
+#define X86_DEFCPU(obj) \
+    OBJECT_CHECK(X86DEFCPU, (obj), TYPE_X86_DEFCPU)
+#define X86_DEFCPU_GET_CLASS(obj) \
+    OBJECT_GET_CLASS(X86DEFCPUClass, (obj), TYPE_X86_DEFCPU)
+
+/**
+ * X86DEFCPUClass:
+ * @cpudef: model-specific CPUID information, used by x86_defcpu_initfn()
+ *
+ * A predefined CPU model, pointing to a X86CPUDefinition struct.
+ */
+typedef struct X86DEFCPUClass {
+    /*< private >*/
+    X86CPUClass parent_class;
+
+    X86CPUDefinition cpudef;
+} X86DEFCPUClass;
+
+
+/* class_init functions for each CPU subclass: */
+
+static void cpu_class_init_qemu64(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 4;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -357,8 +386,10 @@ static void cpudef_init_qemu64(X86CPUDefinition *def)
             qemu_get_version());
 }
 
-static void cpudef_init_phenom(X86CPUDefinition *def)
+static void cpu_class_init_phenom(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 5;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -387,8 +418,10 @@ static void cpudef_init_phenom(X86CPUDefinition *def)
             "AMD Phenom(tm) 9550 Quad-Core Processor");
 }
 
-static void cpudef_init_core2duo(X86CPUDefinition *def)
+static void cpu_class_init_core2duo(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 10;
     def->family = 6;
     def->model = 15;
@@ -407,8 +440,10 @@ static void cpudef_init_core2duo(X86CPUDefinition *def)
             "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz");
 }
 
-static void cpudef_init_kvm64(X86CPUDefinition *def)
+static void cpu_class_init_kvm64(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 5;
     def->vendor1 = CPUID_VENDOR_INTEL_1;
     def->vendor2 = CPUID_VENDOR_INTEL_2;
@@ -435,8 +470,10 @@ static void cpudef_init_kvm64(X86CPUDefinition *def)
             "Common KVM processor");
 }
 
-static void cpudef_init_qemu32(X86CPUDefinition *def)
+static void cpu_class_init_qemu32(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 4;
     def->family = 6;
     def->model = 3;
@@ -450,8 +487,10 @@ static void cpudef_init_qemu32(X86CPUDefinition *def)
             qemu_get_version());
 }
 
-static void cpudef_init_kvm32(X86CPUDefinition *def)
+static void cpu_class_init_kvm32(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 5;
     def->family = 15;
     def->model = 6;
@@ -466,8 +505,10 @@ static void cpudef_init_kvm32(X86CPUDefinition *def)
             "Common 32-bit KVM processor");
 }
 
-static void cpudef_init_coreduo(X86CPUDefinition *def)
+static void cpu_class_init_coreduo(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 10;
     def->family = 6;
     def->model = 14;
@@ -483,8 +524,10 @@ static void cpudef_init_coreduo(X86CPUDefinition *def)
             "Genuine Intel(R) CPU           T2600  @ 2.16GHz");
 }
 
-static void cpudef_init_486(X86CPUDefinition *def)
+static void cpu_class_init_486(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 1;
     def->family = 4;
     def->model = 0;
@@ -493,8 +536,10 @@ static void cpudef_init_486(X86CPUDefinition *def)
     def->xlevel = 0;
 }
 
-static void cpudef_init_pentium(X86CPUDefinition *def)
+static void cpu_class_init_pentium(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 1;
     def->family = 5;
     def->model = 4;
@@ -503,8 +548,10 @@ static void cpudef_init_pentium(X86CPUDefinition *def)
     def->xlevel = 0;
 }
 
-static void cpudef_init_pentium2(X86CPUDefinition *def)
+static void cpu_class_init_pentium2(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 2;
     def->family = 6;
     def->model = 5;
@@ -513,8 +560,10 @@ static void cpudef_init_pentium2(X86CPUDefinition *def)
     def->xlevel = 0;
 }
 
-static void cpudef_init_pentium3(X86CPUDefinition *def)
+static void cpu_class_init_pentium3(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 2;
     def->family = 6;
     def->model = 7;
@@ -523,8 +572,10 @@ static void cpudef_init_pentium3(X86CPUDefinition *def)
     def->xlevel = 0;
 }
 
-static void cpudef_init_athlon(X86CPUDefinition *def)
+static void cpu_class_init_athlon(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 2;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -543,8 +594,10 @@ static void cpudef_init_athlon(X86CPUDefinition *def)
             qemu_get_version());
 }
 
-static void cpudef_init_n270(X86CPUDefinition *def)
+static void cpu_class_init_n270(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     /* original is on level 10 */
     def->level = 5;
     def->family = 6;
@@ -564,8 +617,10 @@ static void cpudef_init_n270(X86CPUDefinition *def)
             "Intel(R) Atom(TM) CPU N270   @ 1.60GHz");
 }
 
-static void cpudef_init_Conroe(X86CPUDefinition *def)
+static void cpu_class_init_Conroe(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 2;
     def->vendor1 = CPUID_VENDOR_INTEL_1;
     def->vendor2 = CPUID_VENDOR_INTEL_2;
@@ -586,8 +641,10 @@ static void cpudef_init_Conroe(X86CPUDefinition *def)
             "Intel Celeron_4x0 (Conroe/Merom Class Core 2)");
 }
 
-static void cpudef_init_Penryn(X86CPUDefinition *def)
+static void cpu_class_init_Penryn(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 2;
     def->vendor1 = CPUID_VENDOR_INTEL_1;
     def->vendor2 = CPUID_VENDOR_INTEL_2;
@@ -609,8 +666,10 @@ static void cpudef_init_Penryn(X86CPUDefinition *def)
             "Intel Core 2 Duo P9xxx (Penryn Class Core 2)");
 }
 
-static void cpudef_init_Nehalem(X86CPUDefinition *def)
+static void cpu_class_init_Nehalem(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 2;
     def->vendor1 = CPUID_VENDOR_INTEL_1;
     def->vendor2 = CPUID_VENDOR_INTEL_2;
@@ -632,8 +691,10 @@ static void cpudef_init_Nehalem(X86CPUDefinition *def)
             "Intel Core i7 9xx (Nehalem Class Core i7)");
 }
 
-static void cpudef_init_Westmere(X86CPUDefinition *def)
+static void cpu_class_init_Westmere(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 11;
     def->vendor1 = CPUID_VENDOR_INTEL_1;
     def->vendor2 = CPUID_VENDOR_INTEL_2;
@@ -656,8 +717,10 @@ static void cpudef_init_Westmere(X86CPUDefinition *def)
             "Westmere E56xx/L56xx/X56xx (Nehalem-C)");
 }
 
-static void cpudef_init_SandyBridge(X86CPUDefinition *def)
+static void cpu_class_init_SandyBridge(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 0xd;
     def->vendor1 = CPUID_VENDOR_INTEL_1;
     def->vendor2 = CPUID_VENDOR_INTEL_2;
@@ -683,8 +746,10 @@ static void cpudef_init_SandyBridge(X86CPUDefinition *def)
             "Intel Xeon E312xx (Sandy Bridge)");
 }
 
-static void cpudef_init_Haswell(X86CPUDefinition *def)
+static void cpu_class_init_Haswell(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 0xd;
     def->vendor1 = CPUID_VENDOR_INTEL_1;
     def->vendor2 = CPUID_VENDOR_INTEL_2;
@@ -715,8 +780,10 @@ static void cpudef_init_Haswell(X86CPUDefinition *def)
             "Intel Core Processor (Haswell)");
 }
 
-static void cpudef_init_Opteron_G1(X86CPUDefinition *def)
+static void cpu_class_init_Opteron_G1(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 5;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -741,8 +808,10 @@ static void cpudef_init_Opteron_G1(X86CPUDefinition *def)
             "AMD Opteron 240 (Gen 1 Class Opteron)");
 }
 
-static void cpudef_init_Opteron_G2(X86CPUDefinition *def)
+static void cpu_class_init_Opteron_G2(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 5;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -769,8 +838,10 @@ static void cpudef_init_Opteron_G2(X86CPUDefinition *def)
             "AMD Opteron 22xx (Gen 2 Class Opteron)");
 }
 
-static void cpudef_init_Opteron_G3(X86CPUDefinition *def)
+static void cpu_class_init_Opteron_G3(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 5;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -799,8 +870,10 @@ static void cpudef_init_Opteron_G3(X86CPUDefinition *def)
             "AMD Opteron 23xx (Gen 3 Class Opteron)");
 }
 
-static void cpudef_init_Opteron_G4(X86CPUDefinition *def)
+static void cpu_class_init_Opteron_G4(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 0xd;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -833,8 +906,10 @@ static void cpudef_init_Opteron_G4(X86CPUDefinition *def)
             "AMD Opteron 62xx class CPU");
 }
 
-static void cpudef_init_Opteron_G5(X86CPUDefinition *def)
+static void cpu_class_init_Opteron_G5(ObjectClass *oc, void *data)
 {
+    X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+    X86CPUDefinition *def = &dc->cpudef;
     def->level = 0xd;
     def->vendor1 = CPUID_VENDOR_AMD_1;
     def->vendor2 = CPUID_VENDOR_AMD_2;
@@ -1447,51 +1522,26 @@ static void listflags(char *buf, int bufsize, uint32_t fbits,
         }
 }
 
-static struct X86CPUInitFuncTable {
-    const char *name;
-    void (*cpudef_init)(X86CPUDefinition *cpudef);
-} cpudef_init_funcs[] = {
-    { "qemu64",      cpudef_init_qemu64 },
-    { "phenom",      cpudef_init_phenom },
-    { "core2duo",    cpudef_init_core2duo },
-    { "kvm64",       cpudef_init_kvm64 },
-    { "qemu32",      cpudef_init_qemu32 },
-    { "kvm32",       cpudef_init_kvm32 },
-    { "coreduo",     cpudef_init_coreduo },
-    { "486",         cpudef_init_486 },
-    { "pentium",     cpudef_init_pentium },
-    { "pentium2",    cpudef_init_pentium2 },
-    { "pentium3",    cpudef_init_pentium3 },
-    { "athlon",      cpudef_init_athlon },
-    { "n270",        cpudef_init_n270 },
-    { "Conroe",      cpudef_init_Conroe },
-    { "Penryn",      cpudef_init_Penryn },
-    { "Nehalem",     cpudef_init_Nehalem },
-    { "Westmere",    cpudef_init_Westmere },
-    { "SandyBridge", cpudef_init_SandyBridge },
-    { "Haswell",     cpudef_init_Haswell },
-    { "Opteron_G1",  cpudef_init_Opteron_G1 },
-    { "Opteron_G2",  cpudef_init_Opteron_G2 },
-    { "Opteron_G3",  cpudef_init_Opteron_G3 },
-    { "Opteron_G4",  cpudef_init_Opteron_G4 },
-    { "Opteron_G5",  cpudef_init_Opteron_G5 },
-    { NULL, NULL },
-};
-
 /* generate CPU information. */
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
     char buf[256];
-    struct X86CPUInitFuncTable *i;
+    GSList *i;
+    GSList *list = object_class_get_list(TYPE_X86_DEFCPU, false);
 
-    for (i = cpudef_init_funcs; i->name; i++) {
-        X86CPUDefinition def;
-        i->cpudef_init(&def);
-        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", i->name, def.model_id);
+    for (i = list; i; i = g_slist_next(i)) {
+        ObjectClass *oc = i->data;
+        X86DEFCPUClass *dc = X86_DEFCPU_CLASS(oc);
+        X86CPUDefinition *def = &dc->cpudef;
+        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", object_class_get_name(oc),
+                                               def->model_id);
     }
+    g_slist_free(list);
+
     if (kvm_enabled()) {
         (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
     }
+
     (*cpu_fprintf)(f, "\nRecognized CPUID flags:\n");
     listflags(buf, sizeof(buf), (uint32_t)~0, feature_name, 1);
     (*cpu_fprintf)(f, "  %s\n", buf);
@@ -1506,20 +1556,23 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 {
     CpuDefinitionInfoList *cpu_list = NULL;
-    struct X86CPUInitFuncTable *i;
+    GSList *i;
+    GSList *list = object_class_get_list(TYPE_X86_CPU, false);
 
-    for (i = cpudef_init_funcs; i->name; i++) {
+    for (i = list; i; i = g_slist_next(i)) {
+        ObjectClass *oc = i->data;
         CpuDefinitionInfoList *entry;
         CpuDefinitionInfo *info;
 
         info = g_malloc0(sizeof(*info));
-        info->name = g_strdup(i->name);
+        info->name = g_strdup(object_class_get_name(oc));
 
         entry = g_malloc0(sizeof(*entry));
         entry->value = info;
         entry->next = cpu_list;
         cpu_list = entry;
     }
+    g_slist_free(list);
 
     return cpu_list;
 }
@@ -1615,42 +1668,42 @@ static int cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     return 0;
 }
 
+/* Build class name for specific CPU model:
+ *
+ * The CPU class names are in the form: <model>-<arch>-cpu
+ */
+
+#define CPU_CLASS_NAME(model) (model "-" TYPE_X86_CPU)
+
+static char *build_cpu_class_name(const char *model)
+{
+    return g_strdup_printf("%s-%s", model, TYPE_X86_CPU);
+}
+
 /* Create a X86CPU object, based on the model name
  */
 static X86CPU *cpu_x86_new(const char *name, Error **errp)
 {
-    X86CPUDefinition cpudef;
+    char *class_name = NULL;
+    ObjectClass *obj_class;
     X86CPU *cpu = NULL;
 
-    memset(&cpudef, 0, sizeof(cpudef));
-
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-        kvm_cpu_fill_host(&cpudef);
-    } else {
-        struct X86CPUInitFuncTable *i;
-        for (i = cpudef_init_funcs; i->name; i++) {
-            if (name && !strcmp(name, i->name)) {
-                i->cpudef_init(&cpudef);
-                break;
-            }
-        }
-        if (!i->name) {
-            goto error;
-        }
-    }
-
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
-
-    if (cpudef_2_x86_cpu(cpu, &cpudef, errp) < 0) {
+    class_name = build_cpu_class_name(name);
+    obj_class = object_class_by_name(class_name);
+    if (!obj_class) {
+        error_set(errp, QERR_DEVICE_NOT_FOUND, name);
         goto error;
     }
 
+    cpu = X86_CPU(object_new(class_name));
+    g_free(class_name);
     return cpu;
 
 error:
     if (!error_is_set(errp)) {
         error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
     }
+    g_free(class_name);
     return NULL;
 }
 
@@ -2194,9 +2247,9 @@ void x86_cpu_realize(Object *obj, Error **errp)
     cpu_reset(CPU(cpu));
 }
 
-static void x86_cpu_initfn(Object *obj)
+static void x86_cpu_init_instance(X86CPU *cpu)
 {
-    X86CPU *cpu = X86_CPU(obj);
+    Object *obj = OBJECT(cpu);
     CPUX86State *env = &cpu->env;
     static int inited;
 
@@ -2239,6 +2292,27 @@ static void x86_cpu_initfn(Object *obj)
     }
 }
 
+/* instance_init function for predefined CPU models
+ *
+ * This function may eventually go away once we eliminate the X86CPUDefinition
+ * struct and just set model-specific default property values.
+ */
+static void x86_defcpu_initfn(Object *obj)
+{
+    Error *err = NULL;
+    X86CPU *cpu = X86_CPU(obj);
+    X86DEFCPUClass *dc = X86_DEFCPU_GET_CLASS(obj);
+
+    x86_cpu_init_instance(cpu);
+
+    cpudef_2_x86_cpu(cpu, &dc->cpudef, &err);
+    if (err) {
+        error_report("x86_defcpu_initfn: %s", error_get_pretty(err));
+        error_free(err);
+        exit(1);
+    }
+}
+
 static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
 {
     X86CPUClass *xcc = X86_CPU_CLASS(oc);
@@ -2252,15 +2326,116 @@ static const TypeInfo x86_cpu_type_info = {
     .name = TYPE_X86_CPU,
     .parent = TYPE_CPU,
     .instance_size = sizeof(X86CPU),
-    .instance_init = x86_cpu_initfn,
-    .abstract = false,
+    .abstract = true,
     .class_size = sizeof(X86CPUClass),
     .class_init = x86_cpu_common_class_init,
 };
 
+static TypeInfo x86_defcpu_type_info = {
+    .name = TYPE_X86_DEFCPU,
+    .parent = TYPE_X86_CPU,
+    .abstract = true,
+    .class_size = sizeof(X86DEFCPUClass),
+};
+
+/* TYPE_X86_HOST_CPU:
+ *
+ * X86CPU subclass for "-cpu host"
+ */
+
+#define TYPE_X86_HOST_CPU CPU_CLASS_NAME("host")
+
+/* instance_init function for predefined CPU models
+ *
+ * This function may eventually go away once we eliminate the X86CPUDefinition
+ * struct and use default property values for all CPU model information.
+ */
+static void x86_hostcpu_initfn(Object *obj)
+{
+    Error *err = NULL;
+    X86CPU *cpu = X86_CPU(obj);
+    X86CPUDefinition cpudef;
+
+    if (!kvm_enabled()) {
+        error_report("\"host\" cpu model is only available on KVM");
+        exit(1);
+    }
+
+    x86_cpu_init_instance(cpu);
+
+    memset(&cpudef, 0, sizeof(cpudef));
+    kvm_cpu_fill_host(&cpudef);
+    cpudef_2_x86_cpu(cpu, &cpudef, &err);
+
+    if (err) {
+        error_report("x86_hostcpu_initfn: %s", error_get_pretty(err));
+        error_free(err);
+        exit(1);
+    }
+}
+
+TypeInfo x86_hostcpu_type = {
+    .name = CPU_CLASS_NAME("host"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .instance_init = x86_hostcpu_initfn,
+    .class_size = sizeof(X86DEFCPUClass),
+};
+
+static void register_defcpu_class(const char *class_name,
+                               void (*class_init)(ObjectClass *oc, void *data))
+{
+    TypeInfo type_info = {
+        .name = class_name,
+        .parent = TYPE_X86_DEFCPU,
+        .instance_size = sizeof(X86CPU),
+        .instance_init = x86_defcpu_initfn,
+        .class_size = sizeof(X86DEFCPUClass),
+        .class_init = class_init,
+    };
+    type_register(&type_info);
+}
+
+static void register_cpu_classes(void)
+{
+    type_register_static(&x86_defcpu_type_info);
+
+    register_defcpu_class(CPU_CLASS_NAME("qemu64"), cpu_class_init_qemu64);
+    register_defcpu_class(CPU_CLASS_NAME("phenom"), cpu_class_init_phenom);
+    register_defcpu_class(CPU_CLASS_NAME("core2duo"), cpu_class_init_core2duo);
+    register_defcpu_class(CPU_CLASS_NAME("kvm64"), cpu_class_init_kvm64);
+    register_defcpu_class(CPU_CLASS_NAME("qemu32"), cpu_class_init_qemu32);
+    register_defcpu_class(CPU_CLASS_NAME("kvm32"), cpu_class_init_kvm32);
+    register_defcpu_class(CPU_CLASS_NAME("coreduo"), cpu_class_init_coreduo);
+    register_defcpu_class(CPU_CLASS_NAME("486"), cpu_class_init_486);
+    register_defcpu_class(CPU_CLASS_NAME("pentium"), cpu_class_init_pentium);
+    register_defcpu_class(CPU_CLASS_NAME("pentium2"), cpu_class_init_pentium2);
+    register_defcpu_class(CPU_CLASS_NAME("pentium3"), cpu_class_init_pentium3);
+    register_defcpu_class(CPU_CLASS_NAME("athlon"), cpu_class_init_athlon);
+    register_defcpu_class(CPU_CLASS_NAME("n270"), cpu_class_init_n270);
+    register_defcpu_class(CPU_CLASS_NAME("Conroe"), cpu_class_init_Conroe);
+    register_defcpu_class(CPU_CLASS_NAME("Penryn"), cpu_class_init_Penryn);
+    register_defcpu_class(CPU_CLASS_NAME("Nehalem"), cpu_class_init_Nehalem);
+    register_defcpu_class(CPU_CLASS_NAME("Westmere"), cpu_class_init_Westmere);
+    register_defcpu_class(CPU_CLASS_NAME("SandyBridge"), cpu_class_init_SandyBridge);
+    register_defcpu_class(CPU_CLASS_NAME("Haswell"), cpu_class_init_Haswell);
+    register_defcpu_class(CPU_CLASS_NAME("Opteron_G1"), cpu_class_init_Opteron_G1);
+    register_defcpu_class(CPU_CLASS_NAME("Opteron_G2"), cpu_class_init_Opteron_G2);
+    register_defcpu_class(CPU_CLASS_NAME("Opteron_G3"), cpu_class_init_Opteron_G3);
+    register_defcpu_class(CPU_CLASS_NAME("Opteron_G4"), cpu_class_init_Opteron_G4);
+    register_defcpu_class(CPU_CLASS_NAME("Opteron_G5"), cpu_class_init_Opteron_G5);
+}
+
 static void x86_cpu_register_types(void)
 {
+    /* Abstract X86CPU class */
     type_register_static(&x86_cpu_type_info);
+
+    /* -cpu host */
+    type_register_static(&x86_hostcpu_type);
+
+    /* One class for each CPU model: */
+    register_cpu_classes();
 }
 
 type_init(x86_cpu_register_types)
