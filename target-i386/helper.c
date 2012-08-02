@@ -1153,8 +1153,6 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
 
 X86CPU *cpu_x86_init(const char *cpu_model)
 {
-    X86CPU *cpu;
-    CPUX86State *env;
     static int inited;
 
     /* init various static tables used in TCG mode */
@@ -1167,17 +1165,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 #endif
     }
 
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
-    env = &cpu->env;
-    env->cpu_model_str = cpu_model;
-    if (cpu_x86_register(cpu, cpu_model) < 0) {
-        object_delete(OBJECT(cpu));
-        return NULL;
-    }
-
-    x86_cpu_realize(OBJECT(cpu), NULL);
-
-    return cpu;
+    return cpu_x86_create(cpu_model);
 }
 
 #if !defined(CONFIG_USER_ONLY)
