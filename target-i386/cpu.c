@@ -271,8 +271,8 @@ static void add_flagname_to_bitmaps(const char *flagname, uint32_t *features,
             fprintf(stderr, "CPU feature %s not found\n", flagname);
 }
 
-typedef struct x86_def_t {
-    struct x86_def_t *next;
+typedef struct X86CPUDefinition {
+    struct X86CPUDefinition *next;
     const char *name;
     uint32_t level;
     uint32_t vendor1, vendor2, vendor3;
@@ -290,7 +290,7 @@ typedef struct x86_def_t {
     uint32_t xlevel2;
     /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
     uint32_t cpuid_7_0_ebx_features;
-} x86_def_t;
+} X86CPUDefinition;
 
 #define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
 #define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
@@ -330,13 +330,14 @@ typedef struct x86_def_t {
 #define TCG_SVM_FEATURES 0
 #define TCG_7_0_EBX_FEATURES (CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_SMAP)
 
+
 /* maintains list of cpu model definitions
  */
-static x86_def_t *x86_defs = {NULL};
+static X86CPUDefinition *x86_defs = {NULL};
 
 /* built-in cpu model definitions (deprecated)
  */
-static x86_def_t builtin_x86_defs[] = {
+static X86CPUDefinition builtin_x86_defs[] = {
     {
         .name = "qemu64",
         .level = 4,
@@ -837,12 +838,12 @@ static int cpu_x86_fill_model_id(char *str)
 }
 #endif
 
-/* Fill a x86_def_t struct with information about the host CPU, and
+/* Fill a X86CPUDefinition struct with information about the host CPU, and
  * the CPU features supported by the host hardware + host kernel
  *
  * This function may be called only if KVM is enabled.
  */
-static void kvm_cpu_fill_host(x86_def_t *x86_cpu_def)
+static void kvm_cpu_fill_host(X86CPUDefinition *x86_cpu_def)
 {
 #ifdef CONFIG_KVM
     KVMState *s = kvm_state;
@@ -850,7 +851,6 @@ static void kvm_cpu_fill_host(x86_def_t *x86_cpu_def)
 
     assert(kvm_enabled());
 
-    x86_cpu_def->name = "host";
     host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
     x86_cpu_def->vendor1 = ebx;
     x86_cpu_def->vendor2 = edx;
@@ -927,9 +927,9 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
  *
  * This function may be called only if KVM is enabled.
  */
-static int kvm_check_features_against_host(x86_def_t *guest_def)
+static int kvm_check_features_against_host(X86CPUDefinition *guest_def)
 {
-    x86_def_t host_def;
+    X86CPUDefinition host_def;
     uint32_t mask;
     int rv, i;
     struct model_features_t ft[] = {
@@ -1208,10 +1208,11 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
-static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *cpu_model)
+static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
+                                const char *cpu_model)
 {
     unsigned int i;
-    x86_def_t *def;
+    X86CPUDefinition *def;
 
     char *s = g_strdup(cpu_model);
     char *featurestr, *name = strtok(s, ",");
@@ -1417,7 +1418,7 @@ static void listflags(char *buf, int bufsize, uint32_t fbits,
 /* generate CPU information. */
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
-    x86_def_t *def;
+    X86CPUDefinition *def;
     char buf[256];
 
     for (def = x86_defs; def; def = def->next) {
@@ -1441,7 +1442,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 {
     CpuDefinitionInfoList *cpu_list = NULL;
-    x86_def_t *def;
+    X86CPUDefinition *def;
 
     for (def = x86_defs; def; def = def->next) {
         CpuDefinitionInfoList *entry;
@@ -1488,7 +1489,7 @@ static void filter_features_for_kvm(X86CPU *cpu)
 static int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 {
     CPUX86State *env = &cpu->env;
-    x86_def_t def1, *def = &def1;
+    X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
 
     memset(def, 0, sizeof(*def));
@@ -1598,7 +1599,7 @@ void x86_cpudef_setup(void)
     static const char *model_with_versions[] = { "qemu32", "qemu64", "athlon" };
 
     for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
-        x86_def_t *def = &builtin_x86_defs[i];
+        X86CPUDefinition *def = &builtin_x86_defs[i];
         def->next = x86_defs;
 
         /* Look for specific "cpudef" models that */
