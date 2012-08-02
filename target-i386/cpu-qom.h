@@ -37,6 +37,26 @@
 #define X86_CPU_GET_CLASS(obj) \
     OBJECT_GET_CLASS(X86CPUClass, (obj), TYPE_X86_CPU)
 
+
+typedef struct X86CPUDefinition {
+    uint32_t level;
+    uint32_t vendor1, vendor2, vendor3;
+    int family;
+    int model;
+    int stepping;
+    int tsc_khz;
+    uint32_t features, ext_features, ext2_features, ext3_features;
+    uint32_t kvm_features, svm_features;
+    uint32_t xlevel;
+    char model_id[48];
+    int vendor_override;
+    /* Store the results of Centaur's CPUID instructions */
+    uint32_t ext4_features;
+    uint32_t xlevel2;
+    /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
+    uint32_t cpuid_7_0_ebx_features;
+} X86CPUDefinition;
+
 /**
  * X86CPUClass:
  * @parent_reset: The parent class' reset handler.
