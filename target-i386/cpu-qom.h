@@ -37,6 +37,10 @@
 #define X86_CPU_GET_CLASS(obj) \
     OBJECT_GET_CLASS(X86CPUClass, (obj), TYPE_X86_CPU)
 
+
+struct X86CPUDefinition;
+typedef struct X86CPUDefinition X86CPUDefinition;
+
 /**
  * X86CPUClass:
  * @parent_reset: The parent class' reset handler.
@@ -49,6 +53,8 @@ typedef struct X86CPUClass {
     /*< public >*/
 
     void (*parent_reset)(CPUState *cpu);
+
+    X86CPUDefinition *cpudef;
 } X86CPUClass;
 
 /**
