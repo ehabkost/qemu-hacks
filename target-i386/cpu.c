@@ -1352,6 +1352,27 @@ static void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
     return;
 }
 
+static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
+{
+    x86_def_t *def;
+
+    for (def = x86_defs; def; def = def->next) {
+        if (name && !strcmp(name, def->name)) {
+            break;
+        }
+    }
+    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
+        cpu_x86_fill_host(x86_cpu_def);
+    } else if (!def) {
+        goto error;
+    } else {
+        memcpy(x86_cpu_def, def, sizeof(*def));
+    }
+    return 0;
+error:
+    return -1;
+}
+
 static int cpu_x86_build_from_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
@@ -1366,17 +1387,8 @@ static int cpu_x86_build_from_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
         goto error;
     }
 
-    for (def = x86_defs; def; def = def->next) {
-        if (name && !strcmp(name, def->name)) {
-            break;
-        }
-    }
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-        cpu_x86_fill_host(x86_cpu_def);
-    } else if (!def) {
+    if (cpu_x86_find_by_name(x86_cpu_def, name) != 0) {
         goto error;
-    } else {
-        memcpy(x86_cpu_def, def, sizeof(*def));
     }
 
     cpudef_2_x86_cpu(cpu, def, errp);
