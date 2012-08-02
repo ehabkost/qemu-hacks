@@ -1077,17 +1077,14 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
-static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
-                                   const char *cpu_model)
+/* Extend a x86_def_t struct based on a +feature,-feature,feature=xyz string
+ *
+ * Returns 0 on success, -1 on error.
+ */
+static int cpu_x86_extend_features(x86_def_t *x86_cpu_def, char *featlist)
 {
     unsigned int i;
-    x86_def_t *def;
-
-    char *last;
-    char *s = g_strdup(cpu_model);
-    char *featurestr, *name = strtok_r(s, ",", &last);
-    char *featlist = strtok_r(NULL, "", &last);
-
+    char *last, *featurestr;
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = 0;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
@@ -1097,20 +1094,6 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
     uint32_t minus_ext2_features = 0, minus_ext3_features = 0;
     uint32_t minus_kvm_features = 0, minus_svm_features = 0;
     uint32_t numvalue;
-
-    for (def = x86_defs; def; def = def->next) {
-        if (name && !strcmp(name, def->name)) {
-            break;
-        }
-    }
-
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-        cpu_x86_fill_host(x86_cpu_def);
-    } else if (!def) {
-        goto error;
-    } else {
-        memcpy(x86_cpu_def, def, sizeof(*def));
-    }
 
     plus_kvm_features = ~0; /* not supported bits will be filtered out later */
 
@@ -1243,6 +1226,39 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
     x86_cpu_def->ext3_features &= ~minus_ext3_features;
     x86_cpu_def->kvm_features &= ~minus_kvm_features;
     x86_cpu_def->svm_features &= ~minus_svm_features;
+    return 0;
+error:
+    return -1;
+}
+
+static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
+                                   const char *cpu_model)
+{
+    x86_def_t *def;
+
+    char *last;
+    char *s = g_strdup(cpu_model);
+    char *name = strtok_r(s, ",", &last);
+    char *featlist = strtok_r(NULL, "", &last);
+
+    for (def = x86_defs; def; def = def->next) {
+        if (name && !strcmp(name, def->name)) {
+            break;
+        }
+    }
+
+    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
+        cpu_x86_fill_host(x86_cpu_def);
+    } else if (!def) {
+        goto error;
+    } else {
+        memcpy(x86_cpu_def, def, sizeof(*def));
+    }
+
+    if (cpu_x86_extend_features(x86_cpu_def, featlist) < 0) {
+        goto error;
+    }
+
     if (check_cpuid) {
         if (check_features_against_host(x86_cpu_def) && enforce_cpuid) {
             goto error;
