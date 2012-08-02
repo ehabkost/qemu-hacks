@@ -1352,7 +1352,7 @@ static void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
     return;
 }
 
-static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
+static int cpu_x86_build_from_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
     x86_def_t *def;
@@ -1502,7 +1502,7 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_find_by_name(cpu, def, cpu_model, &error) < 0) {
+    if (cpu_x86_build_from_name(cpu, def, cpu_model, &error) < 0) {
         goto out;
     }
 
