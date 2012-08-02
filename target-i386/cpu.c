@@ -1575,6 +1575,8 @@ void cpu_clear_apic_feature(CPUX86State *env)
 
 #endif /* !CONFIG_USER_ONLY */
 
+static void x86_cpu_register_types(void);
+
 /* register "cpudef" models defined in configuration file.  Here we first
  * preload any built-in definitions
  */
@@ -1605,6 +1607,8 @@ void x86_cpudef_setup(void)
 #if !defined(CONFIG_USER_ONLY)
     qemu_opts_foreach(qemu_find_opts("cpudef"), cpudef_register, NULL, 0);
 #endif
+
+    x86_cpu_register_types();
 }
 
 static void get_cpuid_vendor(CPUX86State *env, uint32_t *ebx,
@@ -2123,4 +2127,5 @@ static void x86_cpu_register_types(void)
     x86_cpu_register_class("host", &host_def);
 }
 
-type_init(x86_cpu_register_types)
+//HACK: the function is being called from x86_cpudef_setup()
+//type_init(x86_cpu_register_types)
