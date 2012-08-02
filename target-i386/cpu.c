@@ -206,24 +206,6 @@ static bool lookup_feature(uint32_t *pval, const char *s, const char *e,
     return found;
 }
 
-typedef struct X86CPUDefinition {
-    uint32_t level;
-    char vendor[CPUID_VENDOR_SZ + 1];
-    int family;
-    int model;
-    int stepping;
-    int tsc_khz;
-    uint32_t features, ext_features, ext2_features, ext3_features;
-    uint32_t kvm_features, svm_features;
-    uint32_t xlevel;
-    char model_id[48];
-    int vendor_override;
-    /* Store the results of Centaur's CPUID instructions */
-    uint32_t ext4_features;
-    uint32_t xlevel2;
-    /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
-    uint32_t cpuid_7_0_ebx_features;
-} X86CPUDefinition;
 
 #define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
 #define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
