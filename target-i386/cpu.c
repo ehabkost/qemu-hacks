@@ -1353,19 +1353,9 @@ static void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
     return;
 }
 
-static int cpu_x86_build_from_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
-                                const char *cpu_model, Error **errp)
+static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
 {
     x86_def_t *def;
-
-    QDict *features;
-    const QDictEntry *ent;
-    char *name;
-
-    compat_normalize_cpu_model(cpu_model, &name, &features, errp);
-    if (error_is_set(errp)) {
-        goto error;
-    }
 
     for (def = x86_defs; def; def = def->next) {
         if (name && !strcmp(name, def->name)) {
@@ -1378,6 +1368,26 @@ static int cpu_x86_build_from_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
         goto error;
     } else {
         memcpy(x86_cpu_def, def, sizeof(*def));
+    }
+    return 0;
+error:
+    return -1;
+}
+
+static int cpu_x86_build_from_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
+                                const char *cpu_model, Error **errp)
+{
+    QDict *features;
+    const QDictEntry *ent;
+    char *name;
+
+    compat_normalize_cpu_model(cpu_model, &name, &features, errp);
+    if (error_is_set(errp)) {
+        goto error;
+    }
+
+    if (cpu_x86_find_by_name(x86_cpu_def, name) != 0) {
+        goto error;
     }
 
     cpudef_2_x86_cpu(cpu, x86_cpu_def, errp);
