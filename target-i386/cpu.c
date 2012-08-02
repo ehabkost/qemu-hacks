@@ -1086,6 +1086,8 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
     char *last;
     char *s = g_strdup(cpu_model);
     char *featurestr, *name = strtok_r(s, ",", &last);
+    char *featlist = strtok_r(NULL, "", &last);
+
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = 0;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
@@ -1116,7 +1118,7 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
         &plus_ext_features, &plus_ext2_features, &plus_ext3_features,
         &plus_kvm_features, &plus_svm_features);
 
-    featurestr = strtok_r(NULL, ",", &last);
+    featurestr = featlist ? strtok_r(featlist, ",", &last) : NULL;
 
     while (featurestr) {
         char *val;
