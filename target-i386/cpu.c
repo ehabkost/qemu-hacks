@@ -1231,15 +1231,9 @@ error:
     return -1;
 }
 
-static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
-                                   const char *cpu_model)
+static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
 {
     x86_def_t *def;
-
-    char *last;
-    char *s = g_strdup(cpu_model);
-    char *name = strtok_r(s, ",", &last);
-    char *featlist = strtok_r(NULL, "", &last);
 
     for (def = x86_defs; def; def = def->next) {
         if (name && !strcmp(name, def->name)) {
@@ -1253,6 +1247,22 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
         goto error;
     } else {
         memcpy(x86_cpu_def, def, sizeof(*def));
+    }
+    return 0;
+error:
+    return -1;
+}
+
+static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
+                                   const char *cpu_model)
+{
+    char *last;
+    char *s = g_strdup(cpu_model);
+    char *name = strtok_r(s, ",", &last);
+    char *featlist = strtok_r(NULL, "", &last);
+
+    if (cpu_x86_find_by_name(x86_cpu_def, name) != 0) {
+        goto error;
     }
 
     if (cpu_x86_extend_features(x86_cpu_def, featlist) < 0) {
