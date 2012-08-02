@@ -1083,8 +1083,9 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
     unsigned int i;
     x86_def_t *def;
 
+    char *last;
     char *s = g_strdup(cpu_model);
-    char *featurestr, *name = strtok(s, ",");
+    char *featurestr, *name = strtok_r(s, ",", &last);
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = 0;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
@@ -1115,7 +1116,7 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
         &plus_ext_features, &plus_ext2_features, &plus_ext3_features,
         &plus_kvm_features, &plus_svm_features);
 
-    featurestr = strtok(NULL, ",");
+    featurestr = strtok_r(NULL, ",", &last);
 
     while (featurestr) {
         char *val;
@@ -1226,7 +1227,7 @@ static int cpu_x86_build_from_name(x86_def_t *x86_cpu_def,
             fprintf(stderr, "feature string `%s' not in format (+feature|-feature|feature=xyz)\n", featurestr);
             goto error;
         }
-        featurestr = strtok(NULL, ",");
+        featurestr = strtok_r(NULL, ",", &last);
     }
     x86_cpu_def->features |= plus_features;
     x86_cpu_def->ext_features |= plus_ext_features;
