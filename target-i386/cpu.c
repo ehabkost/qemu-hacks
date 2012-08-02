@@ -207,8 +207,8 @@ static bool lookup_feature(uint32_t *pval, const char *s, const char *e,
     return found;
 }
 
-typedef struct x86_def_t {
-    struct x86_def_t *next;
+typedef struct X86CPUDefinition {
+    struct X86CPUDefinition *next;
     const char *name;
     uint32_t level;
     char vendor[CPUID_VENDOR_SZ + 1];
@@ -227,7 +227,7 @@ typedef struct x86_def_t {
     uint32_t xlevel2;
     /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
     uint32_t cpuid_7_0_ebx_features;
-} x86_def_t;
+} X86CPUDefinition;
 
 #define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
 #define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
@@ -269,11 +269,11 @@ typedef struct x86_def_t {
 
 /* maintains list of cpu model definitions
  */
-static x86_def_t *x86_defs = {NULL};
+static X86CPUDefinition *x86_defs = {NULL};
 
 /* built-in cpu model definitions (deprecated)
  */
-static x86_def_t builtin_x86_defs[] = {
+static X86CPUDefinition builtin_x86_defs[] = {
     {
         .name = "qemu64",
         .level = 4,
@@ -681,7 +681,7 @@ static int cpu_x86_fill_model_id(char *str)
     return 0;
 }
 
-static int cpu_x86_fill_host(x86_def_t *x86_cpu_def)
+static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
 {
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
     int i;
@@ -761,7 +761,7 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
 static int check_features_against_host(X86CPU *cpu)
 {
     CPUX86State *env = &cpu->env;
-    x86_def_t host_def;
+    X86CPUDefinition host_def;
     uint32_t mask;
     int rv, i;
     struct model_features_t ft[] = {
@@ -1269,7 +1269,7 @@ x86_cpuid_set_vendor_override(Object *obj, Visitor *v, void *opaque,
     env->cpuid_vendor_override = value;
 }
 
-static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
+static void cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
 {
     CPUX86State *env = &cpu->env;
 
@@ -1366,10 +1366,10 @@ static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
     }
 }
 
-static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
+static int cpu_x86_find_by_name(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
-    x86_def_t *def;
+    X86CPUDefinition *def;
 
     if (!cpu_model) {
         error_set(errp, QERR_INVALID_PARAMETER_VALUE, "cpu_model", "NULL");
@@ -1426,7 +1426,7 @@ static void listflags(char *buf, int bufsize, uint32_t fbits,
 /* generate CPU information. */
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
-    x86_def_t *def;
+    X86CPUDefinition *def;
     char buf[256];
 
     for (def = x86_defs; def; def = def->next) {
@@ -1450,7 +1450,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
 {
     CpuDefinitionInfoList *cpu_list = NULL;
-    x86_def_t *def;
+    X86CPUDefinition *def;
 
     for (def = x86_defs; def; def = def->next) {
         CpuDefinitionInfoList *entry;
@@ -1470,7 +1470,7 @@ CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
 
 int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 {
-    x86_def_t def1, *def = &def1;
+    X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
     QDict *features;
     char *name;
@@ -1558,11 +1558,11 @@ static void setfeatures(uint32_t *pval, const char *str,
     }
 }
 
-/* map config file options to x86_def_t form
+/* map config file options to X86CPUDefinition form
  */
 static int cpudef_setfield(const char *name, const char *str, void *opaque)
 {
-    x86_def_t *def = opaque;
+    X86CPUDefinition *def = opaque;
     int err = 0;
 
     if (!strcmp(name, "name")) {
@@ -1601,11 +1601,11 @@ static int cpudef_setfield(const char *name, const char *str, void *opaque)
     return (0);
 }
 
-/* register config file entry as x86_def_t
+/* register config file entry as X86CPUDefinition
  */
 static int cpudef_register(QemuOpts *opts, void *opaque)
 {
-    x86_def_t *def = g_malloc0(sizeof(x86_def_t));
+    X86CPUDefinition *def = g_malloc0(sizeof(X86CPUDefinition));
 
     qemu_opt_foreach(opts, cpudef_setfield, def, 1);
     def->next = x86_defs;
@@ -1629,7 +1629,7 @@ void x86_cpudef_setup(void)
     static const char *model_with_versions[] = { "qemu32", "qemu64", "athlon" };
 
     for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
-        x86_def_t *def = &builtin_x86_defs[i];
+        X86CPUDefinition *def = &builtin_x86_defs[i];
         def->next = x86_defs;
         def->is_builtin = true;
 
