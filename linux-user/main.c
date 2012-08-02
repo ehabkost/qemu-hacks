@@ -3428,9 +3428,6 @@ int main(int argc, char **argv, char **envp)
     }
 
     cpu_model = NULL;
-#if defined(cpudef_setup)
-    cpudef_setup(); /* parse cpu definitions in target config file (TBD) */
-#endif
 
     /* init debug */
     cpu_set_log_filename(log_file);
