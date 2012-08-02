@@ -1284,35 +1284,6 @@ error:
     return -1;
 }
 
-static int cpu_x86_build_from_name(X86CPUDefinition *x86_cpu_def,
-                                   const char *cpu_model)
-{
-    char *last;
-    char *s = g_strdup(cpu_model);
-    char *name = strtok_r(s, ",", &last);
-    char *featlist = strtok_r(NULL, "", &last);
-
-    if (cpu_x86_find_by_name(x86_cpu_def, name) != 0) {
-        goto error;
-    }
-
-    if (cpu_x86_extend_features(x86_cpu_def, featlist) < 0) {
-        goto error;
-    }
-
-    if (check_cpuid) {
-        if (check_features_against_host(x86_cpu_def) && enforce_cpuid) {
-            goto error;
-        }
-    }
-    g_free(s);
-    return 0;
-
-error:
-    g_free(s);
-    return -1;
-}
-
 /* generate a composite string into buf of all cpuid names in featureset
  * selected by fbits.  indicate truncation at bufsize in the event of overflow.
  * if flags, suppress names undefined in featureset.
@@ -1468,6 +1439,10 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     X86CPU *cpu;
     CPUX86State *env;
     X86CPUDefinition def1, *def = &def1;
+    char *last;
+    char *s = g_strdup(cpu_model);
+    char *name = strtok_r(s, ",", &last);
+    char *featlist = strtok_r(NULL, "", &last);
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
@@ -1475,8 +1450,18 @@ X86CPU *cpu_x86_create(const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_build_from_name(def, cpu_model) < 0) {
+    if (cpu_x86_find_by_name(def, name) != 0) {
         goto error;
+    }
+
+    if (cpu_x86_extend_features(def, featlist) < 0) {
+        goto error;
+    }
+
+    if (check_cpuid) {
+        if (check_features_against_host(def) && enforce_cpuid) {
+            goto error;
+        }
     }
 
     if (cpu_x86_init_from_def(cpu, def) < 0) {
@@ -1484,9 +1469,12 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     }
 
     x86_cpu_realize(OBJECT(cpu), NULL);
+
+    g_free(s);
     return cpu;
 
 error:
+    g_free(s);
     object_delete(OBJECT(cpu));
     return NULL;
 }
