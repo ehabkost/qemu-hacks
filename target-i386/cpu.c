@@ -214,9 +214,7 @@ static bool lookup_feature(uint32_t *pval, const char *s, const char *e,
     return found;
 }
 
-typedef struct x86_def_t {
-    struct x86_def_t *next;
-    const char *name;
+typedef struct X86CPUDefinition {
     uint32_t level;
     char vendor[CPUID_VENDOR_SZ + 1];
     int family;
@@ -233,7 +231,7 @@ typedef struct x86_def_t {
     uint32_t xlevel2;
     /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
     uint32_t cpuid_7_0_ebx_features;
-} x86_def_t;
+} X86CPUDefinition;
 
 #define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
 #define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
@@ -272,15 +270,24 @@ typedef struct x86_def_t {
           CPUID_EXT3_CR8LEG | CPUID_EXT3_ABM | CPUID_EXT3_SSE4A)
 #define TCG_SVM_FEATURES 0
 
+
+typedef struct X86CPUModelTableEntry {
+    const char *name;
+    struct X86CPUModelTableEntry *next;
+    bool is_builtin;
+    X86CPUDefinition cpudef;
+} X86CPUModelTableEntry;
+
 /* maintains list of cpu model definitions
  */
-static x86_def_t *x86_defs = {NULL};
+static X86CPUModelTableEntry *x86_defs = {NULL};
 
 /* built-in cpu model definitions (deprecated)
  */
-static x86_def_t builtin_x86_defs[] = {
+static X86CPUModelTableEntry builtin_x86_defs[] = {
     {
-        .name = "qemu64",
+      .name = "qemu64",
+      .cpudef = {
         .level = 4,
         .vendor = CPUID_VENDOR_AMD,
         .family = 6,
@@ -295,9 +302,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
             CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
         .xlevel = 0x8000000A,
+      },
     },
     {
-        .name = "phenom",
+      .name = "phenom",
+      .cpudef = {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 16,
@@ -321,9 +330,11 @@ static x86_def_t builtin_x86_defs[] = {
         .svm_features = CPUID_SVM_NPT | CPUID_SVM_LBRV,
         .xlevel = 0x8000001A,
         .model_id = "AMD Phenom(tm) 9550 Quad-Core Processor"
+      },
     },
     {
-        .name = "core2duo",
+      .name = "core2duo",
+      .cpudef = {
         .level = 10,
         .family = 6,
         .model = 15,
@@ -339,9 +350,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x80000008,
         .model_id = "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz",
+      },
     },
     {
-        .name = "kvm64",
+      .name = "kvm64",
+      .cpudef = {
         .level = 5,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 15,
@@ -363,9 +376,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = 0,
         .xlevel = 0x80000008,
         .model_id = "Common KVM processor"
+      },
     },
     {
-        .name = "qemu32",
+      .name = "qemu32",
+      .cpudef = {
         .level = 4,
         .family = 6,
         .model = 3,
@@ -373,9 +388,11 @@ static x86_def_t builtin_x86_defs[] = {
         .features = PPRO_FEATURES,
         .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_POPCNT,
         .xlevel = 0x80000004,
+      },
     },
     {
-        .name = "kvm32",
+      .name = "kvm32",
+      .cpudef = {
         .level = 5,
         .family = 15,
         .model = 6,
@@ -387,9 +404,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = 0,
         .xlevel = 0x80000008,
         .model_id = "Common 32-bit KVM processor"
+      },
     },
     {
-        .name = "coreduo",
+      .name = "coreduo",
+      .cpudef = {
         .level = 10,
         .family = 6,
         .model = 14,
@@ -402,45 +421,55 @@ static x86_def_t builtin_x86_defs[] = {
         .ext2_features = CPUID_EXT2_NX,
         .xlevel = 0x80000008,
         .model_id = "Genuine Intel(R) CPU           T2600  @ 2.16GHz",
+      },
     },
     {
-        .name = "486",
+      .name = "486",
+      .cpudef = {
         .level = 1,
         .family = 4,
         .model = 0,
         .stepping = 0,
         .features = I486_FEATURES,
         .xlevel = 0,
+      },
     },
     {
-        .name = "pentium",
+      .name = "pentium",
+      .cpudef = {
         .level = 1,
         .family = 5,
         .model = 4,
         .stepping = 3,
         .features = PENTIUM_FEATURES,
         .xlevel = 0,
+      },
     },
     {
-        .name = "pentium2",
+      .name = "pentium2",
+      .cpudef = {
         .level = 2,
         .family = 6,
         .model = 5,
         .stepping = 2,
         .features = PENTIUM2_FEATURES,
         .xlevel = 0,
+      },
     },
     {
-        .name = "pentium3",
+      .name = "pentium3",
+      .cpudef = {
         .level = 2,
         .family = 6,
         .model = 7,
         .stepping = 3,
         .features = PENTIUM3_FEATURES,
         .xlevel = 0,
+      },
     },
     {
-        .name = "athlon",
+      .name = "athlon",
+      .cpudef = {
         .level = 2,
         .vendor = CPUID_VENDOR_AMD,
         .family = 6,
@@ -451,9 +480,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext2_features = (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
             CPUID_EXT2_MMXEXT | CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT,
         .xlevel = 0x80000008,
+      },
     },
     {
-        .name = "n270",
+      .name = "n270",
+      .cpudef = {
         /* original is on level 10 */
         .level = 5,
         .family = 6,
@@ -470,9 +501,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel(R) Atom(TM) CPU N270   @ 1.60GHz",
+      },
     },
     {
-        .name = "Conroe",
+      .name = "Conroe",
+      .cpudef = {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -488,9 +521,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Celeron_4x0 (Conroe/Merom Class Core 2)",
+      },
     },
     {
-        .name = "Penryn",
+      .name = "Penryn",
+      .cpudef = {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -507,9 +542,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Core 2 Duo P9xxx (Penryn Class Core 2)",
+      },
     },
     {
-        .name = "Nehalem",
+      .name = "Nehalem",
+      .cpudef = {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -526,9 +563,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Core i7 9xx (Nehalem Class Core i7)",
+      },
     },
     {
-        .name = "Westmere",
+      .name = "Westmere",
+      .cpudef = {
         .level = 11,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -546,9 +585,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Westmere E56xx/L56xx/X56xx (Nehalem-C)",
+      },
     },
     {
-        .name = "SandyBridge",
+      .name = "SandyBridge",
+      .cpudef = {
         .level = 0xd,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -569,9 +610,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Xeon E312xx (Sandy Bridge)",
+      },
     },
     {
-        .name = "Opteron_G1",
+      .name = "Opteron_G1",
+      .cpudef = {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 15,
@@ -591,9 +634,11 @@ static x86_def_t builtin_x86_defs[] = {
              CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU,
         .xlevel = 0x80000008,
         .model_id = "AMD Opteron 240 (Gen 1 Class Opteron)",
+      },
     },
     {
-        .name = "Opteron_G2",
+      .name = "Opteron_G2",
+      .cpudef = {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 15,
@@ -615,9 +660,11 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
         .xlevel = 0x80000008,
         .model_id = "AMD Opteron 22xx (Gen 2 Class Opteron)",
+      },
     },
     {
-        .name = "Opteron_G3",
+      .name = "Opteron_G3",
+      .cpudef = {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 15,
@@ -641,9 +688,11 @@ static x86_def_t builtin_x86_defs[] = {
              CPUID_EXT3_ABM | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
         .xlevel = 0x80000008,
         .model_id = "AMD Opteron 23xx (Gen 3 Class Opteron)",
+      },
     },
     {
-        .name = "Opteron_G4",
+      .name = "Opteron_G4",
+      .cpudef = {
         .level = 0xd,
         .vendor = CPUID_VENDOR_AMD,
         .family = 21,
@@ -671,6 +720,7 @@ static x86_def_t builtin_x86_defs[] = {
              CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000001A,
         .model_id = "AMD Opteron 62xx class CPU",
+      },
     },
 };
 
@@ -689,12 +739,12 @@ static int cpu_x86_fill_model_id(char *str)
     return 0;
 }
 
-static int cpu_x86_fill_host(x86_def_t *x86_cpu_def)
+/* Fill X86CPUDefinition struct with host CPU features */
+static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
 {
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
     int i;
 
-    x86_cpu_def->name = "host";
     host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
     x86_cpu_def->level = eax;
     for (i = 0; i < 4; i++) {
@@ -769,7 +819,7 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
 static int check_features_against_host(X86CPU *cpu)
 {
     CPUX86State *env = &cpu->env;
-    x86_def_t host_def;
+    X86CPUDefinition host_def;
     uint32_t mask;
     int rv, i;
     struct model_features_t ft[] = {
@@ -1290,7 +1340,7 @@ x86_cpuid_set_vendor_override(Object *obj, Visitor *v, void *opaque,
     env->cpuid_vendor_override = value;
 }
 
-static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
+static void cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
 {
     CPUX86State *env = &cpu->env;
 
@@ -1396,10 +1446,10 @@ static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
     }
 }
 
-static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
+static int cpu_x86_find_by_name(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
-    x86_def_t *def;
+    X86CPUModelTableEntry *def;
 
     for (def = x86_defs; def; def = def->next) {
         if (!strcmp(cpu_model, def->name)) {
@@ -1451,12 +1501,12 @@ static void listflags(char *buf, int bufsize, uint32_t fbits,
 /* generate CPU information. */
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
-    x86_def_t *def;
+    X86CPUModelTableEntry *def;
     char buf[256];
 
     for (def = x86_defs; def; def = def->next) {
         snprintf(buf, sizeof(buf), "%s", def->name);
-        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->model_id);
+        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->cpudef.model_id);
     }
     if (kvm_enabled()) {
         (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
@@ -1475,7 +1525,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 {
     CpuDefinitionInfoList *cpu_list = NULL;
-    x86_def_t *def;
+    X86CPUModelTableEntry *def;
 
     for (def = x86_defs; def; def = def->next) {
         CpuDefinitionInfoList *entry;
@@ -1495,7 +1545,7 @@ CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 
 int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 {
-    x86_def_t def1, *def = &def1;
+    X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
     QDict *features = NULL;
     char *name = NULL;
@@ -1585,16 +1635,16 @@ void x86_cpudef_setup(void)
     static const char *model_with_versions[] = { "qemu32", "qemu64", "athlon" };
 
     for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
-        x86_def_t *def = &builtin_x86_defs[i];
+        X86CPUModelTableEntry *def = &builtin_x86_defs[i];
         def->next = x86_defs;
 
         /* Look for specific "cpudef" models that */
         /* have the QEMU version in .model_id */
         for (j = 0; j < ARRAY_SIZE(model_with_versions); j++) {
             if (strcmp(model_with_versions[j], def->name) == 0) {
-                pstrcpy(def->model_id, sizeof(def->model_id),
+                pstrcpy(def->cpudef.model_id, sizeof(def->cpudef.model_id),
                         "QEMU Virtual CPU version ");
-                pstrcat(def->model_id, sizeof(def->model_id),
+                pstrcat(def->cpudef.model_id, sizeof(def->cpudef.model_id),
                         qemu_get_version());
                 break;
             }
