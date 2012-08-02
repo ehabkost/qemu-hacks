@@ -1384,27 +1384,6 @@ static void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
     return;
 }
 
-static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def, const char *name)
-{
-    X86CPUModelTableEntry *def;
-
-    for (def = x86_defs; def; def = def->next) {
-        if (name && !strcmp(name, def->name)) {
-            break;
-        }
-    }
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-        cpu_x86_fill_host(x86_cpu_def);
-    } else if (!def) {
-        goto error;
-    } else {
-        memcpy(x86_cpu_def, &def->cpudef, sizeof(*def));
-    }
-    return 0;
-error:
-    return -1;
-}
-
 /* Set features on X86CPU object based on a QDict */
 static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
 {
@@ -1535,6 +1514,12 @@ CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
     return cpu_list;
 }
 
+/* Build class name for specific CPU model */
+static char *build_cpu_class_name(const char *model)
+{
+    return g_strdup_printf("%s.%s", TYPE_X86_CPU, model);
+}
+
 X86CPU *cpu_x86_create(const char *cpu_model)
 {
     X86CPU *cpu;
@@ -1542,22 +1527,20 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
     QDict *features;
-    char *name;
+    char *name = NULL;
+    char *class_name = NULL;
 
     compat_normalize_cpu_model(cpu_model, &name, &features, &error);
     if (error_is_set(&error)) {
         goto error;
     }
 
-    memset(def, 0, sizeof(*def));
-
-    if (cpu_x86_find_by_name(def, name) != 0) {
-        goto error;
-    }
-
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    class_name = build_cpu_class_name(name);
+    cpu = X86_CPU(object_new(class_name));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
+
+    *def = X86_CPU_GET_CLASS(cpu)->cpudef;
 
     cpudef_2_x86_cpu(cpu, def, &error);
     cpu_x86_set_props(cpu, features, &error);
@@ -1574,6 +1557,7 @@ X86CPU *cpu_x86_create(const char *cpu_model)
 
 error:
     g_free(name);
+    g_free(class_name);
     if (error_is_set(&error)) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
@@ -2234,19 +2218,55 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
     cc->reset = x86_cpu_reset;
 }
 
+static void x86_cpu_class_init(ObjectClass *oc, void *data)
+{
+    X86CPUClass *xcc = X86_CPU_CLASS(oc);
+    X86CPUDefinition *def = data;
+
+    xcc->cpudef = *def;
+}
+
 static const TypeInfo x86_cpu_type_info = {
     .name = TYPE_X86_CPU,
     .parent = TYPE_CPU,
     .instance_size = sizeof(X86CPU),
-    .instance_init = x86_cpu_initfn,
-    .abstract = false,
+    .abstract = true,
     .class_size = sizeof(X86CPUClass),
     .class_init = x86_cpu_common_class_init,
 };
 
+static void x86_cpu_register_class(const char *name, X86CPUDefinition *def)
+{
+    char *class_name = build_cpu_class_name(name);
+    TypeInfo type = {
+        .name = class_name,
+        .parent = TYPE_X86_CPU,
+        .instance_size = sizeof(X86CPU),
+        .instance_init = x86_cpu_initfn,
+        .class_size = sizeof(X86CPUClass),
+        .class_init = x86_cpu_class_init,
+        .class_data = def,
+    };
+    type_register(&type);
+    g_free(class_name);
+}
+
 static void x86_cpu_register_types(void)
 {
+    X86CPUModelTableEntry *def;
+    X86CPUDefinition host_def;
+
+    /* Abstract CPUX86 class */
     type_register_static(&x86_cpu_type_info);
+
+    /* One class for each CPU model: */
+    for (def = x86_defs; def; def = def->next) {
+        x86_cpu_register_class(def->name, &def->cpudef);
+    }
+
+    /* -cpu host class */
+    cpu_x86_fill_host(&host_def);
+    x86_cpu_register_class("host", &host_def);
 }
 
 type_init(x86_cpu_register_types)
