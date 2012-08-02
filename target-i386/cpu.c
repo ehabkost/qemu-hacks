@@ -1540,36 +1540,23 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf, const char *optarg)
     }
 }
 
-int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
-{
-    X86CPUDefinition def1, *def = &def1;
-    Error *error = NULL;
-
-    memset(def, 0, sizeof(*def));
-
-    if (cpu_x86_build_from_name(cpu, def, cpu_model, &error) < 0) {
-        goto out;
-    }
-
-out:
-    if (error_is_set(&error)) {
-        fprintf(stderr, "%s\n", error_get_pretty(error));
-        error_free(error);
-        return -1;
-    }
-    return 0;
-}
-
 X86CPU *cpu_x86_create(const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
+    X86CPUDefinition def1, *def = &def1;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
 
-    if (cpu_x86_register(cpu, cpu_model) < 0) {
+    memset(def, 0, sizeof(*def));
+
+    if (cpu_x86_build_from_name(def, cpu_model) < 0) {
+        goto error;
+    }
+
+    if (cpu_x86_init_from_def(cpu, def) < 0) {
         goto error;
     }
 
