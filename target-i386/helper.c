@@ -1157,10 +1157,6 @@ X86CPU *cpu_x86_init(const char *cpu_model)
     CPUX86State *env;
     static int inited;
 
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
-    env = &cpu->env;
-    env->cpu_model_str = cpu_model;
-
     /* init various static tables used in TCG mode */
     if (tcg_enabled() && !inited) {
         inited = 1;
@@ -1170,6 +1166,10 @@ X86CPU *cpu_x86_init(const char *cpu_model)
             cpu_set_debug_excp_handler(breakpoint_handler);
 #endif
     }
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_model;
     if (cpu_x86_register(cpu, cpu_model) < 0) {
         object_delete(OBJECT(cpu));
         return NULL;
