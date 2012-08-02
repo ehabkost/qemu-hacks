@@ -68,6 +68,8 @@ typedef struct X86CPUClass {
     /*< public >*/
 
     void (*parent_reset)(CPUState *cpu);
+
+    X86CPUDefinition cpudef;
 } X86CPUClass;
 
 /**
