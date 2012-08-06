@@ -977,6 +977,13 @@ void host_cpuid(uint32_t function, uint32_t count,
  */
 unsigned int apic_id_for_cpu(int cpu_index);
 
+/* Calculate limit for the APIC ID value, based on max_cpus
+ *
+ * On PC, FW_CFG_MAX_CPUS is not max_cpus, but the limit for the APIC IDs
+ * of all CPUs (so that of all CPUs APIC ID < MAX_CPUS).
+ */
+unsigned int apic_id_limit(void);
+
 
 /* helper.c */
 int cpu_x86_handle_mmu_fault(CPUX86State *env, target_ulong addr,
