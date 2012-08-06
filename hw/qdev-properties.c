@@ -1087,25 +1087,17 @@ void error_set_from_qdev_prop_error(Error **errp, int ret, DeviceState *dev,
     }
 }
 
-int qdev_prop_parse(DeviceState *dev, const char *name, const char *value)
+void qdev_prop_parse(DeviceState *dev, const char *name, const char *value,
+                     Error **errp)
 {
     char *legacy_name;
-    Error *err = NULL;
-
     legacy_name = g_strdup_printf("legacy-%s", name);
     if (object_property_get_type(OBJECT(dev), legacy_name, NULL)) {
-        object_property_parse(OBJECT(dev), value, legacy_name, &err);
+        object_property_parse(OBJECT(dev), value, legacy_name, errp);
     } else {
-        object_property_parse(OBJECT(dev), value, name, &err);
+        object_property_parse(OBJECT(dev), value, name, errp);
     }
     g_free(legacy_name);
-
-    if (err) {
-        qerror_report_err(err);
-        error_free(err);
-        return -1;
-    }
-    return 0;
 }
 
 void qdev_prop_set_bit(DeviceState *dev, const char *name, bool value)
@@ -1250,11 +1242,14 @@ void qdev_prop_set_globals(DeviceState *dev)
 
     do {
         GlobalProperty *prop;
+        Error *err = NULL;
         QTAILQ_FOREACH(prop, &global_props, next) {
             if (strcmp(object_class_get_name(class), prop->driver) != 0) {
                 continue;
             }
-            if (qdev_prop_parse(dev, prop->property, prop->value) != 0) {
+            qdev_prop_parse(dev, prop->property, prop->value, &err);
+            if (err) {
+                qerror_report_err(err);
                 exit(1);
             }
         }
