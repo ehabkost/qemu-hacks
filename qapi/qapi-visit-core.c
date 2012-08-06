@@ -311,3 +311,14 @@ void input_type_enum(Visitor *v, int *obj, const char *strings[],
     g_free(enum_str);
     *obj = value;
 }
+
+void visit_type_freq(Visitor *v, int64_t *obj, const char *name, Error **errp)
+{
+    if (!error_is_set(errp)) {
+        if (v->type_freq) {
+            v->type_freq(v, obj, name, errp);
+        } else {
+            v->type_int(v, obj, name, errp);
+        }
+    }
+}
