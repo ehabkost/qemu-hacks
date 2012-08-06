@@ -582,6 +582,11 @@ int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
     return index;
 }
 
+static unsigned int apic_id_limit(void)
+{
+    return apic_id_for_cpu(max_cpus - 1) + 1;
+}
+
 static void *bochs_bios_init(void)
 {
     void *fw_cfg;
@@ -589,6 +594,7 @@ static void *bochs_bios_init(void)
     size_t smbios_len;
     uint64_t *numa_fw_cfg;
     int i, j;
+    unsigned int max_apic_id = apic_id_limit();
 
     register_ioport_write(0x8900, 1, 1, bochs_bios_write, NULL);
 
@@ -597,7 +603,21 @@ static void *bochs_bios_init(void)
     register_ioport_write(0x502, 1, 2, bochs_bios_write, NULL);
 
     fw_cfg = fw_cfg_init(BIOS_CFG_IOPORT, BIOS_CFG_IOPORT + 1, 0, 0);
-    fw_cfg_add_i16(fw_cfg, FW_CFG_MAX_CPUS, (uint16_t)max_cpus);
+    /* FW_CFG_MAX_CPUS is a bit confusing/problematic on x86:
+     *
+     * SeaBIOS needs FW_CFG_MAX_CPUS for CPU hotplug, but the CPU hotplug
+     * QEMU<->SeaBIOS interface is not based on the "CPU index", but on the APIC
+     * ID of hotplugged CPUs[1]. This means that FW_CFG_MAX_CPUS is not the
+     * "maximum number of CPUs", but the "limit to the APIC ID values SeaBIOS
+     * may see".
+     *
+     * So, this means we must not use max_cpus, here, but the maximum possible
+     * APIC ID value, plus one.
+     *
+     * [1] The only kind of "CPU identifier" used between SeaBIOS and QEMU is
+     *     the APIC ID, not the "CPU index"
+     */
+    fw_cfg_add_i16(fw_cfg, FW_CFG_MAX_CPUS, (uint16_t)max_apic_id);
     fw_cfg_add_i32(fw_cfg, FW_CFG_ID, 1);
     fw_cfg_add_i64(fw_cfg, FW_CFG_RAM_SIZE, (uint64_t)ram_size);
     fw_cfg_add_bytes(fw_cfg, FW_CFG_ACPI_TABLES, (uint8_t *)acpi_tables,
@@ -617,21 +637,24 @@ static void *bochs_bios_init(void)
      * of nodes, one word for each VCPU->node and one word for each node to
      * hold the amount of memory.
      */
-    numa_fw_cfg = g_malloc0((1 + max_cpus + nb_numa_nodes) * 8);
+    numa_fw_cfg = g_malloc0((1 + max_apic_id + nb_numa_nodes) * 8);
     numa_fw_cfg[0] = cpu_to_le64(nb_numa_nodes);
-    for (i = 0; i < max_cpus; i++) {
+    unsigned int cpu_idx;
+    for (cpu_idx = 0; cpu_idx < max_cpus; cpu_idx++) {
+        unsigned int apic_id = apic_id_for_cpu(cpu_idx);
+        assert(apic_id < max_apic_id);
         for (j = 0; j < nb_numa_nodes; j++) {
-            if (test_bit(i, node_cpumask[j])) {
-                numa_fw_cfg[i + 1] = cpu_to_le64(j);
+            if (test_bit(cpu_idx, node_cpumask[j])) {
+                numa_fw_cfg[apic_id + 1] = cpu_to_le64(j);
                 break;
             }
         }
     }
     for (i = 0; i < nb_numa_nodes; i++) {
-        numa_fw_cfg[max_cpus + 1 + i] = cpu_to_le64(node_mem[i]);
+        numa_fw_cfg[max_apic_id + 1 + i] = cpu_to_le64(node_mem[i]);
     }
     fw_cfg_add_bytes(fw_cfg, FW_CFG_NUMA, (uint8_t *)numa_fw_cfg,
-                     (1 + max_cpus + nb_numa_nodes) * 8);
+                     (1 + max_apic_id + nb_numa_nodes) * 8);
 
     return fw_cfg;
 }
