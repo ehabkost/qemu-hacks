@@ -569,7 +569,7 @@ static void configure_rtc(QemuOpts *opts)
                 { /* end of list */ }
             };
 
-            qdev_prop_register_global_list(slew_lost_ticks);
+            qemu_globals_register_list(slew_lost_ticks);
         } else if (!strcmp(value, "none")) {
             /* discard is default */
         } else {
@@ -3036,7 +3036,7 @@ int main(int argc, char **argv, char **envp)
                     { /* end of list */ }
                 };
 
-                qdev_prop_register_global_list(slew_lost_ticks);
+                qemu_globals_register_list(slew_lost_ticks);
                 break;
             }
             case QEMU_OPTION_acpitable:
@@ -3607,7 +3607,7 @@ int main(int argc, char **argv, char **envp)
     }
 
     if (machine->compat_props) {
-        qdev_prop_register_global_list(machine->compat_props);
+        qemu_globals_register_list(machine->compat_props);
     }
     qemu_add_globals();
 
