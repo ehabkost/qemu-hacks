@@ -28,7 +28,7 @@ static void qdev_prop_register_global(GlobalProperty *prop)
     QTAILQ_INSERT_TAIL(&global_props, prop, next);
 }
 
-void qdev_prop_register_global_list(GlobalProperty *props)
+void qemu_globals_register_list(GlobalProperty *props)
 {
     int i;
 
