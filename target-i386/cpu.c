@@ -1146,7 +1146,8 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
-static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *cpu_model)
+static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
+                                const char *cpu_model, Error **errp)
 {
     unsigned int i;
     x86_def_t *def;
@@ -1319,6 +1320,9 @@ static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *cpu_model)
 
 error:
     g_free(s);
+    if (!error_is_set(errp)) {
+        error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
+    }
     return -1;
 }
 
@@ -1431,8 +1435,10 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_find_by_name(def, cpu_model) < 0)
-        return -1;
+    if (cpu_x86_find_by_name(cpu, def, cpu_model, &error) < 0) {
+        goto out;
+    }
+
     if (def->vendor1) {
         env->cpuid_vendor1 = def->vendor1;
         env->cpuid_vendor2 = def->vendor2;
@@ -1486,6 +1492,8 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 #endif
     }
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
+
+out:
     if (error) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
