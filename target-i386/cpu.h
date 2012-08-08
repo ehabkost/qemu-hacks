@@ -639,6 +639,18 @@ typedef struct {
 
 #define NB_MMU_MODES 2
 
+typedef enum FeatureWord {
+    CPUID_1_EDX,         /* CPUID[1].EDX */
+    CPUID_1_ECX,         /* CPUID[1].ECX */
+    CPUID_7_0_EBX,       /* CPUID[EAX=7,ECX=0].EBX */
+    CPUID_8000_0001_EDX, /* CPUID[8000_0001].EDX */
+    CPUID_8000_0001_ECX, /* CPUID[8000_0001].ECX */
+    CPUID_C000_0001_EDX, /* CPUID[C000_0001].EDX */
+    CPUID_KVM,           /* CPUID[4000_0001].EAX (KVM_CPUID_FEATURES) */
+    CPUID_SVM,           /* CPUID[8000_000A].EDX */
+    FEATURE_WORDS,
+} FeatureWord;
+
 typedef enum TPRAccess {
     TPR_ACCESS_READ,
     TPR_ACCESS_WRITE,
