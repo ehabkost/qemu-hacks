@@ -160,6 +160,39 @@ PropertyInfo qdev_prop_kvmclock = {
 
 #endif
 
+static void x86_get_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    int64_t value = hyperv_get_spinlock_retries();
+
+    visit_type_int(v, &value, name, errp);
+}
+
+static void x86_set_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    int64_t value;
+
+    visit_type_int(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    if (!value) {
+        error_setg(errp, "Property '%s.%s' doesn't take value '%s'",
+                   object_get_typename(obj), name, "0");
+        return;
+    }
+    hyperv_set_spinlock_retries(value);
+}
+
+PropertyInfo qdev_prop_spinlocks = {
+    .name  = "int",
+    .get   = x86_get_hv_spinlocks,
+    .set   = x86_set_hv_spinlocks,
+};
+#define DEFINE_PROP_HV_SPINLOCKS(_n)                                           \
+    DEFINE_GENERIC_PROP(_n, qdev_prop_spinlocks)
+
 #define FEAT(_name, _field, _bit, _val) \
     DEFINE_PROP_BIT(_name, X86CPU, _field, _bit, _val)
 
@@ -310,6 +343,7 @@ static Property cpu_x86_properties[] = {
                     0, false),
     DEFINE_PROP_UINT32("xlevel", X86CPU, env.cpuid_xlevel, 0),
     DEFINE_PROP_UINT32("level", X86CPU, env.cpuid_level, 0),
+    DEFINE_PROP_HV_SPINLOCKS("hv_spinlocks"),
     DEFINE_PROP_END_OF_LIST(),
  };
 
