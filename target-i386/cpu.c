@@ -1195,7 +1195,7 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     const int64_t max = INT64_MAX;
     int64_t value;
 
-    visit_type_int(v, &value, name, errp);
+    visit_type_freq(v, &value, name, errp);
     if (error_is_set(errp)) {
         return;
     }
