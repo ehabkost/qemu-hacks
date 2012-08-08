@@ -107,8 +107,8 @@ typedef struct model_features_t {
     uint32_t cpuid;
     } model_features_t;
 
-int check_cpuid = 0;
-int enforce_cpuid = 0;
+bool check_cpuid;
+bool enforce_cpuid;
 
 void host_cpuid(uint32_t function, uint32_t count,
                 uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
@@ -799,19 +799,20 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
  * their way to the guest.  Note: ft[].check_feat ideally should be
  * specified via a guest_def field to suppress report of extraneous flags.
  */
-static int check_features_against_host(x86_def_t *guest_def)
+static int check_features_against_host(X86CPU *cpu)
 {
+    CPUX86State *env = &cpu->env;
     x86_def_t host_def;
     uint32_t mask;
     int rv, i;
     struct model_features_t ft[] = {
-        {&guest_def->features, &host_def.features,
+        {&env->cpuid_features, &host_def.features,
             ~0, feature_name, 0x00000000},
-        {&guest_def->ext_features, &host_def.ext_features,
+        {&env->cpuid_ext_features, &host_def.ext_features,
             ~CPUID_EXT_HYPERVISOR, ext_feature_name, 0x00000001},
-        {&guest_def->ext2_features, &host_def.ext2_features,
+        {&env->cpuid_ext2_features, &host_def.ext2_features,
             ~PPRO_FEATURES, ext2_feature_name, 0x80000000},
-        {&guest_def->ext3_features, &host_def.ext3_features,
+        {&env->cpuid_ext3_features, &host_def.ext3_features,
             ~CPUID_EXT3_SVM, ext3_feature_name, 0x80000001}};
 
     cpu_x86_fill_host(&host_def);
@@ -1248,6 +1249,43 @@ static void x86_set_hv_vapic(Object *obj, Visitor *v, void *opaque,
 }
 #endif
 
+static void x86_cpuid_get_check(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    visit_type_bool(v, &check_cpuid, name, errp);
+}
+
+static void x86_cpuid_set_check(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    bool value;
+
+    visit_type_bool(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    check_cpuid = value;
+}
+
+static void x86_cpuid_get_enforce(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    visit_type_bool(v, &enforce_cpuid, name, errp);
+}
+
+static void x86_cpuid_set_enforce(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    bool value;
+
+    visit_type_bool(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    enforce_cpuid = value;
+    object_property_set_bool(obj, value, "check", errp);
+}
+
 static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
 {
     CPUX86State *env = &cpu->env;
@@ -1443,10 +1481,6 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
     x86_cpu_def->ext3_features &= ~minus_ext3_features;
     x86_cpu_def->kvm_features &= ~minus_kvm_features;
     x86_cpu_def->svm_features &= ~minus_svm_features;
-    if (check_cpuid) {
-        if (check_features_against_host(x86_cpu_def) && enforce_cpuid)
-            goto error;
-    }
     g_free(s);
     return 0;
 
@@ -2109,6 +2143,12 @@ void x86_cpu_realize(Object *obj, Error **errp)
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
 
+    if (check_cpuid && check_features_against_host(cpu)
+        && enforce_cpuid) {
+        error_set(errp, QERR_PERMISSION_DENIED);
+        return;
+    }
+
     if (!kvm_enabled()) {
         env->cpuid_features &= TCG_FEATURES;
         env->cpuid_ext_features &= TCG_EXT_FEATURES;
@@ -2162,6 +2202,12 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "tsc-frequency", "int",
                         x86_cpuid_get_tsc_freq,
                         x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
+    object_property_add(obj, "check", "bool",
+                        x86_cpuid_get_check,
+                        x86_cpuid_set_check, NULL, NULL, NULL);
+    object_property_add(obj, "enforce", "bool",
+                        x86_cpuid_get_enforce,
+                        x86_cpuid_set_enforce, NULL, NULL, NULL);
 #if !defined(CONFIG_USER_ONLY)
     object_property_add(obj, "hv_spinlocks", "int",
                         x86_get_hv_spinlocks,
