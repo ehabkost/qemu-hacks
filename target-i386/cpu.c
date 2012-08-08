@@ -193,6 +193,34 @@ PropertyInfo qdev_prop_spinlocks = {
 #define DEFINE_PROP_HV_SPINLOCKS(_n)                                           \
     DEFINE_GENERIC_PROP(_n, qdev_prop_spinlocks)
 
+static void x86_get_hv_relaxed(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    bool value = hyperv_relaxed_timing_enabled();
+
+    visit_type_bool(v, &value, name, errp);
+}
+
+static void x86_set_hv_relaxed(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    bool value;
+
+    visit_type_bool(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    hyperv_enable_relaxed_timing(value);
+}
+
+PropertyInfo qdev_prop_hv_relaxed = {
+    .name  = "boolean",
+    .get   = x86_get_hv_relaxed,
+    .set   = x86_set_hv_relaxed,
+};
+#define DEFINE_PROP_HV_RELAXED(_n)                                             \
+    DEFINE_GENERIC_PROP(_n, qdev_prop_hv_relaxed)
+
 #define FEAT(_name, _field, _bit, _val) \
     DEFINE_PROP_BIT(_name, X86CPU, _field, _bit, _val)
 
@@ -344,6 +372,7 @@ static Property cpu_x86_properties[] = {
     DEFINE_PROP_UINT32("xlevel", X86CPU, env.cpuid_xlevel, 0),
     DEFINE_PROP_UINT32("level", X86CPU, env.cpuid_level, 0),
     DEFINE_PROP_HV_SPINLOCKS("hv_spinlocks"),
+    DEFINE_PROP_HV_RELAXED("hv_relaxed"),
     DEFINE_PROP_END_OF_LIST(),
  };
 
