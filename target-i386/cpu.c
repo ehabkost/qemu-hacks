@@ -172,17 +172,6 @@ static const char *register_names[] = {
     [R_EDI] = "edi",
 };
 
-/* collects per-function cpuid data
- */
-typedef struct model_features_t {
-    FeatureWord word;
-    uint32_t check_feat;
-    const char **flag_names;
-    uint32_t cpuid;       /* CPUID EAX input value */
-    uint32_t cpuid_index; /* CPUID ECX input value */
-    int cpuid_reg;        /* CPUID output register (a R_ExX constant) */
-} model_features_t;
-
 bool check_cpuid;
 bool enforce_cpuid;
 
@@ -304,14 +293,43 @@ typedef struct X86CPUDefinition {
 } X86CPUDefinition;
 
 typedef struct FeatureWordInfo {
-    const char **feat_names;
+    const char **feat_names; /* Array of feature names for each bit */
+    uint32_t cpuid;          /* CPUID EAX input value */
+    uint32_t cpuid_index;    /* CPUID ECX input value */
+    int cpuid_reg;           /* CPUID output register (a R_ExX constant) */
+    uint32_t bits_to_check;  /* bits to check against host */
 } FeatureWordInfo;
 
 static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
-    [CPUID_1_EDX] = { .feat_names = feature_name },
-    [CPUID_1_ECX] = { .feat_names = ext_feature_name },
-    [CPUID_8000_0001_EDX] = { .feat_names = ext2_feature_name },
-    [CPUID_8000_0001_ECX] = { .feat_names = ext3_feature_name },
+    [CPUID_1_EDX] = {
+        .cpuid = 0x00000001, .cpuid_reg = R_EDX,
+        .feat_names = feature_name,
+        /* check all feature bits against host */
+        .bits_to_check = ~0,
+    },
+    [CPUID_1_ECX] = {
+        .cpuid = 0x00000001, .cpuid_reg = R_ECX,
+        .feat_names = ext_feature_name,
+        /* CPUID_EXT_HYPERVISOR is not set on the host, so it's not checked */
+        .bits_to_check = ~CPUID_EXT_HYPERVISOR,
+    },
+    [CPUID_8000_0001_EDX] = {
+        .cpuid = 0x80000001, .cpuid_reg = R_EDX,
+        .feat_names = ext2_feature_name,
+        /* Probably this can be ~0, too, once check/enforce is based on
+         * "capability to virtualize/emulate the feature", not "presence of
+         * feature on host CPU"
+         */
+        .bits_to_check = ~PPRO_FEATURES,
+    },
+    [CPUID_8000_0001_ECX] = {
+        .cpuid = 0x80000001, .cpuid_reg = R_ECX,
+        .feat_names = ext3_feature_name,
+        /* Probably this can be ~0, too, once check/enforce is based
+         * "capability to virtualize the feature", not "presence on host CPU"
+         */
+        .bits_to_check = ~CPUID_EXT3_SVM,
+    },
     [CPUID_KVM]   = { .feat_names = kvm_feature_name },
     [CPUID_SVM]   = { .feat_names = svm_feature_name },
 };
@@ -859,9 +877,10 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
     return 0;
 }
 
-static int unavailable_host_features(struct model_features_t *f, uint32_t mask)
+static int unavailable_host_features(FeatureWord w, uint32_t mask)
 {
     int i;
+    FeatureWordInfo *f = &feature_word_info[w];
 
     for (i = 0; i < 32; ++i) {
         if (1 << i & mask) {
@@ -869,7 +888,7 @@ static int unavailable_host_features(struct model_features_t *f, uint32_t mask)
                 "CPUID[EAX=%04x_%04xh,ECX=%xh].%s, flag '%s' [0x%08x]\n",
                 f->cpuid >> 16, f->cpuid & 0xffff, f->cpuid_index,
                 register_names[f->cpuid_reg],
-                f->flag_names[i] ? f->flag_names[i] : "[reserved]", mask);
+                f->feat_names[i] ? f->feat_names[i] : "[reserved]", mask);
         }
     }
     return 0;
@@ -884,26 +903,20 @@ static int check_features_against_host(X86CPU *cpu)
     CPUX86State *env = &cpu->env;
     X86CPUDefinition host_def;
     uint32_t mask;
-    int rv, i;
-    struct model_features_t ft[] = {
-        {CPUID_1_EDX, ~0, feature_name,
-            0x00000001, 0, R_EDX},
-        {CPUID_1_ECX, ~CPUID_EXT_HYPERVISOR, ext_feature_name,
-            0x00000001, 0, R_ECX},
-        {CPUID_8000_0001_EDX, ~PPRO_FEATURES, ext2_feature_name,
-            0x80000001, 0, R_EDX},
-        {CPUID_8000_0001_ECX, ~CPUID_EXT3_SVM, ext3_feature_name,
-            0x80000001, 0, R_ECX}};
+    int i, rv = 0;
 
     cpu_x86_fill_host(&host_def);
-    for (rv = 0, i = 0; i < ARRAY_SIZE(ft); ++i) {
-        FeatureWord w = ft[i].word;
-        uint32_t guest_feat = env->feature_words[w];
-        uint32_t host_feat = host_def.feature_words[w];
+    for (i = 0; i < FEATURE_WORDS; ++i) {
+        uint32_t guest_feat = env->feature_words[i];
+        uint32_t host_feat = host_def.feature_words[i];
+        uint32_t bits = feature_word_info[i].bits_to_check;
+        if (!bits)
+            continue;
+
         for (mask = 1; mask; mask <<= 1) {
-            if ((ft[i].check_feat & mask) && (guest_feat & mask) &&
+            if ((bits & mask) && (guest_feat & mask) &&
                     !(host_feat & mask)) {
-                unavailable_host_features(&ft[i], mask);
+                unavailable_host_features(i, mask);
                 rv = 1;
             }
         }
