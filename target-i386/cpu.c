@@ -253,6 +253,7 @@ typedef struct FeatureWordInfo {
     uint32_t cpuid;          /* CPUID leaf */
     int reg;                 /* register (R_EAX, R_EBX, R_ECX, R_EDX) */
     uint32_t bits_to_check;  /* bits to check against host */
+    const char *cfg_field;   /* Configuration field name */
 } FeatureWordInfo;
 
 static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
@@ -260,21 +261,25 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         .cpuid = 0x00000001, .reg = R_EDX,
         .feat_names = feature_name,
         .bits_to_check = ~0,
+        .cfg_field = "feature_edx",
     },
     [CPUID_1_ECX] = {
         .cpuid = 0x00000001, .reg = R_ECX,
         .feat_names = ext_feature_name,
         .bits_to_check = ~CPUID_EXT_HYPERVISOR,
+        .cfg_field = "feature_ecx",
     },
     [CPUID_8000_0001_EDX] = {
         .cpuid = 0x80000001, .reg = R_EDX,
         .feat_names = ext2_feature_name,
         .bits_to_check = ~PPRO_FEATURES,
+        .cfg_field = "extfeature_edx",
     },
     [CPUID_8000_0001_ECX] = {
         .cpuid = 0x80000001, .reg = R_ECX,
         .feat_names = ext3_feature_name,
         .bits_to_check = ~CPUID_EXT3_SVM,
+        .cfg_field = "extfeature_ecx",
     },
     [CPUID_KVM]   = { .feat_names = kvm_feature_name },
     [CPUID_SVM]   = { .feat_names = svm_feature_name },
@@ -1490,6 +1495,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
     X86CPUModelTableEntry *def;
     char buf[256];
+    FeatureWord w;
 
     for (def = x86_defs; def; def = def->next) {
         snprintf(buf, sizeof (buf), def->is_builtin ? "[%s]": "%s", def->name);
@@ -1499,14 +1505,13 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
         (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
     }
     (*cpu_fprintf)(f, "\nRecognized CPUID flags:\n");
-    listflags(buf, sizeof(buf), (uint32_t)~0, feature_name, 1);
-    (*cpu_fprintf)(f, "  feature_edx: %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext_feature_name, 1);
-    (*cpu_fprintf)(f, "  feature_ecx: %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext2_feature_name, 1);
-    (*cpu_fprintf)(f, "  extfeature_edx: %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext3_feature_name, 1);
-    (*cpu_fprintf)(f, "  extfeature_ecx: %s\n", buf);
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        FeatureWordInfo *fw = &feature_word_info[w];
+        if (!fw->cfg_field)
+            continue;
+        listflags(buf, sizeof(buf), (uint32_t)~0, fw->feat_names, 1);
+        (*cpu_fprintf)(f, "  %s: %s\n", fw->cfg_field, buf);
+    }
 }
 
 CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
