@@ -1500,13 +1500,13 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
     }
     (*cpu_fprintf)(f, "\nRecognized CPUID flags:\n");
     listflags(buf, sizeof(buf), (uint32_t)~0, feature_name, 1);
-    (*cpu_fprintf)(f, "  f_edx: %s\n", buf);
+    (*cpu_fprintf)(f, "  feature_edx: %s\n", buf);
     listflags(buf, sizeof(buf), (uint32_t)~0, ext_feature_name, 1);
-    (*cpu_fprintf)(f, "  f_ecx: %s\n", buf);
+    (*cpu_fprintf)(f, "  feature_ecx: %s\n", buf);
     listflags(buf, sizeof(buf), (uint32_t)~0, ext2_feature_name, 1);
-    (*cpu_fprintf)(f, "  extf_edx: %s\n", buf);
+    (*cpu_fprintf)(f, "  extfeature_edx: %s\n", buf);
     listflags(buf, sizeof(buf), (uint32_t)~0, ext3_feature_name, 1);
-    (*cpu_fprintf)(f, "  extf_ecx: %s\n", buf);
+    (*cpu_fprintf)(f, "  extfeature_ecx: %s\n", buf);
 }
 
 CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
