@@ -220,6 +220,18 @@ static bool lookup_feature(uint32_t *pval, const char *s, const char *e,
     return found;
 }
 
+typedef struct FeatureWordInfo {
+    const char **feat_names;
+} FeatureWordInfo;
+
+static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
+    [CPUID_1_EDX] = { .feat_names = feature_name },
+    [CPUID_1_ECX] = { .feat_names = ext_feature_name },
+    [CPUID_8000_0001_EDX] = { .feat_names = ext2_feature_name },
+    [CPUID_8000_0001_ECX] = { .feat_names = ext3_feature_name },
+    [CPUID_KVM]   = { .feat_names = kvm_feature_name },
+    [CPUID_SVM]   = { .feat_names = svm_feature_name },
+};
 
 #define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
 #define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
