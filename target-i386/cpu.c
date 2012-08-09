@@ -306,6 +306,8 @@ static Property cpu_x86_properties[] = {
     FEAT("f-rdseed", env.cpuid_7_0_ebx_features, 18, false),
     FEAT("f-adx", env.cpuid_7_0_ebx_features, 19, false),
     FEAT("f-smap", env.cpuid_7_0_ebx_features, 20, false),
+    DEFINE_PROP_BIT("vendor-override", X86CPU, env.cpuid_vendor_override,
+                    0, false),
     DEFINE_PROP_END_OF_LIST(),
  };
 
@@ -1331,7 +1333,6 @@ static void x86_cpuid_set_vendor(Object *obj, const char *value,
         env->cpuid_vendor2 |= ((uint8_t)value[i + 4]) << (8 * i);
         env->cpuid_vendor3 |= ((uint8_t)value[i + 8]) << (8 * i);
     }
-    env->cpuid_vendor_override = 1;
 }
 
 static char *x86_cpuid_get_model_id(Object *obj, Error **errp)
@@ -1410,7 +1411,9 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     env->cpuid_vendor1 = def->vendor1;
     env->cpuid_vendor2 = def->vendor2;
     env->cpuid_vendor3 = def->vendor3;
-    env->cpuid_vendor_override = def->vendor_override;
+    if (def->vendor_override) {
+        object_property_set_bool(OBJECT(cpu), true, "vendor-override", errp);
+    }
     object_property_set_int(OBJECT(cpu), def->level, "level", errp);
     object_property_set_int(OBJECT(cpu), def->family, "family", errp);
     object_property_set_int(OBJECT(cpu), def->model, "model", errp);
