@@ -1647,8 +1647,21 @@ static int cpudef_setfield(const char *name, const char *str, void *opaque)
     X86CPUModelTableEntry *deft = opaque;
     X86CPUDefinition *def = &deft->cpudef;
     int err = 0;
+    int w;
 
-    if (!strcmp(name, "name")) {
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        FeatureWordInfo *fw = &feature_word_info[w];
+        if (!fw->cfg_field)
+            continue;
+        if (!strcmp(name, fw->cfg_field)) {
+            setfeatures(&def->feature_words[w], str, fw->feat_names, &err);
+            break;
+        }
+    }
+
+    if (w < FEATURE_WORDS) {
+        /* already set above, do nothing */
+    } else if (!strcmp(name, "name")) {
         g_free((void *)deft->name);
         deft->name = g_strdup(str);
     } else if (!strcmp(name, "model_id")) {
@@ -1663,18 +1676,6 @@ static int cpudef_setfield(const char *name, const char *str, void *opaque)
         setscalar(&def->model, str, &err)
     } else if (!strcmp(name, "stepping")) {
         setscalar(&def->stepping, str, &err)
-    } else if (!strcmp(name, "feature_edx")) {
-        setfeatures(&def->feature_words[CPUID_1_EDX], str,
-                    feature_name, &err);
-    } else if (!strcmp(name, "feature_ecx")) {
-        setfeatures(&def->feature_words[CPUID_1_ECX], str,
-                    ext_feature_name, &err);
-    } else if (!strcmp(name, "extfeature_edx")) {
-        setfeatures(&def->feature_words[CPUID_8000_0001_EDX], str,
-                    ext2_feature_name, &err);
-    } else if (!strcmp(name, "extfeature_ecx")) {
-        setfeatures(&def->feature_words[CPUID_8000_0001_ECX], str,
-                    ext3_feature_name, &err);
     } else if (!strcmp(name, "xlevel")) {
         setscalar(&def->xlevel, str, &err)
     } else {
