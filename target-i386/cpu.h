@@ -764,19 +764,14 @@ typedef struct CPUX86State {
     uint32_t cpuid_vendor2;
     uint32_t cpuid_vendor3;
     uint32_t cpuid_version;
-    uint32_t cpuid_features;
-    uint32_t cpuid_ext_features;
     uint32_t cpuid_xlevel;
     uint32_t cpuid_model[12];
-    uint32_t cpuid_ext2_features;
-    uint32_t cpuid_ext3_features;
     uint32_t cpuid_apic_id;
     bool cpuid_vendor_override;
     /* Store the results of Centaur's CPUID instructions */
     uint32_t cpuid_xlevel2;
-    uint32_t cpuid_ext4_features;
-    /* Flags from CPUID[EAX=7,ECX=0].EBX */
-    uint32_t cpuid_7_0_ebx;
+
+    uint32_t feature_words[FEATURE_WORDS];
 
     /* MTRRs */
     uint64_t mtrr_fixed[11];
@@ -790,8 +785,6 @@ typedef struct CPUX86State {
     uint8_t soft_interrupt;
     uint8_t has_error_code;
     uint32_t sipi_vector;
-    uint32_t cpuid_kvm_features;
-    uint32_t cpuid_svm_features;
     bool tsc_valid;
     int tsc_khz;
     void *kvm_xsave_buf;
