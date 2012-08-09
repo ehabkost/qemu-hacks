@@ -735,7 +735,7 @@ int main(int argc, char **argv)
             break;
         case 'b': {
             char **list_head, **list;
-            if (is_help_option(optarg)) {
+            if (*optarg == '?') {
                 list_head = list = qmp_get_command_list();
                 while (*list != NULL) {
                     printf("%s\n", *list);
