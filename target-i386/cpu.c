@@ -1440,6 +1440,90 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     }
 }
 
+/*
+ * convert legacy cpumodel string to cpu_name string and
+ * a uniform set of custom features that could be applied to CPU
+ * using object_property_parse()
+ */
+static void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
+                                        QDict **features, Error **errp)
+{
+    int i;
+    gchar **feat_array = g_strsplit(cpu_model, ",", 0);
+    *features = qdict_new();
+
+    g_assert(feat_array[0] != NULL);
+    *cpu_name = g_strdup(feat_array[0]);
+
+    for (i = 1; feat_array[i]; ++i) {
+        gchar *featurestr = feat_array[i];
+        char *val;
+        if (featurestr[0] == '+' || featurestr[0] == '-') {
+            const gchar *feat = featurestr + 1;
+            gchar *cpuid_fname = g_strconcat("f-", feat, NULL);
+
+            if (qdev_prop_find(DEVICE_CLASS(object_class_by_name(TYPE_X86_CPU)),
+                               cpuid_fname)) {
+                feat = cpuid_fname;
+            }
+
+            if (featurestr[0] == '+') {
+                /*
+                 * preseve legacy behaviour, if feature was disabled once
+                 * do not allow to enable it again
+                 */
+                if (!qdict_haskey(*features, feat)) {
+                    qdict_put(*features, feat, qstring_from_str("on"));
+                }
+            } else {
+                qdict_put(*features, feat, qstring_from_str("off"));
+            }
+
+            g_free(cpuid_fname);
+        } else {
+            val = strchr(featurestr, '=');
+            if (val) {
+                *val = 0; val++;
+                if (!strcmp(featurestr, "vendor")) {
+                    qdict_put(*features, "vendor-override",
+                              qstring_from_str("on"));
+                    qdict_put(*features, featurestr, qstring_from_str(val));
+                } else if (!strcmp(featurestr, "tsc_freq")) {
+                    qdict_put(*features, "tsc-frequency",
+                              qstring_from_str(val));
+                } else if (!strcmp(featurestr, "model_id")) {
+                    qdict_put(*features, "model-id",
+                              qstring_from_str(val));
+                } else if (!strcmp(featurestr, "xlevel")) {
+                    uint32_t numvalue;
+                    char *err;
+                    numvalue = strtoul(val, &err, 0);
+                    if (!*val || *err) {
+                        error_setg(errp, "bad xlevel value %s", val);
+                        goto out;
+                    }
+                    if (numvalue < 0x80000000) {
+                        numvalue += 0x80000000;
+                        fprintf(stderr, "warning: xlevel: %s is too small,"
+                                "correcting it to: %u\n", val, numvalue);
+                    }
+                    val = g_strdup_printf("%u", numvalue);
+                    qdict_put(*features, featurestr, qstring_from_str(val));
+                    g_free(val);
+                } else {
+                    qdict_put(*features, featurestr, qstring_from_str(val));
+                }
+            } else {
+                qdict_put(*features, featurestr, qstring_from_str("on"));
+            }
+        }
+    }
+
+out:
+    g_strfreev(feat_array);
+    return;
+}
+
 static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
 {
     x86_def_t *def;
