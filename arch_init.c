@@ -679,7 +679,7 @@ void select_soundhw(const char *optarg)
 {
     struct soundhw *c;
 
-    if (is_help_option(optarg)) {
+    if (*optarg == '?') {
     show_valid_cards:
 
         printf("Valid sound card names (comma separated):\n");
@@ -687,7 +687,7 @@ void select_soundhw(const char *optarg)
             printf ("%-11s %s\n", c->name, c->descr);
         }
         printf("\n-soundhw all will enable all of the above\n");
-        exit(!is_help_option(optarg));
+        exit(*optarg != '?');
     }
     else {
         size_t l;

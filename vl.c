@@ -2085,7 +2085,7 @@ static QEMUMachine *machine_parse(const char *name)
         printf("%-20s %s%s\n", m->name, m->desc,
                m->is_default ? " (default)" : "");
     }
-    exit(!name || !is_help_option(name));
+    exit(!name || *name != '?');
 }
 
 static int tcg_init(void)
@@ -3215,7 +3215,7 @@ int main(int argc, char **argv, char **envp)
      */
     cpudef_init();
 
-    if (cpu_model && is_help_option(cpu_model)) {
+    if (cpu_model && *cpu_model == '?') {
         list_cpus(stdout, &fprintf, cpu_model);
         exit(0);
     }
