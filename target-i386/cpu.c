@@ -1396,6 +1396,7 @@ static int cpu_x86_init_from_def(X86CPU *cpu, X86CPUDefinition *def)
 {
     CPUX86State *env = &cpu->env;
     Error *error = NULL;
+    int w;
 
     if (def->vendor1) {
         env->cpuid_vendor1 = def->vendor1;
@@ -1411,15 +1412,10 @@ static int cpu_x86_init_from_def(X86CPU *cpu, X86CPUDefinition *def)
     object_property_set_int(OBJECT(cpu), def->family, "family", &error);
     object_property_set_int(OBJECT(cpu), def->model, "model", &error);
     object_property_set_int(OBJECT(cpu), def->stepping, "stepping", &error);
-    env->feature_words[CPUID_1_EDX] = def->feature_words[CPUID_1_EDX];
-    env->feature_words[CPUID_1_ECX] = def->feature_words[CPUID_1_ECX];
-    env->feature_words[CPUID_8000_0001_EDX] = def->feature_words[CPUID_8000_0001_EDX];
-    env->feature_words[CPUID_8000_0001_ECX] = def->feature_words[CPUID_8000_0001_ECX];
     object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", &error);
-    env->feature_words[CPUID_KVM] = def->feature_words[CPUID_KVM];
-    env->feature_words[CPUID_SVM] = def->feature_words[CPUID_SVM];
-    env->feature_words[CPUID_C000_0001_EDX] = def->feature_words[CPUID_C000_0001_EDX];
-    env->feature_words[CPUID_7_0_EBX] = def->feature_words[CPUID_7_0_EBX];
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        env->feature_words[w] = def->feature_words[w];
+    }
     env->cpuid_xlevel2 = def->xlevel2;
     object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
                             "tsc-frequency", &error);
