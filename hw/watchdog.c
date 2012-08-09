@@ -55,7 +55,7 @@ int select_watchdog(const char *p)
     QemuOpts *opts;
 
     /* -watchdog ? lists available devices and exits cleanly. */
-    if (is_help_option(p)) {
+    if (strcmp(p, "?") == 0) {
         QLIST_FOREACH(model, &watchdog_list, entry) {
             fprintf(stderr, "\t%s\t%s\n",
                      model->wdt_name, model->wdt_description);
