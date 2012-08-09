@@ -256,6 +256,7 @@ typedef struct FeatureWordInfo {
     uint32_t cpuid;          /* CPUID leaf */
     int reg;                 /* register (R_EAX, R_EBX, R_ECX, R_EDX) */
     uint32_t bits_to_check;  /* bits to check against host */
+    uint32_t tcg_features;   /* bits supported by TCG */
 } FeatureWordInfo;
 
 static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
@@ -263,24 +264,35 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         .cpuid = 0x00000001, .reg = R_EDX,
         .feat_names = feature_name,
         .bits_to_check = ~0,
+        .tcg_features = TCG_FEATURES,
     },
     [CPUID_1_ECX] = {
         .cpuid = 0x00000001, .reg = R_ECX,
         .feat_names = ext_feature_name,
         .bits_to_check = ~CPUID_EXT_HYPERVISOR,
+        .tcg_features = TCG_EXT_FEATURES,
     },
     [CPUID_8000_0001_EDX] = {
         .cpuid = 0x80000001, .reg = R_EDX,
         .feat_names = ext2_feature_name,
         .bits_to_check = ~PPRO_FEATURES,
+        .tcg_features = (TCG_EXT2_FEATURES
+#ifdef TARGET_X86_64
+            | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
+#endif
+            ),
     },
     [CPUID_8000_0001_ECX] = {
         .cpuid = 0x80000001, .reg = R_ECX,
         .feat_names = ext3_feature_name,
         .bits_to_check = ~CPUID_EXT3_SVM,
+        .tcg_features = TCG_EXT3_FEATURES,
     },
     [CPUID_KVM]   = { .feat_names = kvm_feature_name },
-    [CPUID_SVM]   = { .feat_names = svm_feature_name },
+    [CPUID_SVM]   = {
+        .feat_names = svm_feature_name,
+        .tcg_features = TCG_SVM_FEATURES,
+    },
 };
 
 
@@ -2054,18 +2066,10 @@ void x86_cpu_realize(Object *obj, Error **errp)
     }
 
     if (!kvm_enabled()) {
-        env->feature_words[CPUID_1_EDX] &= TCG_FEATURES;
-        env->feature_words[CPUID_1_ECX] &= TCG_EXT_FEATURES;
-        env->feature_words[CPUID_8000_0001_EDX] &= (TCG_EXT2_FEATURES
-#ifdef TARGET_X86_64
-            | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
-#endif
-            );
-        env->feature_words[CPUID_8000_0001_ECX] &= TCG_EXT3_FEATURES;
-        env->feature_words[CPUID_SVM] &= TCG_SVM_FEATURES;
-        env->feature_words[CPUID_KVM] = 0;
-        env->feature_words[CPUID_7_0_EBX] = 0;
-        env->feature_words[CPUID_C000_0001_EDX] = 0;
+        FeatureWord w;
+        for (w = 0; w < FEATURE_WORDS; w++) {
+            env->feature_words[w] &= feature_word_info[w].tcg_features;
+        }
     }
 
 #ifndef CONFIG_USER_ONLY
