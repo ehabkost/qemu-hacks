@@ -396,23 +396,28 @@ int kvm_arch_init_vcpu(CPUX86State *env)
     uint32_t signature[3];
     int r;
 
-    env->cpuid_features &= kvm_arch_get_supported_cpuid(s, 1, 0, R_EDX);
+    env->feature_words[CPUID_1_EDX] &=
+            kvm_arch_get_supported_cpuid(s, 1, 0, R_EDX);
 
-    i = env->cpuid_ext_features & CPUID_EXT_HYPERVISOR;
-    j = env->cpuid_ext_features & CPUID_EXT_TSC_DEADLINE_TIMER;
-    env->cpuid_ext_features &= kvm_arch_get_supported_cpuid(s, 1, 0, R_ECX);
-    env->cpuid_ext_features |= i;
+    i = env->feature_words[CPUID_1_ECX] & CPUID_EXT_HYPERVISOR;
+    j = env->feature_words[CPUID_1_ECX] & CPUID_EXT_TSC_DEADLINE_TIMER;
+    env->feature_words[CPUID_1_ECX] &=
+            kvm_arch_get_supported_cpuid(s, 1, 0, R_ECX);
+    env->feature_words[CPUID_1_ECX] |= i;
     if (j && kvm_irqchip_in_kernel() &&
         kvm_check_extension(s, KVM_CAP_TSC_DEADLINE_TIMER)) {
-        env->cpuid_ext_features |= CPUID_EXT_TSC_DEADLINE_TIMER;
+        env->feature_words[CPUID_1_ECX] |= CPUID_EXT_TSC_DEADLINE_TIMER;
     }
 
-    env->cpuid_ext2_features &= kvm_arch_get_supported_cpuid(s, 0x80000001,
-                                                             0, R_EDX);
-    env->cpuid_ext3_features &= kvm_arch_get_supported_cpuid(s, 0x80000001,
-                                                             0, R_ECX);
-    env->cpuid_svm_features  &= kvm_arch_get_supported_cpuid(s, 0x8000000A,
-                                                             0, R_EDX);
+    env->feature_words[CPUID_8000_0001_EDX] &=
+            kvm_arch_get_supported_cpuid(s, 0x80000001,
+                                         0, R_EDX);
+    env->feature_words[CPUID_8000_0001_ECX] &=
+            kvm_arch_get_supported_cpuid(s, 0x80000001,
+                                         0, R_ECX);
+    env->feature_words[CPUID_SVM] &=
+            kvm_arch_get_supported_cpuid(s, 0x8000000A,
+                                         0, R_EDX);
 
     cpuid_i = 0;
 
@@ -434,7 +439,7 @@ int kvm_arch_init_vcpu(CPUX86State *env)
     c = &cpuid_data.entries[cpuid_i++];
     memset(c, 0, sizeof(*c));
     c->function = KVM_CPUID_FEATURES;
-    c->eax = env->cpuid_kvm_features &
+    c->eax = env->feature_words[CPUID_KVM] &
         kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
 
     if (hyperv_enabled()) {
@@ -554,7 +559,7 @@ int kvm_arch_init_vcpu(CPUX86State *env)
 
     /* Call Centaur's CPUID instructions they are supported. */
     if (env->cpuid_xlevel2 > 0) {
-        env->cpuid_ext4_features &=
+        env->feature_words[CPUID_C000_0001_EDX] &=
             kvm_arch_get_supported_cpuid(s, 0xC0000001, 0, R_EDX);
         cpu_x86_cpuid(env, 0xC0000000, 0, &limit, &unused, &unused, &unused);
 
@@ -570,7 +575,7 @@ int kvm_arch_init_vcpu(CPUX86State *env)
     cpuid_data.cpuid.nent = cpuid_i;
 
     if (((env->cpuid_version >> 8)&0xF) >= 6
-        && (env->cpuid_features&(CPUID_MCE|CPUID_MCA)) == (CPUID_MCE|CPUID_MCA)
+        && (env->feature_words[CPUID_1_EDX]&(CPUID_MCE|CPUID_MCA)) == (CPUID_MCE|CPUID_MCA)
         && kvm_check_extension(env->kvm_state, KVM_CAP_MCE) > 0) {
         uint64_t mcg_cap;
         int banks;

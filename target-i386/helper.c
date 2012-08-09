@@ -448,7 +448,7 @@ void cpu_x86_update_cr4(CPUX86State *env, uint32_t new_cr4)
         tlb_flush(env, 1);
     }
     /* SSE handling */
-    if (!(env->cpuid_features & CPUID_SSE))
+    if (!(env->feature_words[CPUID_1_EDX] & CPUID_SSE))
         new_cr4 &= ~CR4_OSFXSR_MASK;
     if (new_cr4 & CR4_OSFXSR_MASK)
         env->hflags |= HF_OSFXSR_MASK;

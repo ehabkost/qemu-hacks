@@ -916,7 +916,7 @@ static X86CPU *pc_new_cpu(const char *cpu_model)
         exit(1);
     }
     env = &cpu->env;
-    if ((env->cpuid_features & CPUID_APIC) || smp_cpus > 1) {
+    if ((env->feature_words[CPUID_1_EDX] & CPUID_APIC) || smp_cpus > 1) {
         env->apic_state = apic_init(env, env->cpuid_apic_id);
     }
     cpu_reset(CPU(cpu));
