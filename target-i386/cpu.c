@@ -104,6 +104,62 @@ static const char *svm_feature_name[] = {
     NULL, NULL, NULL, NULL,
 };
 
+#define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
+#define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
+          CPUID_MSR | CPUID_MCE | CPUID_CX8 | CPUID_MMX | CPUID_APIC)
+#define PENTIUM2_FEATURES (PENTIUM_FEATURES | CPUID_PAE | CPUID_SEP | \
+          CPUID_MTRR | CPUID_PGE | CPUID_MCA | CPUID_CMOV | CPUID_PAT | \
+          CPUID_PSE36 | CPUID_FXSR)
+#define PENTIUM3_FEATURES (PENTIUM2_FEATURES | CPUID_SSE)
+#define PPRO_FEATURES (CPUID_FP87 | CPUID_DE | CPUID_PSE | CPUID_TSC | \
+          CPUID_MSR | CPUID_MCE | CPUID_CX8 | CPUID_PGE | CPUID_CMOV | \
+          CPUID_PAT | CPUID_FXSR | CPUID_MMX | CPUID_SSE | CPUID_SSE2 | \
+          CPUID_PAE | CPUID_SEP | CPUID_APIC)
+
+#define TCG_FEATURES (CPUID_FP87 | CPUID_PSE | CPUID_TSC | CPUID_MSR | \
+          CPUID_PAE | CPUID_MCE | CPUID_CX8 | CPUID_APIC | CPUID_SEP | \
+          CPUID_MTRR | CPUID_PGE | CPUID_MCA | CPUID_CMOV | CPUID_PAT | \
+          CPUID_PSE36 | CPUID_CLFLUSH | CPUID_ACPI | CPUID_MMX | \
+          CPUID_FXSR | CPUID_SSE | CPUID_SSE2 | CPUID_SS)
+          /* partly implemented:
+          CPUID_MTRR, CPUID_MCA, CPUID_CLFLUSH (needed for Win64)
+          CPUID_PSE36 (needed for Solaris) */
+          /* missing:
+          CPUID_VME, CPUID_DTS, CPUID_SS, CPUID_HT, CPUID_TM, CPUID_PBE */
+#define TCG_EXT_FEATURES (CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | \
+          CPUID_EXT_CX16 | CPUID_EXT_POPCNT | \
+          CPUID_EXT_HYPERVISOR)
+          /* missing:
+          CPUID_EXT_DTES64, CPUID_EXT_DSCPL, CPUID_EXT_VMX, CPUID_EXT_EST,
+          CPUID_EXT_TM2, CPUID_EXT_XTPR, CPUID_EXT_PDCM, CPUID_EXT_XSAVE */
+#define TCG_EXT2_FEATURES_32 ((TCG_FEATURES & CPUID_EXT2_AMD_ALIASES) | \
+          CPUID_EXT2_NX | CPUID_EXT2_MMXEXT | CPUID_EXT2_RDTSCP | \
+          CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT)
+          /* missing:
+          CPUID_EXT2_PDPE1GB */
+#define TCG_EXT2_FEATURES_64 (TCG_EXT2_FEATURES_32 | \
+          CPUID_EXT2_SYSCALL |  CPUID_EXT2_LM)
+#ifdef TARGET_X86_64
+#define TCG_EXT2_FEATURES TCG_EXT2_FEATURES_64
+#else
+#define TCG_EXT2_FEATURES TCG_EXT2_FEATURES_32
+#endif
+#define TCG_EXT3_FEATURES (CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM | \
+          CPUID_EXT3_CR8LEG | CPUID_EXT3_ABM | CPUID_EXT3_SSE4A)
+#define TCG_SVM_FEATURES 0
+
+#ifdef CONFIG_KVM
+#define DEFAULT_KVM_FEATURES ((1 << KVM_FEATURE_CLOCKSOURCE) | \
+                              (1 << KVM_FEATURE_NOP_IO_DELAY) | \
+                              (1 << KVM_FEATURE_MMU_OP) | \
+                              (1 << KVM_FEATURE_CLOCKSOURCE2) | \
+                              (1 << KVM_FEATURE_ASYNC_PF) | \
+                              (1 << KVM_FEATURE_STEAL_TIME) | \
+                              (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT))
+#else
+#define DEFAULT_KVM_FEATURES 0
+#endif
+
 /* Names of the 32-bit registers, indexed by the R_* constants */
 static const char *register_names[] = {
     [R_EAX] = "eax",
@@ -259,63 +315,6 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
     [CPUID_KVM]   = { .feat_names = kvm_feature_name },
     [CPUID_SVM]   = { .feat_names = svm_feature_name },
 };
-
-#define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
-#define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
-          CPUID_MSR | CPUID_MCE | CPUID_CX8 | CPUID_MMX | CPUID_APIC)
-#define PENTIUM2_FEATURES (PENTIUM_FEATURES | CPUID_PAE | CPUID_SEP | \
-          CPUID_MTRR | CPUID_PGE | CPUID_MCA | CPUID_CMOV | CPUID_PAT | \
-          CPUID_PSE36 | CPUID_FXSR)
-#define PENTIUM3_FEATURES (PENTIUM2_FEATURES | CPUID_SSE)
-#define PPRO_FEATURES (CPUID_FP87 | CPUID_DE | CPUID_PSE | CPUID_TSC | \
-          CPUID_MSR | CPUID_MCE | CPUID_CX8 | CPUID_PGE | CPUID_CMOV | \
-          CPUID_PAT | CPUID_FXSR | CPUID_MMX | CPUID_SSE | CPUID_SSE2 | \
-          CPUID_PAE | CPUID_SEP | CPUID_APIC)
-
-#define TCG_FEATURES (CPUID_FP87 | CPUID_PSE | CPUID_TSC | CPUID_MSR | \
-          CPUID_PAE | CPUID_MCE | CPUID_CX8 | CPUID_APIC | CPUID_SEP | \
-          CPUID_MTRR | CPUID_PGE | CPUID_MCA | CPUID_CMOV | CPUID_PAT | \
-          CPUID_PSE36 | CPUID_CLFLUSH | CPUID_ACPI | CPUID_MMX | \
-          CPUID_FXSR | CPUID_SSE | CPUID_SSE2 | CPUID_SS)
-          /* partly implemented:
-          CPUID_MTRR, CPUID_MCA, CPUID_CLFLUSH (needed for Win64)
-          CPUID_PSE36 (needed for Solaris) */
-          /* missing:
-          CPUID_VME, CPUID_DTS, CPUID_SS, CPUID_HT, CPUID_TM, CPUID_PBE */
-#define TCG_EXT_FEATURES (CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | \
-          CPUID_EXT_CX16 | CPUID_EXT_POPCNT | \
-          CPUID_EXT_HYPERVISOR)
-          /* missing:
-          CPUID_EXT_DTES64, CPUID_EXT_DSCPL, CPUID_EXT_VMX, CPUID_EXT_EST,
-          CPUID_EXT_TM2, CPUID_EXT_XTPR, CPUID_EXT_PDCM, CPUID_EXT_XSAVE */
-#define TCG_EXT2_FEATURES_32 ((TCG_FEATURES & CPUID_EXT2_AMD_ALIASES) | \
-          CPUID_EXT2_NX | CPUID_EXT2_MMXEXT | CPUID_EXT2_RDTSCP | \
-          CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT)
-          /* missing:
-          CPUID_EXT2_PDPE1GB */
-#define TCG_EXT2_FEATURES_64 (TCG_EXT2_FEATURES_32 | \
-          CPUID_EXT2_SYSCALL |  CPUID_EXT2_LM)
-#ifdef TARGET_X86_64
-#define TCG_EXT2_FEATURES TCG_EXT2_FEATURES_64
-#else
-#define TCG_EXT2_FEATURES TCG_EXT2_FEATURES_32
-#endif
-#define TCG_EXT3_FEATURES (CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM | \
-          CPUID_EXT3_CR8LEG | CPUID_EXT3_ABM | CPUID_EXT3_SSE4A)
-#define TCG_SVM_FEATURES 0
-
-#ifdef CONFIG_KVM
-#define DEFAULT_KVM_FEATURES ((1 << KVM_FEATURE_CLOCKSOURCE) | \
-                              (1 << KVM_FEATURE_NOP_IO_DELAY) | \
-                              (1 << KVM_FEATURE_MMU_OP) | \
-                              (1 << KVM_FEATURE_CLOCKSOURCE2) | \
-                              (1 << KVM_FEATURE_ASYNC_PF) | \
-                              (1 << KVM_FEATURE_STEAL_TIME) | \
-                              (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT))
-#else
-#define DEFAULT_KVM_FEATURES 0
-#endif
-
 
 typedef struct X86CPUModelTableEntry {
     const char *name;
