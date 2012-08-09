@@ -437,7 +437,7 @@ int kvm_arch_init_vcpu(CPUX86State *env)
     c = &cpuid_data.entries[cpuid_i++];
     memset(c, 0, sizeof(*c));
     c->function = KVM_CPUID_FEATURES;
-    c->eax = env->cpuid_kvm_features;
+    c->eax = env->feature_words[CPUID_KVM];
 
     if (hyperv_enabled()) {
         memcpy(signature, "Hv#1\0\0\0\0\0\0\0\0", 12);
@@ -572,7 +572,7 @@ int kvm_arch_init_vcpu(CPUX86State *env)
     cpuid_data.cpuid.nent = cpuid_i;
 
     if (((env->cpuid_version >> 8)&0xF) >= 6
-        && (env->cpuid_features&(CPUID_MCE|CPUID_MCA)) == (CPUID_MCE|CPUID_MCA)
+        && (env->feature_words[CPUID_1_EDX]&(CPUID_MCE|CPUID_MCA)) == (CPUID_MCE|CPUID_MCA)
         && kvm_check_extension(env->kvm_state, KVM_CAP_MCE) > 0) {
         uint64_t mcg_cap;
         int banks;
