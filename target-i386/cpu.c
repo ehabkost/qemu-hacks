@@ -1290,23 +1290,10 @@ static int cpu_x86_extend_features(X86CPUDefinition *x86_cpu_def,
         }
         featurestr = strtok_r(NULL, ",", &last);
     }
-    x86_cpu_def->feature_words[CPUID_1_EDX] |= plus_words[CPUID_1_EDX];
-    x86_cpu_def->feature_words[CPUID_1_ECX] |= plus_words[CPUID_1_ECX];
-    x86_cpu_def->feature_words[CPUID_7_0_EBX] |= plus_words[CPUID_7_0_EBX];
-    x86_cpu_def->feature_words[CPUID_8000_0001_EDX] |= plus_words[CPUID_8000_0001_EDX];
-    x86_cpu_def->feature_words[CPUID_8000_0001_ECX] |= plus_words[CPUID_8000_0001_ECX];
-    x86_cpu_def->feature_words[CPUID_C000_0001_EDX] |= plus_words[CPUID_C000_0001_EDX];
-    x86_cpu_def->feature_words[CPUID_KVM] |= plus_words[CPUID_KVM];
-    x86_cpu_def->feature_words[CPUID_SVM] |= plus_words[CPUID_SVM];
-
-    x86_cpu_def->feature_words[CPUID_1_EDX] &= ~minus_words[CPUID_1_EDX];
-    x86_cpu_def->feature_words[CPUID_1_ECX] &= ~minus_words[CPUID_1_ECX];
-    x86_cpu_def->feature_words[CPUID_7_0_EBX] &= ~minus_words[CPUID_7_0_EBX];
-    x86_cpu_def->feature_words[CPUID_8000_0001_EDX] &= ~minus_words[CPUID_8000_0001_EDX];
-    x86_cpu_def->feature_words[CPUID_8000_0001_ECX] &= ~minus_words[CPUID_8000_0001_ECX];
-    x86_cpu_def->feature_words[CPUID_C000_0001_EDX] &= ~minus_words[CPUID_C000_0001_EDX];
-    x86_cpu_def->feature_words[CPUID_KVM] &= ~minus_words[CPUID_KVM];
-    x86_cpu_def->feature_words[CPUID_SVM] &= ~minus_words[CPUID_SVM];
+    for (i = 0; i < FEATURE_WORDS; i++) {
+        x86_cpu_def->feature_words[i] |= plus_words[i];
+        x86_cpu_def->feature_words[i] &= ~minus_words[i];
+    }
     return 0;
 error:
     return -1;
