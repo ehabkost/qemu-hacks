@@ -2114,6 +2114,9 @@ void x86_cpu_realize(Object *obj, Error **errp)
         env->cpuid_ext2_features &= TCG_EXT2_FEATURES;
         env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
         env->cpuid_svm_features &= TCG_SVM_FEATURES;
+        env->cpuid_kvm_features = 0;
+        env->cpuid_7_0_ebx = 0;
+        env->cpuid_ext4_features = 0;
     } else {
 #ifdef CONFIG_KVM
         filter_features_for_kvm(cpu);
