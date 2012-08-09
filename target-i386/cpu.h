@@ -960,6 +960,8 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model);
 void cpu_clear_apic_feature(CPUX86State *env);
 void host_cpuid(uint32_t function, uint32_t count,
                 uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx);
+void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
+                                        QDict **features, Error **errp);
 
 /* helper.c */
 int cpu_x86_handle_mmu_fault(CPUX86State *env, target_ulong addr,
