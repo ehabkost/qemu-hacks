@@ -1429,6 +1429,7 @@ static int cpu_x86_init_from_def(X86CPU *cpu, X86CPUDefinition *def)
             );
         env->feature_words[CPUID_8000_0001_ECX] &= TCG_EXT3_FEATURES;
         env->feature_words[CPUID_SVM] &= TCG_SVM_FEATURES;
+        env->feature_words[CPUID_KVM] = 0;
     }
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
     if (error_is_set(&error)) {
