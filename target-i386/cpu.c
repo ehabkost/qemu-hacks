@@ -1112,7 +1112,6 @@ static void x86_cpuid_set_vendor(Object *obj, const char *value,
         env->cpuid_vendor2 |= ((uint8_t)value[i + 4]) << (8 * i);
         env->cpuid_vendor3 |= ((uint8_t)value[i + 8]) << (8 * i);
     }
-    env->cpuid_vendor_override = 1;
 }
 
 static char *x86_cpuid_get_model_id(Object *obj, Error **errp)
@@ -1286,6 +1285,31 @@ static void x86_cpuid_set_enforce(Object *obj, Visitor *v, void *opaque,
     object_property_set_bool(obj, value, "check", errp);
 }
 
+static void
+x86_cpuid_get_vendor_override(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+
+    visit_type_bool(v, &env->cpuid_vendor_override, name, errp);
+}
+
+static void
+x86_cpuid_set_vendor_override(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    bool value;
+
+    visit_type_bool(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    env->cpuid_vendor_override = value;
+}
+
 static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
 {
     CPUX86State *env = &cpu->env;
@@ -1299,7 +1323,7 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
         env->cpuid_vendor2 = CPUID_VENDOR_INTEL_2;
         env->cpuid_vendor3 = CPUID_VENDOR_INTEL_3;
     }
-    env->cpuid_vendor_override = def->vendor_override;
+    object_property_set_bool(OBJECT(cpu), true, "vendor-override", errp);
     object_property_set_int(OBJECT(cpu), def->level, "level", errp);
     object_property_set_int(OBJECT(cpu), def->family, "family", errp);
     object_property_set_int(OBJECT(cpu), def->model, "model", errp);
@@ -2196,6 +2220,9 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add_str(obj, "vendor",
                             x86_cpuid_get_vendor,
                             x86_cpuid_set_vendor, NULL);
+    object_property_add(obj, "vendor-override", "bool",
+                        x86_cpuid_get_vendor_override,
+                        x86_cpuid_set_vendor_override, NULL, NULL, NULL);
     object_property_add_str(obj, "model-id",
                             x86_cpuid_get_model_id,
                             x86_cpuid_set_model_id, NULL);
