@@ -7899,10 +7899,10 @@ static inline void gen_intermediate_code_internal(CPUX86State *env,
         else
             dc->mem_index = 1 * 4;
     }
-    dc->cpuid_features = env->cpuid_features;
-    dc->cpuid_ext_features = env->cpuid_ext_features;
-    dc->cpuid_ext2_features = env->cpuid_ext2_features;
-    dc->cpuid_ext3_features = env->cpuid_ext3_features;
+    dc->cpuid_features = env->feature_words[CPUID_1_EDX];
+    dc->cpuid_ext_features = env->feature_words[CPUID_1_ECX];;
+    dc->cpuid_ext2_features = env->feature_words[CPUID_8000_0001_EDX];
+    dc->cpuid_ext3_features = env->feature_words[CPUID_8000_0001_ECX];
 #ifdef TARGET_X86_64
     dc->lma = (flags >> HF_LMA_SHIFT) & 1;
     dc->code64 = (flags >> HF_CS64_SHIFT) & 1;

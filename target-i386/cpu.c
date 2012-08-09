@@ -836,16 +836,16 @@ static int check_features_against_host(X86CPU *cpu)
     uint32_t mask;
     int rv, i;
     struct model_features_t ft[] = {
-        {&env->cpuid_features,
+        {&env->feature_words[CPUID_1_EDX],
             &host_def.feature_words[CPUID_1_EDX],
             ~0, feature_name, 0x00000001, R_EDX},
-        {&env->cpuid_ext_features,
+        {&env->feature_words[CPUID_1_ECX],
             &host_def.feature_words[CPUID_1_ECX],
             ~CPUID_EXT_HYPERVISOR, ext_feature_name, 0x00000001, R_ECX},
-        {&env->cpuid_ext2_features,
+        {&env->feature_words[CPUID_8000_0001_EDX],
             &host_def.feature_words[CPUID_8000_0001_EDX],
             ~PPRO_FEATURES, ext2_feature_name, 0x80000001, R_EDX},
-        {&env->cpuid_ext3_features,
+        {&env->feature_words[CPUID_8000_0001_ECX],
             &host_def.feature_words[CPUID_8000_0001_ECX],
             ~CPUID_EXT3_SVM, ext3_feature_name, 0x80000001, R_ECX}};
 
@@ -882,12 +882,18 @@ static void x86_cpuid_get_feature(Object *obj, Visitor *v, void *opaque,
     CPUX86State *env = &cpu->env;
     bool value = true;
 
-    if (!is_feature_set(name, env->cpuid_features, feature_name) &&
-       !is_feature_set(name, env->cpuid_ext_features, ext_feature_name) &&
-       !is_feature_set(name, env->cpuid_ext2_features, ext2_feature_name) &&
-       !is_feature_set(name, env->cpuid_ext3_features, ext3_feature_name) &&
-       !is_feature_set(name, env->cpuid_kvm_features, kvm_feature_name) &&
-       !is_feature_set(name, env->cpuid_svm_features, svm_feature_name)) {
+    if (!is_feature_set(name, env->feature_words[CPUID_1_EDX],
+                        feature_name) &&
+       !is_feature_set(name, env->feature_words[CPUID_1_ECX],
+                        ext_feature_name) &&
+       !is_feature_set(name, env->feature_words[CPUID_8000_0001_EDX],
+                        ext2_feature_name) &&
+       !is_feature_set(name, env->feature_words[CPUID_8000_0001_ECX],
+                        ext3_feature_name) &&
+       !is_feature_set(name, env->feature_words[CPUID_KVM],
+                        kvm_feature_name) &&
+       !is_feature_set(name, env->feature_words[CPUID_SVM],
+                        svm_feature_name)) {
         value = false;
     }
 
@@ -909,17 +915,17 @@ static void x86_cpuid_set_feature(Object *obj, Visitor *v, void *opaque,
     }
 
     if (lookup_feature(&mask, name, NULL, feature_name)) {
-        dst_features = &env->cpuid_features;
+        dst_features = &env->feature_words[CPUID_1_EDX];
     } else if (lookup_feature(&mask, name, NULL, ext_feature_name)) {
-        dst_features = &env->cpuid_ext_features;
+        dst_features = &env->feature_words[CPUID_1_ECX];
     } else if (lookup_feature(&mask, name, NULL, ext2_feature_name)) {
-        dst_features = &env->cpuid_ext2_features;
+        dst_features = &env->feature_words[CPUID_8000_0001_EDX];
     } else if (lookup_feature(&mask, name, NULL, ext3_feature_name)) {
-        dst_features = &env->cpuid_ext3_features;
+        dst_features = &env->feature_words[CPUID_8000_0001_ECX];
     } else if (lookup_feature(&mask, name, NULL, kvm_feature_name)) {
-        dst_features = &env->cpuid_kvm_features;
+        dst_features = &env->feature_words[CPUID_KVM];
     } else if (lookup_feature(&mask, name, NULL, svm_feature_name)) {
-        dst_features = &env->cpuid_svm_features;
+        dst_features = &env->feature_words[CPUID_SVM];
     } else {
         error_set(errp, QERR_PROPERTY_NOT_FOUND, "", name);
         return;
@@ -1360,17 +1366,17 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
                             "tsc-frequency", errp);
 
-    env->cpuid_features = def->feature_words[CPUID_1_EDX];
-    env->cpuid_ext_features = def->feature_words[CPUID_1_ECX];
-    env->cpuid_ext2_features = def->feature_words[CPUID_8000_0001_EDX];
-    env->cpuid_ext3_features = def->feature_words[CPUID_8000_0001_ECX];
-    env->cpuid_kvm_features = def->feature_words[CPUID_KVM];
-    env->cpuid_svm_features = def->feature_words[CPUID_SVM];
-    env->cpuid_ext4_features = def->feature_words[CPUID_C000_0001_EDX];
-    env->cpuid_7_0_ebx = def->feature_words[CPUID_7_0_EBX];
+    env->feature_words[CPUID_1_EDX] = def->feature_words[CPUID_1_EDX];
+    env->feature_words[CPUID_1_ECX] = def->feature_words[CPUID_1_ECX];
+    env->feature_words[CPUID_8000_0001_EDX] = def->feature_words[CPUID_8000_0001_EDX];
+    env->feature_words[CPUID_8000_0001_ECX] = def->feature_words[CPUID_8000_0001_ECX];
+    env->feature_words[CPUID_KVM] = def->feature_words[CPUID_KVM];
+    env->feature_words[CPUID_SVM] = def->feature_words[CPUID_SVM];
+    env->feature_words[CPUID_C000_0001_EDX] = def->feature_words[CPUID_C000_0001_EDX];
+    env->feature_words[CPUID_7_0_EBX] = def->feature_words[CPUID_7_0_EBX];
 
     /* not supported bits will be filtered out later */
-    env->cpuid_kvm_features = ~0;
+    env->feature_words[CPUID_KVM] = ~0;
 
     object_property_set_bool(OBJECT(cpu), true, "hypervisor", errp);
 }
@@ -1684,7 +1690,7 @@ static int cpudef_register(QemuOpts *opts, void *opaque)
 
 void cpu_clear_apic_feature(CPUX86State *env)
 {
-    env->cpuid_features &= ~CPUID_APIC;
+    env->feature_words[CPUID_1_EDX] &= ~CPUID_APIC;
 }
 
 #endif /* !CONFIG_USER_ONLY */
@@ -1774,8 +1780,8 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
     case 1:
         *eax = env->cpuid_version;
         *ebx = (env->cpuid_apic_id << 24) | 8 << 8; /* CLFLUSH size in quad words, Linux wants it. */
-        *ecx = env->cpuid_ext_features;
-        *edx = env->cpuid_features;
+        *ecx = env->feature_words[CPUID_1_ECX];
+        *edx = env->feature_words[CPUID_1_EDX];
         if (env->nr_cores * env->nr_threads > 1) {
             *ebx |= (env->nr_cores * env->nr_threads) << 16;
             *edx |= 1 << 28;    /* HTT bit */
@@ -1843,7 +1849,7 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         /* Structured Extended Feature Flags Enumeration Leaf */
         if (count == 0) {
             *eax = 0; /* Maximum ECX value for sub-leaves */
-            *ebx = env->cpuid_7_0_ebx; /* Feature flags */
+            *ebx = env->feature_words[CPUID_7_0_EBX]; /* Feature flags */
             *ecx = 0; /* Reserved */
             *edx = 0; /* Reserved */
         } else {
@@ -1878,7 +1884,7 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         break;
     case 0xD:
         /* Processor Extended State */
-        if (!(env->cpuid_ext_features & CPUID_EXT_XSAVE)) {
+        if (!(env->feature_words[CPUID_1_ECX] & CPUID_EXT_XSAVE)) {
             *eax = 0;
             *ebx = 0;
             *ecx = 0;
@@ -1908,8 +1914,8 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
     case 0x80000001:
         *eax = env->cpuid_version;
         *ebx = 0;
-        *ecx = env->cpuid_ext3_features;
-        *edx = env->cpuid_ext2_features;
+        *ecx = env->feature_words[CPUID_8000_0001_ECX];
+        *edx = env->feature_words[CPUID_8000_0001_EDX];
 
         /* The Linux kernel checks for the CMPLegacy bit and
          * discards multiple thread information if it is set.
@@ -1950,12 +1956,12 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
     case 0x80000008:
         /* virtual & phys address size in low 2 bytes. */
 /* XXX: This value must match the one used in the MMU code. */
-        if (env->cpuid_ext2_features & CPUID_EXT2_LM) {
+        if (env->feature_words[CPUID_8000_0001_EDX] & CPUID_EXT2_LM) {
             /* 64 bit processor */
 /* XXX: The physical address space is limited to 42 bits in exec.c. */
             *eax = 0x00003028;	/* 48 bits virtual, 40 bits physical */
         } else {
-            if (env->cpuid_features & CPUID_PSE36)
+            if (env->feature_words[CPUID_1_EDX] & CPUID_PSE36)
                 *eax = 0x00000024; /* 36 bits physical */
             else
                 *eax = 0x00000020; /* 32 bits physical */
@@ -1968,11 +1974,11 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         }
         break;
     case 0x8000000A:
-        if (env->cpuid_ext3_features & CPUID_EXT3_SVM) {
+        if (env->feature_words[CPUID_8000_0001_ECX] & CPUID_EXT3_SVM) {
             *eax = 0x00000001; /* SVM Revision */
             *ebx = 0x00000010; /* nr of ASIDs */
             *ecx = 0;
-            *edx = env->cpuid_svm_features; /* optional features */
+            *edx = env->feature_words[CPUID_SVM]; /* optional features */
         } else {
             *eax = 0;
             *ebx = 0;
@@ -1991,7 +1997,7 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         *eax = env->cpuid_version;
         *ebx = 0;
         *ecx = 0;
-        *edx = env->cpuid_ext4_features;
+        *edx = env->feature_words[CPUID_C000_0001_EDX];
         break;
     case 0xC0000002:
     case 0xC0000003:
@@ -2123,7 +2129,7 @@ static void mce_init(X86CPU *cpu)
     unsigned int bank;
 
     if (((cenv->cpuid_version >> 8) & 0xf) >= 6
-        && (cenv->cpuid_features & (CPUID_MCE | CPUID_MCA)) ==
+        && (cenv->feature_words[CPUID_1_EDX] & (CPUID_MCE | CPUID_MCA)) ==
             (CPUID_MCE | CPUID_MCA)) {
         cenv->mcg_cap = MCE_CAP_DEF | MCE_BANKS_DEF;
         cenv->mcg_ctl = ~(uint64_t)0;
@@ -2145,15 +2151,15 @@ void x86_cpu_realize(Object *obj, Error **errp)
     }
 
     if (!kvm_enabled()) {
-        env->cpuid_features &= TCG_FEATURES;
-        env->cpuid_ext_features &= TCG_EXT_FEATURES;
-        env->cpuid_ext2_features &= (TCG_EXT2_FEATURES
+        env->feature_words[CPUID_1_EDX] &= TCG_FEATURES;
+        env->feature_words[CPUID_1_ECX] &= TCG_EXT_FEATURES;
+        env->feature_words[CPUID_8000_0001_EDX] &= (TCG_EXT2_FEATURES
 #ifdef TARGET_X86_64
             | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
 #endif
             );
-        env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
-        env->cpuid_svm_features &= TCG_SVM_FEATURES;
+        env->feature_words[CPUID_8000_0001_ECX] &= TCG_EXT3_FEATURES;
+        env->feature_words[CPUID_SVM] &= TCG_SVM_FEATURES;
     }
 
 #ifndef CONFIG_USER_ONLY
