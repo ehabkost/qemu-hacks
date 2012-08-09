@@ -219,16 +219,33 @@ static bool lookup_feature(uint32_t *pval, const char *s, const char *e,
     return found;
 }
 
+typedef struct FeatureWordInfo {
+    const char **feat_names;
+} FeatureWordInfo;
+
+static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
+    [CPUID_1_EDX] = { .feat_names = feature_name },
+    [CPUID_1_ECX] = { .feat_names = ext_feature_name },
+    [CPUID_8000_0001_EDX] = { .feat_names = ext2_feature_name },
+    [CPUID_8000_0001_ECX] = { .feat_names = ext3_feature_name },
+    [CPUID_KVM]   = { .feat_names = kvm_feature_name },
+    [CPUID_SVM]   = { .feat_names = svm_feature_name },
+};
+
 static void add_flagname_to_bitmaps(const char *flagname,
                                     uint32_t *feature_words)
 {
-    if (!lookup_feature(&feature_words[CPUID_1_EDX], flagname, NULL, feature_name) &&
-        !lookup_feature(&feature_words[CPUID_1_ECX], flagname, NULL, ext_feature_name) &&
-        !lookup_feature(&feature_words[CPUID_8000_0001_EDX], flagname, NULL, ext2_feature_name) &&
-        !lookup_feature(&feature_words[CPUID_8000_0001_ECX], flagname, NULL, ext3_feature_name) &&
-        !lookup_feature(&feature_words[CPUID_KVM], flagname, NULL, kvm_feature_name) &&
-        !lookup_feature(&feature_words[CPUID_SVM], flagname, NULL, svm_feature_name)) {
-            fprintf(stderr, "CPU feature %s not found\n", flagname);
+    int i, found = 0;
+    for (i = 0; i < FEATURE_WORDS; i++) {
+        FeatureWordInfo *w = &feature_word_info[i];
+        if (!w->feat_names)
+            continue;
+        if (lookup_feature(&feature_words[i], flagname, NULL, w->feat_names)) {
+            found = 1;
+        }
+    }
+    if (!found) {
+        fprintf(stderr, "CPU feature %s not found\n", flagname);
     }
 }
 
