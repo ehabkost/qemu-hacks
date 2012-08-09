@@ -252,6 +252,7 @@ typedef struct FeatureWordInfo {
     uint32_t cpuid;          /* CPUID leaf */
     int reg;                 /* register (R_EAX, R_EBX, R_ECX, R_EDX) */
     uint32_t bits_to_check;  /* bits to check against host */
+    uint32_t tcg_features;   /* bits supported by TCG */
     const char *cfg_field;   /* Configuration field name */
 } FeatureWordInfo;
 
@@ -261,27 +262,38 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         .feat_names = feature_name,
         .bits_to_check = ~0,
         .cfg_field = "feature_edx",
+        .tcg_features = TCG_FEATURES,
     },
     [CPUID_1_ECX] = {
         .cpuid = 0x00000001, .reg = R_ECX,
         .feat_names = ext_feature_name,
         .bits_to_check = ~CPUID_EXT_HYPERVISOR,
         .cfg_field = "feature_ecx",
+        .tcg_features = TCG_EXT_FEATURES,
     },
     [CPUID_8000_0001_EDX] = {
         .cpuid = 0x80000001, .reg = R_EDX,
         .feat_names = ext2_feature_name,
         .bits_to_check = ~PPRO_FEATURES,
         .cfg_field = "extfeature_edx",
+        .tcg_features = (TCG_EXT2_FEATURES
+#ifdef TARGET_X86_64
+            | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
+#endif
+            ),
     },
     [CPUID_8000_0001_ECX] = {
         .cpuid = 0x80000001, .reg = R_ECX,
         .feat_names = ext3_feature_name,
         .bits_to_check = ~CPUID_EXT3_SVM,
         .cfg_field = "extfeature_ecx",
+        .tcg_features = TCG_EXT3_FEATURES,
     },
     [CPUID_KVM]   = { .feat_names = kvm_feature_name },
-    [CPUID_SVM]   = { .feat_names = svm_feature_name },
+    [CPUID_SVM]   = {
+        .feat_names = svm_feature_name,
+        .tcg_features = TCG_SVM_FEATURES,
+    },
 };
 
 static void add_flagname_to_bitmaps(const char *flagname,
