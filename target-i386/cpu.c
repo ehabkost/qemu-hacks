@@ -1507,6 +1507,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
     X86CPUModelTableEntry *def;
     char buf[256];
+    FeatureWord w;
 
     for (def = x86_defs; def; def = def->next) {
         snprintf(buf, sizeof(buf), "%s", def->name);
@@ -1516,14 +1517,13 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
         (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
     }
     (*cpu_fprintf)(f, "\nRecognized CPUID flags:\n");
-    listflags(buf, sizeof(buf), (uint32_t)~0, feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext_feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext2_feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext3_feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        FeatureWordInfo *fw = &feature_word_info[w];
+        if (!fw->feat_names)
+            continue;
+        listflags(buf, sizeof(buf), (uint32_t)~0, fw->feat_names, 1);
+        (*cpu_fprintf)(f, "  %s\n", buf);
+    }
 }
 
 CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
