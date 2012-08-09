@@ -2063,6 +2063,9 @@ void x86_cpu_realize(Object *obj, Error **errp)
             );
         env->feature_words[CPUID_8000_0001_ECX] &= TCG_EXT3_FEATURES;
         env->feature_words[CPUID_SVM] &= TCG_SVM_FEATURES;
+        env->feature_words[CPUID_KVM] = 0;
+        env->feature_words[CPUID_7_0_EBX] = 0;
+        env->feature_words[CPUID_C000_0001_EDX] = 0;
     }
 
 #ifndef CONFIG_USER_ONLY
