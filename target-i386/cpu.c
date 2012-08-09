@@ -97,6 +97,18 @@ static const char *svm_feature_name[] = {
     NULL, NULL, NULL, NULL,
 };
 
+/* Names of the 32-bit registers, indexed by the R_* constants */
+static const char *register_names[] = {
+    [R_EAX] = "eax",
+    [R_ECX] = "ecx",
+    [R_EDX] = "edx",
+    [R_EBX] = "ebx",
+    [R_ESP] = "esp",
+    [R_EBP] = "ebp",
+    [R_ESI] = "esi",
+    [R_EDI] = "edi",
+};
+
 /* collects per-function cpuid data
  */
 typedef struct model_features_t {
@@ -104,8 +116,9 @@ typedef struct model_features_t {
     uint32_t *host_feat;
     uint32_t check_feat;
     const char **flag_names;
-    uint32_t cpuid;
-    } model_features_t;
+    uint32_t cpuid; /* CPUID leaf */
+    int reg;        /* register (R_EAX, R_EBX, R_ECX, R_EDX) */
+} model_features_t;
 
 bool check_cpuid;
 bool enforce_cpuid;
@@ -776,9 +789,9 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
 
     for (i = 0; i < 32; ++i)
         if (1 << i & mask) {
-            fprintf(stderr, "warning: host cpuid %04x_%04x lacks requested"
+            fprintf(stderr, "warning: host cpuid %04x_%04x.%s lacks requested"
                 " flag '%s' [0x%08x]\n",
-                f->cpuid >> 16, f->cpuid & 0xffff,
+                f->cpuid >> 16, f->cpuid & 0xffff, register_names[f->reg],
                 f->flag_names[i] ? f->flag_names[i] : "[reserved]", mask);
             break;
         }
@@ -797,13 +810,13 @@ static int check_features_against_host(X86CPU *cpu)
     int rv, i;
     struct model_features_t ft[] = {
         {&env->cpuid_features, &host_def.features,
-            ~0, feature_name, 0x00000000},
+            ~0, feature_name, 0x00000001, R_EDX},
         {&env->cpuid_ext_features, &host_def.ext_features,
-            ~CPUID_EXT_HYPERVISOR, ext_feature_name, 0x00000001},
+            ~CPUID_EXT_HYPERVISOR, ext_feature_name, 0x00000001, R_ECX},
         {&env->cpuid_ext2_features, &host_def.ext2_features,
-            ~PPRO_FEATURES, ext2_feature_name, 0x80000000},
+            ~PPRO_FEATURES, ext2_feature_name, 0x80000001, R_EDX},
         {&env->cpuid_ext3_features, &host_def.ext3_features,
-            ~CPUID_EXT3_SVM, ext3_feature_name, 0x80000001}};
+            ~CPUID_EXT3_SVM, ext3_feature_name, 0x80000001, R_ECX}};
 
     cpu_x86_fill_host(&host_def);
     for (rv = 0, i = 0; i < ARRAY_SIZE(ft); ++i)
