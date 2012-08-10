@@ -965,8 +965,17 @@ static void x86_cpuid_set_xlevel(Object *obj, Visitor *v, void *opaque,
                                  const char *name, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
+    uint32_t value;
 
-    visit_type_uint32(v, &cpu->env.cpuid_xlevel, name, errp);
+    visit_type_uint32(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+
+    if (value < 0x80000000) {
+        value += 0x80000000;
+    }
+    cpu->env.cpuid_xlevel = value;
 }
 
 static char *x86_cpuid_get_vendor(Object *obj, Error **errp)
@@ -1200,9 +1209,6 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
                 if (!*val || *err) {
                     fprintf(stderr, "bad numerical value %s\n", val);
                     goto error;
-                }
-                if (numvalue < 0x80000000) {
-                    numvalue += 0x80000000;
                 }
                 x86_cpu_def->xlevel = numvalue;
             } else if (!strcmp(featurestr, "vendor")) {
