@@ -915,6 +915,7 @@ static X86CPU *pc_new_cpu(const char *cpu_model)
         fprintf(stderr, "Unable to find x86 CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
     if ((env->cpuid_features & CPUID_APIC) || smp_cpus > 1) {
         env->apic_state = apic_init(env, env->cpuid_apic_id);

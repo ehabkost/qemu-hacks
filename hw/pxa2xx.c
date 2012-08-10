@@ -2021,6 +2021,7 @@ PXA2xxState *pxa270_init(MemoryRegion *address_space,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(s->cpu));
     s->reset = qemu_allocate_irqs(pxa2xx_reset, s, 1)[0];
 
     /* SDRAM & Internal Memory Storage */

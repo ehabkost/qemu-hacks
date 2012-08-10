@@ -770,6 +770,7 @@ static SPARCCPU *cpu_devinit(const char *cpu_model, const struct hwdef *hwdef)
         fprintf(stderr, "Unable to find Sparc CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     env->tick = cpu_timer_create("tick", env, tick_irq,

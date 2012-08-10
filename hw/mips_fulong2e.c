@@ -285,6 +285,7 @@ static void mips_fulong2e_init(ram_addr_t ram_size, const char *boot_device,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     qemu_register_reset(main_cpu_reset, cpu);

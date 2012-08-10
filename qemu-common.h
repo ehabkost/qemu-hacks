@@ -270,7 +270,6 @@ typedef struct PCIEPort PCIEPort;
 typedef struct PCIESlot PCIESlot;
 typedef struct MSIMessage MSIMessage;
 typedef struct SerialState SerialState;
-typedef struct IRQState *qemu_irq;
 typedef struct PCMCIACardState PCMCIACardState;
 typedef struct MouseTransformInfo MouseTransformInfo;
 typedef struct uWireSlave uWireSlave;
@@ -280,6 +279,8 @@ typedef struct EventNotifier EventNotifier;
 typedef struct VirtIODevice VirtIODevice;
 typedef struct QEMUSGList QEMUSGList;
 typedef struct SHPCDevice SHPCDevice;
+
+#include "hw/irq.h"
 
 typedef uint64_t pcibus_t;
 

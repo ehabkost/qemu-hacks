@@ -265,6 +265,7 @@ void axisdev88_init (ram_addr_t ram_size,
         cpu_model = "crisv32";
     }
     cpu = cpu_cris_init(cpu_model);
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     /* allocate RAM */

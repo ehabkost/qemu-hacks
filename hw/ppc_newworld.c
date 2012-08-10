@@ -172,6 +172,7 @@ static void ppc_core99_init (ram_addr_t ram_size,
             fprintf(stderr, "Unable to find PowerPC CPU definition\n");
             exit(1);
         }
+        qdev_init_nofail(DEVICE(cpu));
         env = &cpu->env;
 
         /* Set time-base frequency to 100 Mhz */

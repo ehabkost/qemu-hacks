@@ -61,6 +61,7 @@ CPUPPCState *ppc4xx_init (const char *cpu_model,
                 cpu_model);
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     cpu_clk->cb = NULL; /* We don't care about CPU clock frequency changes */

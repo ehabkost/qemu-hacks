@@ -2258,6 +2258,7 @@ struct omap_mpu_state_s *omap2420_mpu_init(MemoryRegion *sysmem,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(s->cpu));
     s->sdram_size = sdram_size;
     s->sram_size = OMAP242X_SRAM_SIZE;
 

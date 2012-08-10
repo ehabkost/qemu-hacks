@@ -188,6 +188,7 @@ qemu_irq *armv7m_init(MemoryRegion *address_space_mem,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
 #if 0
