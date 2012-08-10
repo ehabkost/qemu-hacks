@@ -192,6 +192,7 @@ static void bamboo_init(ram_addr_t ram_size,
         fprintf(stderr, "Unable to initialize CPU!\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     qemu_register_reset(main_cpu_reset, cpu);

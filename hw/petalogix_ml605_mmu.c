@@ -92,6 +92,7 @@ petalogix_ml605_init(ram_addr_t ram_size,
         cpu_model = "microblaze";
     }
     cpu = cpu_mb_init(cpu_model);
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     /* Attach emulated BRAM through the LMB.  */

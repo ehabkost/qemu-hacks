@@ -12,12 +12,6 @@ qobject-obj-y += qerror.o error.o qemu-error.o
 universal-obj-y += $(qobject-obj-y)
 
 #######################################################################
-# QOM
-qom-obj-y = qom/
-
-universal-obj-y += $(qom-obj-y)
-
-#######################################################################
 # oslib-obj-y is code depending on the OS (win32 vs posix)
 oslib-obj-y = osdep.o
 oslib-obj-$(CONFIG_WIN32) += oslib-win32.o qemu-thread-win32.o

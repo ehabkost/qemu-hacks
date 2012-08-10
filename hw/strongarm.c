@@ -1569,6 +1569,7 @@ StrongARMState *sa1110_init(MemoryRegion *sysmem,
         error_report("Unable to find CPU definition");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(s->cpu));
 
     memory_region_init_ram(&s->sdram, "strongarm.sdram", sdram_size);
     vmstate_register_ram_global(&s->sdram);

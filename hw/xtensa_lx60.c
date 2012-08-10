@@ -182,6 +182,7 @@ static void lx_init(const LxBoardDesc *board,
             fprintf(stderr, "Unable to find CPU definition\n");
             exit(1);
         }
+        qdev_init_nofail(DEVICE(cpu));
         env = &cpu->env;
 
         env->sregs[PRID] = n;

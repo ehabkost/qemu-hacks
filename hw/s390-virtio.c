@@ -213,6 +213,7 @@ static void s390_init(ram_addr_t my_ram_size,
         CPUS390XState *tmp_env;
 
         cpu = cpu_s390x_init(cpu_model);
+        qdev_init_nofail(DEVICE(cpu));
         tmp_env = &cpu->env;
         if (!env) {
             env = tmp_env;

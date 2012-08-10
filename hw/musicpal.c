@@ -1538,6 +1538,7 @@ static void musicpal_init(ram_addr_t ram_size,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     cpu_pic = arm_pic_init_cpu(cpu);
 
     /* For now we use a fixed - the original - RAM size */

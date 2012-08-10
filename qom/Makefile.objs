@@ -1,4 +1,3 @@
 qom-obj-y = object.o container.o qom-qobject.o
-qom-obj-twice-y = cpu.o
-common-obj-y = $(qom-obj-twice-y)
-user-obj-y = $(qom-obj-twice-y)
+common-obj-y += $(qom-obj-y) cpu-softmmu.o
+user-obj-y += $(qom-obj-y) cpu-user.o

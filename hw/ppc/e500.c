@@ -449,6 +449,7 @@ void ppce500_init(PPCE500Params *params)
             fprintf(stderr, "Unable to initialize CPU!\n");
             exit(1);
         }
+        qdev_init_nofail(DEVICE(cpu));
         env = &cpu->env;
 
         if (!firstenv) {

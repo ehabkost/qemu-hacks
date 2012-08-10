@@ -214,6 +214,7 @@ static void highbank_init(ram_addr_t ram_size,
             fprintf(stderr, "Unable to find CPU definition\n");
             exit(1);
         }
+        qdev_init_nofail(DEVICE(cpu));
 
         /* This will become a QOM property eventually */
         cpu->reset_cbar = GIC_BASE_ADDR;

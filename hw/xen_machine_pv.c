@@ -50,6 +50,7 @@ static void xen_init_pv(ram_addr_t ram_size,
 #endif
     }
     cpu = cpu_x86_init(cpu_model);
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
     env->halted = 1;
 

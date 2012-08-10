@@ -107,6 +107,7 @@ milkymist_init(ram_addr_t ram_size_not_used,
         cpu_model = "lm32-full";
     }
     cpu = cpu_lm32_init(cpu_model);
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
     reset_info->cpu = cpu;
 

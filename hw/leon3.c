@@ -123,6 +123,7 @@ static void leon3_generic_hw_init(ram_addr_t  ram_size,
         fprintf(stderr, "qemu: Unable to find Sparc CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     cpu_sparc_set_id(env, 0);
