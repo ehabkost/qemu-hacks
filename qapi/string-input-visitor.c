@@ -110,6 +110,27 @@ static void parse_start_optional(Visitor *v, bool *present,
     *present = true;
 }
 
+static void parse_type_hz(Visitor *v, int64_t *obj, const char *name,
+                             Error **errp)
+{
+    StringInputVisitor *siv = DO_UPCAST(StringInputVisitor, visitor, v);
+    char *endp = (char *) siv->string;
+    long long val;
+
+    errno = 0;
+    if (siv->string) {
+        val = strtosz_suffix_unit(siv->string, &endp,
+                             STRTOSZ_DEFSUFFIX_B, 1000);
+    }
+    if (!siv->string || val == -1 || *endp) {
+        error_set(errp, QERR_INVALID_PARAMETER_VALUE, name,
+              "a value representible as a non-negative int64");
+        return;
+    }
+
+    *obj = val;
+}
+
 Visitor *string_input_get_visitor(StringInputVisitor *v)
 {
     return &v->visitor;
@@ -132,6 +153,7 @@ StringInputVisitor *string_input_visitor_new(const char *str)
     v->visitor.type_str = parse_type_str;
     v->visitor.type_number = parse_type_number;
     v->visitor.start_optional = parse_start_optional;
+    v->visitor.type_hz = parse_type_hz;
 
     v->string = str;
     return v;
