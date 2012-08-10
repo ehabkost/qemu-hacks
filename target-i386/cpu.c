@@ -1183,6 +1183,32 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
+#if !defined(CONFIG_USER_ONLY)
+static void x86_get_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    int64_t value = hyperv_get_spinlock_retries();
+
+    visit_type_int(v, &value, name, errp);
+}
+
+static void x86_set_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    int64_t value;
+
+    visit_type_int(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    if (!value) {
+        error_set(errp, QERR_PROPERTY_VALUE_BAD, "", name, "0");
+        return;
+    }
+    hyperv_set_spinlock_retries(value);
+}
+#endif
+
 static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
 {
     CPUX86State *env = &cpu->env;
@@ -2117,6 +2143,11 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "tsc-frequency", "int",
                         x86_cpuid_get_tsc_freq,
                         x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
+#if !defined(CONFIG_USER_ONLY)
+    object_property_add(obj, "hv_spinlocks", "int",
+                        x86_get_hv_spinlocks,
+                        x86_set_hv_spinlocks, NULL, NULL, NULL);
+#endif
     x86_register_cpuid_properties(obj, feature_name);
     x86_register_cpuid_properties(obj, ext_feature_name);
     x86_register_cpuid_properties(obj, ext2_feature_name);
