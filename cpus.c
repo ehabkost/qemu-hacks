@@ -1190,12 +1190,7 @@ void set_cpu_log_filename(const char *optarg)
 
 void list_cpus(FILE *f, fprintf_function cpu_fprintf, const char *optarg)
 {
-    /* XXX: implement xxx_cpu_list for targets that still miss it */
-#if defined(cpu_list_id)
-    cpu_list_id(f, cpu_fprintf, optarg);
-#elif defined(cpu_list)
-    cpu_list(f, cpu_fprintf); /* deprecated */
-#endif
+    cpu_list(f, cpu_fprintf);
 }
 
 CpuInfoList *qmp_query_cpus(Error **errp)
