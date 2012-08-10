@@ -1293,6 +1293,8 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     env->cpuid_ext4_features = def->ext4_features;
     env->cpuid_7_0_ebx = def->cpuid_7_0_ebx_features;
     env->cpuid_xlevel2 = def->xlevel2;
+
+    object_property_set_bool(OBJECT(cpu), true, "hypervisor", errp);
 }
 
 /* convert legacy cpumodel string to string cpu_name and
@@ -1376,8 +1378,6 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
 
     /* not supported bits will be filtered out later */
     env->cpuid_kvm_features = ~0;
-
-    object_property_set_bool(OBJECT(cpu), true, "hypervisor", errp);
 
     for (ent = qdict_first(features); ent; ent = qdict_next(features, ent)) {
         const QString *qval = qobject_to_qstring(qdict_entry_value(ent));
