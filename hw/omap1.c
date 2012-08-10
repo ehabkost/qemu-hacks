@@ -3836,6 +3836,7 @@ struct omap_mpu_state_s *omap310_mpu_init(MemoryRegion *system_memory,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(s->cpu));
     s->sdram_size = sdram_size;
     s->sram_size = OMAP15XX_SRAM_SIZE;
 

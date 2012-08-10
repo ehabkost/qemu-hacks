@@ -122,6 +122,7 @@ Exynos4210State *exynos4210_init(MemoryRegion *system_mem,
             fprintf(stderr, "Unable to find CPU %d definition\n", n);
             exit(1);
         }
+        qdev_init_nofail(DEVICE(s->cpu[n]));
 
         /* Create PIC controller for each processor instance */
         irqp = arm_pic_init_cpu(s->cpu[n]);
