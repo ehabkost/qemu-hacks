@@ -1427,6 +1427,7 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 
 out:
     if (error_is_set(&error)) {
+        fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
         return -1;
     }
