@@ -1390,17 +1390,6 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     env->cpuid_xlevel2 = def->xlevel2;
     object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
                             "tsc-frequency", &error);
-    if (!kvm_enabled()) {
-        env->cpuid_features &= TCG_FEATURES;
-        env->cpuid_ext_features &= TCG_EXT_FEATURES;
-        env->cpuid_ext2_features &= (TCG_EXT2_FEATURES
-#ifdef TARGET_X86_64
-            | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
-#endif
-            );
-        env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
-        env->cpuid_svm_features &= TCG_SVM_FEATURES;
-    }
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
 
 out:
@@ -1964,6 +1953,19 @@ static void mce_init(X86CPU *cpu)
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+
+    if (!kvm_enabled()) {
+        env->cpuid_features &= TCG_FEATURES;
+        env->cpuid_ext_features &= TCG_EXT_FEATURES;
+        env->cpuid_ext2_features &= (TCG_EXT2_FEATURES
+#ifdef TARGET_X86_64
+            | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
+#endif
+            );
+        env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
+        env->cpuid_svm_features &= TCG_SVM_FEATURES;
+    }
 
 #ifndef CONFIG_USER_ONLY
     qemu_register_reset(x86_cpu_machine_reset_cb, cpu);
