@@ -147,6 +147,7 @@ static void mips_jazz_init(MemoryRegion *address_space,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
     qemu_register_reset(main_cpu_reset, cpu);
 

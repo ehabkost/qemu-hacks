@@ -833,6 +833,7 @@ void mips_malta_init (ram_addr_t ram_size,
             fprintf(stderr, "Unable to find CPU definition\n");
             exit(1);
         }
+        qdev_init_nofail(DEVICE(cpu));
         env = &cpu->env;
 
         /* Init internal devices */

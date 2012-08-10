@@ -819,6 +819,7 @@ static void cpu_devinit(const char *cpu_model, unsigned int id,
         fprintf(stderr, "qemu: Unable to find Sparc CPU definition\n");
         exit(1);
     }
+    qdev_init_nofail(DEVICE(cpu));
     env = &cpu->env;
 
     cpu_sparc_set_id(env, id);
