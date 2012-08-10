@@ -1228,6 +1228,26 @@ static void x86_set_hv_relaxed(Object *obj, Visitor *v, void *opaque,
     }
     hyperv_enable_relaxed_timing(value);
 }
+
+static void x86_get_hv_vapic(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    bool value = hyperv_vapic_recommended();
+
+    visit_type_bool(v, &value, name, errp);
+}
+
+static void x86_set_hv_vapic(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    bool value;
+
+    visit_type_bool(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    hyperv_enable_vapic_recommended(value);
+}
 #endif
 
 static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
@@ -2192,6 +2212,9 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "hv_relaxed", "bool",
                         x86_get_hv_relaxed,
                         x86_set_hv_relaxed, NULL, NULL, NULL);
+    object_property_add(obj, "hv_vapic", "bool",
+                        x86_set_hv_vapic,
+                        x86_get_hv_vapic, NULL, NULL, NULL);
 #endif
     x86_register_cpuid_properties(obj, feature_name);
     x86_register_cpuid_properties(obj, ext_feature_name);
