@@ -809,7 +809,6 @@ typedef struct CPUX86State {
 
 #include "cpu-qom.h"
 
-X86CPU *cpu_x86_init(const char *cpu_model);
 int cpu_x86_exec(CPUX86State *s);
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 void x86_cpudef_setup(void);
@@ -925,6 +924,7 @@ int cpu_x86_signal_handler(int host_signum, void *pinfo,
 void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
                    uint32_t *eax, uint32_t *ebx,
                    uint32_t *ecx, uint32_t *edx);
+X86CPU *cpu_x86_create(const char *cpu_model);
 int cpu_x86_register(X86CPU *cpu, const char *cpu_model);
 void cpu_clear_apic_feature(CPUX86State *env);
 void host_cpuid(uint32_t function, uint32_t count,
@@ -985,7 +985,7 @@ uint64_t cpu_get_tsc(CPUX86State *env);
 
 static inline CPUX86State *cpu_init(const char *cpu_model)
 {
-    X86CPU *cpu = cpu_x86_init(cpu_model);
+    X86CPU *cpu = cpu_x86_create(cpu_model);
     if (cpu == NULL) {
         return NULL;
     }
