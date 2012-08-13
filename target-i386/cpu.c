@@ -1527,6 +1527,24 @@ out:
     return 0;
 }
 
+X86CPU *cpu_x86_create(const char *cpu_model)
+{
+    X86CPU *cpu;
+    CPUX86State *env;
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_model;
+
+    if (cpu_x86_register(cpu, cpu_model) < 0) {
+        object_delete(OBJECT(cpu));
+        return NULL;
+    }
+
+    x86_cpu_realize(OBJECT(cpu), NULL);
+    return cpu;
+}
+
 #if !defined(CONFIG_USER_ONLY)
 /* interpret radix and convert from string to arbitrary scalar,
  * otherwise flag failure
