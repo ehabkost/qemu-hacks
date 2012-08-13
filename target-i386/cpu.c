@@ -1404,6 +1404,19 @@ error:
     return -1;
 }
 
+/* Set features on X86CPU object based on a QDict */
+static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Errp **errp)
+{
+    for (ent = qdict_first(features); ent; ent = qdict_next(features, ent)) {
+        const QString *qval = qobject_to_qstring(qdict_entry_value(ent));
+        object_property_parse(OBJECT(cpu), qstring_get_str(qval),
+                              qdict_entry_key(ent), errp);
+        if (error_is_set(errp)) {
+            return;
+        }
+    }
+}
+
 static int cpu_x86_build_from_name(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
@@ -1423,15 +1436,11 @@ static int cpu_x86_build_from_name(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
     }
 
     cpudef_2_x86_cpu(cpu, def, errp);
-
-    for (ent = qdict_first(features); ent; ent = qdict_next(features, ent)) {
-        const QString *qval = qobject_to_qstring(qdict_entry_value(ent));
-        object_property_parse(OBJECT(cpu), qstring_get_str(qval),
-                              qdict_entry_key(ent), errp);
-        if (error_is_set(errp)) {
-            goto error;
-        }
+    cpu_x86_set_props(cpu, features, errp);
+    if (error_is_set(errp)) {
+        goto error;
     }
+
     QDECREF(features);
 
     g_free(name);
