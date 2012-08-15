@@ -894,22 +894,9 @@ static void x86_cpuid_get_feature(Object *obj, Visitor *v, void *opaque,
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
-    bool value = true;
-
-    if (!is_feature_set(name, env->feature_words[CPUID_1_EDX],
-                        feature_name) &&
-       !is_feature_set(name, env->feature_words[CPUID_1_ECX],
-                        ext_feature_name) &&
-       !is_feature_set(name, env->feature_words[CPUID_8000_0001_EDX],
-                        ext2_feature_name) &&
-       !is_feature_set(name, env->feature_words[CPUID_8000_0001_ECX],
-                        ext3_feature_name) &&
-       !is_feature_set(name, env->feature_words[CPUID_KVM],
-                        kvm_feature_name) &&
-       !is_feature_set(name, env->feature_words[CPUID_SVM],
-                        svm_feature_name)) {
-        value = false;
-    }
+    FeatureWord w = (FeatureWord)opaque;
+    FeatureWordInfo *fw = &feature_word_info[w];
+    bool value = is_feature_set(name, env->feature_words[w], fw->feat_names);
 
     visit_type_bool(v, &value, name, errp);
 }
@@ -919,8 +906,10 @@ static void x86_cpuid_set_feature(Object *obj, Visitor *v, void *opaque,
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
+    FeatureWord w = (FeatureWord)opaque;
+    FeatureWordInfo *fw = &feature_word_info[w];
     uint32_t mask = 0;
-    uint32_t *dst_features;
+    uint32_t *dst_features = &env->feature_words[w];
     bool value;
 
     visit_type_bool(v, &value, name, errp);
@@ -928,19 +917,7 @@ static void x86_cpuid_set_feature(Object *obj, Visitor *v, void *opaque,
         return;
     }
 
-    if (lookup_feature(&mask, name, NULL, feature_name)) {
-        dst_features = &env->feature_words[CPUID_1_EDX];
-    } else if (lookup_feature(&mask, name, NULL, ext_feature_name)) {
-        dst_features = &env->feature_words[CPUID_1_ECX];
-    } else if (lookup_feature(&mask, name, NULL, ext2_feature_name)) {
-        dst_features = &env->feature_words[CPUID_8000_0001_EDX];
-    } else if (lookup_feature(&mask, name, NULL, ext3_feature_name)) {
-        dst_features = &env->feature_words[CPUID_8000_0001_ECX];
-    } else if (lookup_feature(&mask, name, NULL, kvm_feature_name)) {
-        dst_features = &env->feature_words[CPUID_KVM];
-    } else if (lookup_feature(&mask, name, NULL, svm_feature_name)) {
-        dst_features = &env->feature_words[CPUID_SVM];
-    } else {
+    if (!lookup_feature(&mask, name, NULL, fw->feat_names)) {
         error_set(errp, QERR_PROPERTY_NOT_FOUND, "", name);
         return;
     }
@@ -952,9 +929,15 @@ static void x86_cpuid_set_feature(Object *obj, Visitor *v, void *opaque,
     }
 }
 
-static void x86_register_cpuid_properties(Object *obj, const char **featureset)
+static void x86_register_feature_properties(Object *obj, FeatureWord w)
 {
     uint32_t mask;
+    FeatureWordInfo *fw = &feature_word_info[w];
+    const char **featureset = fw->feat_names;
+
+    if (!fw->feat_names) {
+        return; /* No feature names to register */
+    }
 
     for (mask = 1; mask; mask <<= 1) {
         if (featureset[ffs(mask) - 1]) {
@@ -968,7 +951,7 @@ static void x86_register_cpuid_properties(Object *obj, const char **featureset)
             while (feature_name) {
                 object_property_add(obj, feature_name, "bool",
                                 x86_cpuid_get_feature,
-                                x86_cpuid_set_feature, NULL, NULL, NULL);
+                                x86_cpuid_set_feature, NULL, (void*)w, NULL);
                 feature_name = strtok_r(NULL, "|", &save_ptr);
             }
         }
@@ -2209,6 +2192,7 @@ static void x86_cpu_initfn(Object *obj)
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
     static int inited;
+    FeatureWord w;
 
     cpu_exec_init(env);
 
@@ -2256,12 +2240,9 @@ static void x86_cpu_initfn(Object *obj)
                         x86_set_hv_vapic,
                         x86_get_hv_vapic, NULL, NULL, NULL);
 #endif
-    x86_register_cpuid_properties(obj, feature_name);
-    x86_register_cpuid_properties(obj, ext_feature_name);
-    x86_register_cpuid_properties(obj, ext2_feature_name);
-    x86_register_cpuid_properties(obj, ext3_feature_name);
-    x86_register_cpuid_properties(obj, kvm_feature_name);
-    x86_register_cpuid_properties(obj, svm_feature_name);
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        x86_register_feature_properties(obj, w);
+    }
 
     env->cpuid_apic_id = env->cpu_index;
 
