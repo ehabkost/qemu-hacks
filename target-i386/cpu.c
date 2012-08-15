@@ -1544,20 +1544,20 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     QDict *features;
     char *name;
 
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
-    env = &cpu->env;
-    env->cpu_model_str = cpu_model;
-
-    memset(def, 0, sizeof(*def));
-
     compat_normalize_cpu_model(cpu_model, &name, &features, &error);
     if (error_is_set(&error)) {
         goto error;
     }
 
+    memset(def, 0, sizeof(*def));
+
     if (cpu_x86_find_by_name(def, name) != 0) {
         goto error;
     }
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_model;
 
     cpudef_2_x86_cpu(cpu, def, &error);
     cpu_x86_set_props(cpu, features, &error);
