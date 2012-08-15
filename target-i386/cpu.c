@@ -1567,18 +1567,12 @@ static int cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
 
 X86CPU *cpu_x86_init(const char *cpu_string)
 {
-    X86CPU *cpu;
+    X86CPU *cpu = NULL;
     CPUX86State *env;
     Error *error = NULL;
     X86CPUDefinition def;
     char *name, *features;
     gchar **model_pieces;
-
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
-    env = &cpu->env;
-    env->cpu_model_str = cpu_string;
-
-    memset(&def, 0, sizeof(def));
 
     model_pieces = g_strsplit(cpu_string, ",", 2);
     if (!model_pieces[0]) {
@@ -1586,6 +1580,12 @@ X86CPU *cpu_x86_init(const char *cpu_string)
     }
     name = model_pieces[0];
     features = model_pieces[1];
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_string;
+
+    memset(&def, 0, sizeof(def));
 
     if (cpu_x86_find_cpudef(name, &def, &error) < 0) {
         goto error;
@@ -1608,7 +1608,9 @@ X86CPU *cpu_x86_init(const char *cpu_string)
     return cpu;
 error:
     g_strfreev(model_pieces);
-    object_delete(OBJECT(cpu));
+    if (cpu) {
+        object_delete(OBJECT(cpu));
+    }
     if (error) {
         error_report("cpu_x86_init: %s", error_get_pretty(error));
         error_free(error);
