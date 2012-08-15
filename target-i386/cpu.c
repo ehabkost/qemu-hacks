@@ -1569,36 +1569,20 @@ CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
     return cpu_list;
 }
 
-int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
-{
-    X86CPUDefinition def1, *def = &def1;
-    Error *error = NULL;
-
-    memset(def, 0, sizeof(*def));
-
-    if (cpu_x86_build_from_name(cpu, def, cpu_model, &error) < 0) {
-        goto out;
-    }
-
-out:
-    if (error_is_set(&error)) {
-        fprintf(stderr, "%s\n", error_get_pretty(error));
-        error_free(error);
-        return -1;
-    }
-    return 0;
-}
-
 X86CPU *cpu_x86_create(const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
+    X86CPUDefinition def1, *def = &def1;
+    Error *error = NULL;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
 
-    if (cpu_x86_register(cpu, cpu_model) < 0) {
+    memset(def, 0, sizeof(*def));
+
+    if (cpu_x86_build_from_name(cpu, def, cpu_model, &error) < 0) {
         goto error;
     }
 
@@ -1606,6 +1590,10 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     return cpu;
 
 error:
+    if (error_is_set(&error)) {
+        fprintf(stderr, "%s\n", error_get_pretty(error));
+        error_free(error);
+    }
     object_delete(OBJECT(cpu));
     return NULL;
 }
