@@ -1508,18 +1508,19 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     QDict *features = NULL;
     char *name = NULL;
 
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
-    env = &cpu->env;
-    env->cpu_model_str = cpu_model;
-
     /* for CPU subclasses should go into cpu_x86_init() before object_new() */
     compat_normalize_cpu_model(cpu_model, &name, &features, &error);
     if (error_is_set(&error)) {
-        goto error;
+        goto error_normalize;
     }
 
     /* this block should be replaced by CPU subclasses */
     memset(def, 0, sizeof(*def));
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_model;
+
     if (cpu_x86_find_by_name(cpu, def, name, &error) < 0) {
         goto error;
     }
@@ -1540,6 +1541,7 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     return cpu;
 error:
     object_delete(OBJECT(cpu));
+error_normalize:
     QDECREF(features);
     g_free(name);
     if (error_is_set(&error)) {
