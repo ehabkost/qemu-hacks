@@ -1419,40 +1419,6 @@ static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
     }
 }
 
-static int cpu_x86_build_from_name(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
-                                const char *cpu_model, Error **errp)
-{
-    QDict *features;
-    char *name;
-
-    compat_normalize_cpu_model(cpu_model, &name, &features, errp);
-    if (error_is_set(errp)) {
-        goto error;
-    }
-
-    if (cpu_x86_find_by_name(x86_cpu_def, name) != 0) {
-        goto error;
-    }
-
-    cpudef_2_x86_cpu(cpu, x86_cpu_def, errp);
-    cpu_x86_set_props(cpu, features, errp);
-    if (error_is_set(errp)) {
-        goto error;
-    }
-
-    QDECREF(features);
-
-    g_free(name);
-    return 0;
-
-error:
-    g_free(name);
-    if (!error_is_set(errp)) {
-        error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
-    }
-    return -1;
-}
-
 /* generate a composite string into buf of all cpuid names in featureset
  * selected by fbits.  indicate truncation at bufsize in the event of overflow.
  * if flags, suppress names undefined in featureset.
@@ -1575,6 +1541,8 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     CPUX86State *env;
     X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
+    QDict *features;
+    char *name;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
@@ -1582,14 +1550,30 @@ X86CPU *cpu_x86_create(const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_build_from_name(cpu, def, cpu_model, &error) < 0) {
+    compat_normalize_cpu_model(cpu_model, &name, &features, &error);
+    if (error_is_set(&error)) {
         goto error;
     }
+
+    if (cpu_x86_find_by_name(def, name) != 0) {
+        goto error;
+    }
+
+    cpudef_2_x86_cpu(cpu, def, &error);
+    cpu_x86_set_props(cpu, features, &error);
+    if (error_is_set(&error)) {
+        goto error;
+    }
+
+    QDECREF(features);
+
+    g_free(name);
 
     x86_cpu_realize(OBJECT(cpu), NULL);
     return cpu;
 
 error:
+    g_free(name);
     if (error_is_set(&error)) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
