@@ -1371,42 +1371,26 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
 {
     x86_def_t *def;
 
-    QDict *features;
-    char *name;
-
-    compat_normalize_cpu_model(cpu_model, &name, &features, errp);
-    if (error_is_set(errp)) {
-        goto error;
+    if (!cpu_model) {
+        error_set(errp, QERR_INVALID_PARAMETER_VALUE, "cpu_model", "NULL");
+        return -1;
     }
 
-    for (def = x86_defs; def; def = def->next)
-        if (name && !strcmp(name, def->name))
+    for (def = x86_defs; def; def = def->next) {
+        if (!strcmp(cpu_model, def->name)) {
             break;
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
+        }
+    }
+    if (kvm_enabled() && strcmp(cpu_model, "host") == 0) {
         cpu_x86_fill_host(x86_cpu_def);
     } else if (!def) {
-        goto error;
+        error_set(errp, QERR_DEVICE_NOT_FOUND, cpu_model);
+        return -1;
     } else {
         memcpy(x86_cpu_def, def, sizeof(*def));
     }
 
-    cpudef_2_x86_cpu(cpu, x86_cpu_def, errp);
-
-    cpu_x86_set_props(cpu, features, errp);
-    QDECREF(features);
-    if (error_is_set(errp)) {
-        goto error;
-    }
-
-    g_free(name);
     return 0;
-
-error:
-    g_free(name);
-    if (!error_is_set(errp)) {
-        error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
-    }
-    return -1;
 }
 
 /* generate a composite string into buf of all cpuid names in featureset
@@ -1488,14 +1472,29 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 {
     x86_def_t def1, *def = &def1;
     Error *error = NULL;
+    QDict *features;
+    char *name;
 
-    memset(def, 0, sizeof(*def));
-
-    if (cpu_x86_find_by_name(cpu, def, cpu_model, &error) < 0) {
+    /* for CPU subclasses should go into cpu_x86_init() before object_new() */
+    compat_normalize_cpu_model(cpu_model, &name, &features, &error);
+    if (error_is_set(&error)) {
         goto out;
     }
 
+    /* this block should be replaced by CPU subclasses */
+    memset(def, 0, sizeof(*def));
+    if (cpu_x86_find_by_name(cpu, def, name, &error) < 0) {
+        goto out;
+    }
+    cpudef_2_x86_cpu(cpu, def, &error);
+
+    /* for CPU subclasses should go between object_new() and
+     * x86_cpu_realize() */
+    cpu_x86_set_props(cpu, features, &error);
+
 out:
+    QDECREF(features);
+    g_free(name);
     if (error_is_set(&error)) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
