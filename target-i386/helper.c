@@ -1147,7 +1147,7 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
     return 1;
 }
 
-X86CPU *cpu_x86_init(const char *cpu_model)
+X86CPU *cpu_x86_create(const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
