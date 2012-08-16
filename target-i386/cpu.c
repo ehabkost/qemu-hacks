@@ -1503,8 +1503,8 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 {
     X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
-    QDict *features;
-    char *name;
+    QDict *features = NULL;
+    char *name = NULL;
 
     /* for CPU subclasses should go into cpu_x86_init() before object_new() */
     compat_normalize_cpu_model(cpu_model, &name, &features, &error);
