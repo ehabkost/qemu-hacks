@@ -1499,23 +1499,29 @@ CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
     return cpu_list;
 }
 
-int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
+X86CPU *cpu_x86_create(const char *cpu_model)
 {
-    X86CPUDefinition def1, *def = &def1;
+    X86CPU *cpu;
+    CPUX86State *env;
     Error *error = NULL;
+    X86CPUDefinition def1, *def = &def1;
     QDict *features = NULL;
     char *name = NULL;
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_model;
 
     /* for CPU subclasses should go into cpu_x86_init() before object_new() */
     compat_normalize_cpu_model(cpu_model, &name, &features, &error);
     if (error_is_set(&error)) {
-        goto out;
+        goto error;
     }
 
     /* this block should be replaced by CPU subclasses */
     memset(def, 0, sizeof(*def));
     if (cpu_x86_find_by_name(cpu, def, name, &error) < 0) {
-        goto out;
+        goto error;
     }
     cpudef_2_x86_cpu(cpu, def, &error);
 
@@ -1523,38 +1529,19 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
      * x86_cpu_realize() */
     cpu_x86_set_props(cpu, features, &error);
 
-out:
-    QDECREF(features);
-    g_free(name);
-    if (error_is_set(&error)) {
-        fprintf(stderr, "%s\n", error_get_pretty(error));
-        error_free(error);
-        return -1;
-    }
-    return 0;
-}
-
-X86CPU *cpu_x86_create(const char *cpu_model)
-{
-    X86CPU *cpu;
-    CPUX86State *env;
-    Error *error = NULL;
-
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
-    env = &cpu->env;
-    env->cpu_model_str = cpu_model;
-
-    if (cpu_x86_register(cpu, cpu_model) < 0) {
-        goto error;
-    }
-
     x86_cpu_realize(OBJECT(cpu), &error);
     if (error_is_set(&error)) {
         goto error;
     }
+
+    QDECREF(features);
+    g_free(name);
+
     return cpu;
 error:
     object_delete(OBJECT(cpu));
+    QDECREF(features);
+    g_free(name);
     if (error_is_set(&error)) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
