@@ -2060,6 +2060,16 @@ static void mce_init(X86CPU *cpu)
     }
 }
 
+static void filter_features_for_tcg(X86CPU *cpu)
+{
+    CPUX86State *env = &cpu->env;
+    FeatureWord w;
+
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        env->feature_words[w] &= feature_word_info[w].tcg_features;
+    }
+}
+
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
@@ -2083,10 +2093,7 @@ void x86_cpu_realize(Object *obj, Error **errp)
     }
 
     if (!kvm_enabled()) {
-        FeatureWord w;
-        for (w = 0; w < FEATURE_WORDS; w++) {
-            env->feature_words[w] &= feature_word_info[w].tcg_features;
-        }
+        filter_features_for_tcg(cpu);
     }
 
 #ifndef CONFIG_USER_ONLY
