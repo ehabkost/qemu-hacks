@@ -1580,6 +1580,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 error:
     object_delete(OBJECT(cpu));
     if (error) {
+        error_report("cpu_x86_init: %s", error_get_pretty(error));
         error_free(error);
     }
     return NULL;
