@@ -2070,6 +2070,38 @@ static void filter_features_for_tcg(X86CPU *cpu)
     }
 }
 
+static void filter_features_for_kvm(X86CPU *cpu)
+{
+    /* This function shouldn't even get called if CONFIG_KVM is not set,
+     * the linker won't find the functions if we leave the calls here
+     * and the compiler do not optimize them out.
+     */
+#ifdef CONFIG_KVM
+    CPUX86State *env = &cpu->env;
+    KVMState *s = kvm_state;
+
+    env->feature_words[CPUID_1_EDX] &=
+            kvm_arch_get_supported_cpuid(s, 1, 0, R_EDX);
+
+    env->feature_words[CPUID_1_ECX] &=
+            kvm_arch_get_supported_cpuid(s, 1, 0, R_ECX);
+
+    env->feature_words[CPUID_8000_0001_EDX] &=
+            kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_EDX);
+    env->feature_words[CPUID_8000_0001_ECX] &=
+            kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_ECX);
+    env->feature_words[CPUID_SVM] &=
+            kvm_arch_get_supported_cpuid(s, 0x8000000A, 0, R_EDX);
+
+    env->feature_words[CPUID_KVM] &=
+            kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
+
+    env->feature_words[CPUID_C000_0001_EDX] &=
+        kvm_arch_get_supported_cpuid(s, 0xC0000001, 0, R_EDX);
+
+#endif
+}
+
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
@@ -2092,7 +2124,9 @@ void x86_cpu_realize(Object *obj, Error **errp)
         return;
     }
 
-    if (!kvm_enabled()) {
+    if (kvm_enabled()) {
+        filter_features_for_kvm(cpu);
+    } else {
         filter_features_for_tcg(cpu);
     }
 
