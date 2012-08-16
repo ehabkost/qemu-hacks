@@ -2086,6 +2086,19 @@ static void filter_features_for_kvm(X86CPU *cpu)
 }
 #endif
 
+static void filter_features_for_tcg(X86CPU *cpu)
+{
+    CPUX86State *env = &cpu->env;
+    env->cpuid_features &= TCG_FEATURES;
+    env->cpuid_ext_features &= TCG_EXT_FEATURES;
+    env->cpuid_ext2_features &= TCG_EXT2_FEATURES;
+    env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
+    env->cpuid_svm_features &= TCG_SVM_FEATURES;
+    env->cpuid_kvm_features = 0;
+    env->cpuid_7_0_ebx = 0;
+    env->cpuid_ext4_features = 0;
+}
+
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
@@ -2109,14 +2122,7 @@ void x86_cpu_realize(Object *obj, Error **errp)
     }
 
     if (!kvm_enabled()) {
-        env->cpuid_features &= TCG_FEATURES;
-        env->cpuid_ext_features &= TCG_EXT_FEATURES;
-        env->cpuid_ext2_features &= TCG_EXT2_FEATURES;
-        env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
-        env->cpuid_svm_features &= TCG_SVM_FEATURES;
-        env->cpuid_kvm_features = 0;
-        env->cpuid_7_0_ebx = 0;
-        env->cpuid_ext4_features = 0;
+        filter_features_for_tcg(cpu);
     } else {
 #ifdef CONFIG_KVM
         filter_features_for_kvm(cpu);
