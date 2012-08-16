@@ -809,7 +809,7 @@ typedef struct CPUX86State {
 
 #include "cpu-qom.h"
 
-X86CPU *cpu_x86_init(const char *cpu_model);
+X86CPU *cpu_x86_create(const char *cpu_model);
 int cpu_x86_exec(CPUX86State *s);
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 void x86_cpudef_setup(void);
@@ -985,7 +985,7 @@ uint64_t cpu_get_tsc(CPUX86State *env);
 
 static inline CPUX86State *cpu_init(const char *cpu_model)
 {
-    X86CPU *cpu = cpu_x86_init(cpu_model);
+    X86CPU *cpu = cpu_x86_create(cpu_model);
     if (cpu == NULL) {
         return NULL;
     }

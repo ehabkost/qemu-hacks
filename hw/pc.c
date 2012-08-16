@@ -911,7 +911,7 @@ static X86CPU *pc_new_cpu(const char *cpu_model)
     X86CPU *cpu;
     CPUX86State *env;
 
-    cpu = cpu_x86_init(cpu_model);
+    cpu = cpu_x86_create(cpu_model);
     if (cpu == NULL) {
         fprintf(stderr, "Unable to find x86 CPU definition\n");
         exit(1);
