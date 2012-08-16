@@ -1169,6 +1169,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 error:
     object_delete(OBJECT(cpu));
     if (error_is_set(&error)) {
+        fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
     }
     return NULL;
