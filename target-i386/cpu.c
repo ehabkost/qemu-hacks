@@ -2036,6 +2036,32 @@ static void mce_init(X86CPU *cpu)
     }
 }
 
+#ifdef CONFIG_KVM
+static void filter_features_for_kvm(X86CPU *cpu)
+{
+    CPUX86State *env = &cpu->env;
+    KVMState *s = kvm_state;
+
+    env->cpuid_features &= kvm_arch_get_supported_cpuid(s, 1, 0, R_EDX);
+
+    env->cpuid_ext_features &= kvm_arch_get_supported_cpuid(s, 1, 0, R_ECX);
+
+    env->cpuid_ext2_features &= kvm_arch_get_supported_cpuid(s, 0x80000001,
+                                                             0, R_EDX);
+    env->cpuid_ext3_features &= kvm_arch_get_supported_cpuid(s, 0x80000001,
+                                                             0, R_ECX);
+    env->cpuid_svm_features  &= kvm_arch_get_supported_cpuid(s, 0x8000000A,
+                                                             0, R_EDX);
+
+    env->cpuid_kvm_features &=
+            kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
+
+    env->cpuid_ext4_features &= kvm_arch_get_supported_cpuid(s, 0xC0000001,
+                                                             0, R_EDX);
+
+}
+#endif
+
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
@@ -2068,6 +2094,10 @@ void x86_cpu_realize(Object *obj, Error **errp)
             );
         env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
         env->cpuid_svm_features &= TCG_SVM_FEATURES;
+    } else {
+#ifdef CONFIG_KVM
+        filter_features_for_kvm(cpu);
+#endif
     }
 
 #ifndef CONFIG_USER_ONLY
