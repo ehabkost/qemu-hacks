@@ -281,6 +281,9 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         .bits_to_check = ~CPUID_EXT_HYPERVISOR,
         .tcg_features = TCG_EXT_FEATURES,
     },
+    [CPUID_7_0_EBX] = {
+        .cpuid = 7, .reg = R_EBX,
+    },
     [CPUID_8000_0001_EDX] = {
         .cpuid = 0x80000001, .reg = R_EDX,
         .feat_names = ext2_feature_name,
@@ -300,8 +303,15 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         .bits_to_check = ~CPUID_EXT3_SVM,
         .tcg_features = TCG_EXT3_FEATURES,
     },
-    [CPUID_KVM]   = { .feat_names = kvm_feature_name },
-    [CPUID_SVM]   = {
+    [CPUID_C000_0001_EDX] = {
+        .cpuid = 0xc0000001, .reg = R_EDX,
+    },
+    [CPUID_KVM] = {
+        .cpuid = 0x40000001, .reg = R_EAX,
+        .feat_names = kvm_feature_name
+    },
+    [CPUID_SVM] = {
+        .cpuid = 0x8000000A, .reg = R_EDX,
         .feat_names = svm_feature_name,
         .tcg_features = TCG_SVM_FEATURES,
     },
@@ -2085,28 +2095,13 @@ static void filter_features_for_kvm(X86CPU *cpu)
 #ifdef CONFIG_KVM
     CPUX86State *env = &cpu->env;
     KVMState *s = kvm_state;
+    FeatureWord w;
 
-    env->feature_words[CPUID_1_EDX] &=
-            kvm_arch_get_supported_cpuid(s, 1, 0, R_EDX);
-
-    env->feature_words[CPUID_1_ECX] &=
-            kvm_arch_get_supported_cpuid(s, 1, 0, R_ECX);
-
-    env->feature_words[CPUID_7_0_EBX] &=
-            kvm_arch_get_supported_cpuid(s, 7, 0, R_EBX);
-
-    env->feature_words[CPUID_8000_0001_EDX] &=
-            kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_EDX);
-    env->feature_words[CPUID_8000_0001_ECX] &=
-            kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_ECX);
-    env->feature_words[CPUID_SVM] &=
-            kvm_arch_get_supported_cpuid(s, 0x8000000A, 0, R_EDX);
-
-    env->feature_words[CPUID_KVM] &=
-            kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
-
-    env->feature_words[CPUID_C000_0001_EDX] &=
-        kvm_arch_get_supported_cpuid(s, 0xC0000001, 0, R_EDX);
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        FeatureWordInfo *fw = &feature_word_info[w];
+        env->feature_words[w] &=
+                kvm_arch_get_supported_cpuid(s, fw->cpuid, 0, fw->reg);
+    }
 
 #endif
 }
