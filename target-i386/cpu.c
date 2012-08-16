@@ -801,7 +801,7 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
 {
     int i;
 
-    for (i = 0; i < 32; ++i)
+    for (i = 0; i < 32; ++i) {
         if (1 << i & mask) {
             fprintf(stderr, "warning: host cpuid %04x_%04x lacks requested"
                 " flag '%s' [0x%08x]\n",
@@ -809,6 +809,7 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
                 f->flag_names[i] ? f->flag_names[i] : "[reserved]", mask);
             break;
         }
+    }
     return 0;
 }
 
@@ -1858,10 +1859,11 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
 /* XXX: The physical address space is limited to 42 bits in exec.c. */
             *eax = 0x00003028;	/* 48 bits virtual, 40 bits physical */
         } else {
-            if (env->cpuid_features & CPUID_PSE36)
+            if (env->cpuid_features & CPUID_PSE36) {
                 *eax = 0x00000024; /* 36 bits physical */
-            else
+            } else {
                 *eax = 0x00000020; /* 32 bits physical */
+            }
         }
         *ebx = 0;
         *ecx = 0;
