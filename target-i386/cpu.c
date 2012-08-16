@@ -1402,11 +1402,6 @@ static int cpu_x86_find_by_name(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
 {
     X86CPUModelTableEntry *def;
 
-    if (!cpu_model) {
-        error_set(errp, QERR_INVALID_PARAMETER_VALUE, "cpu_model", "NULL");
-        return -1;
-    }
-
     for (def = x86_defs; def; def = def->next) {
         if (!strcmp(cpu_model, def->name)) {
             break;
@@ -1520,6 +1515,11 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
+
+    if (!cpu_model) {
+        error_set(&error, QERR_INVALID_PARAMETER_VALUE, "cpu_model", "NULL");
+        goto error;
+    }
 
     if (cpu_x86_find_by_name(cpu, def, name, &error) < 0) {
         goto error;
