@@ -2111,6 +2111,9 @@ static void filter_features_for_kvm(X86CPU *cpu)
     env->feature_words[CPUID_1_ECX] &=
             kvm_arch_get_supported_cpuid(s, 1, 0, R_ECX);
 
+    env->feature_words[CPUID_7_0_EBX] &=
+            kvm_arch_get_supported_cpuid(s, 7, 0, R_EBX);
+
     env->feature_words[CPUID_8000_0001_EDX] &=
             kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_EDX);
     env->feature_words[CPUID_8000_0001_ECX] &=
