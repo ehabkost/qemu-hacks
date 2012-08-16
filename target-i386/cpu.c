@@ -58,15 +58,18 @@ static const char *ext_feature_name[] = {
     "tsc-deadline", "aes", "xsave", "osxsave",
     "avx", NULL, NULL, "hypervisor",
 };
+/* Comments starting with "=" below indicate features already defined on
+ * feature_name[], that are copied automatically to cpuid_ext2_features when
+ * CPU vendor is AMD.
+ */
 static const char *ext2_feature_name[] = {
-    "fpu", "vme", "de", "pse",
-    "tsc", "msr", "pae", "mce",
-    "cx8" /* AMD CMPXCHG8B */, "apic", NULL, "syscall",
-    "mtrr", "pge", "mca", "cmov",
-    "pat", "pse36", NULL, NULL /* Linux mp */,
-    "nx|xd", NULL, "mmxext", "mmx",
-    "fxsr", "fxsr_opt|ffxsr", "pdpe1gb" /* AMD Page1GB */, "rdtscp",
-    NULL, "lm|i64", "3dnowext", "3dnow",
+    NULL /* =fpu */, NULL /* =vme */, NULL /* =de */, NULL /* =pse */,
+    NULL /* =tsc */, NULL /* =msr */, NULL /* =pae */, NULL /* =mce */,
+    NULL /* =cx8 */ /* AMD CMPXCHG8B */, NULL /* =apic */, NULL, "syscall",
+    NULL /* =mtrr */, NULL /* =pge */, NULL /* =mca */, NULL /* =cmov */,
+    NULL /* =pat */, NULL /* =pse36 */, NULL, NULL /* Linux mp */,
+    "nx|xd", NULL, "mmxext", NULL /* =mmx */,
+    NULL /* =fxsr */, "fxsr_opt|ffxsr", "pdpe1gb" /* AMD Page1GB */, "rdtscp",
 };
 static const char *ext3_feature_name[] = {
     "lahf_lm" /* AMD LahfSahf */, "cmp_legacy", "svm", "extapic" /* AMD ExtApicSpace */,
@@ -1350,6 +1353,11 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     env->cpuid_features = def->features;
     env->cpuid_ext_features = def->ext_features;
     env->cpuid_ext2_features = def->ext2_features;
+    if (env->cpuid_vendor1 == CPUID_VENDOR_AMD_1 &&
+            env->cpuid_vendor2 == CPUID_VENDOR_AMD_2 &&
+            env->cpuid_vendor3 == CPUID_VENDOR_AMD_3) {
+        env->cpuid_ext2_features |= (def->features & CPUID_EXT2_AMD_ALIASES);
+    }
     env->cpuid_ext3_features = def->ext3_features;
     object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", &error);
     env->cpuid_kvm_features = def->kvm_features;
