@@ -20,6 +20,7 @@
 
 #ifdef CONFIG_KVM
 #include <linux/kvm.h>
+#include <linux/kvm_para.h>
 #endif
 
 #ifdef NEED_CPU_H
