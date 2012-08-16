@@ -1544,12 +1544,14 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     env->cpu_model_str = cpu_model;
 
     if (cpu_x86_register(cpu, cpu_model) < 0) {
-        object_delete(OBJECT(cpu));
-        return NULL;
+        goto error;
     }
 
     x86_cpu_realize(OBJECT(cpu), NULL);
     return cpu;
+error:
+    object_delete(OBJECT(cpu));
+    return NULL;
 }
 
 #if !defined(CONFIG_USER_ONLY)
