@@ -275,11 +275,18 @@ typedef struct X86CPUDefinition {
           /* missing:
           CPUID_EXT_DTES64, CPUID_EXT_DSCPL, CPUID_EXT_VMX, CPUID_EXT_EST,
           CPUID_EXT_TM2, CPUID_EXT_XTPR, CPUID_EXT_PDCM, CPUID_EXT_XSAVE */
-#define TCG_EXT2_FEATURES ((TCG_FEATURES & CPUID_EXT2_AMD_ALIASES) | \
+#define TCG_EXT2_FEATURES_32 ((TCG_FEATURES & CPUID_EXT2_AMD_ALIASES) | \
           CPUID_EXT2_NX | CPUID_EXT2_MMXEXT | CPUID_EXT2_RDTSCP | \
           CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT)
           /* missing:
           CPUID_EXT2_PDPE1GB */
+#define TCG_EXT2_FEATURES_64 (TCG_EXT2_FEATURES_32 | \
+          CPUID_EXT2_SYSCALL |  CPUID_EXT2_LM)
+#ifdef TARGET_X86_64
+#define TCG_EXT2_FEATURES TCG_EXT2_FEATURES_64
+#else
+#define TCG_EXT2_FEATURES TCG_EXT2_FEATURES_32
+#endif
 #define TCG_EXT3_FEATURES (CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM | \
           CPUID_EXT3_CR8LEG | CPUID_EXT3_ABM | CPUID_EXT3_SSE4A)
 #define TCG_SVM_FEATURES 0
@@ -2104,11 +2111,7 @@ void x86_cpu_realize(Object *obj, Error **errp)
     if (!kvm_enabled()) {
         env->cpuid_features &= TCG_FEATURES;
         env->cpuid_ext_features &= TCG_EXT_FEATURES;
-        env->cpuid_ext2_features &= (TCG_EXT2_FEATURES
-#ifdef TARGET_X86_64
-            | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
-#endif
-            );
+        env->cpuid_ext2_features &= TCG_EXT2_FEATURES;
         env->cpuid_ext3_features &= TCG_EXT3_FEATURES;
         env->cpuid_svm_features &= TCG_SVM_FEATURES;
     } else {
