@@ -131,9 +131,16 @@ static const char *svm_feature_name[] = {
           /* missing:
           CPUID_EXT_DTES64, CPUID_EXT_DSCPL, CPUID_EXT_VMX, CPUID_EXT_EST,
           CPUID_EXT_TM2, CPUID_EXT_XTPR, CPUID_EXT_PDCM, CPUID_EXT_XSAVE */
+
+#ifdef TARGET_X86_64
+#define TCG_EXT2_FEATURES_64 (CPUID_EXT2_SYSCALL | CPUID_EXT2_LM)
+#else
+#define TCG_EXT2_FEATURES_64 0
+#endif
+
 #define TCG_EXT2_FEATURES ((TCG_FEATURES & EXT2_FEATURE_MASK) | \
           CPUID_EXT2_NX | CPUID_EXT2_MMXEXT | CPUID_EXT2_RDTSCP | \
-          CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT)
+          CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT | TCG_EXT2_FEATURES_64)
           /* missing:
           CPUID_EXT2_PDPE1GB */
 #define TCG_EXT3_FEATURES (CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM | \
@@ -2095,11 +2102,7 @@ void x86_cpu_realize(Object *obj, Error **errp)
     if (!kvm_enabled()) {
         env->feature_words[CPUID_1_EDX] &= TCG_FEATURES;
         env->feature_words[CPUID_1_ECX] &= TCG_EXT_FEATURES;
-        env->feature_words[CPUID_8000_0001_EDX] &= (TCG_EXT2_FEATURES
-#ifdef TARGET_X86_64
-            | CPUID_EXT2_SYSCALL | CPUID_EXT2_LM
-#endif
-            );
+        env->feature_words[CPUID_8000_0001_EDX] &= TCG_EXT2_FEATURES;
         env->feature_words[CPUID_8000_0001_ECX] &= TCG_EXT3_FEATURES;
         env->feature_words[CPUID_SVM] &= TCG_SVM_FEATURES;
         env->feature_words[CPUID_KVM] = 0;
