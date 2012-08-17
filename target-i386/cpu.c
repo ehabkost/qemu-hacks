@@ -858,51 +858,20 @@ static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
     return 0;
 }
 
-static int unavailable_host_feature(FeatureWord w, uint32_t mask)
+static int unavailable_host_features(FeatureWord w, uint32_t mask)
 {
     int i;
     FeatureWordInfo *f = &feature_word_info[w];
 
     for (i = 0; i < 32; ++i) {
         if (1 << i & mask) {
-            fprintf(stderr, "warning: host cpuid %04x_%04x.%s lacks requested"
-                " flag '%s' [0x%08x]\n",
+            fprintf(stderr, "warning: feature not supported by host:"
+                " CPUID[%04x_%04xh].%s[%d], flag name: '%s'\n",
                 f->cpuid >> 16, f->cpuid & 0xffff, register_names[f->reg],
-                f->feat_names[i] ? f->feat_names[i] : "[reserved]", mask);
-            break;
+                i, f->feat_names[i] ? f->feat_names[i] : "[reserved]");
         }
     }
     return 0;
-}
-
-/* best effort attempt to inform user requested cpu flags aren't making
- * their way to the guest.  Note: ft[].check_feat ideally should be
- * specified via a guest_def field to suppress report of extraneous flags.
- */
-static int check_features_against_host(X86CPU *cpu)
-{
-    CPUX86State *env = &cpu->env;
-    X86CPUDefinition host_def;
-    uint32_t mask;
-    int i, rv = 0;
-
-    cpu_x86_fill_host(&host_def);
-    for (i = 0; i < FEATURE_WORDS; ++i) {
-        uint32_t guest_feat = env->feature_words[i];
-        uint32_t host_feat = host_def.feature_words[i];
-        uint32_t bits = feature_word_info[i].bits_to_check;
-        if (!bits)
-            continue;
-
-        for (mask = 1; mask; mask <<= 1) {
-            if ((bits & mask) && (guest_feat & mask) &&
-                    !(host_feat & mask)) {
-                unavailable_host_feature(i, mask);
-                rv = 1;
-            }
-        }
-    }
-    return rv;
 }
 
 static bool is_feature_set(const char *name, const uint32_t featbitmap,
@@ -2070,40 +2039,63 @@ static void mce_init(X86CPU *cpu)
     }
 }
 
-static void filter_features_for_tcg(X86CPU *cpu)
-{
-    CPUX86State *env = &cpu->env;
-    FeatureWord w;
+/* Callbacks for supported-features check:
+ */
+typedef uint32_t (*supported_feature_fn)(FeatureWord w);
 
-    for (w = 0; w < FEATURE_WORDS; w++) {
-        env->feature_words[w] &= feature_word_info[w].tcg_features;
-    }
+static uint32_t tcg_supported_features(FeatureWord w)
+{
+    return feature_word_info[w].tcg_features;
 }
 
-static void filter_features_for_kvm(X86CPU *cpu)
+static uint32_t kvm_supported_features(FeatureWord w)
 {
     /* This function shouldn't even get called if CONFIG_KVM is not set,
      * the linker won't find the functions if we leave the calls here
      * and the compiler do not optimize them out.
      */
 #ifdef CONFIG_KVM
-    CPUX86State *env = &cpu->env;
     KVMState *s = kvm_state;
+    FeatureWordInfo *fw = &feature_word_info[w];
+    return kvm_arch_get_supported_cpuid(s, fw->cpuid, 0, fw->reg);    
+#else
+    return 0;
+#endif
+}
+
+/* Check features against host capabilities
+ *
+ * Returns false if some feature bit was removed, true if no bit was filtered
+ * out.
+ *
+ * Note: bits not set on FeatureWordInfo.bits_to_check are not reported
+ * as missing.
+ */
+static bool filter_features_for_host(X86CPU *cpu, supported_feature_fn fn)
+{
+    CPUX86State *env = &cpu->env;
     FeatureWord w;
+    bool all_ok = true;
 
     for (w = 0; w < FEATURE_WORDS; w++) {
-        FeatureWordInfo *fw = &feature_word_info[w];
-        env->feature_words[w] &=
-                kvm_arch_get_supported_cpuid(s, fw->cpuid, 0, fw->reg);
+        uint32_t supported = fn(w);
+        uint32_t result = env->feature_words[w] & supported;
+        uint32_t missing = env->feature_words[w] & ~result;
+        uint32_t to_check = feature_word_info[w].bits_to_check;
+        uint32_t to_report = missing & to_check;
+        if (to_report && check_cpuid) {
+                unavailable_host_features(w, to_report);
+                all_ok = false;
+        }
     }
-
-#endif
+    return all_ok;
 }
 
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
+    bool all_ok;
 
     /* On AMD CPUs, some CPUID[8000_0001].EDX bits must match the bits on
      * CPUID[1].EDX.
@@ -2116,16 +2108,15 @@ void x86_cpu_realize(Object *obj, Error **errp)
                      (env->feature_words[CPUID_1_EDX] & CPUID_EXT2_AMD_ALIASES);
     }
 
-    if (check_cpuid && check_features_against_host(cpu)
-        && enforce_cpuid) {
-        error_set(errp, QERR_PERMISSION_DENIED);
-        return;
+    if (kvm_enabled()) {
+        all_ok = filter_features_for_host(cpu, kvm_supported_features);
+    } else {
+        all_ok = filter_features_for_host(cpu, tcg_supported_features);
     }
 
-    if (kvm_enabled()) {
-        filter_features_for_kvm(cpu);
-    } else {
-        filter_features_for_tcg(cpu);
+    if (!all_ok && enforce_cpuid) {
+        error_set(errp, QERR_PERMISSION_DENIED);
+        return;
     }
 
 #ifndef CONFIG_USER_ONLY
