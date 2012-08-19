@@ -20,6 +20,7 @@
 
 #include "qemu/cpu.h"
 #include "qemu-common.h"
+#include "hw/qdev-core.h"
 
 void cpu_reset(CPUState *cpu)
 {
@@ -36,14 +37,16 @@ static void cpu_common_reset(CPUState *cpu)
 
 static void cpu_class_init(ObjectClass *klass, void *data)
 {
+    DeviceClass *dc = DEVICE_CLASS(klass);
     CPUClass *k = CPU_CLASS(klass);
 
     k->reset = cpu_common_reset;
+    dc->no_user = 1;
 }
 
 static TypeInfo cpu_type_info = {
     .name = TYPE_CPU,
-    .parent = TYPE_OBJECT,
+    .parent = TYPE_DEVICE,
     .instance_size = sizeof(CPUState),
     .abstract = true,
     .class_size = sizeof(CPUClass),
