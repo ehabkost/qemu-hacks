@@ -9,6 +9,7 @@
 #include "qapi-types.h"
 #include "notify.h"
 #include "main-loop.h"
+#include "hw/irq.h"
 
 /* vl.c */
 
