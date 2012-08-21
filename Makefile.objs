@@ -18,6 +18,13 @@ qom-obj-y = qom/
 universal-obj-y += $(qom-obj-y)
 
 #######################################################################
+# Core hw code (qdev core)
+hw-core-obj-y += hw/
+hw-core-obj-y += qemu-option.o
+
+universal-obj-y += $(hw-core-obj-y)
+
+#######################################################################
 # oslib-obj-y is code depending on the OS (win32 vs posix)
 oslib-obj-y = osdep.o cutils.o qemu-timer-common.o
 oslib-obj-$(CONFIG_WIN32) += oslib-win32.o qemu-thread-win32.o
@@ -244,5 +251,6 @@ nested-vars += \
 	block-obj-y \
 	user-obj-y \
 	common-obj-y \
+	hw-core-obj-y \
 	extra-obj-y
 dummy := $(call unnest-vars)
