@@ -16,6 +16,9 @@ universal-obj-y += $(qobject-obj-y)
 qom-obj-y = qom/
 
 universal-obj-y += $(qom-obj-y)
+# QOM qdev-core.o requires qemu-option.o:
+universal-obj-y += qemu-option.o
+
 
 #######################################################################
 # oslib-obj-y is code depending on the OS (win32 vs posix)
