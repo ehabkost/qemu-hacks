@@ -41,21 +41,24 @@
 struct X86CPUDefinition;
 typedef struct X86CPUDefinition X86CPUDefinition;
 
+struct X86CPUClass;
+typedef struct X86CPUClass X86CPUClass;
+
 /**
  * X86CPUClass:
  * @parent_reset: The parent class' reset handler.
+ * @init_cpudef: initialize X86CPUDefinition struct for CPU class
  *
  * An x86 CPU model or family.
  */
-typedef struct X86CPUClass {
+struct X86CPUClass {
     /*< private >*/
     CPUClass parent_class;
     /*< public >*/
 
     void (*parent_reset)(CPUState *cpu);
-
-    X86CPUDefinition *cpudef;
-} X86CPUClass;
+    int (*init_cpudef)(X86CPUClass *xcc, X86CPUDefinition *def, Error **errp);
+};
 
 /**
  * X86CPU:

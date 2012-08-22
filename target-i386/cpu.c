@@ -1497,13 +1497,15 @@ CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 /* Build class name for specific CPU model */
 static char *build_cpu_class_name(const char *model)
 {
+    /* If changing this, change TYPE_X86_HOST_CPU too */
     return g_strdup_printf("%s.%s", TYPE_X86_CPU, model);
 }
 
 X86CPU *cpu_x86_create(const char *cpu_model)
 {
     X86CPU *cpu;
-    ObjectClass *cpu_class;
+    ObjectClass *obj_class;
+    X86CPUClass *cpu_class;
     CPUX86State *env;
     Error *error = NULL;
     X86CPUDefinition def1, *def = &def1;
@@ -1522,8 +1524,8 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     }
 
     class_name = build_cpu_class_name(name);
-    cpu_class = object_class_by_name(class_name);
-    if (!cpu_class) {
+    obj_class = object_class_by_name(class_name);
+    if (!obj_class) {
         error_set(&error, QERR_DEVICE_NOT_FOUND, name);
         goto error_normalize;
     }
@@ -1532,7 +1534,10 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
 
-    memcpy(def, X86_CPU_GET_CLASS(cpu)->cpudef, sizeof(X86CPUDefinition));  
+    cpu_class = X86_CPU_GET_CLASS(cpu);
+    if (cpu_class->init_cpudef(cpu_class, def, &error) < 0) {
+        goto error;
+    }
 
     cpudef_2_x86_cpu(cpu, def, &error);
 
@@ -2149,13 +2154,55 @@ static const TypeInfo x86_cpu_type_info = {
     .class_init = x86_cpu_common_class_init,
 };
 
-static void x86_cpu_class_init(ObjectClass *oc, void *data)
+/* TYPE_X86_DEFCPU: abstract class for predefined CPU models */
+
+#define TYPE_X86_DEFCPU (TYPE_X86_CPU "-predefined")
+
+#define X86_DEFCPU_CLASS(klass) \
+    OBJECT_CLASS_CHECK(X86DEFCPUClass, (klass), TYPE_X86_DEFCPU)
+#define X86_DEFCPU(obj) \
+    OBJECT_CHECK(X86DEFCPU, (obj), TYPE_X86_DEFCPU)
+#define X86_DEFCPU_GET_CLASS(obj) \
+    OBJECT_GET_CLASS(X86DEFCPUClass, (obj), TYPE_X86_DEFCPU)
+
+/**
+ * X86DEFCPUClass:
+ * @cpudef: pointer to X86CPUDefinition for CPU model
+ *
+ * An x86 CPU model or family.
+ */
+typedef struct X86DEFCPUClass {
+    /*< private >*/
+    X86CPUClass parent_class;
+    /*< public >*/
+
+    X86CPUDefinition *cpudef;
+} X86DEFCPUClass;
+
+static int x86_predef_cpu_init_cpudef(X86CPUClass *xcc, X86CPUDefinition *def,
+                                       Error **errp)
+{
+    X86DEFCPUClass *defclass = X86_DEFCPU_CLASS(xcc);
+    memcpy(def, defclass->cpudef, sizeof(X86CPUDefinition));  
+    return 0;
+}
+
+static void x86_predef_cpu_class_init(ObjectClass *oc, void *data)
 {
     X86CPUClass *xcc = X86_CPU_CLASS(oc);
+    X86DEFCPUClass *xdcc = X86_DEFCPU_CLASS(xcc);
     X86CPUDefinition *def = data;
 
-    xcc->cpudef = def;
+    xcc->init_cpudef = x86_predef_cpu_init_cpudef;
+    xdcc->cpudef = def;
 }
+
+static TypeInfo x86_predef_cpu_type_info = {
+    .name = TYPE_X86_DEFCPU,
+    .parent = TYPE_X86_CPU,
+    .abstract = true,
+    .class_size = sizeof(X86DEFCPUClass),
+};
 
 /* Register a CPU class for a specific X86CPUDefinintion */
 static void x86_cpu_register_class(const char *name, X86CPUDefinition *def)
@@ -2163,27 +2210,41 @@ static void x86_cpu_register_class(const char *name, X86CPUDefinition *def)
     char *class_name = build_cpu_class_name(name);
     TypeInfo type = {
         .name = class_name,
-        .parent = TYPE_X86_CPU,
+        .parent = TYPE_X86_DEFCPU,
         .instance_size = sizeof(X86CPU),
         .instance_init = x86_cpu_initfn,
-        .class_size = sizeof(X86CPUClass),
-        .class_init = x86_cpu_class_init,
+        .class_size = sizeof(X86DEFCPUClass),
+        .class_init = x86_predef_cpu_class_init,
         .class_data = def,
     };
     type_register(&type);
     g_free(class_name);
 }
 
+/* If changing this, change build_cpu_class_name() too */
+#define TYPE_X86_HOST_CPU (TYPE_X86_CPU ".host")
+
+static int x86_host_cpu_init_cpudef(X86CPUClass *xcc, X86CPUDefinition *def,
+                                     Error **errp)
+{
+    if (!kvm_enabled()) {
+        error_set(errp, ERROR_CLASS_GENERIC_ERROR,
+                  "-cpu host is available only when using KVM");
+        return -1;
+    }
+    cpu_x86_fill_host(def);
+    return 0;
+}
+
 static void x86_cpu_host_class_init(ObjectClass *oc, void *data)
 {
     X86CPUClass *xcc = X86_CPU_CLASS(oc);
 
-    xcc->cpudef = g_malloc0(sizeof(X86CPUDefinition));
-    cpu_x86_fill_host(xcc->cpudef);
+    xcc->init_cpudef = x86_host_cpu_init_cpudef;
 }
 
 static TypeInfo x86_cpu_host_type_info = {
-    .name = TYPE_X86_CPU ".host",
+    .name = TYPE_X86_HOST_CPU,
     .parent = TYPE_X86_CPU,
     .instance_size = sizeof(X86CPU),
     .instance_init = x86_cpu_initfn,
@@ -2202,6 +2263,10 @@ static void x86_cpu_register_types(void)
 
     /* -cpu host class */
     type_register_static(&x86_cpu_host_type_info);
+
+
+    /* Abstract class for predefined CPU models */
+    type_register_static(&x86_predef_cpu_type_info);
 
     /* One class for each CPU model: */
     for (def = x86_defs; def; def = def->next) {
