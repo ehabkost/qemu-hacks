@@ -824,8 +824,8 @@ static int unavailable_host_features(struct model_features_t *f, uint32_t mask)
 
     for (i = 0; i < 32; ++i) {
         if (1 << i & mask) {
-            fprintf(stderr, "warning: host CPUID[EAX=%04x_%04xh,ECX=%xh].%s lacks requested"
-                " flag '%s' [0x%08x]\n",
+            fprintf(stderr, "warning: feature not supported by host: "
+                "CPUID[EAX=%04x_%04xh,ECX=%xh].%s, flag '%s' [0x%08x]\n",
                 f->cpuid >> 16, f->cpuid & 0xffff, f->cpuid_index,
                 register_names[f->cpuid_reg],
                 f->flag_names[i] ? f->flag_names[i] : "[reserved]", mask);
