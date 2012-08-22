@@ -899,7 +899,7 @@ static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
 }
 #endif
 
-static int unavailable_host_feature(FeatureWord w, uint32_t mask)
+static int unavailable_host_features(FeatureWord w, uint32_t mask)
 {
     int i;
     FeatureWordInfo *f = &feature_word_info[w];
@@ -909,8 +909,7 @@ static int unavailable_host_feature(FeatureWord w, uint32_t mask)
             fprintf(stderr, "warning: host cpuid %04x_%04x.%s lacks requested"
                 " flag '%s' [0x%08x]\n",
                 f->cpuid >> 16, f->cpuid & 0xffff, register_names[f->reg],
-                f->feat_names[i] ? f->feat_names[i] : "[reserved]", mask);
-            break;
+                i, f->feat_names[i] ? f->feat_names[i] : "[reserved]");
         }
     }
     return 0;
@@ -938,7 +937,7 @@ static int check_features_against_host(X86CPU *cpu)
         for (mask = 1; mask; mask <<= 1) {
             if ((bits & mask) && (guest_feat & mask) &&
                     !(host_feat & mask)) {
-                unavailable_host_feature(i, mask);
+                unavailable_host_features(i, mask);
                 rv = 1;
             }
         }
