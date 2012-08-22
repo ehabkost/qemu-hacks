@@ -818,7 +818,7 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
     return 0;
 }
 
-static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
+static int unavailable_host_features(struct model_features_t *f, uint32_t mask)
 {
     int i;
 
@@ -829,7 +829,6 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
                 f->cpuid >> 16, f->cpuid & 0xffff, f->cpuid_index,
                 register_names[f->cpuid_reg],
                 f->flag_names[i] ? f->flag_names[i] : "[reserved]", mask);
-            break;
         }
     }
     return 0;
@@ -860,7 +859,7 @@ static int check_features_against_host(X86CPU *cpu)
         for (mask = 1; mask; mask <<= 1)
             if (ft[i].check_feat & mask && *ft[i].guest_feat & mask &&
                 !(*ft[i].host_feat & mask)) {
-                    unavailable_host_feature(&ft[i], mask);
+                    unavailable_host_features(&ft[i], mask);
                     rv = 1;
                 }
     return rv;
