@@ -2115,34 +2115,48 @@ static void mce_init(X86CPU *cpu)
     }
 }
 
-static void filter_features_for_tcg(X86CPU *cpu)
-{
-    CPUX86State *env = &cpu->env;
-    FeatureWord w;
+/* Callbacks for supported-features check:
+ */
+typedef uint32_t (*supported_feature_fn)(FeatureWord w);
 
-    for (w = 0; w < FEATURE_WORDS; w++) {
-        env->feature_words[w] &= feature_word_info[w].tcg_features;
-    }
+static uint32_t tcg_supported_features(FeatureWord w)
+{
+    return feature_word_info[w].tcg_features;
 }
 
-static void filter_features_for_kvm(X86CPU *cpu)
+static uint32_t kvm_supported_features(FeatureWord w)
 {
     /* This function shouldn't even get called if CONFIG_KVM is not set,
      * the linker won't find the functions if we leave the calls here
      * and the compiler do not optimize them out.
      */
 #ifdef CONFIG_KVM
-    CPUX86State *env = &cpu->env;
     KVMState *s = kvm_state;
+    FeatureWordInfo *fw = &feature_word_info[w];
+    return kvm_arch_get_supported_cpuid(s, fw->cpuid, 0, fw->reg);
+#else
+    return 0;
+#endif
+}
+
+/* Check features against host capabilities
+ *
+ * Returns false if some feature bit was removed, true if no bit was filtered
+ * out.
+ *
+ * Note: bits not set on FeatureWordInfo.bits_to_check are not reported
+ * as missing.
+ */
+static void filter_features_for_host(X86CPU *cpu, supported_feature_fn fn)
+{
+    CPUX86State *env = &cpu->env;
     FeatureWord w;
 
     for (w = 0; w < FEATURE_WORDS; w++) {
-        FeatureWordInfo *fw = &feature_word_info[w];
-        env->feature_words[w] &=
-                kvm_arch_get_supported_cpuid(s, fw->cpuid, 0, fw->reg);
+        uint32_t supported = fn(w);
+        uint32_t result = env->feature_words[w] & supported;
+        env->feature_words[w] = result;
     }
-
-#endif
 }
 
 void x86_cpu_realize(Object *obj, Error **errp)
@@ -2168,9 +2182,9 @@ void x86_cpu_realize(Object *obj, Error **errp)
     }
 
     if (kvm_enabled()) {
-        filter_features_for_kvm(cpu);
+        filter_features_for_host(cpu, kvm_supported_features);
     } else {
-        filter_features_for_tcg(cpu);
+        filter_features_for_host(cpu, tcg_supported_features);
     }
 
 #ifndef CONFIG_USER_ONLY
