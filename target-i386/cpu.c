@@ -804,6 +804,21 @@ static X86CPUModelTableEntry builtin_x86_defs[] = {
     },
 };
 
+
+#ifdef CONFIG_KVM
+
+/* Get CPUID information according to KVM capabilities */
+static void kvm_cpuid(uint32_t function, uint32_t index,
+                      uint32_t *eax, uint32_t *ebx, uint32_t *ecx,
+                      uint32_t *edx)
+{
+    KVMState *s = kvm_state;
+    *eax = kvm_arch_get_supported_cpuid(s, function, index, R_EAX);
+    *ebx = kvm_arch_get_supported_cpuid(s, function, index, R_EBX);
+    *ecx = kvm_arch_get_supported_cpuid(s, function, index, R_ECX);
+    *edx = kvm_arch_get_supported_cpuid(s, function, index, R_EDX);
+}
+
 static int cpu_x86_fill_model_id(char *str)
 {
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
@@ -826,43 +841,48 @@ static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
     int i;
 
     host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
-    x86_cpu_def->level = eax;
     for (i = 0; i < 4; i++) {
         x86_cpu_def->vendor[i] = ebx >> (8 * i);
         x86_cpu_def->vendor[i + 4] = edx >> (8 * i);
         x86_cpu_def->vendor[i + 8] = ecx >> (8 * i);
     }
 
+    kvm_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
+    x86_cpu_def->level = eax;
+
     host_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
     x86_cpu_def->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
     x86_cpu_def->model = ((eax >> 4) & 0x0F) | ((eax & 0xF0000) >> 12);
     x86_cpu_def->stepping = eax & 0x0F;
+
+    kvm_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
     x86_cpu_def->feature_words[CPUID_1_ECX] = ecx;
     x86_cpu_def->feature_words[CPUID_1_EDX] = edx;
 
-    if (kvm_enabled() && x86_cpu_def->level >= 7) {
+    if (x86_cpu_def->level >= 7) {
         x86_cpu_def->feature_words[CPUID_7_0_EBX] =
                 kvm_arch_get_supported_cpuid(kvm_state, 0x7, 0, R_EBX);
     } else {
         x86_cpu_def->feature_words[CPUID_7_0_EBX] = 0;
     }
 
-    host_cpuid(0x80000000, 0, &eax, &ebx, &ecx, &edx);
+    kvm_cpuid(0x80000000, 0, &eax, &ebx, &ecx, &edx);
     x86_cpu_def->xlevel = eax;
 
-    host_cpuid(0x80000001, 0, &eax, &ebx, &ecx, &edx);
+    kvm_cpuid(0x80000001, 0, &eax, &ebx, &ecx, &edx);
     x86_cpu_def->feature_words[CPUID_8000_0001_EDX] = edx;
     x86_cpu_def->feature_words[CPUID_8000_0001_ECX] = ecx;
+
     cpu_x86_fill_model_id(x86_cpu_def->model_id);
     x86_cpu_def->vendor_override = 0;
 
     /* Call Centaur's CPUID instruction. */
     if (!strcmp(x86_cpu_def->vendor, CPUID_VENDOR_VIA)) {
-        host_cpuid(0xC0000000, 0, &eax, &ebx, &ecx, &edx);
+        kvm_cpuid(0xC0000000, 0, &eax, &ebx, &ecx, &edx);
         if (eax >= 0xC0000001) {
             /* Support VIA max extended level */
             x86_cpu_def->xlevel2 = eax;
-            host_cpuid(0xC0000001, 0, &eax, &ebx, &ecx, &edx);
+            kvm_cpuid(0xC0000001, 0, &eax, &ebx, &ecx, &edx);
             x86_cpu_def->feature_words[CPUID_C000_0001_EDX] = edx;
         }
     }
@@ -877,6 +897,7 @@ static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
 
     return 0;
 }
+#endif
 
 static int unavailable_host_feature(FeatureWord w, uint32_t mask)
 {
@@ -2319,6 +2340,7 @@ static void x86_cpu_register_class(const char *name, X86CPUDefinition *def)
 /* If changing this, change build_cpu_class_name() too */
 #define TYPE_X86_HOST_CPU (TYPE_X86_CPU ".host")
 
+#ifdef CONFIG_KVM
 static int x86_host_cpu_init_cpudef(X86CPUClass *xcc, X86CPUDefinition *def,
                                      Error **errp)
 {
@@ -2346,6 +2368,7 @@ static TypeInfo x86_cpu_host_type_info = {
     .class_size = sizeof(X86CPUClass),
     .class_init = x86_cpu_host_class_init,
 };
+#endif /* CONFIG_KVM */
 
 static void x86_cpu_register_types(void)
 {
@@ -2356,8 +2379,10 @@ static void x86_cpu_register_types(void)
     /* Abstract X86CPU class */
     type_register_static(&x86_cpu_type_info);
 
+#ifdef CONFIG_KVM
     /* -cpu host class */
     type_register_static(&x86_cpu_host_type_info);
+#endif /* CONFIG_KVM */
 
 
     /* Abstract class for predefined CPU models */
