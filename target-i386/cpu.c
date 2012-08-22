@@ -912,36 +912,6 @@ static int unavailable_host_features(FeatureWord w, uint32_t mask)
     return 0;
 }
 
-/* best effort attempt to inform user requested cpu flags aren't making
- * their way to the guest.  Note: ft[].check_feat ideally should be
- * specified via a guest_def field to suppress report of extraneous flags.
- */
-static int check_features_against_host(X86CPU *cpu)
-{
-    CPUX86State *env = &cpu->env;
-    X86CPUDefinition host_def;
-    uint32_t mask;
-    int i, rv = 0;
-
-    cpu_x86_fill_host(&host_def);
-    for (i = 0; i < FEATURE_WORDS; ++i) {
-        uint32_t guest_feat = env->feature_words[i];
-        uint32_t host_feat = host_def.feature_words[i];
-        uint32_t bits = feature_word_info[i].bits_to_check;
-        if (!bits)
-            continue;
-
-        for (mask = 1; mask; mask <<= 1) {
-            if ((bits & mask) && (guest_feat & mask) &&
-                    !(host_feat & mask)) {
-                unavailable_host_features(i, mask);
-                rv = 1;
-            }
-        }
-    }
-    return rv;
-}
-
 static bool is_feature_set(const char *name, const uint32_t featbitmap,
                                   const char **featureset)
 {
@@ -2164,6 +2134,7 @@ void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
+    bool all_ok = true;
 
     /* On AMD CPUs, some CPUID[8000_0001].EDX bits must match the bits on
      * CPUID[1].EDX.
@@ -2176,18 +2147,17 @@ void x86_cpu_realize(Object *obj, Error **errp)
                      (env->feature_words[CPUID_1_EDX] & CPUID_EXT2_AMD_ALIASES);
     }
 
-    if (check_cpuid && check_features_against_host(cpu)
-        && enforce_cpuid) {
-        error_set(errp, QERR_PERMISSION_DENIED);
-        return;
-    }
-
     if (!kvm_enabled()) {
-        filter_features_for_host(cpu, tcg_supported_features);
+        all_ok = filter_features_for_host(cpu, tcg_supported_features);
     } else {
 #ifdef CONFIG_KVM
-        filter_features_for_host(cpu, kvm_supported_features);
+        all_ok = filter_features_for_host(cpu, kvm_supported_features);
 #endif
+    }
+
+    if (!all_ok && enforce_cpuid) {
+        error_set(errp, QERR_PERMISSION_DENIED);
+        return;
     }
 
 #ifndef CONFIG_USER_ONLY
