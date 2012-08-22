@@ -906,8 +906,8 @@ static int unavailable_host_features(FeatureWord w, uint32_t mask)
 
     for (i = 0; i < 32; ++i) {
         if (1 << i & mask) {
-            fprintf(stderr, "warning: host cpuid %04x_%04x.%s lacks requested"
-                " flag '%s' [0x%08x]\n",
+            fprintf(stderr, "warning: feature not supported by host:"
+                " CPUID[%04x_%04xh].%s[%d], flag name: '%s'\n",
                 f->cpuid >> 16, f->cpuid & 0xffff, register_names[f->reg],
                 i, f->feat_names[i] ? f->feat_names[i] : "[reserved]");
         }
