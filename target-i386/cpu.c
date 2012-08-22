@@ -2111,30 +2111,33 @@ static void mce_init(X86CPU *cpu)
     }
 }
 
-#ifdef CONFIG_KVM
-static void filter_features_for_kvm(X86CPU *cpu)
-{
-    CPUX86State *env = &cpu->env;
-    KVMState *s = kvm_state;
-    FeatureWord w;
+/* Callbacks for supported-features check:
+ */
+typedef uint32_t (*supported_feature_fn)(FeatureWord w);
 
-    for (w = 0; w < FEATURE_WORDS; w++) {
-        FeatureWordInfo *fw = &feature_word_info[w];
-        uint32_t supported =
-            kvm_arch_get_supported_cpuid(s, fw->cpuid, fw->cpuid_index,
-                                         fw->cpuid_reg);
-        env->feature_words[w] &= supported;
-    }
+static uint32_t tcg_supported_features(FeatureWord w)
+{
+    return feature_word_info[w].tcg_features;
+}
+
+#ifdef CONFIG_KVM
+static uint32_t kvm_supported_features(FeatureWord w)
+{
+    KVMState *s = kvm_state;
+    FeatureWordInfo *fw = &feature_word_info[w];
+    return kvm_arch_get_supported_cpuid(s, fw->cpuid, fw->cpuid_index,
+                                        fw->cpuid_reg);
 }
 #endif
 
-static void filter_features_for_tcg(X86CPU *cpu)
+/* Check features against host capabilities
+ */
+static void filter_features_for_host(X86CPU *cpu, supported_feature_fn fn)
 {
     CPUX86State *env = &cpu->env;
     FeatureWord w;
     for (w = 0; w < FEATURE_WORDS; w++) {
-        FeatureWordInfo *fw = &feature_word_info[w];
-        uint32_t supported = fw->tcg_features;
+        uint32_t supported = fn(w);
         env->feature_words[w] &= supported;
     }
 }
@@ -2162,10 +2165,10 @@ void x86_cpu_realize(Object *obj, Error **errp)
     }
 
     if (!kvm_enabled()) {
-        filter_features_for_tcg(cpu);
+        filter_features_for_host(cpu, tcg_supported_features);
     } else {
 #ifdef CONFIG_KVM
-        filter_features_for_kvm(cpu);
+        filter_features_for_host(cpu, kvm_supported_features);
 #endif
     }
 
