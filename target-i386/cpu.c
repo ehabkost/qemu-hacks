@@ -866,12 +866,31 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
     int i;
 
+    /* Some bits can be queried directly from the host CPU, but the
+     * ones that describe available features/capabilities need to
+     * be queried using GET_SUPPORTED_CPUID
+     */
+
+    /* First, the host model/family/vendor information that can be queried
+     * directly from the host:
+     */
     host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
     for (i = 0; i < 4; i++) {
         def->vendor[i] = ebx >> (8 * i);
         def->vendor[i + 4] = edx >> (8 * i);
         def->vendor[i + 8] = ecx >> (8 * i);
     }
+
+    host_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
+    def->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
+    def->model = ((eax >> 4) & 0x0F) | ((eax & 0xF0000) >> 12);
+    def->stepping = eax & 0x0F;
+
+    cpu_x86_fill_model_id(def->model_id);
+    def->vendor_override = 0;
+
+
+    /* Now, the feature/capability bits that depend on KVM: */
 
     kvm_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
     def->level = eax;
@@ -881,11 +900,6 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
      */
     if (def->level > MAX_CPUID_LEVEL)
         def->level = MAX_CPUID_LEVEL;
-
-    host_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
-    def->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
-    def->model = ((eax >> 4) & 0x0F) | ((eax & 0xF0000) >> 12);
-    def->stepping = eax & 0x0F;
 
     kvm_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
     def->feature_words[CPUID_1_ECX] = ecx;
@@ -913,9 +927,6 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
 
     def->feature_words[CPUID_KVM] =
             kvm_arch_get_supported_cpuid(kvm_state, 0x40000001, 0, R_EAX);
-
-    cpu_x86_fill_model_id(def->model_id);
-    def->vendor_override = 0;
 
     /* Call Centaur's CPUID instruction. */
     if (!strcmp(def->vendor, CPUID_VENDOR_VIA)) {
