@@ -910,6 +910,9 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
     def->feature_words[CPUID_8000_0001_EDX] = edx;
     def->feature_words[CPUID_8000_0001_ECX] = ecx;
 
+    def->feature_words[CPUID_KVM] =
+            kvm_arch_get_supported_cpuid(kvm_state, 0x40000001, 0, R_EAX);
+
     cpu_x86_fill_model_id(def->model_id);
     def->vendor_override = 0;
 
@@ -1451,8 +1454,6 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     for (w = 0; w < FEATURE_WORDS; w++) {
         env->feature_words[w] = def->feature_words[w];
     }
-
-    env->feature_words[CPUID_KVM] = DEFAULT_KVM_FEATURES;
 
     object_property_set_bool(OBJECT(cpu), true, "hypervisor", errp);
 }
@@ -2333,6 +2334,13 @@ static int x86_predef_cpu_init_cpudef(X86CPUClass *xcc, X86CPUDefinition *def,
 {
     X86DEFCPUClass *defclass = X86_DEFCPU_CLASS(xcc);
     memcpy(def, defclass->cpudef, sizeof(X86CPUDefinition));  
+
+    /* The CPU model table don't define the KVM features, as they are the same
+     * for all CPU models
+     */
+    if (kvm_enabled())
+        def->feature_words[CPUID_KVM] = DEFAULT_KVM_FEATURES;
+
     return 0;
 }
 
