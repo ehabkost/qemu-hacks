@@ -740,49 +740,49 @@ static int cpu_x86_fill_model_id(char *str)
 }
 
 /* Fill X86CPUDefinition struct with host CPU features */
-static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
+static int cpu_x86_fill_host(X86CPUDefinition *def)
 {
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
     int i;
 
     host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
-    x86_cpu_def->level = eax;
+    def->level = eax;
     for (i = 0; i < 4; i++) {
-        x86_cpu_def->vendor[i] = ebx >> (8 * i);
-        x86_cpu_def->vendor[i + 4] = edx >> (8 * i);
-        x86_cpu_def->vendor[i + 8] = ecx >> (8 * i);
+        def->vendor[i] = ebx >> (8 * i);
+        def->vendor[i + 4] = edx >> (8 * i);
+        def->vendor[i + 8] = ecx >> (8 * i);
     }
 
     host_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
-    x86_cpu_def->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
-    x86_cpu_def->model = ((eax >> 4) & 0x0F) | ((eax & 0xF0000) >> 12);
-    x86_cpu_def->stepping = eax & 0x0F;
-    x86_cpu_def->ext_features = ecx;
-    x86_cpu_def->features = edx;
+    def->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
+    def->model = ((eax >> 4) & 0x0F) | ((eax & 0xF0000) >> 12);
+    def->stepping = eax & 0x0F;
+    def->ext_features = ecx;
+    def->features = edx;
 
-    if (kvm_enabled() && x86_cpu_def->level >= 7) {
-        x86_cpu_def->cpuid_7_0_ebx_features = kvm_arch_get_supported_cpuid(kvm_state, 0x7, 0, R_EBX);
+    if (kvm_enabled() && def->level >= 7) {
+        def->cpuid_7_0_ebx_features = kvm_arch_get_supported_cpuid(kvm_state, 0x7, 0, R_EBX);
     } else {
-        x86_cpu_def->cpuid_7_0_ebx_features = 0;
+        def->cpuid_7_0_ebx_features = 0;
     }
 
     host_cpuid(0x80000000, 0, &eax, &ebx, &ecx, &edx);
-    x86_cpu_def->xlevel = eax;
+    def->xlevel = eax;
 
     host_cpuid(0x80000001, 0, &eax, &ebx, &ecx, &edx);
-    x86_cpu_def->ext2_features = edx;
-    x86_cpu_def->ext3_features = ecx;
-    cpu_x86_fill_model_id(x86_cpu_def->model_id);
-    x86_cpu_def->vendor_override = 0;
+    def->ext2_features = edx;
+    def->ext3_features = ecx;
+    cpu_x86_fill_model_id(def->model_id);
+    def->vendor_override = 0;
 
     /* Call Centaur's CPUID instruction. */
-    if (!strcmp(x86_cpu_def->vendor, CPUID_VENDOR_VIA)) {
+    if (!strcmp(def->vendor, CPUID_VENDOR_VIA)) {
         host_cpuid(0xC0000000, 0, &eax, &ebx, &ecx, &edx);
         if (eax >= 0xC0000001) {
             /* Support VIA max extended level */
-            x86_cpu_def->xlevel2 = eax;
+            def->xlevel2 = eax;
             host_cpuid(0xC0000001, 0, &eax, &ebx, &ecx, &edx);
-            x86_cpu_def->ext4_features = edx;
+            def->ext4_features = edx;
         }
     }
 
@@ -792,7 +792,7 @@ static int cpu_x86_fill_host(X86CPUDefinition *x86_cpu_def)
      * available on the host hardware. Just set all bits and mask out the
      * unsupported ones later.
      */
-    x86_cpu_def->svm_features = -1;
+    def->svm_features = -1;
 
     return 0;
 }
