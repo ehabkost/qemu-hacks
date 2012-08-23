@@ -160,6 +160,14 @@ static const char *svm_feature_name[] = {
 #define DEFAULT_KVM_FEATURES 0
 #endif
 
+/* The maximum CPUID level supported by QEMU (cpu_x86_cpuid()) */
+#define MAX_CPUID_LEVEL   0xD
+/* The maximum CPUID xlevel supported by QEMU (cpu_x86_cpuid()) */
+#define MAX_CPUID_XLEVEL  0x8000000A
+/* The maximum CPUID xlevel2 supported by QEMU (cpu_x86_cpuid()) */
+#define MAX_CPUID_XLEVEL2 0xC0000004
+
+
 /* Names of the 32-bit registers, indexed by the R_* constants */
 static const char *register_names[] = {
     [R_EAX] = "eax",
@@ -866,6 +874,12 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
 
     kvm_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
     def->level = eax;
+    /* Even if the host supports more than MAX_CPUID_LEVEL, QEMU is not
+     * able to emulate them properly yet, so restrict 'level' to something
+     * QEMU can actually handle.
+     */
+    if (def->level > MAX_CPUID_LEVEL)
+        def->level = MAX_CPUID_LEVEL;
 
     host_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
     def->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
@@ -885,6 +899,12 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
 
     kvm_cpuid(0x80000000, 0, &eax, &ebx, &ecx, &edx);
     def->xlevel = eax;
+    /* Even if the host supports more than MAX_CPUID_XLEVEL, QEMU is not
+     * able to emulate them properly yet, so restrict 'lxevel' to something
+     * QEMU can actually handle.
+     */
+    if (def->xlevel > MAX_CPUID_XLEVEL)
+        def->xlevel = MAX_CPUID_XLEVEL;
 
     kvm_cpuid(0x80000001, 0, &eax, &ebx, &ecx, &edx);
     def->feature_words[CPUID_8000_0001_EDX] = edx;
@@ -899,6 +919,12 @@ static int cpu_x86_fill_host(X86CPUDefinition *def)
         if (eax >= 0xC0000001) {
             /* Support VIA max extended level */
             def->xlevel2 = eax;
+            /* Even if the host supports more than MAX_CPUID_XLEVEL2, QEMU is
+             * not able to emulate them properly yet, so restrict 'lxevel' to
+             * something QEMU can actually handle.
+             */
+            if (def->xlevel2 > MAX_CPUID_XLEVEL2)
+                def->xlevel2 = MAX_CPUID_XLEVEL2;
             kvm_cpuid(0xC0000001, 0, &eax, &ebx, &ecx, &edx);
             def->feature_words[CPUID_C000_0001_EDX] = edx;
         }
