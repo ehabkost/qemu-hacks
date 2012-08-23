@@ -351,7 +351,8 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
     },
     [CPUID_KVM] = {
         .cpuid = 0x40000001, .cpuid_reg = R_EAX,
-        .feat_names = kvm_feature_name
+        .feat_names = kvm_feature_name,
+        .bits_to_check = ~0,
     },
     [CPUID_SVM] = {
         .cpuid = 0x8000000A, .cpuid_reg = R_EDX,
