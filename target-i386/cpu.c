@@ -2116,23 +2116,14 @@ static void filter_features_for_kvm(X86CPU *cpu)
 {
     CPUX86State *env = &cpu->env;
     KVMState *s = kvm_state;
+    FeatureWord w;
 
-    env->feature_words[CPUID_1_EDX] &=
-        kvm_arch_get_supported_cpuid(s, 1, 0, R_EDX);
-    env->feature_words[CPUID_1_ECX] &=
-        kvm_arch_get_supported_cpuid(s, 1, 0, R_ECX);
-    env->feature_words[CPUID_8000_0001_EDX] &=
-        kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_EDX);
-    env->feature_words[CPUID_8000_0001_ECX] &=
-        kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_ECX);
-    env->feature_words[CPUID_SVM]  &=
-        kvm_arch_get_supported_cpuid(s, 0x8000000A, 0, R_EDX);
-    env->feature_words[CPUID_7_0_EBX] &=
-        kvm_arch_get_supported_cpuid(s, 7, 0, R_EBX);
-    env->feature_words[CPUID_KVM] &=
-        kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
-    env->feature_words[CPUID_C000_0001_EDX] &=
-        kvm_arch_get_supported_cpuid(s, 0xC0000001, 0, R_EDX);
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        FeatureWordInfo *fw = &feature_word_info[w];
+        env->feature_words[w] &=
+            kvm_arch_get_supported_cpuid(s, fw->cpuid, fw->cpuid_index,
+                                         fw->cpuid_reg);
+    }
 }
 #endif
 
