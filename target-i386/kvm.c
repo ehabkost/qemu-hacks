@@ -425,7 +425,7 @@ int kvm_arch_init_vcpu(CPUX86State *env)
     c->function = KVM_CPUID_SIGNATURE;
     if (!hyperv_enabled()) {
         memcpy(signature, "KVMKVMKVM\0\0\0", 12);
-        c->eax = 0;
+        c->eax = KVM_CPUID_FEATURES;
     } else {
         memcpy(signature, "Microsoft Hv", 12);
         c->eax = HYPERV_CPUID_MIN;
