@@ -316,6 +316,9 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         .bits_to_check = ~CPUID_EXT_HYPERVISOR,
         .tcg_features = TCG_EXT_FEATURES,
     },
+    [CPUID_7_0_EBX] = {
+        .cpuid = 7, .cpuid_reg = R_EBX,
+    },
     [CPUID_8000_0001_EDX] = {
         .cpuid = 0x80000001, .cpuid_reg = R_EDX,
         .feat_names = ext2_feature_name,
@@ -335,8 +338,15 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         .bits_to_check = ~CPUID_EXT3_SVM,
         .tcg_features = TCG_EXT3_FEATURES,
     },
-    [CPUID_KVM]   = { .feat_names = kvm_feature_name },
-    [CPUID_SVM]   = {
+    [CPUID_C000_0001_EDX] = {
+        .cpuid = 0xc0000001, .cpuid_reg = R_EDX,
+    },
+    [CPUID_KVM] = {
+        .cpuid = 0x40000001, .cpuid_reg = R_EAX,
+        .feat_names = kvm_feature_name
+    },
+    [CPUID_SVM] = {
+        .cpuid = 0x8000000A, .cpuid_reg = R_EDX,
         .feat_names = svm_feature_name,
         .tcg_features = TCG_SVM_FEATURES,
     },
