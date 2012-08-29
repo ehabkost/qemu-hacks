@@ -2131,15 +2131,33 @@ static uint32_t kvm_supported_features(FeatureWord w)
 #endif
 
 /* Check features against host capabilities
- */
-static void filter_features_for_host(X86CPU *cpu, supported_feature_fn fn)
+ *
+ * Returns false if some feature bit was removed, true if no bit was filtered
+ * out.
+ *
+ * Note: bits not set on FeatureWordInfo.bits_to_check are not reported
+ * as missing.
+  */
+static bool filter_features_for_host(X86CPU *cpu, supported_feature_fn fn)
 {
     CPUX86State *env = &cpu->env;
     FeatureWord w;
+    bool all_ok = true;
+
     for (w = 0; w < FEATURE_WORDS; w++) {
         uint32_t supported = fn(w);
-        env->feature_words[w] &= supported;
+        uint32_t result = env->feature_words[w] & supported;
+        uint32_t missing = env->feature_words[w] & ~result;
+        uint32_t to_check = feature_word_info[w].bits_to_check;
+        uint32_t to_report = missing & to_check;
+
+        env->feature_words[w] = result;
+        if (to_report && check_cpuid) {
+                unavailable_host_features(w, to_report);
+                all_ok = false;
+        }
     }
+    return all_ok;
 }
 
 void x86_cpu_realize(Object *obj, Error **errp)
