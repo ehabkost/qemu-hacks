@@ -2120,9 +2120,10 @@ static void filter_features_for_kvm(X86CPU *cpu)
 
     for (w = 0; w < FEATURE_WORDS; w++) {
         FeatureWordInfo *fw = &feature_word_info[w];
-        env->feature_words[w] &=
+        uint32_t supported =
             kvm_arch_get_supported_cpuid(s, fw->cpuid, fw->cpuid_index,
                                          fw->cpuid_reg);
+        env->feature_words[w] &= supported;
     }
 }
 #endif
@@ -2132,8 +2133,10 @@ static void filter_features_for_tcg(X86CPU *cpu)
     CPUX86State *env = &cpu->env;
     FeatureWord w;
     for (w = 0; w < FEATURE_WORDS; w++) {
-        env->feature_words[w] &= feature_word_info[w].tcg_features;
-    }    
+        FeatureWordInfo *fw = &feature_word_info[w];
+        uint32_t supported = fw->tcg_features;
+        env->feature_words[w] &= supported;
+    }
 }
 
 void x86_cpu_realize(Object *obj, Error **errp)
