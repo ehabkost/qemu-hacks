@@ -291,6 +291,18 @@ typedef struct X86CPUDefinition {
           CPUID_EXT3_CR8LEG | CPUID_EXT3_ABM | CPUID_EXT3_SSE4A)
 #define TCG_SVM_FEATURES 0
 
+#ifdef CONFIG_KVM
+#define DEFAULT_KVM_FEATURES ((1 << KVM_FEATURE_CLOCKSOURCE) | \
+                              (1 << KVM_FEATURE_NOP_IO_DELAY) | \
+                              (1 << KVM_FEATURE_MMU_OP) | \
+                              (1 << KVM_FEATURE_CLOCKSOURCE2) | \
+                              (1 << KVM_FEATURE_ASYNC_PF) | \
+                              (1 << KVM_FEATURE_STEAL_TIME) | \
+                              (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT))
+#else
+#define DEFAULT_KVM_FEATURES 0
+#endif
+
 
 typedef struct X86CPUModelTableEntry {
     const char *name;
@@ -1373,17 +1385,7 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     env->cpuid_7_0_ebx = def->cpuid_7_0_ebx_features;
     env->cpuid_xlevel2 = def->xlevel2;
 
-#if defined(CONFIG_KVM)
-    env->cpuid_kvm_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
-        (1 << KVM_FEATURE_NOP_IO_DELAY) | 
-        (1 << KVM_FEATURE_MMU_OP) |
-        (1 << KVM_FEATURE_CLOCKSOURCE2) |
-        (1 << KVM_FEATURE_ASYNC_PF) | 
-        (1 << KVM_FEATURE_STEAL_TIME) |
-        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
-#else
-    env->cpuid_kvm_features = 0;
-#endif
+    env->cpuid_kvm_features = DEFAULT_KVM_FEATURES;
 
     object_property_set_bool(OBJECT(cpu), true, "hypervisor", errp);
 }
