@@ -1314,6 +1314,18 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     env->cpuid_7_0_ebx = def->cpuid_7_0_ebx_features;
     env->cpuid_xlevel2 = def->xlevel2;
 
+#if defined(CONFIG_KVM)
+    env->cpuid_kvm_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
+        (1 << KVM_FEATURE_NOP_IO_DELAY) |
+        (1 << KVM_FEATURE_MMU_OP) |
+        (1 << KVM_FEATURE_CLOCKSOURCE2) |
+        (1 << KVM_FEATURE_ASYNC_PF) |
+        (1 << KVM_FEATURE_STEAL_TIME) |
+        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
+#else
+    env->cpuid_kvm_features = 0;
+#endif
+
     object_property_set_bool(OBJECT(cpu), true, "hypervisor", errp);
 }
 
@@ -1389,7 +1401,6 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
 {
     x86_def_t *def;
 
-    CPUX86State *env = &cpu->env;
     QDict *features = NULL;
     char *name = NULL;
 
@@ -1410,18 +1421,6 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
     }
 
     cpudef_2_x86_cpu(cpu, x86_cpu_def, errp);
-
-#if defined(CONFIG_KVM)
-    env->cpuid_kvm_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
-        (1 << KVM_FEATURE_NOP_IO_DELAY) | 
-        (1 << KVM_FEATURE_MMU_OP) |
-        (1 << KVM_FEATURE_CLOCKSOURCE2) |
-        (1 << KVM_FEATURE_ASYNC_PF) | 
-        (1 << KVM_FEATURE_STEAL_TIME) |
-        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
-#else
-    env->cpuid_kvm_features = 0;
-#endif
 
     cpu_x86_set_props(cpu, features, errp);
     QDECREF(features);
