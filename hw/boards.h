@@ -4,6 +4,7 @@
 #define HW_BOARDS_H
 
 #include "qdev.h"
+#include "global-props.h"
 
 typedef void QEMUMachineInitFunc(ram_addr_t ram_size,
                                  const char *boot_device,
