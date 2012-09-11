@@ -390,16 +390,18 @@ int kvm_arch_init_vcpu(CPUX86State *env)
     c = &cpuid_data.entries[cpuid_i++];
     memset(c, 0, sizeof(*c));
     c->function = KVM_CPUID_SIGNATURE;
-    if (!hyperv_enabled()) {
+    if (env->cpuid_hv_level == 0) {
         memcpy(signature, "KVMKVMKVM\0\0\0", 12);
         c->eax = 0;
+        c->ebx = signature[0];
+        c->ecx = signature[1];
+        c->edx = signature[2];
     } else {
-        memcpy(signature, "Microsoft Hv", 12);
-        c->eax = HYPERV_CPUID_MIN;
+        c->eax = env->cpuid_hv_level;
+        c->ebx = env->cpuid_hv_vendor1;
+        c->ecx = env->cpuid_hv_vendor2;
+        c->edx = env->cpuid_hv_vendor3;
     }
-    c->ebx = signature[0];
-    c->ecx = signature[1];
-    c->edx = signature[2];
 
     c = &cpuid_data.entries[cpuid_i++];
     memset(c, 0, sizeof(*c));
@@ -444,6 +446,25 @@ int kvm_arch_init_vcpu(CPUX86State *env)
         c->function = HYPERV_CPUID_IMPLEMENT_LIMITS;
         c->eax = 0x40;
         c->ebx = 0x40;
+
+        c = &cpuid_data.entries[cpuid_i++];
+        memset(c, 0, sizeof(*c));
+        c->function = KVM_CPUID_SIGNATURE_NEXT;
+        memcpy(signature, "KVMKVMKVM\0\0\0", 12);
+        c->eax = 0;
+        c->ebx = signature[0];
+        c->ecx = signature[1];
+        c->edx = signature[2];
+    } else if (env->cpuid_hv_level > 0) {
+        for (i = KVM_CPUID_FEATURES + 1; i <= env->cpuid_hv_level; i++) {
+            c = &cpuid_data.entries[cpuid_i++];
+            memset(c, 0, sizeof(*c));
+            c->function = i;
+            if (i == env->cpuid_hv_extra) {
+                c->eax = env->cpuid_hv_extra_a;
+                c->ebx = env->cpuid_hv_extra_b;
+            }
+        }
 
         c = &cpuid_data.entries[cpuid_i++];
         memset(c, 0, sizeof(*c));

@@ -488,6 +488,18 @@
 
 #define CPUID_VENDOR_VIA   "CentaurHauls"
 
+#define CPUID_HV_VENDOR_VMWARE_1 0x61774d56 /* "VMwa" */
+#define CPUID_HV_VENDOR_VMWARE_2 0x4d566572 /* "reVM" */
+#define CPUID_HV_VENDOR_VMWARE_3 0x65726177 /* "ware" */
+#define CPUID_HV_VENDOR_VMWARE "VMwareVMware"
+#define CPUID_HV_LEVEL_VMARE_3 0x40000002
+#define CPUID_HV_LEVEL_VMARE_4 0x40000010
+
+#define CPUID_HV_VENDOR_XEN "XenVMMXenVMM"
+#define CPUID_HV_LEVEL_XEN  0x40000002
+
+#define CPUID_HV_VENDOR_KVM "KVMKVMKVM"
+
 #define CPUID_MWAIT_IBE     (1 << 1) /* Interrupts can exit capability */
 #define CPUID_MWAIT_EMX     (1 << 0) /* enumeration supported */
 
@@ -782,6 +794,15 @@ typedef struct CPUX86State {
     uint32_t cpuid_ext4_features;
     /* Flags from CPUID[EAX=7,ECX=0].EBX */
     uint32_t cpuid_7_0_ebx;
+    /* Hypervisor CPUIDs */
+    uint32_t cpuid_hv_level;
+    uint32_t cpuid_hv_vendor1;
+    uint32_t cpuid_hv_vendor2;
+    uint32_t cpuid_hv_vendor3;
+    /* VMware extra data */
+    uint32_t cpuid_hv_extra;
+    uint32_t cpuid_hv_extra_a;
+    uint32_t cpuid_hv_extra_b;
 
     /* MTRRs */
     uint64_t mtrr_fixed[11];
