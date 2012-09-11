@@ -1135,6 +1135,36 @@ static void x86_cpuid_set_model_id(Object *obj, const char *model_id,
     }
 }
 
+static void x86_cpuid_set_vmware_extra(Object *obj)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    if ((cpu->env.tsc_khz != 0) &&
+        (cpu->env.cpuid_hv_level == CPUID_HV_LEVEL_VMARE_4) &&
+        (cpu->env.cpuid_hv_vendor1 == CPUID_HV_VENDOR_VMWARE_1) &&
+        (cpu->env.cpuid_hv_vendor2 == CPUID_HV_VENDOR_VMWARE_2) &&
+        (cpu->env.cpuid_hv_vendor3 == CPUID_HV_VENDOR_VMWARE_3)) {
+        const uint32_t apic_khz = 1000000L;
+
+        /*
+         * From article.gmane.org/gmane.comp.emulators.kvm.devel/22643
+         *
+         *    Leaf 0x40000010, Timing Information.
+         *
+         *    VMware has defined the first generic leaf to provide timing
+         *    information.  This leaf returns the current TSC frequency and
+         *    current Bus frequency in kHz.
+         *
+         *    # EAX: (Virtual) TSC frequency in kHz.
+         *    # EBX: (Virtual) Bus (local apic timer) frequency in kHz.
+         *    # ECX, EDX: RESERVED (Per above, reserved fields are set to zero).
+         */
+        cpu->env.cpuid_hv_extra = 0x40000010;
+        cpu->env.cpuid_hv_extra_a = (uint32_t)cpu->env.tsc_khz;
+        cpu->env.cpuid_hv_extra_b = apic_khz;
+    }
+}
+
 static void x86_cpuid_get_tsc_freq(Object *obj, Visitor *v, void *opaque,
                                    const char *name, Error **errp)
 {
@@ -1164,9 +1194,175 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     }
 
     cpu->env.tsc_khz = value / 1000;
+    x86_cpuid_set_vmware_extra(obj);
+}
+
+static void x86_cpuid_get_hv_level(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_level, name, errp);
+}
+
+static void x86_cpuid_set_hv_level(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    uint32_t value;
+
+    visit_type_uint32(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+
+    if ((value != 0) && (value < 0x40000000)) {
+        value += 0x40000000;
+    }
+    cpu->env.cpuid_hv_level = value;
+}
+
+static char *x86_cpuid_get_hv_vendor(Object *obj, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    char *value;
+    int i;
+
+    value = (char *)g_malloc(CPUID_VENDOR_SZ + 1);
+    for (i = 0; i < 4; i++) {
+        value[i + 0] = env->cpuid_hv_vendor1 >> (8 * i);
+        value[i + 4] = env->cpuid_hv_vendor2 >> (8 * i);
+        value[i + 8] = env->cpuid_hv_vendor3 >> (8 * i);
+    }
+    value[CPUID_VENDOR_SZ] = '\0';
+
+    /* Convert known names */
+    if (!strcmp(value, CPUID_HV_VENDOR_VMWARE)) {
+        if (env->cpuid_hv_level == CPUID_HV_LEVEL_VMARE_4) {
+            pstrcpy(value, sizeof(value), "vmware4");
+        } else if (env->cpuid_hv_level == CPUID_HV_LEVEL_VMARE_3) {
+            pstrcpy(value, sizeof(value), "vmware3");
+        }
+    } else if (!strcmp(value, CPUID_HV_VENDOR_XEN) &&
+               env->cpuid_hv_level == CPUID_HV_LEVEL_XEN) {
+        pstrcpy(value, sizeof(value), "xen");
+    } else if (!strcmp(value, CPUID_HV_VENDOR_KVM) &&
+               env->cpuid_hv_level == 0) {
+        pstrcpy(value, sizeof(value), "kvm");
+    }
+    return value;
+}
+
+static void x86_cpuid_set_hv_vendor(Object *obj, const char *value,
+                                     Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    int i;
+    char adj_value[CPUID_VENDOR_SZ + 1];
+
+    memset(adj_value, 0, sizeof(adj_value));
+
+    /* Convert known names */
+    if (!strcmp(value, "vmware") || !strcmp(value, "vmware4")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_VMARE_4;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_VMWARE);
+    } else if (!strcmp(value, "vmware3")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_VMARE_3;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_VMWARE);
+    } else if (!strcmp(value, "xen")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_XEN;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_XEN);
+    } else if (!strcmp(value, "kvm")) {
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_KVM);
+    } else {
+        pstrcpy(adj_value, sizeof(adj_value), value);
+    }
+
+    env->cpuid_hv_vendor1 = 0;
+    env->cpuid_hv_vendor2 = 0;
+    env->cpuid_hv_vendor3 = 0;
+    for (i = 0; i < 4; i++) {
+        env->cpuid_hv_vendor1 |= ((uint8_t)adj_value[i + 0]) << (8 * i);
+        env->cpuid_hv_vendor2 |= ((uint8_t)adj_value[i + 4]) << (8 * i);
+        env->cpuid_hv_vendor3 |= ((uint8_t)adj_value[i + 8]) << (8 * i);
+    }
+    x86_cpuid_set_vmware_extra(obj);
+}
+
+static void x86_cpuid_get_hv_extra(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra, name, errp);
+}
+
+static void x86_cpuid_set_hv_extra(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    uint32_t value;
+
+    visit_type_uint32(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+
+    if ((value != 0) && (value < 0x40000000)) {
+        value += 0x40000000;
+    }
+    cpu->env.cpuid_hv_extra = value;
+}
+
+static void x86_cpuid_get_hv_extra_a(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_a, name, errp);
+}
+
+static void x86_cpuid_set_hv_extra_a(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_a, name, errp);
+}
+
+static void x86_cpuid_get_hv_extra_b(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_b, name, errp);
+}
+
+static void x86_cpuid_set_hv_extra_b(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_b, name, errp);
 }
 
 #if !defined(CONFIG_USER_ONLY)
+static void x86_set_hyperv(Object *obj, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    cpu->env.cpuid_hv_level = HYPERV_CPUID_MIN;
+    x86_cpuid_set_hv_vendor(obj, "Microsoft Hv", errp);
+}
+
 static void x86_get_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
                                  const char *name, Error **errp)
 {
@@ -1189,6 +1385,7 @@ static void x86_set_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
         return;
     }
     hyperv_set_spinlock_retries(value);
+    x86_set_hyperv(obj, errp);
 }
 
 static void x86_get_hv_relaxed(Object *obj, Visitor *v, void *opaque,
@@ -1209,6 +1406,7 @@ static void x86_set_hv_relaxed(Object *obj, Visitor *v, void *opaque,
         return;
     }
     hyperv_enable_relaxed_timing(value);
+    x86_set_hyperv(obj, errp);
 }
 
 static void x86_get_hv_vapic(Object *obj, Visitor *v, void *opaque,
@@ -1229,6 +1427,7 @@ static void x86_set_hv_vapic(Object *obj, Visitor *v, void *opaque,
         return;
     }
     hyperv_enable_vapic_recommended(value);
+    x86_set_hyperv(obj, errp);
 }
 #endif
 
@@ -2061,6 +2260,21 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "enforce", "bool",
                         x86_cpuid_get_enforce,
                         x86_cpuid_set_enforce, NULL, NULL, NULL);
+    object_property_add(obj, "hypervisor-level", "int",
+                        x86_cpuid_get_hv_level,
+                        x86_cpuid_set_hv_level, NULL, NULL, NULL);
+    object_property_add_str(obj, "hypervisor-vendor",
+                            x86_cpuid_get_hv_vendor,
+                            x86_cpuid_set_hv_vendor, NULL);
+    object_property_add(obj, "hypervisor-extra", "int",
+                        x86_cpuid_get_hv_extra,
+                        x86_cpuid_set_hv_extra, NULL, NULL, NULL);
+    object_property_add(obj, "hypervisor-extra-a", "int",
+                        x86_cpuid_get_hv_extra_a,
+                        x86_cpuid_set_hv_extra_a, NULL, NULL, NULL);
+    object_property_add(obj, "hypervisor-extra-b", "int",
+                        x86_cpuid_get_hv_extra_b,
+                        x86_cpuid_set_hv_extra_b, NULL, NULL, NULL);
 #if !defined(CONFIG_USER_ONLY)
     object_property_add(obj, "hv_spinlocks", "int",
                         x86_get_hv_spinlocks,
