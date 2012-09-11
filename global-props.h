@@ -17,4 +17,12 @@ void qemu_globals_register_list(GlobalProperty *props);
 void qdev_prop_set_globals(DeviceState *dev);
 void qemu_add_globals(void);
 
+/* Get the string value of a global property directly
+ *
+ * Using this function is discouraged. Code should be converted to use
+ * QOM and/or qdev instead of using it. It is provided only as a convenience
+ * for code that is not converted yet.
+ */
+const char *qemu_global_get(const char *driver, const char *property);
+
 #endif /* GLOBAL_PROPS_H */

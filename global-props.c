@@ -57,6 +57,17 @@ void qdev_prop_set_globals(DeviceState *dev)
     } while (class);
 }
 
+const char *qemu_global_get(const char *driver, const char *property)
+{
+    GlobalProperty *prop;
+    QTAILQ_FOREACH(prop, &global_props, next) {
+        if (!strcmp(prop->driver, driver) && !strcmp(prop->property, property)) {
+            return prop->value;
+        }
+    }
+    return NULL;
+}
+
 static int qdev_add_one_global(QemuOpts *opts, void *opaque)
 {
     GlobalProperty *g;
