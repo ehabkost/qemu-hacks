@@ -125,6 +125,7 @@ int main(int argc, char **argv)
 #include "hw/smbios.h"
 #include "hw/xen.h"
 #include "hw/qdev.h"
+#include "global-props.h"
 #include "hw/loader.h"
 #include "bt-host.h"
 #include "net.h"

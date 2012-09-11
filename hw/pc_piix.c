@@ -43,6 +43,7 @@
 #include "xen.h"
 #include "memory.h"
 #include "exec-memory.h"
+#include "global-props.h"
 #ifdef CONFIG_XEN
 #  include <xen/hvm/hvm_info_table.h>
 #endif
