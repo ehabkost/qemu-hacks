@@ -18,6 +18,7 @@
  */
 
 
+#include "global-props.h"
 #include "hw/qdev.h"
 #include "qerror.h"
 
