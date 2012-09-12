@@ -1249,7 +1249,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
 
-    if (cpu_x86_register(cpu, cpu_model) < 0) {
+    if (cpu_x86_register(cpu, cpu_model, env->cpu_index) < 0) {
         object_delete(OBJECT(cpu));
         return NULL;
     }
