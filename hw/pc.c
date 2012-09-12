@@ -885,19 +885,19 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
     }
 }
 
-static X86CPU *pc_new_cpu(const char *cpu_model)
+static X86CPU *pc_new_cpu(const char *cpu_model, uint32_t apic_id)
 {
     X86CPU *cpu;
     CPUX86State *env;
 
-    cpu = cpu_x86_init(cpu_model, -1);
+    cpu = cpu_x86_init(cpu_model, apic_id);
     if (cpu == NULL) {
         fprintf(stderr, "Unable to find x86 CPU definition\n");
         exit(1);
     }
     env = &cpu->env;
     if ((env->cpuid_features & CPUID_APIC) || smp_cpus > 1) {
-        env->apic_state = apic_init(env, env->cpuid_apic_id);
+        env->apic_state = apic_init(env, apic_id);
     }
     cpu_reset(CPU(cpu));
     return cpu;
@@ -917,7 +917,7 @@ void pc_cpus_init(const char *cpu_model)
     }
 
     for(i = 0; i < smp_cpus; i++) {
-        pc_new_cpu(cpu_model);
+        pc_new_cpu(cpu_model, i);
     }
 }
 
