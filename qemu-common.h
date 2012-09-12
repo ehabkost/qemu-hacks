@@ -6,6 +6,8 @@
 #include "compiler.h"
 #include "config-host.h"
 
+#include "qemu-stdio.h"
+
 #if defined(__arm__) || defined(__sparc__) || defined(__mips__) || defined(__hppa__) || defined(__ia64__)
 #define WORDS_ALIGNED
 #endif
@@ -48,28 +50,6 @@ typedef struct MigrationParams MigrationParams;
 #include "qemu-os-posix.h"
 #endif
 
-#ifndef O_LARGEFILE
-#define O_LARGEFILE 0
-#endif
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-#ifndef MAP_ANONYMOUS
-#define MAP_ANONYMOUS MAP_ANON
-#endif
-#ifndef ENOMEDIUM
-#define ENOMEDIUM ENODEV
-#endif
-#if !defined(ENOTSUP)
-#define ENOTSUP 4096
-#endif
-#if !defined(ECANCELED)
-#define ECANCELED 4097
-#endif
-#ifndef TIME_MAX
-#define TIME_MAX LONG_MAX
-#endif
-
 /* HOST_LONG_BITS is the size of a native pointer in bits. */
 #if UINTPTR_MAX == UINT32_MAX
 # define HOST_LONG_BITS 32
@@ -79,39 +59,6 @@ typedef struct MigrationParams MigrationParams;
 # error Unknown pointer size
 #endif
 
-#ifndef CONFIG_IOVEC
-#define CONFIG_IOVEC
-struct iovec {
-    void *iov_base;
-    size_t iov_len;
-};
-/*
- * Use the same value as Linux for now.
- */
-#define IOV_MAX		1024
-#else
-#include <sys/uio.h>
-#endif
-
-typedef int (*fprintf_function)(FILE *f, const char *fmt, ...)
-    GCC_FMT_ATTR(2, 3);
-
-#ifdef _WIN32
-#define fsync _commit
-#if !defined(lseek)
-# define lseek _lseeki64
-#endif
-int qemu_ftruncate64(int, int64_t);
-#if !defined(ftruncate)
-# define ftruncate qemu_ftruncate64
-#endif
-
-static inline char *realpath(const char *path, char *resolved_path)
-{
-    _fullpath(resolved_path, path, _MAX_PATH);
-    return resolved_path;
-}
-#endif
 
 /* icount */
 void configure_icount(const char *option);
@@ -208,8 +155,6 @@ const char *path(const char *pathname);
 
 void *qemu_oom_check(void *ptr);
 
-int qemu_open(const char *name, int flags, ...);
-int qemu_close(int fd);
 ssize_t qemu_write_full(int fd, const void *buf, size_t count)
     QEMU_WARN_UNUSED_RESULT;
 ssize_t qemu_send_full(int fd, const void *buf, size_t count, int flags)
