@@ -1147,7 +1147,15 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
     return 1;
 }
 
-X86CPU *cpu_x86_init(const char *cpu_model)
+/**
+ * cpu_x86_init:
+ *
+ * Creates and initializes a X86CPU object.
+ *
+ * @apic_id: sets a specific APIC ID for the CPU. If negative, the CPU index
+             will be used as APIC ID.
+ */
+X86CPU *cpu_x86_init(const char *cpu_model, long apic_id)
 {
     X86CPU *cpu;
     CPUX86State *env;
@@ -1157,7 +1165,9 @@ X86CPU *cpu_x86_init(const char *cpu_model)
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
 
-    if (cpu_x86_register(cpu, cpu_model, env->cpu_index) < 0) {
+    if (apic_id < 0)
+        apic_id = env->cpu_index;
+    if (cpu_x86_register(cpu, cpu_model, apic_id) < 0) {
         object_delete(OBJECT(cpu));
         return NULL;
     }
