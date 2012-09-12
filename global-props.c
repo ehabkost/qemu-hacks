@@ -21,6 +21,8 @@
 #include "global-props.h"
 #include "hw/qdev.h"
 #include "qerror.h"
+#include "qapi/qapi-visit-core.h"
+#include "qapi/string-input-visitor.h"
 
 
 static QTAILQ_HEAD(, GlobalProperty) global_props = QTAILQ_HEAD_INITIALIZER(global_props);
@@ -66,6 +68,21 @@ const char *qemu_global_get(const char *driver, const char *property)
         }
     }
     return NULL;
+}
+
+bool qemu_global_get_bool(const char *driver, const char *property, Error **errp)
+{
+    StringInputVisitor *siv;
+    Visitor *v;
+    const char *value = qemu_global_get(driver, property);
+    bool r = false;
+    if (!value)
+        return false;
+    siv = string_input_visitor_new(value);
+    v = string_input_get_visitor(siv);
+    visit_type_bool(v, &r, property, errp);
+    string_input_visitor_cleanup(siv);
+    return r;
 }
 
 static int qdev_add_one_global(QemuOpts *opts, void *opaque)

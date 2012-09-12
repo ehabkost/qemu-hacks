@@ -24,5 +24,6 @@ void qemu_add_globals(void);
  * for code that is not converted yet.
  */
 const char *qemu_global_get(const char *driver, const char *property);
+bool qemu_global_get_bool(const char *driver, const char *prop, Error **errp);
 
 #endif /* GLOBAL_PROPS_H */
