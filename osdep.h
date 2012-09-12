@@ -1,15 +1,25 @@
 #ifndef QEMU_OSDEP_H
 #define QEMU_OSDEP_H
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdbool.h>
 #ifdef __OpenBSD__
-#include <sys/types.h>
 #include <sys/signal.h>
 #endif
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+
 
 #include <sys/time.h>
+
+#include "compiler.h"
+#include "config-host.h"
 
 #if defined(CONFIG_SOLARIS) && CONFIG_SOLARIS_VERSION < 10
 /* [u]int_fast*_t not in <sys/int_types.h> */
@@ -171,5 +181,65 @@ const char *qemu_get_version(void);
 
 void fips_set_state(bool requested);
 bool fips_get_state(void);
+
+
+#ifndef O_LARGEFILE
+#define O_LARGEFILE 0
+#endif
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+#ifndef MAP_ANONYMOUS
+#define MAP_ANONYMOUS MAP_ANON
+#endif
+#ifndef ENOMEDIUM
+#define ENOMEDIUM ENODEV
+#endif
+#if !defined(ENOTSUP)
+#define ENOTSUP 4096
+#endif
+#if !defined(ECANCELED)
+#define ECANCELED 4097
+#endif
+#ifndef TIME_MAX
+#define TIME_MAX LONG_MAX
+#endif
+
+#ifndef CONFIG_IOVEC
+#define CONFIG_IOVEC
+struct iovec {
+    void *iov_base;
+    size_t iov_len;
+};
+/*
+ * Use the same value as Linux for now.
+ */
+#define IOV_MAX     1024
+#else
+#include <sys/uio.h>
+#endif
+
+typedef int (*fprintf_function)(FILE *f, const char *fmt, ...)
+    GCC_FMT_ATTR(2, 3);
+
+#ifdef _WIN32
+#define fsync _commit
+#if !defined(lseek)
+# define lseek _lseeki64
+#endif
+int qemu_ftruncate64(int, int64_t);
+#if !defined(ftruncate)
+# define ftruncate qemu_ftruncate64
+#endif
+
+static inline char *realpath(const char *path, char *resolved_path)
+{
+    _fullpath(resolved_path, path, _MAX_PATH);
+    return resolved_path;
+}
+#endif
+
+int qemu_open(const char *name, int flags, ...);
+int qemu_close(int fd);
 
 #endif
