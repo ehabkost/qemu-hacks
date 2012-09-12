@@ -1713,14 +1713,14 @@ CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
     return cpu_list;
 }
 
-int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
+int cpu_x86_register(X86CPU *cpu, const char *cpu_model, uint32_t apic_id)
 {
     x86_def_t def1, *def = &def1;
     Error *error = NULL;
     QDict *features = NULL;
     char *name = NULL;
 
-    cpu->env.cpuid_apic_id = env->cpu_index;
+    cpu->env.cpuid_apic_id = apic_id;
 
     /* for CPU subclasses should go into cpu_x86_init() before object_new() */
     compat_normalize_cpu_model(cpu_model, &name, &features, &error);
