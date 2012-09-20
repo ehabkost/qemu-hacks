@@ -488,6 +488,8 @@
 
 #define CPUID_VENDOR_VIA   "CentaurHauls"
 
+#define CPUID_HV_VENDOR_HYPERV "Microsoft Hv"
+
 #define CPUID_HV_LEVEL_HYPERV  0x40000005
 
 #define CPUID_MWAIT_IBE     (1 << 1) /* Interrupts can exit capability */
