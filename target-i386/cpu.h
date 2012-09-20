@@ -490,9 +490,23 @@
 
 #define CPUID_HV_VENDOR_HYPERV "Microsoft Hv"
 
+#define CPUID_HV_VENDOR_VMWARE_1 0x61774d56 /* "VMwa" */
+#define CPUID_HV_VENDOR_VMWARE_2 0x4d566572 /* "reVM" */
+#define CPUID_HV_VENDOR_VMWARE_3 0x65726177 /* "ware" */
+#define CPUID_HV_VENDOR_VMWARE "VMwareVMware"
+
+#define CPUID_HV_VENDOR_XEN "XenVMMXenVMM"
+
+#define CPUID_HV_VENDOR_KVM "KVMKVMKVM"
+
 #define CPUID_HV_LEVEL_HYPERV  0x40000005
 
 #define CPUID_HV_LEVEL_KVM  0x40000001
+
+#define CPUID_HV_LEVEL_XEN  0x40000002
+
+#define CPUID_HV_LEVEL_VMARE_3 0x40000002
+#define CPUID_HV_LEVEL_VMARE_4 0x40000010
 
 #define CPUID_MWAIT_IBE     (1 << 1) /* Interrupts can exit capability */
 #define CPUID_MWAIT_EMX     (1 << 0) /* enumeration supported */

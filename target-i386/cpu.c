@@ -1206,6 +1206,23 @@ static char *x86_cpuid_get_hv_vendor(Object *obj, Error **errp)
     }
     value[CPUID_VENDOR_SZ] = '\0';
 
+    /* Convert known names */
+    if (!strcmp(value, CPUID_HV_VENDOR_HYPERV) &&
+               env->cpuid_hv_level == CPUID_HV_LEVEL_HYPERV) {
+        pstrcpy(value, sizeof(value), "hyperv");
+    } else if (!strcmp(value, CPUID_HV_VENDOR_VMWARE)) {
+        if (env->cpuid_hv_level == CPUID_HV_LEVEL_VMARE_4) {
+            pstrcpy(value, sizeof(value), "vmware4");
+        } else if (env->cpuid_hv_level == CPUID_HV_LEVEL_VMARE_3) {
+            pstrcpy(value, sizeof(value), "vmware3");
+        }
+    } else if (!strcmp(value, CPUID_HV_VENDOR_XEN) &&
+               env->cpuid_hv_level == CPUID_HV_LEVEL_XEN) {
+        pstrcpy(value, sizeof(value), "xen");
+    } else if (!strcmp(value, CPUID_HV_VENDOR_KVM) &&
+               env->cpuid_hv_level == 0) {
+        pstrcpy(value, sizeof(value), "kvm");
+    }
     return value;
 }
 
@@ -1219,7 +1236,32 @@ static void x86_cpuid_set_hv_vendor(Object *obj, const char *value,
 
     memset(adj_value, 0, sizeof(adj_value));
 
-    pstrcpy(adj_value, sizeof(adj_value), value);
+    /* Convert known names */
+    if (!strcmp(value, "hyperv")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_HYPERV;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_HYPERV);
+    } else if (!strcmp(value, "vmware") || !strcmp(value, "vmware4")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_VMARE_4;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_VMWARE);
+    } else if (!strcmp(value, "vmware3")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_VMARE_3;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_VMWARE);
+    } else if (!strcmp(value, "xen")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_XEN;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_XEN);
+    } else if (!strcmp(value, "kvm")) {
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_KVM);
+    } else {
+        pstrcpy(adj_value, sizeof(adj_value), value);
+    }
 
     env->cpuid_hv_vendor1 = 0;
     env->cpuid_hv_vendor2 = 0;
