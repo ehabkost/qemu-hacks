@@ -807,6 +807,10 @@ typedef struct CPUX86State {
     uint32_t cpuid_hv_vendor1;
     uint32_t cpuid_hv_vendor2;
     uint32_t cpuid_hv_vendor3;
+    /* VMware extra data */
+    uint32_t cpuid_hv_extra;
+    uint32_t cpuid_hv_extra_a;
+    uint32_t cpuid_hv_extra_b;
 
     /* MTRRs */
     uint64_t mtrr_fixed[11];
