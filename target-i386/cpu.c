@@ -1250,9 +1250,12 @@ static char *x86_cpuid_get_hv_vendor(Object *obj, Error **errp)
     } else if (!strcmp(value, CPUID_HV_VENDOR_XEN) &&
                env->cpuid_hv_level == CPUID_HV_LEVEL_XEN) {
         pstrcpy(value, sizeof(value), "xen");
-    } else if (!strcmp(value, CPUID_HV_VENDOR_KVM) &&
-               env->cpuid_hv_level == 0) {
-        pstrcpy(value, sizeof(value), "kvm");
+    } else if (!strcmp(value, CPUID_HV_VENDOR_KVM)) {
+        if (env->cpuid_hv_level == CPUID_HV_LEVEL_KVM) {
+            pstrcpy(value, sizeof(value), "kvm1");
+        } else if (env->cpuid_hv_level == 0) {
+            pstrcpy(value, sizeof(value), "kvm0");
+        }
     }
     return value;
 }
@@ -1288,7 +1291,13 @@ static void x86_cpuid_set_hv_vendor(Object *obj, const char *value,
             env->cpuid_hv_level = CPUID_HV_LEVEL_XEN;
         }
         pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_XEN);
-    } else if (!strcmp(value, "kvm")) {
+    } else if (!strcmp(value, "kvm") || !strcmp(value, "kvm1")) {
+        if (env->cpuid_hv_level == 0) {
+            env->cpuid_hv_level = CPUID_HV_LEVEL_KVM;
+        }
+        pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_KVM);
+    } else if (!strcmp(value, "kvm0")) {
+        env->cpuid_hv_level = 0;
         pstrcpy(adj_value, sizeof(adj_value), CPUID_HV_VENDOR_KVM);
     } else {
         pstrcpy(adj_value, sizeof(adj_value), value);
