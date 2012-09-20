@@ -1135,6 +1135,36 @@ static void x86_cpuid_set_model_id(Object *obj, const char *model_id,
     }
 }
 
+static void x86_cpuid_set_vmware_extra(Object *obj)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    if ((cpu->env.tsc_khz != 0) &&
+        (cpu->env.cpuid_hv_level == CPUID_HV_LEVEL_VMARE_4) &&
+        (cpu->env.cpuid_hv_vendor1 == CPUID_HV_VENDOR_VMWARE_1) &&
+        (cpu->env.cpuid_hv_vendor2 == CPUID_HV_VENDOR_VMWARE_2) &&
+        (cpu->env.cpuid_hv_vendor3 == CPUID_HV_VENDOR_VMWARE_3)) {
+        const uint32_t apic_khz = 1000000L;
+
+        /*
+         * From article.gmane.org/gmane.comp.emulators.kvm.devel/22643
+         *
+         *    Leaf 0x40000010, Timing Information.
+         *
+         *    VMware has defined the first generic leaf to provide timing
+         *    information.  This leaf returns the current TSC frequency and
+         *    current Bus frequency in kHz.
+         *
+         *    # EAX: (Virtual) TSC frequency in kHz.
+         *    # EBX: (Virtual) Bus (local apic timer) frequency in kHz.
+         *    # ECX, EDX: RESERVED (Per above, reserved fields are set to zero).
+         */
+        cpu->env.cpuid_hv_extra = 0x40000010;
+        cpu->env.cpuid_hv_extra_a = (uint32_t)cpu->env.tsc_khz;
+        cpu->env.cpuid_hv_extra_b = apic_khz;
+    }
+}
+
 static void x86_cpuid_get_tsc_freq(Object *obj, Visitor *v, void *opaque,
                                    const char *name, Error **errp)
 {
@@ -1164,6 +1194,7 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     }
 
     cpu->env.tsc_khz = value / 1000;
+    x86_cpuid_set_vmware_extra(obj);
 }
 
 static void x86_cpuid_get_hv_level(Object *obj, Visitor *v, void *opaque,
@@ -1271,6 +1302,7 @@ static void x86_cpuid_set_hv_vendor(Object *obj, const char *value,
         env->cpuid_hv_vendor2 |= ((uint8_t)adj_value[i + 4]) << (8 * i);
         env->cpuid_hv_vendor3 |= ((uint8_t)adj_value[i + 8]) << (8 * i);
     }
+    x86_cpuid_set_vmware_extra(obj);
 }
 
 static void x86_cpuid_get_hv_extra(Object *obj, Visitor *v, void *opaque,
