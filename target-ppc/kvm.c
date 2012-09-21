@@ -375,6 +375,11 @@ static inline void kvm_fixup_page_sizes(CPUPPCState *env)
 
 #endif /* !defined (TARGET_PPC64) */
 
+unsigned long kvm_arch_vcpu_id(CPUArchState *env)
+{
+    return env->cpu_index;
+}
+
 int kvm_arch_init_vcpu(CPUPPCState *cenv)
 {
     PowerPCCPU *cpu = ppc_env_get_cpu(cenv);
