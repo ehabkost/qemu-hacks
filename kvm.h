@@ -181,6 +181,9 @@ int kvm_arch_init(KVMState *s);
 
 int kvm_arch_init_vcpu(CPUArchState *env);
 
+/* Returns VCPU ID to be used on KVM_CREATE_VCPU ioctl() */
+unsigned long kvm_arch_vcpu_id(CPUArchState *env);
+
 void kvm_arch_reset_vcpu(CPUArchState *env);
 
 int kvm_arch_on_sigbus_vcpu(CPUArchState *env, int code, void *addr);
