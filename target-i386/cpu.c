@@ -1175,6 +1175,32 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
+static void x86_cpuid_get_hv_level(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_level, name, errp);
+}
+
+static void x86_cpuid_set_hv_level(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    uint32_t value;
+
+    visit_type_uint32(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+
+    if (value != 0 && value < 0x40000000) {
+        value += 0x40000000;
+    }
+    cpu->env.cpuid_hv_level = value;
+    cpu->env.cpuid_hv_level_set = true;
+}
+
 #if !defined(CONFIG_USER_ONLY)
 static void x86_get_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
                                  const char *name, Error **errp)
@@ -2069,6 +2095,9 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "enforce", "bool",
                         x86_cpuid_get_enforce,
                         x86_cpuid_set_enforce, NULL, NULL, NULL);
+    object_property_add(obj, "hypervisor-level", "int",
+                        x86_cpuid_get_hv_level,
+                        x86_cpuid_set_hv_level, NULL, NULL, NULL);
 #if !defined(CONFIG_USER_ONLY)
     object_property_add(obj, "hv_spinlocks", "int",
                         x86_get_hv_spinlocks,
