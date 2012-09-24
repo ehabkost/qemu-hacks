@@ -1655,6 +1655,21 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
                 index =  env->cpuid_xlevel;
             }
         }
+    } else if (index & 0x40000000) {
+        if (env->cpuid_hv_level_set) {
+            uint32_t real_level = env->cpuid_hv_level;
+
+            /* Handle Hypervisor CPUIDs */
+            if (real_level < 0x40000000) {
+                real_level = 0x40000000;
+            }
+            if (index > real_level) {
+                index = real_level;
+            }
+        } else {
+            if (index > env->cpuid_level)
+                index = env->cpuid_level;
+        }
     } else {
         if (index > env->cpuid_level)
             index = env->cpuid_level;
@@ -1792,6 +1807,18 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
             *ecx = 0;
             *edx = 0;
         }
+        break;
+    case 0x40000000:
+        *eax = env->cpuid_hv_level;
+        *ebx = 0;
+        *ecx = 0;
+        *edx = 0;
+        break;
+    case 0x40000001:
+        *eax = env->cpuid_kvm_features;
+        *ebx = 0;
+        *ecx = 0;
+        *edx = 0;
         break;
     case 0x80000000:
         *eax = env->cpuid_xlevel;
