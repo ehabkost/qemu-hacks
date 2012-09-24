@@ -1288,6 +1288,63 @@ static void x86_cpuid_set_hv_vendor(Object *obj, const char *value,
     env->cpuid_hv_vendor_set = true;
 }
 
+static void x86_cpuid_get_hv_extra(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra, name, errp);
+}
+
+static void x86_cpuid_set_hv_extra(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    uint32_t value;
+
+    visit_type_uint32(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+
+    if ((value != 0) && (value < 0x40000000)) {
+        value += 0x40000000;
+    }
+    cpu->env.cpuid_hv_extra = value;
+}
+
+static void x86_cpuid_get_hv_extra_a(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_a, name, errp);
+}
+
+static void x86_cpuid_set_hv_extra_a(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_a, name, errp);
+}
+
+static void x86_cpuid_get_hv_extra_b(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_b, name, errp);
+}
+
+static void x86_cpuid_set_hv_extra_b(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+
+    visit_type_uint32(v, &cpu->env.cpuid_hv_extra_b, name, errp);
+}
+
 #if !defined(CONFIG_USER_ONLY)
 static void x86_set_hyperv(Object *obj, Error **errp)
 {
@@ -2233,6 +2290,15 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add_str(obj, "hypervisor-vendor",
                             x86_cpuid_get_hv_vendor,
                             x86_cpuid_set_hv_vendor, NULL);
+    object_property_add(obj, "hypervisor-extra", "int",
+                        x86_cpuid_get_hv_extra,
+                        x86_cpuid_set_hv_extra, NULL, NULL, NULL);
+    object_property_add(obj, "hypervisor-extra-a", "int",
+                        x86_cpuid_get_hv_extra_a,
+                        x86_cpuid_set_hv_extra_a, NULL, NULL, NULL);
+    object_property_add(obj, "hypervisor-extra-b", "int",
+                        x86_cpuid_get_hv_extra_b,
+                        x86_cpuid_set_hv_extra_b, NULL, NULL, NULL);
 #if !defined(CONFIG_USER_ONLY)
     object_property_add(obj, "hv_spinlocks", "int",
                         x86_get_hv_spinlocks,
