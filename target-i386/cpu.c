@@ -2005,6 +2005,17 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         *ecx = 0;
         *edx = 0;
         break;
+    case 0x40000002 ... 0x400000FF:
+        if (index == env->cpuid_hv_extra) {
+            *eax = env->cpuid_hv_extra_a;
+            *ebx = env->cpuid_hv_extra_b;
+        } else {
+            *eax = 0;
+            *ebx = 0;
+        }
+        *ecx = 0;
+        *edx = 0;
+        break;
     case 0x80000000:
         *eax = env->cpuid_xlevel;
         *ebx = env->cpuid_vendor1;
