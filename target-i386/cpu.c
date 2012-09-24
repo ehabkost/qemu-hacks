@@ -1201,11 +1201,54 @@ static void x86_cpuid_set_hv_level(Object *obj, Visitor *v, void *opaque,
     cpu->env.cpuid_hv_level_set = true;
 }
 
+static char *x86_cpuid_get_hv_vendor(Object *obj, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    char *value;
+    int i;
+
+    value = (char *)g_malloc(CPUID_VENDOR_SZ + 1);
+    for (i = 0; i < 4; i++) {
+        value[i + 0] = env->cpuid_hv_vendor1 >> (8 * i);
+        value[i + 4] = env->cpuid_hv_vendor2 >> (8 * i);
+        value[i + 8] = env->cpuid_hv_vendor3 >> (8 * i);
+    }
+    value[CPUID_VENDOR_SZ] = '\0';
+
+    return value;
+}
+
+static void x86_cpuid_set_hv_vendor(Object *obj, const char *value,
+                                    Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    int i;
+    char adj_value[CPUID_VENDOR_SZ + 1];
+
+    memset(adj_value, 0, sizeof(adj_value));
+
+    pstrcpy(adj_value, sizeof(adj_value), value);
+
+    env->cpuid_hv_vendor1 = 0;
+    env->cpuid_hv_vendor2 = 0;
+    env->cpuid_hv_vendor3 = 0;
+    for (i = 0; i < 4; i++) {
+        env->cpuid_hv_vendor1 |= ((uint8_t)adj_value[i + 0]) << (8 * i);
+        env->cpuid_hv_vendor2 |= ((uint8_t)adj_value[i + 4]) << (8 * i);
+        env->cpuid_hv_vendor3 |= ((uint8_t)adj_value[i + 8]) << (8 * i);
+    }
+    env->cpuid_hv_vendor_set = true;
+}
+
 #if !defined(CONFIG_USER_ONLY)
 static void x86_set_hyperv(Object *obj, Error **errp)
 {
     object_property_set_int(obj, CPUID_HV_LEVEL_HYPERV,
                             "hypervisor-level", errp);
+    object_property_set_str(obj, CPUID_HV_VENDOR_HYPERV,
+                            "hypervisor-vendor", errp);
 }
 
 static void x86_get_hv_spinlocks(Object *obj, Visitor *v, void *opaque,
@@ -2134,6 +2177,9 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "hypervisor-level", "int",
                         x86_cpuid_get_hv_level,
                         x86_cpuid_set_hv_level, NULL, NULL, NULL);
+    object_property_add_str(obj, "hypervisor-vendor",
+                            x86_cpuid_get_hv_vendor,
+                            x86_cpuid_set_hv_vendor, NULL);
 #if !defined(CONFIG_USER_ONLY)
     object_property_add(obj, "hv_spinlocks", "int",
                         x86_get_hv_spinlocks,
