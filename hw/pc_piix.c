@@ -237,6 +237,7 @@ static void pc_init_pci(QEMUMachineInitArgs *args)
 static void pc_init_pci_1_2(QEMUMachineInitArgs *args)
 {
     disable_kvm_pv_eoi();
+    enable_compat_apic_id_mode();
     pc_init_pci(args);
 }
 
@@ -249,6 +250,7 @@ static void pc_init_pci_no_kvmclock(QEMUMachineInitArgs *args)
     const char *kernel_cmdline = args->kernel_cmdline;
     const char *initrd_filename = args->initrd_filename;
     const char *boot_device = args->boot_device;
+    enable_compat_apic_id_mode();
     pc_init1(get_system_memory(),
              get_system_io(),
              ram_size, boot_device,
@@ -266,6 +268,7 @@ static void pc_init_isa(QEMUMachineInitArgs *args)
     const char *boot_device = args->boot_device;
     if (cpu_model == NULL)
         cpu_model = "486";
+    enable_compat_apic_id_mode();
     pc_init1(get_system_memory(),
              get_system_io(),
              ram_size, boot_device,

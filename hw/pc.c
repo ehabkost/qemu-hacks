@@ -51,6 +51,8 @@
 #include "exec/address-spaces.h"
 #include "sysemu/arch_init.h"
 #include "qemu/bitmap.h"
+#include "sysemu/cpus.h"
+#include "topology.h"
 
 /* debug PC/ISA interrupts */
 //#define DEBUG_IRQ
