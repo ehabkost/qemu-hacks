@@ -150,7 +150,7 @@ static void pc_init1(MemoryRegion *system_memory,
     void *fw_cfg = NULL;
     PC *pc = PC(object_new(TYPE_PC_MACHINE));
 
-    pc_cpus_init(cpu_model);
+    pc_cpus_init(pc, cpu_model);
 
     if (kvmclock_enabled) {
         kvmclock_create();
@@ -175,7 +175,7 @@ static void pc_init1(MemoryRegion *system_memory,
 
     /* allocate ram and load rom/bios */
     if (!xen_enabled()) {
-        fw_cfg = pc_memory_init(system_memory,
+        fw_cfg = pc_memory_init(pc, system_memory,
                        kernel_filename, kernel_cmdline, initrd_filename,
                        below_4g_mem_size, above_4g_mem_size,
                        pci_enabled ? rom_memory : system_memory, &ram_memory);

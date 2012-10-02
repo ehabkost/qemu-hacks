@@ -111,8 +111,9 @@ typedef struct PC PC;
 void pc_register_ferr_irq(qemu_irq irq);
 void pc_acpi_smi_interrupt(void *opaque, int irq, int level);
 
-void pc_cpus_init(const char *cpu_model);
-void *pc_memory_init(MemoryRegion *system_memory,
+void pc_cpus_init(PC *pc, const char *cpu_model);
+void *pc_memory_init(PC *pc,
+                    MemoryRegion *system_memory,
                     const char *kernel_filename,
                     const char *kernel_cmdline,
                     const char *initrd_filename,

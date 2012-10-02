@@ -585,7 +585,7 @@ int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
     return index;
 }
 
-static void *bochs_bios_init(void)
+static void *bochs_bios_init(PC *pc)
 {
     void *fw_cfg;
     uint8_t *smbios_table;
@@ -903,7 +903,7 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
     }
 }
 
-static X86CPU *pc_new_cpu(const char *cpu_model)
+static X86CPU *pc_new_cpu(PC *pc, const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
@@ -921,7 +921,7 @@ static X86CPU *pc_new_cpu(const char *cpu_model)
     return cpu;
 }
 
-void pc_cpus_init(const char *cpu_model)
+void pc_cpus_init(PC *pc, const char *cpu_model)
 {
     int i;
 
@@ -935,11 +935,12 @@ void pc_cpus_init(const char *cpu_model)
     }
 
     for(i = 0; i < smp_cpus; i++) {
-        pc_new_cpu(cpu_model);
+        pc_new_cpu(pc, cpu_model);
     }
 }
 
-void *pc_memory_init(MemoryRegion *system_memory,
+void *pc_memory_init(PC *pc,
+                    MemoryRegion *system_memory,
                     const char *kernel_filename,
                     const char *kernel_cmdline,
                     const char *initrd_filename,
@@ -988,7 +989,7 @@ void *pc_memory_init(MemoryRegion *system_memory,
                                         option_rom_mr,
                                         1);
 
-    fw_cfg = bochs_bios_init();
+    fw_cfg = bochs_bios_init(pc);
     rom_set_fw(fw_cfg);
 
     if (linux_boot) {
