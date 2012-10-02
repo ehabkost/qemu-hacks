@@ -221,25 +221,6 @@ static bool lookup_feature(uint32_t *pval, const char *s, const char *e,
     return found;
 }
 
-static void add_flagname_to_bitmaps(const char *flagname, uint32_t *features,
-                                    uint32_t *ext_features,
-                                    uint32_t *ext2_features,
-                                    uint32_t *ext3_features,
-                                    uint32_t *kvm_features,
-                                    uint32_t *svm_features,
-                                    uint32_t *cpuid_7_0_ebx_features)
-{
-    if (!lookup_feature(features, flagname, NULL, feature_name) &&
-        !lookup_feature(ext_features, flagname, NULL, ext_feature_name) &&
-        !lookup_feature(ext2_features, flagname, NULL, ext2_feature_name) &&
-        !lookup_feature(ext3_features, flagname, NULL, ext3_feature_name) &&
-        !lookup_feature(kvm_features, flagname, NULL, kvm_feature_name) &&
-        !lookup_feature(svm_features, flagname, NULL, svm_feature_name) &&
-        !lookup_feature(cpuid_7_0_ebx_features, flagname, NULL,
-                        cpuid_7_0_ebx_feature_name))
-            fprintf(stderr, "CPU feature %s not found\n", flagname);
-}
-
 typedef struct x86_def_t {
     struct x86_def_t *next;
     const char *name;
@@ -847,7 +828,9 @@ static void x86_cpuid_get_feature(Object *obj, Visitor *v, void *opaque,
        !is_feature_set(name, env->cpuid_ext2_features, ext2_feature_name) &&
        !is_feature_set(name, env->cpuid_ext3_features, ext3_feature_name) &&
        !is_feature_set(name, env->cpuid_kvm_features, kvm_feature_name) &&
-       !is_feature_set(name, env->cpuid_svm_features, svm_feature_name)) {
+       !is_feature_set(name, env->cpuid_svm_features, svm_feature_name) &&
+       !is_feature_set(name, env->cpuid_7_0_ebx_features,
+                       cpuid_7_0_ebx_feature_name)) {
         value = false;
     }
 
@@ -880,6 +863,8 @@ static void x86_cpuid_set_feature(Object *obj, Visitor *v, void *opaque,
         dst_features = &env->cpuid_kvm_features;
     } else if (lookup_feature(&mask, name, NULL, svm_feature_name)) {
         dst_features = &env->cpuid_svm_features;
+    } else if (lookup_feature(&mask, name, NULL, cpuid_7_0_ebx_feature_name)) {
+        dst_features = &env->cpuid_7_0_ebx_features;
     } else {
         error_set(errp, QERR_PROPERTY_NOT_FOUND, "", name);
         return;
@@ -1333,7 +1318,6 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     env->cpuid_ext_features = def->ext_features;
     env->cpuid_ext2_features = def->ext2_features;
     env->cpuid_ext3_features = def->ext3_features;
-    env->cpuid_kvm_features = def->kvm_features;
     env->cpuid_svm_features = def->svm_features;
     env->cpuid_ext4_features = def->ext4_features;
     env->cpuid_7_0_ebx_features = def->cpuid_7_0_ebx_features;
@@ -1401,24 +1385,34 @@ static void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
     return;
 }
 
+/* Set features on X86CPU object based on a QDict */
+static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
+{
+    const QDictEntry *ent;
+
+    for (ent = qdict_first(features); ent; ent = qdict_next(features, ent)) {
+        const QString *qval = qobject_to_qstring(qdict_entry_value(ent));
+        object_property_parse(OBJECT(cpu), qstring_get_str(qval),
+                              qdict_entry_key(ent), errp);
+        if (error_is_set(errp)) {
+            return;
+        }
+    }
+}
+
 static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
     x86_def_t *def;
 
-    char *s = g_strdup(cpu_model);
-    char *featurestr, *name = strtok(s, ",");
-    /* Features to be added*/
-    uint32_t plus_features = 0, plus_ext_features = 0;
-    uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
-    uint32_t plus_kvm_features = 0, plus_svm_features = 0;
-    uint32_t plus_7_0_ebx_features = 0;
-    /* Features to be removed */
-    uint32_t minus_features = 0, minus_ext_features = 0;
-    uint32_t minus_ext2_features = 0, minus_ext3_features = 0;
-    uint32_t minus_kvm_features = 0, minus_svm_features = 0;
-    uint32_t minus_7_0_ebx_features = 0;
-    uint32_t numvalue;
+    CPUX86State *env = &cpu->env;
+    QDict *features = NULL;
+    char *name = NULL;
+
+    compat_normalize_cpu_model(cpu_model, &name, &features, errp);
+    if (error_is_set(errp)) {
+        goto error;
+    }
 
     for (def = x86_defs; def; def = def->next)
         if (name && !strcmp(name, def->name))
@@ -1431,8 +1425,10 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
         memcpy(x86_cpu_def, def, sizeof(*def));
     }
 
+    cpudef_2_x86_cpu(cpu, x86_cpu_def, errp);
+
 #if defined(CONFIG_KVM)
-    plus_kvm_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
+    env->cpuid_kvm_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
         (1 << KVM_FEATURE_NOP_IO_DELAY) | 
         (1 << KVM_FEATURE_MMU_OP) |
         (1 << KVM_FEATURE_CLOCKSOURCE2) |
@@ -1440,133 +1436,23 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
         (1 << KVM_FEATURE_STEAL_TIME) |
         (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
 #else
-    plus_kvm_features = 0;
+    env->cpuid_kvm_features = 0;
 #endif
 
-    add_flagname_to_bitmaps("hypervisor", &plus_features,
-            &plus_ext_features, &plus_ext2_features, &plus_ext3_features,
-            &plus_kvm_features, &plus_svm_features,  &plus_7_0_ebx_features);
+    object_property_set_bool(OBJECT(cpu), true, "hypervisor", errp);
 
-    featurestr = strtok(NULL, ",");
-
-    while (featurestr) {
-        char *val;
-        if (featurestr[0] == '+') {
-            add_flagname_to_bitmaps(featurestr + 1, &plus_features,
-                            &plus_ext_features, &plus_ext2_features,
-                            &plus_ext3_features, &plus_kvm_features,
-                            &plus_svm_features, &plus_7_0_ebx_features);
-        } else if (featurestr[0] == '-') {
-            add_flagname_to_bitmaps(featurestr + 1, &minus_features,
-                            &minus_ext_features, &minus_ext2_features,
-                            &minus_ext3_features, &minus_kvm_features,
-                            &minus_svm_features, &minus_7_0_ebx_features);
-        } else if ((val = strchr(featurestr, '='))) {
-            *val = 0; val++;
-            if (!strcmp(featurestr, "family")) {
-                char *err;
-                numvalue = strtoul(val, &err, 0);
-                if (!*val || *err || numvalue > 0xff + 0xf) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                x86_cpu_def->family = numvalue;
-            } else if (!strcmp(featurestr, "model")) {
-                char *err;
-                numvalue = strtoul(val, &err, 0);
-                if (!*val || *err || numvalue > 0xff) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                x86_cpu_def->model = numvalue;
-            } else if (!strcmp(featurestr, "stepping")) {
-                char *err;
-                numvalue = strtoul(val, &err, 0);
-                if (!*val || *err || numvalue > 0xf) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                x86_cpu_def->stepping = numvalue ;
-            } else if (!strcmp(featurestr, "level")) {
-                char *err;
-                numvalue = strtoul(val, &err, 0);
-                if (!*val || *err) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                x86_cpu_def->level = numvalue;
-            } else if (!strcmp(featurestr, "xlevel")) {
-                char *err;
-                numvalue = strtoul(val, &err, 0);
-                if (!*val || *err) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                x86_cpu_def->xlevel = numvalue;
-            } else if (!strcmp(featurestr, "vendor")) {
-                pstrcpy(x86_cpu_def->vendor, sizeof(x86_cpu_def->vendor), val);
-                x86_cpu_def->vendor_override = 1;
-            } else if (!strcmp(featurestr, "model_id")) {
-                pstrcpy(x86_cpu_def->model_id, sizeof(x86_cpu_def->model_id),
-                        val);
-            } else if (!strcmp(featurestr, "tsc_freq")) {
-                int64_t tsc_freq;
-                char *err;
-
-                tsc_freq = strtosz_suffix_unit(val, &err,
-                                               STRTOSZ_DEFSUFFIX_B, 1000);
-                if (tsc_freq < 0 || *err) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                x86_cpu_def->tsc_khz = tsc_freq / 1000;
-            } else if (!strcmp(featurestr, "hv_spinlocks")) {
-                char *err;
-                numvalue = strtoul(val, &err, 0);
-                if (!*val || *err) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                hyperv_set_spinlock_retries(numvalue);
-            } else {
-                fprintf(stderr, "unrecognized feature %s\n", featurestr);
-                goto error;
-            }
-        } else if (!strcmp(featurestr, "check")) {
-            check_cpuid = 1;
-        } else if (!strcmp(featurestr, "enforce")) {
-            check_cpuid = enforce_cpuid = 1;
-        } else if (!strcmp(featurestr, "hv_relaxed")) {
-            hyperv_enable_relaxed_timing(true);
-        } else if (!strcmp(featurestr, "hv_vapic")) {
-            hyperv_enable_vapic_recommended(true);
-        } else {
-            fprintf(stderr, "feature string `%s' not in format (+feature|-feature|feature=xyz)\n", featurestr);
-            goto error;
-        }
-
-        featurestr = strtok(NULL, ",");
+    cpu_x86_set_props(cpu, features, errp);
+    QDECREF(features);
+    if (error_is_set(errp)) {
+        goto error;
     }
-    x86_cpu_def->features |= plus_features;
-    x86_cpu_def->ext_features |= plus_ext_features;
-    x86_cpu_def->ext2_features |= plus_ext2_features;
-    x86_cpu_def->ext3_features |= plus_ext3_features;
-    x86_cpu_def->kvm_features |= plus_kvm_features;
-    x86_cpu_def->svm_features |= plus_svm_features;
-    x86_cpu_def->cpuid_7_0_ebx_features |= plus_7_0_ebx_features;
-    x86_cpu_def->features &= ~minus_features;
-    x86_cpu_def->ext_features &= ~minus_ext_features;
-    x86_cpu_def->ext2_features &= ~minus_ext2_features;
-    x86_cpu_def->ext3_features &= ~minus_ext3_features;
-    x86_cpu_def->kvm_features &= ~minus_kvm_features;
-    x86_cpu_def->svm_features &= ~minus_svm_features;
-    x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
 
-    g_free(s);
+    g_free(name);
     return 0;
 
 error:
-    g_free(s);
+    g_free(name);
+    QDECREF(features);
     if (!error_is_set(errp)) {
         error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
     }
@@ -1658,8 +1544,6 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     if (cpu_x86_find_by_name(cpu, def, cpu_model, &error) < 0) {
         goto out;
     }
-
-    cpudef_2_x86_cpu(cpu, def, &error);
 
 out:
     if (error) {
@@ -2208,6 +2092,7 @@ static void x86_cpu_initfn(Object *obj)
     x86_register_cpuid_properties(obj, ext3_feature_name);
     x86_register_cpuid_properties(obj, kvm_feature_name);
     x86_register_cpuid_properties(obj, svm_feature_name);
+    x86_register_cpuid_properties(obj, cpuid_7_0_ebx_feature_name);
 
     env->cpuid_apic_id = env->cpu_index;
 
