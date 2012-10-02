@@ -550,6 +550,24 @@ static void bochs_bios_write(void *opaque, uint32_t addr, uint32_t val)
     }
 }
 
+typedef struct PC {
+    DeviceState parent_obj;
+} PC;
+
+static const TypeInfo pc_type_info = {
+    .name = TYPE_PC_MACHINE,
+    .parent = TYPE_DEVICE,
+    .instance_size = sizeof(PC),
+    .class_size = sizeof(DeviceClass),
+};
+
+static void pc_register_type(void)
+{
+    type_register_static(&pc_type_info);
+}
+
+type_init(pc_register_type);
+
 int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
 {
     int index = le32_to_cpu(e820_table.count);

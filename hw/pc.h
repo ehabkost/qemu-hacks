@@ -102,6 +102,12 @@ void i8042_setup_a20_line(ISADevice *dev, qemu_irq *a20_out);
 /* pc.c */
 extern int fd_bootchk;
 
+#define TYPE_PC_MACHINE "PC"
+#define PC(obj) \
+    OBJECT_CHECK(PC, (obj), TYPE_PC_MACHINE)
+struct PC;
+typedef struct PC PC;
+
 void pc_register_ferr_irq(qemu_irq irq);
 void pc_acpi_smi_interrupt(void *opaque, int irq, int level);
 
