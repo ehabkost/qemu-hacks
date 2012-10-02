@@ -51,6 +51,8 @@
 #include "exec/address-spaces.h"
 #include "sysemu/arch_init.h"
 #include "qemu/bitmap.h"
+#include "sysemu/cpus.h"
+#include "topology.h"
 
 /* debug PC/ISA interrupts */
 //#define DEBUG_IRQ
@@ -524,6 +526,14 @@ static void handle_a20_line_change(void *opaque, int irq, int level)
     cpu_x86_set_a20(cpu, level);
 }
 
+/* Enables contiguous-apic-ID mode, for compatibility */
+static bool compat_apic_id_mode;
+
+void enable_compat_apic_id_mode(void)
+{
+    compat_apic_id_mode = true;
+}
+
 /* Calculates initial APIC ID for a specific CPU index
  *
  * Currently we need to be able to calculate the APIC ID from the CPU index
@@ -533,10 +543,20 @@ static void handle_a20_line_change(void *opaque, int irq, int level)
  */
 static uint32_t apic_id_for_cpu(int cpu_index)
 {
-    /* right now APIC ID == CPU index. this will eventually change to use
-     * the CPU topology configuration properly
-     */
-    return cpu_index;
+    uint32_t correct_id;
+    static bool warned;
+
+    correct_id = topo_apicid_for_cpu(smp_cores, smp_threads, cpu_index);
+    if (compat_apic_id_mode) {
+        if (cpu_index != correct_id && !warned) {
+            error_report("APIC IDs set in compatibility mode, "
+                         "CPU topology won't match the configuration");
+            warned = true;
+        }
+        return cpu_index;
+    } else {
+        return correct_id;
+    }
 }
 
 int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)

@@ -78,6 +78,8 @@ extern int fd_bootchk;
 void pc_register_ferr_irq(qemu_irq irq);
 void pc_acpi_smi_interrupt(void *opaque, int irq, int level);
 
+void enable_compat_apic_id_mode(void);
+
 void pc_cpus_init(const char *cpu_model);
 void pc_acpi_init(const char *default_dsdt);
 void *pc_memory_init(MemoryRegion *system_memory,
