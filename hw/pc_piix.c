@@ -374,6 +374,10 @@ static QEMUMachine pc_machine_v1_3 = {
             .driver   = "ivshmem",\
             .property = "use64",\
             .value    = "0",\
+        },{\
+            .driver   = "PC",\
+            .property = "contiguous_apic_ids",\
+            .value    = "true",\
         }
 
 static QEMUMachine pc_machine_v1_2 = {

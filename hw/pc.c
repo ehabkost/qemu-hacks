@@ -52,6 +52,8 @@
 #include "arch_init.h"
 #include "bitmap.h"
 #include "vga-pci.h"
+#include "topology.h"
+#include "cpus.h"
 
 /* debug PC/ISA interrupts */
 //#define DEBUG_IRQ
@@ -552,13 +554,34 @@ static void bochs_bios_write(void *opaque, uint32_t addr, uint32_t val)
 
 typedef struct PC {
     DeviceState parent_obj;
+
+    /* Compatibility mode that force APIC IDs to be contiguous
+     *
+     * Setting it to true may break some CPU topologies (e.g. if core or thread
+     * count is not a power of 2).
+     */
+#define PC_FLAG_CONTIGUOUS_APIC_IDS 0
+
+    uint32_t flags;
 } PC;
+
+static Property pc_properties[] = {
+    DEFINE_PROP_BIT("contiguous_apic_ids", PC, flags,
+                    PC_FLAG_CONTIGUOUS_APIC_IDS, false),
+    DEFINE_PROP_END_OF_LIST()
+};
+
+static void pc_class_init(ObjectClass *klass, void *data)
+{
+    DeviceClass *dc = DEVICE_CLASS(klass);
+    dc->props = pc_properties;
+}
 
 static const TypeInfo pc_type_info = {
     .name = TYPE_PC_MACHINE,
     .parent = TYPE_DEVICE,
     .instance_size = sizeof(PC),
-    .class_size = sizeof(DeviceClass),
+    .class_init = pc_class_init,
 };
 
 static void pc_register_type(void)
@@ -576,10 +599,22 @@ type_init(pc_register_type);
  */
 static uint32_t apic_id_for_cpu(PC *pc, int cpu_index)
 {
-    /* right now APIC ID == CPU index. this will eventually change to use
-     * the CPU topology configuration properly
-     */
-    return cpu_index;
+    unsigned int correct_id;
+    static bool warned;
+    bool contig;
+
+    correct_id = topo_apicid_for_cpu(smp_cores, smp_threads, cpu_index);
+    contig = object_property_get_bool(OBJECT(pc), "contiguous_apic_ids", NULL);
+    if (contig) {
+        if (cpu_index != correct_id && !warned) {
+            fprintf(stderr, "warning: CPU topology in compat mode, "
+                            "results won't match the requested topology\n");
+            warned = true;
+        }
+        return cpu_index;
+    } else {
+        return correct_id;
+    }
 }
 
 int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
