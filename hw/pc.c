@@ -51,6 +51,8 @@
 #include "exec-memory.h"
 #include "arch_init.h"
 #include "bitmap.h"
+#include "topology.h"
+#include "cpus.h"
 
 /* debug PC/ISA interrupts */
 //#define DEBUG_IRQ
@@ -565,10 +567,19 @@ static void bochs_bios_write(void *opaque, uint32_t addr, uint32_t val)
  */
 static uint32_t apic_id_for_cpu(PCInitArgs *args, int cpu_index)
 {
-    /* right now APIC ID == CPU index. this will eventually change to use
-     * the CPU topology configuration properly
-     */
-    return cpu_index;
+    uint32_t correct_id;
+
+    correct_id = topo_apicid_for_cpu(smp_cores, smp_threads, cpu_index);
+    if (args->compat_contiguous_apic_ids) {
+        if (cpu_index != correct_id && !args->apic_id_warned) {
+            error_report("APIC IDs set in compatibility mode, "
+                         "CPU topology won't match the configuration");
+            args->apic_id_warned = true;
+        }
+        return cpu_index;
+    } else {
+        return correct_id;
+    }
 }
 
 int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
