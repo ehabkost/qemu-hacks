@@ -1350,6 +1350,57 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     }
 }
 
+/* convert legacy cpumodel string to string cpu_name and
+ * a uniform set of custom features that will be applied to CPU
+ * using object_property_parse()
+ */
+static void compat_normalize_cpu_model(const char *cpu_model, char **cpu_name,
+                                        QDict **features, Error **errp)
+{
+    int i;
+    gchar **feat_array = g_strsplit(cpu_model, ",", 0);
+    *features = qdict_new();
+
+    g_assert(feat_array[0] != NULL);
+    *cpu_name = g_strdup(feat_array[0]);
+
+    for (i = 1; feat_array[i]; ++i) {
+        gchar *featurestr = feat_array[i];
+        char *val;
+        if (featurestr[0] == '+') {
+            /*
+             * preseve legacy behaviour, if feature was disabled once
+             * do not allow to enable it again
+             */
+            if (!qdict_haskey(*features, featurestr + 1)) {
+                qdict_put(*features, featurestr + 1, qstring_from_str("on"));
+            }
+        } else if (featurestr[0] == '-') {
+            qdict_put(*features, featurestr + 1, qstring_from_str("off"));
+        } else {
+            val = strchr(featurestr, '=');
+            if (val) {
+                *val = 0; val++;
+                if (!strcmp(featurestr, "vendor")) {
+                    qdict_put(*features, "vendor-override",
+                              qstring_from_str("on"));
+                    qdict_put(*features, featurestr, qstring_from_str(val));
+                } else if (!strcmp(featurestr, "tsc_freq")) {
+                    qdict_put(*features, "tsc-frequency",
+                              qstring_from_str(val));
+                } else {
+                    qdict_put(*features, featurestr, qstring_from_str(val));
+                }
+            } else {
+                qdict_put(*features, featurestr, qstring_from_str("on"));
+            }
+        }
+    }
+
+    g_strfreev(feat_array);
+    return;
+}
+
 static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
