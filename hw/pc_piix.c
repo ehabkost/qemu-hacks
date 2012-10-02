@@ -148,6 +148,7 @@ static void pc_init1(MemoryRegion *system_memory,
     MemoryRegion *pci_memory;
     MemoryRegion *rom_memory;
     void *fw_cfg = NULL;
+    PC *pc = PC(object_new(TYPE_PC_MACHINE));
 
     pc_cpus_init(cpu_model);
 
@@ -285,6 +286,8 @@ static void pc_init1(MemoryRegion *system_memory,
     if (pci_enabled) {
         pc_pci_device_init(pci_bus);
     }
+
+    qdev_init_nofail(DEVICE(pc));
 }
 
 static void pc_init_pci(ram_addr_t ram_size,
