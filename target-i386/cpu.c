@@ -1554,9 +1554,7 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
     x86_cpu_def->kvm_features &= ~minus_kvm_features;
     x86_cpu_def->svm_features &= ~minus_svm_features;
     x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
-    if (x86_cpu_def->cpuid_7_0_ebx_features && x86_cpu_def->level < 7) {
-        x86_cpu_def->level = 7;
-    }
+
     g_free(s);
     return 0;
 
@@ -2118,6 +2116,10 @@ void x86_cpu_realize(Object *obj, Error **errp)
         && enforce_cpuid) {
         error_set(errp, QERR_PERMISSION_DENIED);
         return;
+    }
+
+    if (env->cpuid_7_0_ebx_features && env->cpuid_level < 7) {
+        env->cpuid_level = 7;
     }
 
     if (!kvm_enabled()) {
