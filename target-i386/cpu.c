@@ -2071,6 +2071,11 @@ static void x86_cpu_apic_init(X86CPU *cpu, Error **errp)
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+
+    if (env->cpuid_7_0_ebx_features && env->cpuid_level < 7) {
+        env->cpuid_level = 7;
+    }
 
 #ifndef CONFIG_USER_ONLY
     qemu_register_reset(x86_cpu_machine_reset_cb, cpu);
