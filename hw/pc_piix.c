@@ -298,6 +298,7 @@ static void pc_init_pci_v1_2(QEMUMachineInitArgs *args)
         .qemu_args = args,
         .pci_enabled = true,
         .kvmclock_enabled = true,
+        .compat_contiguous_apic_ids = true,
     };
     pc_init1(&pc_args);
 }

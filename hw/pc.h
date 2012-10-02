@@ -81,6 +81,12 @@ typedef struct PCInitArgs {
     QEMUMachineInitArgs *qemu_args;
     bool pci_enabled;
     bool kvmclock_enabled;
+    /* Enable compatibility (buggy) APIC ID generation, that keep APIC IDs
+     * contiguous
+     */
+    bool compat_contiguous_apic_ids;
+    /* Warning message about incorrect APIC ID was shown */
+    bool apic_id_warned;
 
     /* Memory regions & sizes: */
     MemoryRegion *system_memory;
