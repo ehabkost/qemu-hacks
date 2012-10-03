@@ -25,7 +25,6 @@
    inherit from a particular bus (e.g. PCI or I2C) rather than
    this API directly.  */
 
-#include "net.h"
 #include "qdev.h"
 #include "sysemu.h"
 #include "error.h"
@@ -97,47 +96,6 @@ void qdev_set_parent_bus(DeviceState *dev, BusState *bus)
 {
     dev->parent_bus = bus;
     bus_add_child(bus, dev);
-}
-
-/* Create a new device.  This only initializes the device state structure
-   and allows properties to be set.  qdev_init should be called to
-   initialize the actual device emulation.  */
-DeviceState *qdev_create(BusState *bus, const char *name)
-{
-    DeviceState *dev;
-
-    dev = qdev_try_create(bus, name);
-    if (!dev) {
-        if (bus) {
-            hw_error("Unknown device '%s' for bus '%s'\n", name,
-                     object_get_typename(OBJECT(bus)));
-        } else {
-            hw_error("Unknown device '%s' for default sysbus\n", name);
-        }
-    }
-
-    return dev;
-}
-
-DeviceState *qdev_try_create(BusState *bus, const char *type)
-{
-    DeviceState *dev;
-
-    if (object_class_by_name(type) == NULL) {
-        return NULL;
-    }
-    dev = DEVICE(object_new(type));
-    if (!dev) {
-        return NULL;
-    }
-
-    if (!bus) {
-        bus = sysbus_get_default();
-    }
-
-    qdev_set_parent_bus(dev, bus);
-
-    return dev;
 }
 
 /* Initialize a device.  Device properties should be set before calling
@@ -282,44 +240,6 @@ bool qdev_machine_modified(void)
 BusState *qdev_get_parent_bus(DeviceState *dev)
 {
     return dev->parent_bus;
-}
-
-void qdev_init_gpio_in(DeviceState *dev, qemu_irq_handler handler, int n)
-{
-    dev->gpio_in = qemu_extend_irqs(dev->gpio_in, dev->num_gpio_in, handler,
-                                        dev, n);
-    dev->num_gpio_in += n;
-}
-
-void qdev_init_gpio_out(DeviceState *dev, qemu_irq *pins, int n)
-{
-    assert(dev->num_gpio_out == 0);
-    dev->num_gpio_out = n;
-    dev->gpio_out = pins;
-}
-
-qemu_irq qdev_get_gpio_in(DeviceState *dev, int n)
-{
-    assert(n >= 0 && n < dev->num_gpio_in);
-    return dev->gpio_in[n];
-}
-
-void qdev_connect_gpio_out(DeviceState * dev, int n, qemu_irq pin)
-{
-    assert(n >= 0 && n < dev->num_gpio_out);
-    dev->gpio_out[n] = pin;
-}
-
-void qdev_set_nic_properties(DeviceState *dev, NICInfo *nd)
-{
-    qdev_prop_set_macaddr(dev, "mac", nd->macaddr.a);
-    if (nd->netdev)
-        qdev_prop_set_netdev(dev, "netdev", nd->netdev);
-    if (nd->nvectors != DEV_NVECTORS_UNSPECIFIED &&
-        object_property_find(OBJECT(dev), "vectors", NULL)) {
-        qdev_prop_set_uint32(dev, "vectors", nd->nvectors);
-    }
-    nd->instantiated = 1;
 }
 
 BusState *qdev_get_child_bus(DeviceState *dev, const char *name)
