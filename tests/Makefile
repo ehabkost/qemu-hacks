@@ -47,6 +47,7 @@ gcov-files-test-mul64-y = util/host-utils.c
 check-unit-y += tests/test-int128$(EXESUF)
 # all code tested by test-int128 is inside int128.h
 gcov-files-test-int128-y =
+check-unit-y += tests/test-qdev-global-prop$(EXESUF)
 
 check-block-$(CONFIG_POSIX) += tests/qemu-iotests-quick.sh
 
@@ -102,6 +103,11 @@ tests/test-x86-cpuid$(EXESUF): tests/test-x86-cpuid.o
 tests/test-xbzrle$(EXESUF): tests/test-xbzrle.o xbzrle.o page_cache.o libqemuutil.a
 tests/test-cutils$(EXESUF): tests/test-cutils.o util/cutils.o
 tests/test-int128$(EXESUF): tests/test-int128.o
+tests/test-qdev-global-prop$(EXESUF): tests/test-qdev-global-prop.o \
+	hw/qdev.o hw/qdev-properties.o \
+	$(test-qapi-obj-y) $(qom-obj-y) \
+	qemu-option.o \
+	tests/fake-qdev.o
 
 tests/test-qapi-types.c tests/test-qapi-types.h :\
 $(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-types.py
