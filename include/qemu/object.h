@@ -17,7 +17,7 @@
 #include <glib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "qemu/queue.h"
+#include "qemu-queue.h"
 
 struct Visitor;
 struct Error;
@@ -65,7 +65,7 @@ typedef struct InterfaceInfo InterfaceInfo;
  *     int reg0, reg1, reg2;
  * } MyDevice;
  *
- * static const TypeInfo my_device_info = {
+ * static TypeInfo my_device_info = {
  *     .name = TYPE_MY_DEVICE,
  *     .parent = TYPE_DEVICE,
  *     .instance_size = sizeof(MyDevice),
@@ -138,7 +138,7 @@ typedef struct InterfaceInfo InterfaceInfo;
  *     dc->reset = my_device_reset;
  * }
  *
- * static const TypeInfo my_device_info = {
+ * static TypeInfo my_device_info = {
  *     .name = TYPE_MY_DEVICE,
  *     .parent = TYPE_DEVICE,
  *     .instance_size = sizeof(MyDevice),
@@ -147,9 +147,9 @@ typedef struct InterfaceInfo InterfaceInfo;
  *   </programlisting>
  * </example>
  *
- * Introducing new virtual methods requires a class to define its own
- * struct and to add a .class_size member to the #TypeInfo.  Each method
- * will also have a wrapper function to call it easily:
+ * Introducing new virtual functions requires a class to define its own
+ * struct and to add a .class_size member to the TypeInfo.  Each function
+ * will also have a wrapper to call it easily:
  *
  * <example>
  *   <title>Defining an abstract class</title>
@@ -163,7 +163,7 @@ typedef struct InterfaceInfo InterfaceInfo;
  *     void (*frobnicate) (MyDevice *obj);
  * } MyDeviceClass;
  *
- * static const TypeInfo my_device_info = {
+ * static TypeInfo my_device_info = {
  *     .name = TYPE_MY_DEVICE,
  *     .parent = TYPE_DEVICE,
  *     .instance_size = sizeof(MyDevice),
@@ -186,104 +186,6 @@ typedef struct InterfaceInfo InterfaceInfo;
  * similar to normal types except for the fact that are only defined by
  * their classes and never carry any state.  You can dynamically cast an object
  * to one of its #Interface types and vice versa.
- *
- * # Methods #
- *
- * A <emphasis>method</emphasis> is a function within the namespace scope of
- * a class. It usually operates on the object instance by passing it as a
- * strongly-typed first argument.
- * If it does not operate on an object instance, it is dubbed
- * <emphasis>class method</emphasis>.
- *
- * Methods cannot be overloaded. That is, the #ObjectClass and method name
- * uniquely identity the function to be called; the signature does not vary
- * except for trailing varargs.
- *
- * Methods are always <emphasis>virtual</emphasis>. Overriding a method in
- * #TypeInfo.class_init of a subclass leads to any user of the class obtained
- * via OBJECT_GET_CLASS() accessing the overridden function.
- * The original function is not automatically invoked. It is the responsibility
- * of the overriding class to determine whether and when to invoke the method
- * being overridden.
- *
- * To invoke the method being overridden, the preferred solution is to store
- * the original value in the overriding class before overriding the method.
- * This corresponds to |[ {super,base}.method(...) ]| in Java and C#
- * respectively; this frees the overriding class from hardcoding its parent
- * class, which someone might choose to change at some point.
- *
- * <example>
- *   <title>Overriding a virtual method</title>
- *   <programlisting>
- * typedef struct MyState MyState;
- *
- * typedef void (*MyDoSomething)(MyState *obj);
- *
- * typedef struct MyClass {
- *     ObjectClass parent_class;
- *
- *     MyDoSomething do_something;
- * } MyClass;
- *
- * static void my_do_something(MyState *obj)
- * {
- *     // do something
- * }
- *
- * static void my_class_init(ObjectClass *oc, void *data)
- * {
- *     MyClass *mc = MY_CLASS(oc);
- *
- *     mc->do_something = my_do_something;
- * }
- *
- * static const TypeInfo my_type_info = {
- *     .name = TYPE_MY,
- *     .parent = TYPE_OBJECT,
- *     .instance_size = sizeof(MyState),
- *     .class_size = sizeof(MyClass),
- *     .class_init = my_class_init,
- * };
- *
- * typedef struct DerivedClass {
- *     MyClass parent_class;
- *
- *     MyDoSomething parent_do_something;
- * } MyClass;
- *
- * static void derived_do_something(MyState *obj)
- * {
- *     DerivedClass *dc = DERIVED_GET_CLASS(obj);
- *
- *     // do something here
- *     dc->parent_do_something(obj);
- *     // do something else here
- * }
- *
- * static void derived_class_init(ObjectClass *oc, void *data)
- * {
- *     MyClass *mc = MY_CLASS(oc);
- *     DerivedClass *dc = DERIVED_CLASS(oc);
- *
- *     dc->parent_do_something = mc->do_something;
- *     mc->do_something = derived_do_something;
- * }
- *
- * static const TypeInfo derived_type_info = {
- *     .name = TYPE_DERIVED,
- *     .parent = TYPE_MY,
- *     .class_size = sizeof(DerivedClass),
- *     .class_init = my_class_init,
- * };
- *   </programlisting>
- * </example>
- *
- * Alternatively, object_class_by_name() can be used to obtain the class and
- * its non-overridden methods for a specific type. This would correspond to
- * |[ MyClass::method(...) ]| in C++.
- *
- * The first example of such a QOM method was #CPUClass.reset,
- * another example is #DeviceClass.realize.
  */
 
 
@@ -328,25 +230,6 @@ typedef struct ObjectProperty
 } ObjectProperty;
 
 /**
- * ObjectUnparent:
- * @obj: the object that is being removed from the composition tree
- *
- * Called when an object is being removed from the QOM composition tree.
- * The function should remove any backlinks from children objects to @obj.
- */
-typedef void (ObjectUnparent)(Object *obj);
-
-/**
- * ObjectFree:
- * @obj: the object being freed
- *
- * Called when an object's last reference is removed.
- */
-typedef void (ObjectFree)(void *obj);
-
-#define OBJECT_CLASS_CAST_CACHE 4
-
-/**
  * ObjectClass:
  *
  * The base for all classes.  The only thing that #ObjectClass contains is an
@@ -357,10 +240,6 @@ struct ObjectClass
     /*< private >*/
     Type type;
     GSList *interfaces;
-
-    const char *cast_cache[OBJECT_CLASS_CAST_CACHE];
-
-    ObjectUnparent *unparent;
 };
 
 /**
@@ -382,7 +261,6 @@ struct Object
 {
     /*< private >*/
     ObjectClass *class;
-    ObjectFree *free;
     QTAILQ_HEAD(, ObjectProperty) properties;
     uint32_t ref;
     Object *parent;
@@ -483,8 +361,7 @@ struct TypeInfo
  * generated.
  */
 #define OBJECT_CHECK(type, obj, name) \
-    ((type *)object_dynamic_cast_assert(OBJECT(obj), (name), \
-                                        __FILE__, __LINE__, __func__))
+    ((type *)object_dynamic_cast_assert(OBJECT(obj), (name)))
 
 /**
  * OBJECT_CLASS_CHECK:
@@ -497,8 +374,7 @@ struct TypeInfo
  * specific class type.
  */
 #define OBJECT_CLASS_CHECK(class, obj, name) \
-    ((class *)object_class_dynamic_cast_assert(OBJECT_CLASS(obj), (name), \
-                                               __FILE__, __LINE__, __func__))
+    ((class *)object_class_dynamic_cast_assert(OBJECT_CLASS(obj), (name)))
 
 /**
  * OBJECT_GET_CLASS:
@@ -556,16 +432,15 @@ struct InterfaceClass
  * Returns: @obj casted to @interface if cast is valid, otherwise raise error.
  */
 #define INTERFACE_CHECK(interface, obj, name) \
-    ((interface *)object_dynamic_cast_assert(OBJECT((obj)), (name), \
-                                             __FILE__, __LINE__, __func__))
+    ((interface *)object_dynamic_cast_assert(OBJECT((obj)), (name)))
 
 /**
  * object_new:
  * @typename: The name of the type of the object to instantiate.
  *
- * This function will initialize a new object using heap allocated memory.
- * The returned object has a reference count of 1, and will be freed when
- * the last reference is dropped.
+ * This function will initialize a new object using heap allocated memory.  This
+ * function should be paired with object_delete() to free the resources
+ * associated with the object.
  *
  * Returns: The newly allocated and instantiated object.
  */
@@ -575,13 +450,22 @@ Object *object_new(const char *typename);
  * object_new_with_type:
  * @type: The type of the object to instantiate.
  *
- * This function will initialize a new object using heap allocated memory.
- * The returned object has a reference count of 1, and will be freed when
- * the last reference is dropped.
+ * This function will initialize a new object using heap allocated memory.  This
+ * function should be paired with object_delete() to free the resources
+ * associated with the object.
  *
  * Returns: The newly allocated and instantiated object.
  */
 Object *object_new_with_type(Type type);
+
+/**
+ * object_delete:
+ * @obj: The object to free.
+ *
+ * Finalize an object and then free the memory associated with it.  This should
+ * be paired with object_new() to free the resources associated with an object.
+ */
+void object_delete(Object *obj);
 
 /**
  * object_initialize_with_type:
@@ -589,8 +473,7 @@ Object *object_new_with_type(Type type);
  * @type: The type of the object to instantiate.
  *
  * This function will initialize an object.  The memory for the object should
- * have already been allocated.  The returned object has a reference count of 1,
- * and will be finalized when the last reference is dropped.
+ * have already been allocated.
  */
 void object_initialize_with_type(void *data, Type type);
 
@@ -600,10 +483,18 @@ void object_initialize_with_type(void *data, Type type);
  * @typename: The name of the type of the object to instantiate.
  *
  * This function will initialize an object.  The memory for the object should
- * have already been allocated.  The returned object has a reference count of 1,
- * and will be finalized when the last reference is dropped.
+ * have already been allocated.
  */
 void object_initialize(void *obj, const char *typename);
+
+/**
+ * object_finalize:
+ * @obj: The object to finalize.
+ *
+ * This function destroys and object without freeing the memory associated with
+ * it.
+ */
+void object_finalize(void *obj);
 
 /**
  * object_dynamic_cast:
@@ -622,12 +513,9 @@ Object *object_dynamic_cast(Object *obj, const char *typename);
  *
  * See object_dynamic_cast() for a description of the parameters of this
  * function.  The only difference in behavior is that this function asserts
- * instead of returning #NULL on failure if QOM cast debugging is enabled.
- * This function is not meant to be called directly, but only through
- * the wrapper macro OBJECT_CHECK.
+ * instead of returning #NULL on failure.
  */
-Object *object_dynamic_cast_assert(Object *obj, const char *typename,
-                                   const char *file, int line, const char *func);
+Object *object_dynamic_cast_assert(Object *obj, const char *typename);
 
 /**
  * object_get_class:
@@ -672,31 +560,11 @@ Type type_register(const TypeInfo *info);
  * @klass: The #ObjectClass to attempt to cast.
  * @typename: The QOM typename of the class to cast to.
  *
- * See object_class_dynamic_cast() for a description of the parameters
- * of this function.  The only difference in behavior is that this function
- * asserts instead of returning #NULL on failure if QOM cast debugging is
- * enabled.  This function is not meant to be called directly, but only through
- * the wrapper macros OBJECT_CLASS_CHECK and INTERFACE_CHECK.
+ * Returns: This function always returns @klass and asserts on failure.
  */
 ObjectClass *object_class_dynamic_cast_assert(ObjectClass *klass,
-                                              const char *typename,
-                                              const char *file, int line,
-                                              const char *func);
+                                              const char *typename);
 
-/**
- * object_class_dynamic_cast:
- * @klass: The #ObjectClass to attempt to cast.
- * @typename: The QOM typename of the class to cast to.
- *
- * Returns: If @typename is a class, this function returns @klass if
- * @typename is a subtype of @klass, else returns #NULL.
- *
- * If @typename is an interface, this function returns the interface
- * definition for @klass if @klass implements it unambiguously; #NULL
- * is returned if @klass does not implement the interface or if multiple
- * classes or interfaces on the hierarchy leading to @klass implement
- * it.  (FIXME: perhaps this can be detected at type definition time?)
- */
 ObjectClass *object_class_dynamic_cast(ObjectClass *klass,
                                        const char *typename);
 
@@ -715,14 +583,6 @@ ObjectClass *object_class_get_parent(ObjectClass *klass);
  * Returns: The QOM typename for @klass.
  */
 const char *object_class_get_name(ObjectClass *klass);
-
-/**
- * object_class_is_abstract:
- * @klass: The class to obtain the abstractness for.
- *
- * Returns: %true if @klass is abstract, %false otherwise.
- */
-bool object_class_is_abstract(ObjectClass *klass);
 
 /**
  * object_class_by_name:
@@ -1032,7 +892,7 @@ Object *object_resolve_path_type(const char *path, const char *typename,
  *
  * Returns: The resolved object or NULL on path lookup failure.
  */
-Object *object_resolve_path_component(Object *parent, const gchar *part);
+Object *object_resolve_path_component(Object *parent, gchar *part);
 
 /**
  * object_property_add_child:
@@ -1067,11 +927,6 @@ void object_property_add_child(Object *obj, const char *name,
  * between objects.
  *
  * Links form the graph in the object model.
- *
- * Ownership of the pointer that @child points to is transferred to the
- * link property.  The reference count for <code>*@child</code> is
- * managed by the property from after the function returns till the
- * property is deleted with object_property_del().
  */
 void object_property_add_link(Object *obj, const char *name,
                               const char *type, Object **child,
@@ -1093,22 +948,6 @@ void object_property_add_str(Object *obj, const char *name,
                              char *(*get)(Object *, struct Error **),
                              void (*set)(Object *, const char *, struct Error **),
                              struct Error **errp);
-
-/**
- * object_property_add_bool:
- * @obj: the object to add a property to
- * @name: the name of the property
- * @get: the getter or NULL if the property is write-only.
- * @set: the setter or NULL if the property is read-only
- * @errp: if an error occurs, a pointer to an area to store the error
- *
- * Add a bool property using getters/setters.  This function will add a
- * property of type 'bool'.
- */
-void object_property_add_bool(Object *obj, const char *name,
-                              bool (*get)(Object *, struct Error **),
-                              void (*set)(Object *, bool, struct Error **),
-                              struct Error **errp);
 
 /**
  * object_child_foreach:
