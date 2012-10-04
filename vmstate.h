@@ -624,11 +624,13 @@ void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
                         void *opaque);
 int vmstate_register(DeviceState *dev, int instance_id,
                      const VMStateDescription *vmsd, void *base);
-int vmstate_register_with_alias_id(DeviceState *dev, int instance_id,
+
+/* The following functions have GCC_WEAK stubs on qdev-core, for *-user: */
+GCC_WEAK_DECL int vmstate_register_with_alias_id(DeviceState *dev, int instance_id,
                                    const VMStateDescription *vmsd,
                                    void *base, int alias_id,
                                    int required_for_version);
-void vmstate_unregister(DeviceState *dev, const VMStateDescription *vmsd,
+GCC_WEAK_DECL void vmstate_unregister(DeviceState *dev, const VMStateDescription *vmsd,
                         void *opaque);
 
 struct MemoryRegion;
