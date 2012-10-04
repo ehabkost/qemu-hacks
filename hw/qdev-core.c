@@ -47,6 +47,21 @@ void GCC_WEAK qdev_finalize_vmstate(DeviceState *dev)
 {
 }
 
+static void qbus_register_reset(BusState *bus)
+{
+    if (bus != sysbus_get_default()) {
+        /* TODO: once all bus devices are qdevified,
+           only reset handler for main_system_bus should be registered here. */
+        qemu_register_reset(qbus_reset_all_fn, bus);
+    }
+}
+
+static void qbus_unregister_reset(BusState *bus)
+{
+    assert(bus != sysbus_get_default()); /* main_system_bus is never freed */
+    qemu_unregister_reset(qbus_reset_all_fn, bus);
+}
+
 const char *qdev_fw_name(DeviceState *dev)
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
@@ -355,10 +370,8 @@ static void qbus_realize(BusState *bus)
         QLIST_INSERT_HEAD(&bus->parent->child_bus, bus, sibling);
         bus->parent->num_child_bus++;
         object_property_add_child(OBJECT(bus->parent), bus->name, OBJECT(bus), NULL);
-    } else if (bus != sysbus_get_default()) {
-        /* TODO: once all bus devices are qdevified,
-           only reset handler for main_system_bus should be registered here. */
-        qemu_register_reset(qbus_reset_all_fn, bus);
+    } else {
+        qbus_register_reset(bus);
     }
 }
 
@@ -692,8 +705,7 @@ static void qbus_finalize(Object *obj)
         QLIST_REMOVE(bus, sibling);
         bus->parent->num_child_bus--;
     } else {
-        assert(bus != sysbus_get_default()); /* main_system_bus is never freed */
-        qemu_unregister_reset(qbus_reset_all_fn, bus);
+        qbus_unregister_reset(bus);
     }
     g_free((char *)bus->name);
 }
