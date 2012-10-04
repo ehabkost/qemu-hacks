@@ -47,19 +47,17 @@ void GCC_WEAK qdev_finalize_vmstate(DeviceState *dev)
 {
 }
 
-static void qbus_register_reset(BusState *bus)
+/* reset handler register/unregister:
+ *
+ * The real implementations are on qdev-system.c. Those are weak symbols
+ * used by *-user.
+ */
+void GCC_WEAK qbus_register_reset(BusState *bus)
 {
-    if (bus != sysbus_get_default()) {
-        /* TODO: once all bus devices are qdevified,
-           only reset handler for main_system_bus should be registered here. */
-        qemu_register_reset(qbus_reset_all_fn, bus);
-    }
 }
 
-static void qbus_unregister_reset(BusState *bus)
+void GCC_WEAK qbus_unregister_reset(BusState *bus)
 {
-    assert(bus != sysbus_get_default()); /* main_system_bus is never freed */
-    qemu_unregister_reset(qbus_reset_all_fn, bus);
 }
 
 const char *qdev_fw_name(DeviceState *dev)

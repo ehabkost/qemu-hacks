@@ -226,6 +226,9 @@ const struct VMStateDescription *qdev_get_vmsd(DeviceState *dev);
 void qdev_init_vmstate(DeviceState *dev);
 void qdev_finalize_vmstate(DeviceState *dev);
 
+void qbus_register_reset(BusState *bus);
+void qbus_unregister_reset(BusState *bus);
+
 const char *qdev_fw_name(DeviceState *dev);
 
 Object *qdev_get_machine(void);
