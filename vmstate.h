@@ -624,6 +624,8 @@ void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
                         void *opaque);
 int vmstate_register(DeviceState *dev, int instance_id,
                      const VMStateDescription *vmsd, void *base);
+
+/* The following functions have weak aliases on qdev-core, for *-user: */
 int vmstate_register_with_alias_id(DeviceState *dev, int instance_id,
                                    const VMStateDescription *vmsd,
                                    void *base, int alias_id,
