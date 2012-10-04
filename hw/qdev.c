@@ -76,6 +76,30 @@ void qemu_devices_reset(void)
     }
 }
 
+/* vmstate register/unregister:
+ *
+ * The real implementations are on qdev-system.c and savevm.c.
+ * Those are weak symbols used by *-user.
+ */
+
+static int stub_vmstate_register_with_alias_id(DeviceState *dev,
+                                               int instance_id,
+                                               const VMStateDescription *vmsd,
+                                               void *base, int alias_id,
+                                               int required_for_version)
+{
+    return 0;
+}
+QEMU_WEAK_ALIAS(vmstate_register_with_alias_id,
+                stub_vmstate_register_with_alias_id);
+
+static void stub_vmstate_unregister(DeviceState *dev,
+                                    const VMStateDescription *vmsd,
+                                    void *opaque)
+{
+}
+QEMU_WEAK_ALIAS(vmstate_unregister, stub_vmstate_unregister);
+
 const VMStateDescription *qdev_get_vmsd(DeviceState *dev)
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
