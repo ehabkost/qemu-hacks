@@ -88,3 +88,18 @@ void qdev_finalize_vmstate(DeviceState *dev)
         vmstate_unregister(dev, qdev_get_vmsd(dev), dev);
     }
 }
+
+void qbus_register_reset(BusState *bus)
+{
+    if (bus != sysbus_get_default()) {
+        /* TODO: once all bus devices are qdevified,
+           only reset handler for main_system_bus should be registered here. */
+        qemu_register_reset(qbus_reset_all_fn, bus);
+    }
+}
+
+void qbus_unregister_reset(BusState *bus)
+{
+    assert(bus != sysbus_get_default()); /* main_system_bus is never freed */
+    qemu_unregister_reset(qbus_reset_all_fn, bus);
+}
