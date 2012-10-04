@@ -223,6 +223,8 @@ void qdev_machine_init(void);
 void device_reset(DeviceState *dev);
 
 const struct VMStateDescription *qdev_get_vmsd(DeviceState *dev);
+void GCC_WEAK_DECL qdev_init_vmstate(DeviceState *dev);
+void GCC_WEAK_DECL qdev_finalize_vmstate(DeviceState *dev);
 
 const char *qdev_fw_name(DeviceState *dev);
 

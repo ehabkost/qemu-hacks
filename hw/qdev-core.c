@@ -34,26 +34,17 @@ int qdev_hotplug = 0;
 static bool qdev_hot_added = false;
 static bool qdev_hot_removed = false;
 
-const VMStateDescription *qdev_get_vmsd(DeviceState *dev)
+/* vmstate handling:
+ *
+ * The real implementations are on qdev-system.c. Those are weak symbols
+ * used by *-user.
+ */
+void GCC_WEAK qdev_init_vmstate(DeviceState *dev)
 {
-    DeviceClass *dc = DEVICE_GET_CLASS(dev);
-    return dc->vmsd;
 }
 
-static void qdev_init_vmstate(DeviceState *dev)
+void GCC_WEAK qdev_finalize_vmstate(DeviceState *dev)
 {
-    if (qdev_get_vmsd(dev)) {
-        vmstate_register_with_alias_id(dev, -1, qdev_get_vmsd(dev), dev,
-                                       dev->instance_id_alias,
-                                       dev->alias_required_for_version);
-    }
-}
-
-static void qdev_finalize_vmstate(DeviceState *dev)
-{
-    if (qdev_get_vmsd(dev)) {
-        vmstate_unregister(dev, qdev_get_vmsd(dev), dev);
-    }
 }
 
 const char *qdev_fw_name(DeviceState *dev)
