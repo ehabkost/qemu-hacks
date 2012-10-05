@@ -118,9 +118,7 @@ static void ioapic_init(GSIState *gsi_state)
 }
 
 /* PC hardware initialisation */
-static void pc_init1(MemoryRegion *system_memory,
-                     MemoryRegion *system_io,
-                     ram_addr_t ram_size,
+static void pc_init1(ram_addr_t ram_size,
                      const char *boot_device,
                      const char *kernel_filename,
                      const char *kernel_cmdline,
@@ -147,6 +145,8 @@ static void pc_init1(MemoryRegion *system_memory,
     MemoryRegion *ram_memory;
     MemoryRegion *pci_memory;
     MemoryRegion *rom_memory;
+    MemoryRegion *system_memory = get_system_memory();
+    MemoryRegion *system_io = get_system_io();
     void *fw_cfg = NULL;
 
     pc_cpus_init(cpu_model);
@@ -295,9 +295,7 @@ static void pc_init_pci(QEMUMachineInitArgs *args)
     const char *kernel_cmdline = args->kernel_cmdline;
     const char *initrd_filename = args->initrd_filename;
     const char *boot_device = args->boot_device;
-    pc_init1(get_system_memory(),
-             get_system_io(),
-             ram_size, boot_device,
+    pc_init1(ram_size, boot_device,
              kernel_filename, kernel_cmdline,
              initrd_filename, cpu_model, 1, 1);
 }
@@ -310,9 +308,7 @@ static void pc_init_pci_no_kvmclock(QEMUMachineInitArgs *args)
     const char *kernel_cmdline = args->kernel_cmdline;
     const char *initrd_filename = args->initrd_filename;
     const char *boot_device = args->boot_device;
-    pc_init1(get_system_memory(),
-             get_system_io(),
-             ram_size, boot_device,
+    pc_init1(ram_size, boot_device,
              kernel_filename, kernel_cmdline,
              initrd_filename, cpu_model, 1, 0);
 }
@@ -327,9 +323,7 @@ static void pc_init_isa(QEMUMachineInitArgs *args)
     const char *boot_device = args->boot_device;
     if (cpu_model == NULL)
         cpu_model = "486";
-    pc_init1(get_system_memory(),
-             get_system_io(),
-             ram_size, boot_device,
+    pc_init1(ram_size, boot_device,
              kernel_filename, kernel_cmdline,
              initrd_filename, cpu_model, 0, 1);
 }
