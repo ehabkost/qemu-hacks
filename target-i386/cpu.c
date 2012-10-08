@@ -33,6 +33,7 @@
 #include "hyperv.h"
 
 #include "hw/hw.h"
+#include "hw/qdev-properties.h"
 #if defined(CONFIG_KVM)
 #include <linux/kvm_para.h>
 #endif
@@ -122,6 +123,115 @@ static const char *cpuid_7_0_ebx_feature_name[] = {
     NULL, NULL, NULL, NULL, "smap", NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
+
+static Property cpu_x86_properties[] = {
+    DEFINE_PROP_BIT("f-fpu", X86CPU, env.cpuid_features,  0, false),
+    DEFINE_PROP_BIT("f-vme", X86CPU, env.cpuid_features,  1, false),
+    DEFINE_PROP_BIT("f-de", X86CPU, env.cpuid_features,  2, false),
+    DEFINE_PROP_BIT("f-pse", X86CPU, env.cpuid_features,  3, false),
+    DEFINE_PROP_BIT("f-tsc", X86CPU, env.cpuid_features,  4, false),
+    DEFINE_PROP_BIT("f-msr", X86CPU, env.cpuid_features,  5, false),
+    DEFINE_PROP_BIT("f-pae", X86CPU, env.cpuid_features,  6, false),
+    DEFINE_PROP_BIT("f-mce", X86CPU, env.cpuid_features,  7, false),
+    DEFINE_PROP_BIT("f-cx8", X86CPU, env.cpuid_features,  8, false),
+    DEFINE_PROP_BIT("f-apic", X86CPU, env.cpuid_features,  9, false),
+    DEFINE_PROP_BIT("f-sep", X86CPU, env.cpuid_features, 11, false),
+    DEFINE_PROP_BIT("f-mtrr", X86CPU, env.cpuid_features, 12, false),
+    DEFINE_PROP_BIT("f-pge", X86CPU, env.cpuid_features, 13, false),
+    DEFINE_PROP_BIT("f-mca", X86CPU, env.cpuid_features, 14, false),
+    DEFINE_PROP_BIT("f-cmov", X86CPU, env.cpuid_features, 15, false),
+    DEFINE_PROP_BIT("f-pat", X86CPU, env.cpuid_features, 16, false),
+    DEFINE_PROP_BIT("f-pse36", X86CPU, env.cpuid_features, 17, false),
+    DEFINE_PROP_BIT("f-pn" /* Intel psn */, X86CPU, env.cpuid_features, 18, false),
+    DEFINE_PROP_BIT("f-clflush" /* Intel clfsh */, X86CPU, env.cpuid_features, 19, false),
+    DEFINE_PROP_BIT("f-ds" /* Intel dts */, X86CPU, env.cpuid_features, 21, false),
+    DEFINE_PROP_BIT("f-acpi", X86CPU, env.cpuid_features, 22, false),
+    DEFINE_PROP_BIT("f-mmx", X86CPU, env.cpuid_features, 23, false),
+    DEFINE_PROP_BIT("f-fxsr", X86CPU, env.cpuid_features, 24, false),
+    DEFINE_PROP_BIT("f-sse", X86CPU, env.cpuid_features, 25, false),
+    DEFINE_PROP_BIT("f-sse2", X86CPU, env.cpuid_features, 26, false),
+    DEFINE_PROP_BIT("f-ss", X86CPU, env.cpuid_features, 27, false),
+    DEFINE_PROP_BIT("f-ht" /* Intel htt */, X86CPU, env.cpuid_features, 28, false),
+    DEFINE_PROP_BIT("f-tm", X86CPU, env.cpuid_features, 29, false),
+    DEFINE_PROP_BIT("f-ia64", X86CPU, env.cpuid_features, 30, false),
+    DEFINE_PROP_BIT("f-pbe", X86CPU, env.cpuid_features, 31, false),
+    DEFINE_PROP_BIT("f-pni" /* Intel,AMD sse3 */, X86CPU, env.cpuid_ext_features,  0, false),
+    DEFINE_PROP_BIT("f-sse3" /* Intel,AMD sse3 */, X86CPU, env.cpuid_ext_features,  0, false),
+    DEFINE_PROP_BIT("f-pclmulqdq", X86CPU, env.cpuid_ext_features,  1, false),
+    DEFINE_PROP_BIT("f-pclmuldq", X86CPU, env.cpuid_ext_features,  1, false),
+    DEFINE_PROP_BIT("f-dtes64", X86CPU, env.cpuid_ext_features,  2, false),
+    DEFINE_PROP_BIT("f-monitor", X86CPU, env.cpuid_ext_features,  3, false),
+    DEFINE_PROP_BIT("f-ds_cpl", X86CPU, env.cpuid_ext_features,  4, false),
+    DEFINE_PROP_BIT("f-vmx", X86CPU, env.cpuid_ext_features,  5, false),
+    DEFINE_PROP_BIT("f-smx", X86CPU, env.cpuid_ext_features,  6, false),
+    DEFINE_PROP_BIT("f-est", X86CPU, env.cpuid_ext_features,  7, false),
+    DEFINE_PROP_BIT("f-tm2", X86CPU, env.cpuid_ext_features,  8, false),
+    DEFINE_PROP_BIT("f-ssse3", X86CPU, env.cpuid_ext_features,  9, false),
+    DEFINE_PROP_BIT("f-cid", X86CPU, env.cpuid_ext_features, 10, false),
+    DEFINE_PROP_BIT("f-fma", X86CPU, env.cpuid_ext_features, 12, false),
+    DEFINE_PROP_BIT("f-cx16", X86CPU, env.cpuid_ext_features, 13, false),
+    DEFINE_PROP_BIT("f-xtpr", X86CPU, env.cpuid_ext_features, 14, false),
+    DEFINE_PROP_BIT("f-pdcm", X86CPU, env.cpuid_ext_features, 15, false),
+    DEFINE_PROP_BIT("f-pcid", X86CPU, env.cpuid_ext_features, 17, false),
+    DEFINE_PROP_BIT("f-dca", X86CPU, env.cpuid_ext_features, 18, false),
+    DEFINE_PROP_BIT("f-sse4.1", X86CPU, env.cpuid_ext_features, 19, false),
+    DEFINE_PROP_BIT("f-sse4.2", X86CPU, env.cpuid_ext_features, 20, false),
+    DEFINE_PROP_BIT("f-sse4_1", X86CPU, env.cpuid_ext_features, 19, false),
+    DEFINE_PROP_BIT("f-sse4_2", X86CPU, env.cpuid_ext_features, 20, false),
+    DEFINE_PROP_BIT("f-x2apic", X86CPU, env.cpuid_ext_features, 21, false),
+    DEFINE_PROP_BIT("f-movbe", X86CPU, env.cpuid_ext_features, 22, false),
+    DEFINE_PROP_BIT("f-popcnt", X86CPU, env.cpuid_ext_features, 23, false),
+    DEFINE_PROP_BIT("f-tsc-deadline", X86CPU, env.cpuid_ext_features, 24, false),
+    DEFINE_PROP_BIT("f-aes", X86CPU, env.cpuid_ext_features, 25, false),
+    DEFINE_PROP_BIT("f-xsave", X86CPU, env.cpuid_ext_features, 26, false),
+    DEFINE_PROP_BIT("f-osxsave", X86CPU, env.cpuid_ext_features, 27, false),
+    DEFINE_PROP_BIT("f-avx", X86CPU, env.cpuid_ext_features, 28, false),
+    DEFINE_PROP_BIT("f-hypervisor", X86CPU, env.cpuid_ext_features, 31, false),
+    DEFINE_PROP_BIT("f-syscall", X86CPU, env.cpuid_ext2_features, 11, false),
+    DEFINE_PROP_BIT("f-nx", X86CPU, env.cpuid_ext2_features, 20, false),
+    DEFINE_PROP_BIT("f-xd", X86CPU, env.cpuid_ext2_features, 20, false),
+    DEFINE_PROP_BIT("f-mmxext", X86CPU, env.cpuid_ext2_features, 22, false),
+    DEFINE_PROP_BIT("f-fxsr_opt", X86CPU, env.cpuid_ext2_features, 25, false),
+    DEFINE_PROP_BIT("f-ffxsr", X86CPU, env.cpuid_ext2_features, 25, false),
+    DEFINE_PROP_BIT("f-pdpe1gb" /* AMD Page1GB */, X86CPU, env.cpuid_ext2_features, 26, false),
+    DEFINE_PROP_BIT("f-rdtscp", X86CPU, env.cpuid_ext2_features, 27, false),
+    DEFINE_PROP_BIT("f-lahf_lm" /* AMD LahfSahf */, X86CPU, env.cpuid_ext3_features,  0, false),
+    DEFINE_PROP_BIT("f-cmp_legacy", X86CPU, env.cpuid_ext3_features,  1, false),
+    DEFINE_PROP_BIT("f-svm", X86CPU, env.cpuid_ext3_features,  2, false),
+    DEFINE_PROP_BIT("f-extapic" /* AMD ExtApicSpace */, X86CPU, env.cpuid_ext3_features,  3, false),
+    DEFINE_PROP_BIT("f-cr8legacy" /* AMD AltMovCr8 */, X86CPU, env.cpuid_ext3_features,  4, false),
+    DEFINE_PROP_BIT("f-abm", X86CPU, env.cpuid_ext3_features,  5, false),
+    DEFINE_PROP_BIT("f-sse4a", X86CPU, env.cpuid_ext3_features,  6, false),
+    DEFINE_PROP_BIT("f-misalignsse", X86CPU, env.cpuid_ext3_features,  7, false),
+    DEFINE_PROP_BIT("f-3dnowprefetch", X86CPU, env.cpuid_ext3_features,  8, false),
+    DEFINE_PROP_BIT("f-osvw", X86CPU, env.cpuid_ext3_features,  9, false),
+    DEFINE_PROP_BIT("f-ibs", X86CPU, env.cpuid_ext3_features, 10, false),
+    DEFINE_PROP_BIT("f-xop", X86CPU, env.cpuid_ext3_features, 11, false),
+    DEFINE_PROP_BIT("f-skinit", X86CPU, env.cpuid_ext3_features, 12, false),
+    DEFINE_PROP_BIT("f-wdt", X86CPU, env.cpuid_ext3_features, 13, false),
+    DEFINE_PROP_BIT("f-fma4", X86CPU, env.cpuid_ext3_features, 16, false),
+    DEFINE_PROP_BIT("f-cvt16", X86CPU, env.cpuid_ext3_features, 18, false),
+    DEFINE_PROP_BIT("f-nodeid_msr", X86CPU, env.cpuid_ext3_features, 19, false),
+    DEFINE_PROP_BIT("f-kvmclock", X86CPU, env.cpuid_kvm_features,  0, false),
+    DEFINE_PROP_BIT("f-kvm_nopiodelay", X86CPU, env.cpuid_kvm_features,  1, false),
+    DEFINE_PROP_BIT("f-kvm_mmu", X86CPU, env.cpuid_kvm_features,  2, false),
+    DEFINE_PROP_BIT("f-kvmclock2", X86CPU, env.cpuid_kvm_features,  3, false),
+    DEFINE_PROP_BIT("f-kvm_asyncpf", X86CPU, env.cpuid_kvm_features,  4, false),
+    DEFINE_PROP_BIT("f-kvm_pv_eoi", X86CPU, env.cpuid_kvm_features,  6, false),
+    DEFINE_PROP_BIT("f-npt", X86CPU, env.cpuid_svm_features,  0, false),
+    DEFINE_PROP_BIT("f-lbrv", X86CPU, env.cpuid_svm_features,  1, false),
+    DEFINE_PROP_BIT("f-svm_lock", X86CPU, env.cpuid_svm_features,  2, false),
+    DEFINE_PROP_BIT("f-nrip_save", X86CPU, env.cpuid_svm_features,  3, false),
+    DEFINE_PROP_BIT("f-tsc_scale", X86CPU, env.cpuid_svm_features,  4, false),
+    DEFINE_PROP_BIT("f-vmcb_clean", X86CPU, env.cpuid_svm_features,  5, false),
+    DEFINE_PROP_BIT("f-flushbyasid", X86CPU, env.cpuid_svm_features,  6, false),
+    DEFINE_PROP_BIT("f-decodeassists", X86CPU, env.cpuid_svm_features,  7, false),
+    DEFINE_PROP_BIT("f-pause_filter", X86CPU, env.cpuid_svm_features, 10, false),
+    DEFINE_PROP_BIT("f-pfthreshold", X86CPU, env.cpuid_svm_features, 12, false),
+    DEFINE_PROP_BIT("f-smep", X86CPU, env.cpuid_7_0_ebx_features,  7, false),
+    DEFINE_PROP_BIT("f-smap", X86CPU, env.cpuid_7_0_ebx_features, 20, false),
+    DEFINE_PROP_END_OF_LIST(),
+ };
 
 /* collects per-function cpuid data
  */
@@ -2068,9 +2178,11 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
 {
     X86CPUClass *xcc = X86_CPU_CLASS(oc);
     CPUClass *cc = CPU_CLASS(oc);
+    DeviceClass *dc = DEVICE_CLASS(oc);
 
     xcc->parent_reset = cc->reset;
     cc->reset = x86_cpu_reset;
+    dc->props = cpu_x86_properties;
 }
 
 static const TypeInfo x86_cpu_type_info = {
