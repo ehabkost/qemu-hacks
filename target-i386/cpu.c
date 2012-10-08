@@ -33,6 +33,7 @@
 #include "hyperv.h"
 
 #include "hw/hw.h"
+#include "hw/qdev-properties.h"
 #if defined(CONFIG_KVM)
 #include <linux/kvm_para.h>
 #endif
@@ -122,6 +123,152 @@ static const char *cpuid_7_0_ebx_feature_name[] = {
     NULL, NULL, "rdseed", "adx", "smap", NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
+
+#define FEAT(_name, _field, _bit, _val) \
+    DEFINE_PROP_BIT(_name, X86CPU, _field, _bit, _val)
+
+static Property cpu_x86_properties[] = {
+    FEAT("f-fpu", env.cpuid_features,  0, false),
+    FEAT("f-vme", env.cpuid_features,  1, false),
+    FEAT("f-de", env.cpuid_features,  2, false),
+    FEAT("f-pse", env.cpuid_features,  3, false),
+    FEAT("f-tsc", env.cpuid_features,  4, false),
+    FEAT("f-msr", env.cpuid_features,  5, false),
+    FEAT("f-pae", env.cpuid_features,  6, false),
+    FEAT("f-mce", env.cpuid_features,  7, false),
+    FEAT("f-cx8", env.cpuid_features,  8, false),
+    FEAT("f-apic", env.cpuid_features,  9, false),
+    FEAT("f-sep", env.cpuid_features, 11, false),
+    FEAT("f-mtrr", env.cpuid_features, 12, false),
+    FEAT("f-pge", env.cpuid_features, 13, false),
+    FEAT("f-mca", env.cpuid_features, 14, false),
+    FEAT("f-cmov", env.cpuid_features, 15, false),
+    FEAT("f-pat", env.cpuid_features, 16, false),
+    FEAT("f-pse36", env.cpuid_features, 17, false),
+    /* Intel psn */
+    FEAT("f-pn", env.cpuid_features, 18, false),
+    /* Intel clfsh */
+    FEAT("f-clflush", env.cpuid_features, 19, false),
+    /* Intel dts */
+    FEAT("f-ds", env.cpuid_features, 21, false),
+    FEAT("f-acpi", env.cpuid_features, 22, false),
+    FEAT("f-mmx", env.cpuid_features, 23, false),
+    FEAT("f-fxsr", env.cpuid_features, 24, false),
+    FEAT("f-sse", env.cpuid_features, 25, false),
+    FEAT("f-sse2", env.cpuid_features, 26, false),
+    FEAT("f-ss", env.cpuid_features, 27, false),
+    /* Intel htt */
+    FEAT("f-ht", env.cpuid_features, 28, false),
+    FEAT("f-tm", env.cpuid_features, 29, false),
+    FEAT("f-ia64", env.cpuid_features, 30, false),
+    FEAT("f-pbe", env.cpuid_features, 31, false),
+    /* Intel,AMD sse3 */
+    FEAT("f-pni", env.cpuid_ext_features,  0, false),
+    /* Intel,AMD sse3 */
+    FEAT("f-sse3", env.cpuid_ext_features,  0, false),
+    FEAT("f-pclmulqdq", env.cpuid_ext_features,  1, false),
+    FEAT("f-pclmuldq", env.cpuid_ext_features,  1, false),
+    FEAT("f-dtes64", env.cpuid_ext_features,  2, false),
+    FEAT("f-monitor", env.cpuid_ext_features,  3, false),
+    FEAT("f-ds_cpl", env.cpuid_ext_features,  4, false),
+    FEAT("f-vmx", env.cpuid_ext_features,  5, false),
+    FEAT("f-smx", env.cpuid_ext_features,  6, false),
+    FEAT("f-est", env.cpuid_ext_features,  7, false),
+    FEAT("f-tm2", env.cpuid_ext_features,  8, false),
+    FEAT("f-ssse3", env.cpuid_ext_features,  9, false),
+    FEAT("f-cid", env.cpuid_ext_features, 10, false),
+    FEAT("f-fma", env.cpuid_ext_features, 12, false),
+    FEAT("f-cx16", env.cpuid_ext_features, 13, false),
+    FEAT("f-xtpr", env.cpuid_ext_features, 14, false),
+    FEAT("f-pdcm", env.cpuid_ext_features, 15, false),
+    FEAT("f-pcid", env.cpuid_ext_features, 17, false),
+    FEAT("f-dca", env.cpuid_ext_features, 18, false),
+    FEAT("f-sse4.1", env.cpuid_ext_features, 19, false),
+    FEAT("f-sse4.2", env.cpuid_ext_features, 20, false),
+    FEAT("f-sse4_1", env.cpuid_ext_features, 19, false),
+    FEAT("f-sse4_2", env.cpuid_ext_features, 20, false),
+    FEAT("f-x2apic", env.cpuid_ext_features, 21, false),
+    FEAT("f-movbe", env.cpuid_ext_features, 22, false),
+    FEAT("f-popcnt", env.cpuid_ext_features, 23, false),
+    FEAT("f-tsc-deadline", env.cpuid_ext_features, 24, false),
+    FEAT("f-aes", env.cpuid_ext_features, 25, false),
+    FEAT("f-xsave", env.cpuid_ext_features, 26, false),
+    FEAT("f-osxsave", env.cpuid_ext_features, 27, false),
+    FEAT("f-avx", env.cpuid_ext_features, 28, false),
+    FEAT("f-f16c", env.cpuid_ext_features, 29, false),
+    FEAT("f-rdrand", env.cpuid_ext_features, 30, false),
+    FEAT("f-hypervisor", env.cpuid_ext_features, 31, false),
+    FEAT("f-syscall", env.cpuid_ext2_features, 11, false),
+    FEAT("f-nx", env.cpuid_ext2_features, 20, false),
+    FEAT("f-xd", env.cpuid_ext2_features, 20, false),
+    FEAT("f-mmxext", env.cpuid_ext2_features, 22, false),
+    FEAT("f-fxsr_opt", env.cpuid_ext2_features, 25, false),
+    FEAT("f-ffxsr", env.cpuid_ext2_features, 25, false),
+    /* AMD Page1GB */
+    FEAT("f-pdpe1gb", env.cpuid_ext2_features, 26, false),
+    FEAT("f-rdtscp", env.cpuid_ext2_features, 27, false),
+    FEAT("f-lm", env.cpuid_ext2_features, 29, false),
+    FEAT("f-i64", env.cpuid_ext2_features, 29, false),
+    FEAT("f-3dnowext", env.cpuid_ext2_features, 30, false),
+    FEAT("f-3dnow", env.cpuid_ext2_features, 31, false),
+    /* AMD LahfSahf */
+    FEAT("f-lahf_lm", env.cpuid_ext3_features,  0, false),
+    FEAT("f-cmp_legacy", env.cpuid_ext3_features,  1, false),
+    FEAT("f-svm", env.cpuid_ext3_features,  2, false),
+    /* AMD ExtApicSpace */
+    FEAT("f-extapic", env.cpuid_ext3_features,  3, false),
+    /* AMD AltMovCr8 */
+    FEAT("f-cr8legacy", env.cpuid_ext3_features,  4, false),
+    FEAT("f-abm", env.cpuid_ext3_features,  5, false),
+    FEAT("f-sse4a", env.cpuid_ext3_features,  6, false),
+    FEAT("f-misalignsse", env.cpuid_ext3_features,  7, false),
+    FEAT("f-3dnowprefetch", env.cpuid_ext3_features,  8, false),
+    FEAT("f-osvw", env.cpuid_ext3_features,  9, false),
+    FEAT("f-ibs", env.cpuid_ext3_features, 10, false),
+    FEAT("f-xop", env.cpuid_ext3_features, 11, false),
+    FEAT("f-skinit", env.cpuid_ext3_features, 12, false),
+    FEAT("f-wdt", env.cpuid_ext3_features, 13, false),
+    FEAT("f-lwp", env.cpuid_ext3_features, 15, false),
+    FEAT("f-fma4", env.cpuid_ext3_features, 16, false),
+    FEAT("f-tce", env.cpuid_ext3_features, 17, false),
+    FEAT("f-cvt16", env.cpuid_ext3_features, 18, false),
+    FEAT("f-nodeid_msr", env.cpuid_ext3_features, 19, false),
+    FEAT("f-tbm", env.cpuid_ext3_features, 21, false),
+    FEAT("f-topoext", env.cpuid_ext3_features, 22, false),
+    FEAT("f-perfctr_core", env.cpuid_ext3_features, 23, false),
+    FEAT("f-perfctr_nb", env.cpuid_ext3_features, 24, false),
+    FEAT("f-kvmclock", env.cpuid_kvm_features,  0, false),
+    FEAT("f-kvm_nopiodelay", env.cpuid_kvm_features,  1, false),
+    FEAT("f-kvm_mmu", env.cpuid_kvm_features,  2, false),
+    FEAT("f-kvmclock2", env.cpuid_kvm_features,  3, false),
+    FEAT("f-kvm_asyncpf", env.cpuid_kvm_features,  4, false),
+    FEAT("f-kvm_steal_tm", env.cpuid_kvm_features,  5, false),
+    FEAT("f-kvm_pv_eoi", env.cpuid_kvm_features,  6, false),
+    FEAT("f-kvmclock_stable", env.cpuid_kvm_features,  24, false),
+    FEAT("f-npt", env.cpuid_svm_features,  0, false),
+    FEAT("f-lbrv", env.cpuid_svm_features,  1, false),
+    FEAT("f-svm_lock", env.cpuid_svm_features,  2, false),
+    FEAT("f-nrip_save", env.cpuid_svm_features,  3, false),
+    FEAT("f-tsc_scale", env.cpuid_svm_features,  4, false),
+    FEAT("f-vmcb_clean", env.cpuid_svm_features,  5, false),
+    FEAT("f-flushbyasid", env.cpuid_svm_features,  6, false),
+    FEAT("f-decodeassists", env.cpuid_svm_features,  7, false),
+    FEAT("f-pause_filter", env.cpuid_svm_features, 10, false),
+    FEAT("f-pfthreshold", env.cpuid_svm_features, 12, false),
+    FEAT("f-fsgsbase", env.cpuid_7_0_ebx_features, 0, false),
+    FEAT("f-bmi1", env.cpuid_7_0_ebx_features, 3, false),
+    FEAT("f-hle", env.cpuid_7_0_ebx_features, 4, false),
+    FEAT("f-avx2", env.cpuid_7_0_ebx_features, 5, false),
+    FEAT("f-smep", env.cpuid_7_0_ebx_features, 7, false),
+    FEAT("f-bmi2", env.cpuid_7_0_ebx_features, 8, false),
+    FEAT("f-erms", env.cpuid_7_0_ebx_features, 9, false),
+    FEAT("f-invpcid", env.cpuid_7_0_ebx_features, 10, false),
+    FEAT("f-rtm", env.cpuid_7_0_ebx_features, 11, false),
+    FEAT("f-rdseed", env.cpuid_7_0_ebx_features, 18, false),
+    FEAT("f-adx", env.cpuid_7_0_ebx_features, 19, false),
+    FEAT("f-smap", env.cpuid_7_0_ebx_features, 20, false),
+    DEFINE_PROP_END_OF_LIST(),
+ };
 
 /* collects per-function cpuid data
  */
@@ -2172,9 +2319,11 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
 {
     X86CPUClass *xcc = X86_CPU_CLASS(oc);
     CPUClass *cc = CPU_CLASS(oc);
+    DeviceClass *dc = DEVICE_CLASS(oc);
 
     xcc->parent_reset = cc->reset;
     cc->reset = x86_cpu_reset;
+    dc->props = cpu_x86_properties;
 }
 
 static const TypeInfo x86_cpu_type_info = {
