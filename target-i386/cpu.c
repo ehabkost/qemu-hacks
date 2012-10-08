@@ -212,12 +212,16 @@ static Property cpu_x86_properties[] = {
     DEFINE_PROP_BIT("f-fma4", X86CPU, env.cpuid_ext3_features, 16, false),
     DEFINE_PROP_BIT("f-cvt16", X86CPU, env.cpuid_ext3_features, 18, false),
     DEFINE_PROP_BIT("f-nodeid_msr", X86CPU, env.cpuid_ext3_features, 19, false),
-    DEFINE_PROP_BIT("f-kvmclock", X86CPU, env.cpuid_kvm_features,  0, false),
-    DEFINE_PROP_BIT("f-kvm_nopiodelay", X86CPU, env.cpuid_kvm_features,  1, false),
-    DEFINE_PROP_BIT("f-kvm_mmu", X86CPU, env.cpuid_kvm_features,  2, false),
-    DEFINE_PROP_BIT("f-kvmclock2", X86CPU, env.cpuid_kvm_features,  3, false),
-    DEFINE_PROP_BIT("f-kvm_asyncpf", X86CPU, env.cpuid_kvm_features,  4, false),
-    DEFINE_PROP_BIT("f-kvm_pv_eoi", X86CPU, env.cpuid_kvm_features,  6, false),
+#if defined(CONFIG_KVM)
+    DEFINE_PROP_BIT("f-kvmclock", X86CPU, env.cpuid_kvm_features,  0, true),
+    DEFINE_PROP_BIT("f-kvm_nopiodelay", X86CPU, env.cpuid_kvm_features,  1, true),
+    DEFINE_PROP_BIT("f-kvm_mmu", X86CPU, env.cpuid_kvm_features,  2, true),
+    DEFINE_PROP_BIT("f-kvmclock2", X86CPU, env.cpuid_kvm_features,  3, true),
+    DEFINE_PROP_BIT("f-kvm_asyncpf", X86CPU, env.cpuid_kvm_features,  4, true),
+    DEFINE_PROP_BIT("f-kvm-steal-time", X86CPU, env.cpuid_kvm_features,  5, true),
+    DEFINE_PROP_BIT("f-kvm_pv_eoi", X86CPU, env.cpuid_kvm_features,  6, true),
+    DEFINE_PROP_BIT("f-kvm-clock-stable", X86CPU, env.cpuid_kvm_features,  24, true),
+#endif
     DEFINE_PROP_BIT("f-npt", X86CPU, env.cpuid_svm_features,  0, false),
     DEFINE_PROP_BIT("f-lbrv", X86CPU, env.cpuid_svm_features,  1, false),
     DEFINE_PROP_BIT("f-svm_lock", X86CPU, env.cpuid_svm_features,  2, false),
@@ -248,25 +252,6 @@ typedef struct model_features_t {
 
 int check_cpuid = 0;
 int enforce_cpuid = 0;
-
-#if defined(CONFIG_KVM)
-static uint32_t kvm_default_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
-        (1 << KVM_FEATURE_NOP_IO_DELAY) |
-        (1 << KVM_FEATURE_MMU_OP) |
-        (1 << KVM_FEATURE_CLOCKSOURCE2) |
-        (1 << KVM_FEATURE_ASYNC_PF) |
-        (1 << KVM_FEATURE_STEAL_TIME) |
-        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
-static const uint32_t kvm_pv_eoi_features = (0x1 << KVM_FEATURE_PV_EOI);
-#else
-static uint32_t kvm_default_features = 0;
-static const uint32_t kvm_pv_eoi_features = 0;
-#endif
-
-void enable_kvm_pv_eoi(void)
-{
-    kvm_default_features |= kvm_pv_eoi_features;
-}
 
 void host_cpuid(uint32_t function, uint32_t count,
                 uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
@@ -1365,7 +1350,7 @@ static int cpu_x86_find_by_name(X86CPU *cpu, x86_def_t *x86_cpu_def,
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = env->cpuid_ext_features;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
-    uint32_t plus_kvm_features = kvm_default_features, plus_svm_features = 0;
+    uint32_t plus_kvm_features = env->cpuid_kvm_features, plus_svm_features = 0;
     uint32_t plus_7_0_ebx_features = 0;
     /* Features to be removed */
     uint32_t minus_features = 0, minus_ext_features = 0;

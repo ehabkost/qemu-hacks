@@ -305,7 +305,6 @@ static void pc_init_pci(QEMUMachineInitArgs *args)
 
 static void pc_init_pci_1_3(QEMUMachineInitArgs *args)
 {
-    enable_kvm_pv_eoi();
     pc_init_pci(args);
 }
 
@@ -386,6 +385,14 @@ static QEMUMachine pc_machine_v1_3 = {
             .driver   = "VGA",\
             .property = "mmio",\
             .value    = "off",\
+        },{\
+            .driver = "x86_64-cpu",\
+            .property = "f-kvm_pv_eoi",\
+            .value = "off",\
+        },{\
+            .driver = "i386-cpu",\
+            .property = "f-kvm_pv_eoi",\
+            .value = "off",\
         }
 
 static QEMUMachine pc_machine_v1_2 = {
