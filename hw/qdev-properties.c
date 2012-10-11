@@ -802,33 +802,18 @@ PropertyInfo qdev_prop_pci_host_devaddr = {
 
 /* --- public helpers --- */
 
-static Property *qdev_prop_walk(Property *props, const char *name)
-{
-    if (!props)
-        return NULL;
-    while (props->name) {
-        if (strcmp(props->name, name) == 0)
-            return props;
-        props++;
-    }
-    return NULL;
-}
-
 const Property *qdev_prop_find(const DeviceClass *dc, const char *name)
 {
-    ObjectClass *class;
-    Property *prop;
+    const Property *prop;
 
     /* device properties */
-    class = OBJECT_CLASS(dc);
-    do {
-        prop = qdev_prop_walk(DEVICE_CLASS(class)->props, name);
-        if (prop) {
-            return prop;
+    QDEV_CLASS_FOREACH(dc, dc) {
+        QDEV_PROP_FOREACH(prop, dc) {
+            if (strcmp(prop->name, name) == 0) {
+                return prop;
+            }
         }
-        class = object_class_get_parent(class);
-    } while (class != object_class_by_name(TYPE_DEVICE));
-
+    }
     return NULL;
 }
 
