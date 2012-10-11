@@ -36,7 +36,7 @@
 #include "net/hub.h"
 #include "qapi/qapi-visit-core.h"
 
-void *qdev_get_prop_ptr(DeviceState *dev, Property *prop)
+void *qdev_get_prop_ptr(DeviceState *dev, const Property *prop)
 {
     void *ptr = dev;
     ptr += prop->offset;
@@ -814,13 +814,13 @@ static Property *qdev_prop_walk(Property *props, const char *name)
     return NULL;
 }
 
-static Property *qdev_prop_find(DeviceState *dev, const char *name)
+const Property *qdev_prop_find(const DeviceClass *dc, const char *name)
 {
     ObjectClass *class;
     Property *prop;
 
     /* device properties */
-    class = object_get_class(OBJECT(dev));
+    class = OBJECT_CLASS(dc);
     do {
         prop = qdev_prop_walk(DEVICE_CLASS(class)->props, name);
         if (prop) {
@@ -937,10 +937,11 @@ void qdev_prop_set_macaddr(DeviceState *dev, const char *name, uint8_t *value)
 
 void qdev_prop_set_enum(DeviceState *dev, const char *name, int value)
 {
-    Property *prop;
+    const Property *prop;
     Error *errp = NULL;
+    DeviceClass *dc = DEVICE_CLASS(object_get_class(OBJECT(dev)));
 
-    prop = qdev_prop_find(dev, name);
+    prop = qdev_prop_find(dc, name);
     object_property_set_str(OBJECT(dev), prop->info->enum_table[value],
                             name, &errp);
     assert_no_error(errp);
@@ -948,10 +949,11 @@ void qdev_prop_set_enum(DeviceState *dev, const char *name, int value)
 
 void qdev_prop_set_ptr(DeviceState *dev, const char *name, void *value)
 {
-    Property *prop;
+    const Property *prop;
     void **ptr;
+    DeviceClass *dc = DEVICE_CLASS(object_get_class(OBJECT(dev)));
 
-    prop = qdev_prop_find(dev, name);
+    prop = qdev_prop_find(dc, name);
     assert(prop && prop->info == &qdev_prop_ptr);
     ptr = qdev_get_prop_ptr(dev, prop);
     *ptr = value;
