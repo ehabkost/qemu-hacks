@@ -1294,19 +1294,12 @@ static void kvm_cpu_fill_host(x86_def_t *x86_cpu_def)
 #endif /* CONFIG_KVM */
 }
 
-static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
+static void unavailable_host_feat(const uint32_t cpuid, const char *name,
+                                  const uint32_t mask)
 {
-    int i;
-
-    for (i = 0; i < 32; ++i)
-        if (1 << i & mask) {
-            fprintf(stderr, "warning: host cpuid %04x_%04x lacks requested"
-                " flag '%s' [0x%08x]\n",
-                f->cpuid >> 16, f->cpuid & 0xffff,
-                f->flag_names[i] ? f->flag_names[i] : "[reserved]", mask);
-            break;
-        }
-    return 0;
+    fprintf(stderr, "warning: host cpuid %04x_%04x lacks requested"
+            " flag '%s' [0x%08x]\n", cpuid >> 16, cpuid & 0xffff,
+            name ? name : "[reserved]", mask);
 }
 
 /* best effort attempt to inform user requested cpu flags aren't making
@@ -1317,30 +1310,51 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
  */
 static int kvm_check_features_against_host(X86CPU *cpu)
 {
+    const DeviceClass *dc = DEVICE_CLASS(object_get_class(OBJECT(cpu)));
     CPUX86State *env = &cpu->env;
     x86_def_t host_def;
     uint32_t mask;
-    int rv, i;
-    struct model_features_t ft[] = {
-        {&env->cpuid_features, &host_def.features,
-            ~0, feature_name, 0x00000000},
-        {&env->cpuid_ext_features, &host_def.ext_features,
-            ~CPUID_EXT_HYPERVISOR, ext_feature_name, 0x00000001},
-        {&env->cpuid_ext2_features, &host_def.ext2_features,
-            ~PPRO_FEATURES, ext2_feature_name, 0x80000000},
-        {&env->cpuid_ext3_features, &host_def.ext3_features,
-            ~CPUID_EXT3_SVM, ext3_feature_name, 0x80000001}};
+    int rv = 0, bit;
+    const Property *prop;
 
     assert(kvm_enabled());
 
     kvm_cpu_fill_host(&host_def);
-    for (rv = 0, i = 0; i < ARRAY_SIZE(ft); ++i)
-        for (mask = 1; mask; mask <<= 1)
-            if (ft[i].check_feat & mask && *ft[i].guest_feat & mask &&
-                !(*ft[i].host_feat & mask)) {
-                    unavailable_host_feature(&ft[i], mask);
-                    rv = 1;
-                }
+    for (bit = 0 , mask = 1; mask; mask <<= 1, bit++) {
+        if (env->cpuid_features & mask && !(host_def.features & mask)) {
+            prop = QDEV_FIND_PROP_FROM_BIT(dc, X86CPU,
+                                           env.cpuid_features, bit);
+            unavailable_host_feat(0x00000000, prop ? prop->name : NULL, mask);
+            rv = 1;
+        }
+    }
+    for (bit = 0 , mask = 1; mask; mask <<= 1, bit++) {
+        if (~CPUID_EXT_HYPERVISOR & env->cpuid_ext_features & mask &&
+            !(host_def.ext_features & mask)) {
+            prop = QDEV_FIND_PROP_FROM_BIT(dc, X86CPU,
+                                           env.cpuid_ext_features, bit);
+            unavailable_host_feat(0x00000001, prop ? prop->name : NULL, mask);
+            rv = 1;
+        }
+    }
+    for (bit = 0 , mask = 1; mask; mask <<= 1, bit++) {
+        if (~PPRO_FEATURES & env->cpuid_ext2_features & mask &&
+            !(host_def.ext2_features & mask)) {
+            prop = QDEV_FIND_PROP_FROM_BIT(dc, X86CPU,
+                                           env.cpuid_ext2_features, bit);
+            unavailable_host_feat(0x80000000, prop ? prop->name : NULL, mask);
+            rv = 1;
+        }
+    }
+    for (bit = 0 , mask = 1; mask; mask <<= 1, bit++) {
+        if (~CPUID_EXT3_SVM & env->cpuid_ext3_features & mask &&
+            !(host_def.ext3_features & mask)) {
+            prop = QDEV_FIND_PROP_FROM_BIT(dc, X86CPU,
+                                           env.cpuid_ext3_features, bit);
+            unavailable_host_feat(0x80000001, prop ? prop->name : NULL, mask);
+            rv = 1;
+        }
+    }
     return rv;
 }
 
