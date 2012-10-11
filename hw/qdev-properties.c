@@ -817,6 +817,21 @@ const Property *qdev_prop_find(const DeviceClass *dc, const char *name)
     return NULL;
 }
 
+const Property *qdev_prop_find_bit(const DeviceClass *dc, const int offset,
+                                   const uint8_t bitnr)
+{
+    const Property *prop;
+
+    QDEV_CLASS_FOREACH(dc, dc) {
+        QDEV_PROP_FOREACH(prop, dc) {
+            if (prop->offset == offset && prop->bitnr == bitnr) {
+                return prop;
+            }
+        }
+    }
+    return NULL;
+}
+
 void error_set_from_qdev_prop_error(Error **errp, int ret, DeviceState *dev,
                                     Property *prop, const char *value)
 {
