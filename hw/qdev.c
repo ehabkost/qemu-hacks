@@ -680,7 +680,7 @@ void qdev_property_add_static(DeviceState *dev, Property *prop,
 static void device_initfn(Object *obj)
 {
     DeviceState *dev = DEVICE(obj);
-    ObjectClass *class;
+    DeviceClass *dc = DEVICE_CLASS(object_get_class(OBJECT(dev)));
     Property *prop;
 
     if (qdev_hotplug) {
@@ -691,14 +691,12 @@ static void device_initfn(Object *obj)
     dev->instance_id_alias = -1;
     dev->state = DEV_STATE_CREATED;
 
-    class = object_get_class(OBJECT(dev));
-    do {
-        for (prop = DEVICE_CLASS(class)->props; prop && prop->name; prop++) {
+    QDEV_CLASS_FOREACH(dc, dc) {
+        QDEV_PROP_FOREACH(prop, dc) {
             qdev_property_add_legacy(dev, prop, NULL);
             qdev_property_add_static(dev, prop, NULL);
         }
-        class = object_class_get_parent(class);
-    } while (class != object_class_by_name(TYPE_DEVICE));
+    }
     qdev_prop_set_globals(dev);
 
     object_property_add_link(OBJECT(dev), "parent_bus", TYPE_BUS,

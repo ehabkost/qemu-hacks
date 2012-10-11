@@ -135,4 +135,13 @@ void qdev_property_add_static(DeviceState *dev, Property *prop, Error **errp);
 
 const Property *qdev_prop_find(const DeviceClass *dc, const char *name);
 
+#define QDEV_PROP_FOREACH(_var, _class)                                       \
+    for ((_var) = DEVICE_CLASS((_class))->props;                              \
+         (_var) && (_var)->name;                                              \
+         (_var)++)
+
+#define QDEV_CLASS_FOREACH(_var, _class)                                      \
+    for ((_var) = (_class);                                                   \
+         (_var) != DEVICE_CLASS(object_class_by_name(TYPE_DEVICE));           \
+         (_var) = DEVICE_CLASS(object_class_get_parent(OBJECT_CLASS((_var)))))
 #endif
