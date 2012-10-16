@@ -29,7 +29,7 @@
  */
 
 #include "net.h"
-#include "qdev.h"
+#include "hw/qdev.h"
 #include "qerror.h"
 #include "blockdev.h"
 #include "hw/block-common.h"
