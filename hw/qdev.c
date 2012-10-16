@@ -118,6 +118,22 @@ const VMStateDescription *qdev_get_vmsd(DeviceState *dev)
     return dc->vmsd;
 }
 
+static void qdev_init_vmstate(DeviceState *dev)
+{
+    if (qdev_get_vmsd(dev)) {
+        vmstate_register_with_alias_id(dev, -1, qdev_get_vmsd(dev), dev,
+                                       dev->instance_id_alias,
+                                       dev->alias_required_for_version);
+    }
+}
+
+static void qdev_finalize_vmstate(DeviceState *dev)
+{
+    if (qdev_get_vmsd(dev)) {
+        vmstate_unregister(dev, qdev_get_vmsd(dev), dev);
+    }
+}
+
 const char *qdev_fw_name(DeviceState *dev)
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
@@ -247,11 +263,7 @@ int qdev_init(DeviceState *dev)
         g_free(name);
     }
 
-    if (qdev_get_vmsd(dev)) {
-        vmstate_register_with_alias_id(dev, -1, qdev_get_vmsd(dev), dev,
-                                       dev->instance_id_alias,
-                                       dev->alias_required_for_version);
-    }
+    qdev_init_vmstate(dev);
     dev->state = DEV_STATE_INITIALIZED;
     if (dev->hotplugged) {
         device_reset(dev);
@@ -762,9 +774,7 @@ static void device_finalize(Object *obj)
             bus = QLIST_FIRST(&dev->child_bus);
             qbus_free(bus);
         }
-        if (qdev_get_vmsd(dev)) {
-            vmstate_unregister(dev, qdev_get_vmsd(dev), dev);
-        }
+        qdev_finalize_vmstate(dev);
         if (dc->exit) {
             dc->exit(dev);
         }
