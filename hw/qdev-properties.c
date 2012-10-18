@@ -1,3 +1,33 @@
+/*
+ * qdev property parsing and global properties
+ *
+ * Copyright (c) 2009-2010 Gerd Hoffmann <kraxel@redhat.com>
+ * Copyright (c) 2009 Christoph Egger <Christoph.Egger@amd.com>
+ * Copyright (c) 2009-2010 Blue Swirl <blauwirbel@gmail.com>
+ * Copyright (c) 2009 Juan Quintela <quintela@redhat.com>
+ * Copyright (c) 2010 Michael S. Tsirkin <mst@redhat.com>
+ * Copyright (c) 2010,2012 Stefan Weil <weil@mail.berlios.de>
+ * Copyright (c) 2010-2012 Markus Armbruster <armbru@redhat.com>
+ * Copyright (c) 2010 Kevin Wolf <kwolf@redhat.com>
+ * Copyright (c) 2010 Isaku Yamahata <yamahata@valinux.co.jp>
+ * Copyright (c) 2011 David 'Digit' Turner <digit@google.com>
+ * Copyright (c) 2011-2012 Amit Shah <amit.shah@redhat.com>
+ * Copyright (c) 2011 Kusanagi Kouichi <slash@ac.auone-net.jp>
+ * Copyright (c) 2011-2012 Anthony Liguori <aliguori@us.ibm.com>
+ * Copyright (c) 2011 Donald Dutile <ddutile@redhat.com>
+ * Copyright (c) 2011-2012 Jan Kiszka <jan.kiszka@siemens.com>
+ * Copyright (c) 2011-2012 Paolo Bonzini <pbonzini@redhat.com>
+ * Copyright (c) 2012 Stefan Hajnoczi <stefanha@linux.vnet.ibm.com>
+ * Copyright (c) 2012 dunrong huang <riegamaths@gmail.com>
+ * Copyright (c) 2012 Michael Roth <mdroth@linux.vnet.ibm.com>
+ * Copyright (c) 2012 Anthony PERARD <anthony.perard@citrix.com>
+ * Copyright (c) 2012 Christian Borntraeger <borntraeger@de.ibm.com>
+ * Copyright (c) 2012 Zhi Yong Wu <wuzhy@linux.vnet.ibm.com>
+ *
+ * This work is licensed under the terms of the GNU GPL, version 2 or later.
+ * See the COPYING file in the top-level directory.
+ */
+
 #include "net.h"
 #include "qdev.h"
 #include "qerror.h"
