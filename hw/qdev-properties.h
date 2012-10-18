@@ -27,6 +27,11 @@ extern PropertyInfo qdev_prop_pci_devfn;
 extern PropertyInfo qdev_prop_blocksize;
 extern PropertyInfo qdev_prop_pci_host_devaddr;
 
+#define DEFINE_GENERIC_PROP(_name, _prop) { \
+        .name      = (_name),                                    \
+        .info      = &(_prop),                                   \
+        }
+
 #define DEFINE_PROP(_name, _state, _field, _prop, _type) { \
         .name      = (_name),                                    \
         .info      = &(_prop),                                   \
