@@ -542,6 +542,56 @@ PropertyInfo qdev_prop_model = {
 #define DEFINE_PROP_MODEL(_n, _s, _f)                                          \
     DEFINE_PROP(_n, _s, _f, qdev_prop_model, uint32_t)
 
+static void x86_cpuid_version_get_family(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    int64_t value;
+
+    value = (env->cpuid_version >> 8) & 0xf;
+    if (value == 0xf) {
+        value += (env->cpuid_version >> 20) & 0xff;
+    }
+    visit_type_int(v, &value, name, errp);
+}
+
+static void x86_cpuid_version_set_family(Object *obj, Visitor *v, void *opaque,
+                                         const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    const int64_t min = 0;
+    const int64_t max = 0xff + 0xf;
+    int64_t value;
+
+    visit_type_int(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    if (value < min || value > max) {
+        error_setg(errp, "Property %s.%s doesn't take value %" PRId64 " (min"
+                  "imum: %" PRId64 ", maximum: %" PRId64,
+                  object_get_typename(obj), name, value, min, max);
+        return;
+    }
+
+    env->cpuid_version &= ~0xff00f00;
+    if (value > 0x0f) {
+        env->cpuid_version |= 0xf00 | ((value - 0x0f) << 20);
+    } else {
+        env->cpuid_version |= value << 8;
+    }
+}
+
+PropertyInfo qdev_prop_family = {
+    .name  = "uint32",
+    .get   = x86_cpuid_version_get_family,
+    .set   = x86_cpuid_version_set_family,
+};
+#define DEFINE_PROP_FAMILY(_n, _s, _f)                                         \
+    DEFINE_PROP(_n, _s, _f, qdev_prop_family, uint32_t)
+
 static Property cpu_x86_properties[] = {
     DEFINE_PROP_BIT("f-fpu", X86CPU, env.cpuid_features,  0, false),
     DEFINE_PROP_BIT("f-vme", X86CPU, env.cpuid_features,  1, false),
@@ -666,6 +716,7 @@ static Property cpu_x86_properties[] = {
     DEFINE_PROP_MODEL_ID("model-id"),
     DEFINE_PROP_STEPPING("stepping", X86CPU, env.cpuid_version),
     DEFINE_PROP_MODEL("model", X86CPU, env.cpuid_version),
+    DEFINE_PROP_FAMILY("family", X86CPU, env.cpuid_version),
     DEFINE_PROP_END_OF_LIST(),
  };
 
@@ -1391,47 +1442,6 @@ static int kvm_check_features_against_host(X86CPU *cpu)
                     rv = 1;
                 }
     return rv;
-}
-
-static void x86_cpuid_version_get_family(Object *obj, Visitor *v, void *opaque,
-                                         const char *name, Error **errp)
-{
-    X86CPU *cpu = X86_CPU(obj);
-    CPUX86State *env = &cpu->env;
-    int64_t value;
-
-    value = (env->cpuid_version >> 8) & 0xf;
-    if (value == 0xf) {
-        value += (env->cpuid_version >> 20) & 0xff;
-    }
-    visit_type_int(v, &value, name, errp);
-}
-
-static void x86_cpuid_version_set_family(Object *obj, Visitor *v, void *opaque,
-                                         const char *name, Error **errp)
-{
-    X86CPU *cpu = X86_CPU(obj);
-    CPUX86State *env = &cpu->env;
-    const int64_t min = 0;
-    const int64_t max = 0xff + 0xf;
-    int64_t value;
-
-    visit_type_int(v, &value, name, errp);
-    if (error_is_set(errp)) {
-        return;
-    }
-    if (value < min || value > max) {
-        error_set(errp, QERR_PROPERTY_VALUE_OUT_OF_RANGE, "",
-                  name ? name : "null", value, min, max);
-        return;
-    }
-
-    env->cpuid_version &= ~0xff00f00;
-    if (value > 0x0f) {
-        env->cpuid_version |= 0xf00 | ((value - 0x0f) << 20);
-    } else {
-        env->cpuid_version |= value << 8;
-    }
 }
 
 static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
@@ -2382,10 +2392,6 @@ static void x86_cpu_initfn(Object *obj)
     static int inited;
 
     cpu_exec_init(env);
-
-    object_property_add(obj, "family", "int",
-                        x86_cpuid_version_get_family,
-                        x86_cpuid_version_set_family, NULL, NULL, NULL);
 
     env->cpuid_apic_id = env->cpu_index;
 
