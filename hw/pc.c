@@ -570,9 +570,9 @@ int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
     return index;
 }
 
-static void *bochs_bios_init(void)
+static FWCfgState *bochs_bios_init(void)
 {
-    void *fw_cfg;
+    FWCfgState *fw_cfg;
     uint8_t *smbios_table;
     size_t smbios_len;
     uint64_t *numa_fw_cfg;
@@ -638,7 +638,7 @@ static long get_file_size(FILE *f)
     return size;
 }
 
-static void load_linux(void *fw_cfg,
+static void load_linux(FWCfgState *fw_cfg,
                        const char *kernel_filename,
 		       const char *initrd_filename,
 		       const char *kernel_cmdline,
@@ -881,7 +881,7 @@ void *pc_memory_init(PCInitArgs *args)
     int linux_boot, i;
     MemoryRegion *ram, *option_rom_mr;
     MemoryRegion *ram_below_4g, *ram_above_4g;
-    void *fw_cfg;
+    FWCfgState *fw_cfg;
 
     linux_boot = (args->qemu_args->kernel_filename != NULL);
 
