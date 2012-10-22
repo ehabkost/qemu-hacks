@@ -82,20 +82,21 @@ typedef struct PCInitArgs {
     QEMUMachineInitArgs *qemu_args;
     bool pci_enabled;
     bool kvmclock_enabled;
+
+    /* Memory regions & sizes: */
+    MemoryRegion *system_memory;
+    MemoryRegion *system_io;
+    MemoryRegion *rom_memory;
+    MemoryRegion *ram_memory;
+    MemoryRegion *pci_memory;
+    ram_addr_t below_4g_mem_size, above_4g_mem_size;
 } PCInitArgs;
 
 void pc_register_ferr_irq(qemu_irq irq);
 void pc_acpi_smi_interrupt(void *opaque, int irq, int level);
 
 void pc_cpus_init(PCInitArgs *args);
-FWCfgState *pc_memory_init(MemoryRegion *system_memory,
-                           const char *kernel_filename,
-                           const char *kernel_cmdline,
-                           const char *initrd_filename,
-                           ram_addr_t below_4g_mem_size,
-                           ram_addr_t above_4g_mem_size,
-                           MemoryRegion *rom_memory,
-                           MemoryRegion **ram_memory);
+FWCfgState *pc_memory_init(PCInitArgs *args);
 qemu_irq *pc_allocate_cpu_irq(void);
 DeviceState *pc_vga_init(ISABus *isa_bus, PCIBus *pci_bus);
 void pc_basic_device_init(ISABus *isa_bus, qemu_irq *gsi,

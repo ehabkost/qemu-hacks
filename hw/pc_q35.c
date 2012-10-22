@@ -62,23 +62,14 @@ static void pc_q35_init(PCInitArgs *pc_args)
     int i;
     QEMUMachineInitArgs *qemu_args = pc_args->qemu_args;
     ram_addr_t ram_size = qemu_args->ram_size;
-    const char *kernel_filename = qemu_args->kernel_filename;
-    const char *kernel_cmdline = qemu_args->kernel_cmdline;
-    const char *initrd_filename = qemu_args->initrd_filename;
     const char *boot_device = qemu_args->boot_device;
     bool pci_enabled = pc_args->pci_enabled;
-    ram_addr_t below_4g_mem_size, above_4g_mem_size;
     Q35PCIHost *q35_host;
     PCIBus *host_bus;
     PCIDevice *lpc;
     BusState *idebus[MAX_SATA_PORTS];
     ISADevice *rtc_state;
     ISADevice *floppy;
-    MemoryRegion *pci_memory;
-    MemoryRegion *rom_memory;
-    MemoryRegion *ram_memory;
-    MemoryRegion *system_memory = get_system_memory();
-    MemoryRegion *system_io = get_system_io();
     GSIState *gsi_state;
     ISABus *isa_bus;
     qemu_irq *cpu_irq;
@@ -88,6 +79,9 @@ static void pc_q35_init(PCInitArgs *pc_args)
     PCIDevice *ahci;
     qemu_irq *cmos_s3;
 
+    pc_args->system_memory = get_system_memory();
+    pc_args->system_io = get_system_io();
+
     pc_cpus_init(pc_args);
 
     if (pc_args->kvmclock_enabled) {
@@ -95,27 +89,26 @@ static void pc_q35_init(PCInitArgs *pc_args)
     }
 
     if (ram_size >= 0xb0000000) {
-        above_4g_mem_size = ram_size - 0xb0000000;
-        below_4g_mem_size = 0xb0000000;
+        pc_args->above_4g_mem_size = ram_size - 0xb0000000;
+        pc_args->below_4g_mem_size = 0xb0000000;
     } else {
-        above_4g_mem_size = 0;
-        below_4g_mem_size = ram_size;
+        pc_args->above_4g_mem_size = 0;
+        pc_args->below_4g_mem_size = ram_size;
     }
 
     if (pci_enabled) {
-        pci_memory = g_new(MemoryRegion, 1);
-        memory_region_init(pci_memory, "pci", INT64_MAX);
-        rom_memory = pci_memory;
+        pc_args->pci_memory = g_new(MemoryRegion, 1);
+        memory_region_init(pc_args->pci_memory, "pci", INT64_MAX);
+        pc_args->rom_memory = pc_args->pci_memory;
     } else {
-        pci_memory = NULL;
-        rom_memory = system_memory;
+        pc_args->pci_memory = NULL;
+        pc_args->rom_memory = pc_args->system_memory;
     }
 
     /* allocate ram and load rom/bios */
     if (!xen_enabled()) {
-        pc_memory_init(system_memory, kernel_filename, kernel_cmdline,
-                       initrd_filename, below_4g_mem_size, above_4g_mem_size,
-                       rom_memory, &ram_memory);
+        /* pc_memory_init() will set pc_args->ram_memory */
+        pc_memory_init(pc_args);
     }
 
     /* irq lines */
@@ -131,12 +124,12 @@ static void pc_q35_init(PCInitArgs *pc_args)
     /* create pci host bus */
     q35_host = Q35_HOST_DEVICE(qdev_create(NULL, TYPE_Q35_HOST_DEVICE));
 
-    q35_host->mch.ram_memory = ram_memory;
-    q35_host->mch.pci_address_space = pci_memory;
-    q35_host->mch.system_memory = system_memory;
-    q35_host->mch.address_space_io = system_io;;
-    q35_host->mch.below_4g_mem_size = below_4g_mem_size;
-    q35_host->mch.above_4g_mem_size = above_4g_mem_size;
+    q35_host->mch.ram_memory = pc_args->ram_memory;
+    q35_host->mch.pci_address_space = pc_args->pci_memory;
+    q35_host->mch.system_memory = pc_args->system_memory;
+    q35_host->mch.address_space_io = pc_args->system_io;;
+    q35_host->mch.below_4g_mem_size = pc_args->below_4g_mem_size;
+    q35_host->mch.above_4g_mem_size = pc_args->above_4g_mem_size;
     /* pci */
     qdev_init_nofail(DEVICE(q35_host));
     host_bus = q35_host->host.pci.bus;
@@ -198,7 +191,7 @@ static void pc_q35_init(PCInitArgs *pc_args)
                                     0xb100),
                       8, NULL, 0);
 
-    pc_cmos_init(below_4g_mem_size, above_4g_mem_size, boot_device,
+    pc_cmos_init(pc_args->below_4g_mem_size, pc_args->above_4g_mem_size, boot_device,
                  floppy, idebus[0], idebus[1], rtc_state);
 
     /* the rest devices to which pci devfn is automatically assigned */

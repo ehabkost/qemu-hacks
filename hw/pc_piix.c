@@ -60,12 +60,8 @@ static void pc_init1(PCInitArgs *pc_args)
     int i;
     QEMUMachineInitArgs *qemu_args = pc_args->qemu_args;
     ram_addr_t ram_size = qemu_args->ram_size;
-    const char *kernel_filename = qemu_args->kernel_filename;
-    const char *kernel_cmdline = qemu_args->kernel_cmdline;
-    const char *initrd_filename = qemu_args->initrd_filename;
     const char *boot_device = qemu_args->boot_device;
     bool pci_enabled = pc_args->pci_enabled;
-    ram_addr_t below_4g_mem_size, above_4g_mem_size;
     PCIBus *pci_bus;
     ISABus *isa_bus;
     PCII440FXState *i440fx_state;
@@ -79,12 +75,10 @@ static void pc_init1(PCInitArgs *pc_args)
     BusState *idebus[MAX_IDE_BUS];
     ISADevice *rtc_state;
     ISADevice *floppy;
-    MemoryRegion *ram_memory;
-    MemoryRegion *pci_memory;
-    MemoryRegion *rom_memory;
-    MemoryRegion *system_memory = get_system_memory();
-    MemoryRegion *system_io = get_system_io();
     FWCfgState *fw_cfg = NULL;
+
+    pc_args->system_memory = get_system_memory();
+    pc_args->system_io = get_system_io();
 
     pc_cpus_init(pc_args);
 
@@ -93,28 +87,26 @@ static void pc_init1(PCInitArgs *pc_args)
     }
 
     if (ram_size >= 0xe0000000) {
-        above_4g_mem_size = ram_size - 0xe0000000;
-        below_4g_mem_size = 0xe0000000;
+        pc_args->above_4g_mem_size = ram_size - 0xe0000000;
+        pc_args->below_4g_mem_size = 0xe0000000;
     } else {
-        above_4g_mem_size = 0;
-        below_4g_mem_size = ram_size;
+        pc_args->above_4g_mem_size = 0;
+        pc_args->below_4g_mem_size = ram_size;
     }
 
     if (pci_enabled) {
-        pci_memory = g_new(MemoryRegion, 1);
-        memory_region_init(pci_memory, "pci", INT64_MAX);
-        rom_memory = pci_memory;
+        pc_args->pci_memory = g_new(MemoryRegion, 1);
+        memory_region_init(pc_args->pci_memory, "pci", INT64_MAX);
+        pc_args->rom_memory = pc_args->pci_memory;
     } else {
-        pci_memory = NULL;
-        rom_memory = system_memory;
+        pc_args->pci_memory = NULL;
+        pc_args->rom_memory = pc_args->system_memory;
     }
 
     /* allocate ram and load rom/bios */
     if (!xen_enabled()) {
-        fw_cfg = pc_memory_init(system_memory,
-                       kernel_filename, kernel_cmdline, initrd_filename,
-                       below_4g_mem_size, above_4g_mem_size,
-                       rom_memory, &ram_memory);
+        /* pc_memory_init() will set pc_args->ram_memory */
+        fw_cfg = pc_memory_init(pc_args);
     }
 
     gsi_state = g_malloc0(sizeof(*gsi_state));
@@ -128,18 +120,18 @@ static void pc_init1(PCInitArgs *pc_args)
 
     if (pci_enabled) {
         pci_bus = i440fx_init(&i440fx_state, &piix3_devfn, &isa_bus, gsi,
-                              system_memory, system_io, ram_size,
-                              below_4g_mem_size,
-                              0x100000000ULL - below_4g_mem_size,
-                              0x100000000ULL + above_4g_mem_size,
+                              pc_args->system_memory, pc_args->system_io,
+                              ram_size, pc_args->below_4g_mem_size,
+                              0x100000000ULL - pc_args->below_4g_mem_size,
+                              0x100000000ULL + pc_args->above_4g_mem_size,
                               (sizeof(hwaddr) == 4
                                ? 0
                                : ((uint64_t)1 << 62)),
-                              pci_memory, ram_memory);
+                              pc_args->pci_memory, pc_args->ram_memory);
     } else {
         pci_bus = NULL;
         i440fx_state = NULL;
-        isa_bus = isa_bus_new(NULL, system_io);
+        isa_bus = isa_bus_new(NULL, pc_args->system_io);
         no_hpet = 1;
     }
     isa_bus_irqs(isa_bus, gsi);
@@ -194,8 +186,8 @@ static void pc_init1(PCInitArgs *pc_args)
 
     audio_init(isa_bus, pci_bus);
 
-    pc_cmos_init(below_4g_mem_size, above_4g_mem_size, boot_device,
-                 floppy, idebus[0], idebus[1], rtc_state);
+    pc_cmos_init(pc_args->below_4g_mem_size, pc_args->above_4g_mem_size,
+                 boot_device, floppy, idebus[0], idebus[1], rtc_state);
 
     if (pci_enabled && usb_enabled(false)) {
         pci_create_simple(pci_bus, piix3_devfn + 2, "piix3-usb-uhci");
