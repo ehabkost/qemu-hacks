@@ -859,6 +859,14 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
     }
 }
 
+static void pc_cpu_init(PCInitArgs *args, int cpu_index)
+{
+    if (!cpu_x86_init(args->qemu_args->cpu_model)) {
+        fprintf(stderr, "Unable to find x86 CPU definition\n");
+        exit(1);
+    }
+}
+
 void pc_cpus_init(PCInitArgs *args)
 {
     int i;
@@ -869,10 +877,7 @@ void pc_cpus_init(PCInitArgs *args)
     }
 
     for (i = 0; i < smp_cpus; i++) {
-        if (!cpu_x86_init(args->qemu_args->cpu_model)) {
-            fprintf(stderr, "Unable to find x86 CPU definition\n");
-            exit(1);
-        }
+        pc_cpu_init(args, i);
     }
 }
 
