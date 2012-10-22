@@ -71,6 +71,12 @@
 #define FW_CFG_E820_TABLE (FW_CFG_ARCH_LOCAL + 3)
 #define FW_CFG_HPET (FW_CFG_ARCH_LOCAL + 4)
 
+#ifdef TARGET_X86_64
+#define PC_DEFAULT_CPU_MODEL "qemu64"
+#else
+#define PC_DEFAULT_CPU_MODEL "qemu32"
+#endif
+
 #define E820_NR_ENTRIES		16
 
 struct e820_entry {
@@ -862,11 +868,7 @@ void pc_cpus_init(const char *cpu_model)
 
     /* init CPUs */
     if (cpu_model == NULL) {
-#ifdef TARGET_X86_64
-        cpu_model = "qemu64";
-#else
-        cpu_model = "qemu32";
-#endif
+        cpu_model = PC_DEFAULT_CPU_MODEL;
     }
 
     for (i = 0; i < smp_cpus; i++) {
