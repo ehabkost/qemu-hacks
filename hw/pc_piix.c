@@ -280,7 +280,8 @@ static void pc_init1(PCInitArgs *pc_args)
     }
 }
 
-static void pc_init_pci(QEMUMachineInitArgs *args)
+/* PC init function for pc-1.3 and higher */
+static void pc_init_pci_v1_3(QEMUMachineInitArgs *args)
 {
     PCInitArgs pc_args = {
         .qemu_args = args,
@@ -290,6 +291,16 @@ static void pc_init_pci(QEMUMachineInitArgs *args)
     pc_init1(&pc_args);
 }
 
+/* PC init function for pc-1.2 and lower */
+static void pc_init_pci_v1_2(QEMUMachineInitArgs *args)
+{
+    PCInitArgs pc_args = {
+        .qemu_args = args,
+        .pci_enabled = true,
+        .kvmclock_enabled = true,
+    };
+    pc_init1(&pc_args);
+}
 static void pc_init_pci_no_kvmclock(QEMUMachineInitArgs *args)
 {
     PCInitArgs pc_args = {
@@ -327,7 +338,7 @@ static QEMUMachine pc_machine_v1_3 = {
     .name = "pc-1.3",
     .alias = "pc",
     .desc = "Standard PC",
-    .init = pc_init_pci,
+    .init = pc_init_pci_v1_3,
     .max_cpus = 255,
     .is_default = 1,
 };
@@ -362,7 +373,7 @@ static QEMUMachine pc_machine_v1_3 = {
 static QEMUMachine pc_machine_v1_2 = {
     .name = "pc-1.2",
     .desc = "Standard PC",
-    .init = pc_init_pci,
+    .init = pc_init_pci_v1_2,
     .max_cpus = 255,
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_1_2,
@@ -405,7 +416,7 @@ static QEMUMachine pc_machine_v1_2 = {
 static QEMUMachine pc_machine_v1_1 = {
     .name = "pc-1.1",
     .desc = "Standard PC",
-    .init = pc_init_pci,
+    .init = pc_init_pci_v1_2,
     .max_cpus = 255,
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_1_1,
@@ -440,7 +451,7 @@ static QEMUMachine pc_machine_v1_1 = {
 static QEMUMachine pc_machine_v1_0 = {
     .name = "pc-1.0",
     .desc = "Standard PC",
-    .init = pc_init_pci,
+    .init = pc_init_pci_v1_2,
     .max_cpus = 255,
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_1_0,
@@ -455,7 +466,7 @@ static QEMUMachine pc_machine_v1_0 = {
 static QEMUMachine pc_machine_v0_15 = {
     .name = "pc-0.15",
     .desc = "Standard PC",
-    .init = pc_init_pci,
+    .init = pc_init_pci_v1_2,
     .max_cpus = 255,
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_0_15,
@@ -487,7 +498,7 @@ static QEMUMachine pc_machine_v0_15 = {
 static QEMUMachine pc_machine_v0_14 = {
     .name = "pc-0.14",
     .desc = "Standard PC",
-    .init = pc_init_pci,
+    .init = pc_init_pci_v1_2,
     .max_cpus = 255,
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_0_14, 
