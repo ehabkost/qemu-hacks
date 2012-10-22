@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "qemu-common.h"
+#include "qemu-error.h"
 
 #ifdef TARGET_X86_64
 #define TARGET_LONG_BITS 64
@@ -1008,12 +1009,25 @@ uint64_t cpu_get_tsc(CPUX86State *env);
 #define TARGET_VIRT_ADDR_SPACE_BITS 32
 #endif
 
+/* Helper for simple CPU initialization (for target-independent code)
+ *
+ * Note that the PC code doesn't use this function, as it does additional
+ * initialization steps between cpu_x86_init() and cpu_x86_realize() is called.
+ */
 static inline CPUX86State *cpu_init(const char *cpu_model)
 {
+    Error *err = NULL;
     X86CPU *cpu = cpu_x86_init(cpu_model);
     if (cpu == NULL) {
         return NULL;
     }
+
+    x86_cpu_realize(OBJECT(cpu), &err);
+    if (err) {
+        error_report("cpu_init: %s\n", error_get_pretty(err));
+        return NULL;
+    }
+
     return &cpu->env;
 }
 

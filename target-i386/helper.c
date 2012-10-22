@@ -1240,11 +1240,14 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
     return 1;
 }
 
+/* Initialize X86CPU object
+ *
+ * Callers must eventually call x86_cpu_realize(), to finish initialization.
+ */
 X86CPU *cpu_x86_init(const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
-    Error *err = NULL;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
@@ -1252,12 +1255,6 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 
     if (cpu_x86_register(cpu, cpu_model) < 0) {
         object_delete(OBJECT(cpu));
-        return NULL;
-    }
-
-    x86_cpu_realize(OBJECT(cpu), &err);
-    if (err) {
-        error_report("cpu_x86_init: %s\n", error_get_pretty(err));
         return NULL;
     }
 

@@ -861,8 +861,18 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
 
 static void pc_cpu_init(PCInitArgs *args, int cpu_index)
 {
-    if (!cpu_x86_init(args->qemu_args->cpu_model)) {
+    Error *err = NULL;
+    X86CPU *cpu;
+
+    cpu = cpu_x86_init(args->qemu_args->cpu_model);
+    if (!cpu) {
         fprintf(stderr, "Unable to find x86 CPU definition\n");
+        exit(1);
+    }
+
+    x86_cpu_realize(OBJECT(cpu), &err);
+    if (err) {
+        error_report("pc_cpu_init: %s\n", error_get_pretty(err));
         exit(1);
     }
 }
