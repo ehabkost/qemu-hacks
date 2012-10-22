@@ -573,7 +573,7 @@ int e820_add_entry(uint64_t address, uint64_t length, uint32_t type)
     return index;
 }
 
-static FWCfgState *bochs_bios_init(void)
+static FWCfgState *pc_bios_init(void)
 {
     FWCfgState *fw_cfg;
     uint8_t *smbios_table;
@@ -945,7 +945,7 @@ FWCfgState *pc_memory_init(PCInitArgs *args)
                                         option_rom_mr,
                                         1);
 
-    fw_cfg = bochs_bios_init();
+    fw_cfg = pc_bios_init();
     rom_set_fw(fw_cfg);
 
     if (linux_boot) {
