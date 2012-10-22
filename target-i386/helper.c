@@ -19,6 +19,7 @@
 
 #include "cpu.h"
 #include "kvm.h"
+#include "qemu-error.h"
 #ifndef CONFIG_USER_ONLY
 #include "sysemu.h"
 #include "monitor.h"
@@ -1243,6 +1244,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
+    Error *err = NULL;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
@@ -1253,7 +1255,11 @@ X86CPU *cpu_x86_init(const char *cpu_model)
         return NULL;
     }
 
-    x86_cpu_realize(OBJECT(cpu), NULL);
+    x86_cpu_realize(OBJECT(cpu), &err);
+    if (err) {
+        error_report("cpu_x86_init: %s\n", error_get_pretty(err));
+        return NULL;
+    }
 
     return cpu;
 }
