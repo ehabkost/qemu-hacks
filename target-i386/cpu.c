@@ -363,6 +363,46 @@ PropertyInfo qdev_prop_vendor = {
 #define DEFINE_PROP_VENDOR(_n, _s, _f)                                         \
     DEFINE_PROP(_n, _s, _f, qdev_prop_vendor, uint32_t)
 
+static void x86_cpuid_get_tsc_freq(Object *obj, Visitor *v, void *opaque,
+                                   const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    int64_t value;
+
+    value = cpu->env.tsc_khz * 1000;
+    visit_type_int(v, &value, name, errp);
+}
+
+static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
+                                   const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    const int64_t min = 0;
+    const int64_t max = INT64_MAX;
+    int64_t value;
+
+    visit_type_freq(v, &value, name, errp);
+    if (error_is_set(errp)) {
+        return;
+    }
+    if (value < min || value > max) {
+        error_setg(errp, "Property %s.%s doesn't take value %" PRId64 " (min"
+                  "imum: %" PRId64 ", maximum: %" PRId64,
+                  object_get_typename(obj), name, value, min, max);
+        return;
+    }
+
+    cpu->env.tsc_khz = value / 1000;
+}
+
+PropertyInfo qdev_prop_tsc_freq = {
+    .name  = "frequency",
+    .get   = x86_cpuid_get_tsc_freq,
+    .set   = x86_cpuid_set_tsc_freq,
+};
+#define DEFINE_PROP_TSC_FREQ(_n, _s, _f)                                       \
+    DEFINE_PROP(_n, _s, _f, qdev_prop_tsc_freq, int32_t)
+
 static Property cpu_x86_properties[] = {
     DEFINE_PROP_BIT("f-fpu", X86CPU, env.cpuid_features,  0, false),
     DEFINE_PROP_BIT("f-vme", X86CPU, env.cpuid_features,  1, false),
@@ -483,6 +523,7 @@ static Property cpu_x86_properties[] = {
     DEFINE_PROP_CHECK("check"),
     DEFINE_PROP_ENFORCE("enforce"),
     DEFINE_PROP_VENDOR("vendor", X86CPU, env.cpuid_vendor1),
+    DEFINE_PROP_TSC_FREQ("tsc-frequency", X86CPU, env.tsc_khz),
     DEFINE_PROP_END_OF_LIST(),
  };
 
@@ -1357,37 +1398,6 @@ static void x86_cpuid_set_model_id(Object *obj, const char *model_id,
         }
         env->cpuid_model[i >> 2] |= c << (8 * (i & 3));
     }
-}
-
-static void x86_cpuid_get_tsc_freq(Object *obj, Visitor *v, void *opaque,
-                                   const char *name, Error **errp)
-{
-    X86CPU *cpu = X86_CPU(obj);
-    int64_t value;
-
-    value = cpu->env.tsc_khz * 1000;
-    visit_type_int(v, &value, name, errp);
-}
-
-static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
-                                   const char *name, Error **errp)
-{
-    X86CPU *cpu = X86_CPU(obj);
-    const int64_t min = 0;
-    const int64_t max = INT64_MAX;
-    int64_t value;
-
-    visit_type_freq(v, &value, name, errp);
-    if (error_is_set(errp)) {
-        return;
-    }
-    if (value < min || value > max) {
-        error_set(errp, QERR_PROPERTY_VALUE_OUT_OF_RANGE, "",
-                  name ? name : "null", value, min, max);
-        return;
-    }
-
-    cpu->env.tsc_khz = value / 1000;
 }
 
 static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
@@ -2351,9 +2361,6 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add_str(obj, "model-id",
                             x86_cpuid_get_model_id,
                             x86_cpuid_set_model_id, NULL);
-    object_property_add(obj, "tsc-frequency", "int",
-                        x86_cpuid_get_tsc_freq,
-                        x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
 
     env->cpuid_apic_id = env->cpu_index;
 
