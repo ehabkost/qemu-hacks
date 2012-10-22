@@ -1381,9 +1381,6 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
         if (kvm_check_features_against_host(x86_cpu_def) && enforce_cpuid)
             goto error;
     }
-    if (x86_cpu_def->cpuid_7_0_ebx_features && x86_cpu_def->level < 7) {
-        x86_cpu_def->level = 7;
-    }
     return 0;
 
 error:
