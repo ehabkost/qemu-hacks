@@ -876,21 +876,14 @@ void pc_cpus_init(PCInitArgs *args)
     }
 }
 
-void *pc_memory_init(MemoryRegion *system_memory,
-                    const char *kernel_filename,
-                    const char *kernel_cmdline,
-                    const char *initrd_filename,
-                    ram_addr_t below_4g_mem_size,
-                    ram_addr_t above_4g_mem_size,
-                    MemoryRegion *rom_memory,
-                    MemoryRegion **ram_memory)
+void *pc_memory_init(PCInitArgs *args)
 {
     int linux_boot, i;
     MemoryRegion *ram, *option_rom_mr;
     MemoryRegion *ram_below_4g, *ram_above_4g;
     void *fw_cfg;
 
-    linux_boot = (kernel_filename != NULL);
+    linux_boot = (args->qemu_args->kernel_filename != NULL);
 
     /* Allocate RAM.  We allocate it as a single memory region and use
      * aliases to address portions of it, mostly for backwards compatibility
@@ -898,29 +891,29 @@ void *pc_memory_init(MemoryRegion *system_memory,
      */
     ram = g_malloc(sizeof(*ram));
     memory_region_init_ram(ram, "pc.ram",
-                           below_4g_mem_size + above_4g_mem_size);
+                           args->below_4g_mem_size + args->above_4g_mem_size);
     vmstate_register_ram_global(ram);
-    *ram_memory = ram;
+    args->ram_memory = ram;
     ram_below_4g = g_malloc(sizeof(*ram_below_4g));
     memory_region_init_alias(ram_below_4g, "ram-below-4g", ram,
-                             0, below_4g_mem_size);
-    memory_region_add_subregion(system_memory, 0, ram_below_4g);
-    if (above_4g_mem_size > 0) {
+                             0, args->below_4g_mem_size);
+    memory_region_add_subregion(args->system_memory, 0, ram_below_4g);
+    if (args->above_4g_mem_size > 0) {
         ram_above_4g = g_malloc(sizeof(*ram_above_4g));
         memory_region_init_alias(ram_above_4g, "ram-above-4g", ram,
-                                 below_4g_mem_size, above_4g_mem_size);
-        memory_region_add_subregion(system_memory, 0x100000000ULL,
+                                 args->below_4g_mem_size, args->above_4g_mem_size);
+        memory_region_add_subregion(args->system_memory, 0x100000000ULL,
                                     ram_above_4g);
     }
 
 
     /* Initialize PC system firmware */
-    pc_system_firmware_init(rom_memory);
+    pc_system_firmware_init(args->rom_memory);
 
     option_rom_mr = g_malloc(sizeof(*option_rom_mr));
     memory_region_init_ram(option_rom_mr, "pc.rom", PC_ROM_SIZE);
     vmstate_register_ram_global(option_rom_mr);
-    memory_region_add_subregion_overlap(rom_memory,
+    memory_region_add_subregion_overlap(args->rom_memory,
                                         PC_ROM_MIN_VGA,
                                         option_rom_mr,
                                         1);
@@ -929,7 +922,10 @@ void *pc_memory_init(MemoryRegion *system_memory,
     rom_set_fw(fw_cfg);
 
     if (linux_boot) {
-        load_linux(fw_cfg, kernel_filename, initrd_filename, kernel_cmdline, below_4g_mem_size);
+        load_linux(fw_cfg, args->qemu_args->kernel_filename,
+                   args->qemu_args->initrd_filename,
+                   args->qemu_args->kernel_cmdline,
+                   args->below_4g_mem_size);
     }
 
     for (i = 0; i < nb_option_roms; i++) {
