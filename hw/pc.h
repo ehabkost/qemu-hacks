@@ -10,6 +10,7 @@
 #include "memory.h"
 #include "ioapic.h"
 #include "fw_cfg.h"
+#include "boards.h"
 
 /* PC-style peripherals (also used by other machines).  */
 
@@ -75,6 +76,13 @@ void i8042_setup_a20_line(ISADevice *dev, qemu_irq *a20_out);
 
 /* pc.c */
 extern int fd_bootchk;
+
+/* Initialization parameters for the PC init functions */
+typedef struct PCInitArgs {
+    QEMUMachineInitArgs *qemu_args;
+    bool pci_enabled;
+    bool kvmclock_enabled;
+} PCInitArgs;
 
 void pc_register_ferr_irq(qemu_irq irq);
 void pc_acpi_smi_interrupt(void *opaque, int irq, int level);

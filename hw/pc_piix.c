@@ -55,11 +55,17 @@ static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
 /* PC hardware initialisation */
-static void pc_init1(QEMUMachineInitArgs *args,
-                     int pci_enabled,
-                     int kvmclock_enabled)
+static void pc_init1(PCInitArgs *pc_args)
 {
     int i;
+    QEMUMachineInitArgs *qemu_args = pc_args->qemu_args;
+    ram_addr_t ram_size = qemu_args->ram_size;
+    const char *cpu_model = qemu_args->cpu_model;
+    const char *kernel_filename = qemu_args->kernel_filename;
+    const char *kernel_cmdline = qemu_args->kernel_cmdline;
+    const char *initrd_filename = qemu_args->initrd_filename;
+    const char *boot_device = qemu_args->boot_device;
+    bool pci_enabled = pc_args->pci_enabled;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
     PCIBus *pci_bus;
     ISABus *isa_bus;
@@ -80,16 +86,10 @@ static void pc_init1(QEMUMachineInitArgs *args,
     MemoryRegion *system_memory = get_system_memory();
     MemoryRegion *system_io = get_system_io();
     FWCfgState *fw_cfg = NULL;
-    ram_addr_t ram_size = args->ram_size;
-    const char *cpu_model = args->cpu_model;
-    const char *kernel_filename = args->kernel_filename;
-    const char *kernel_cmdline = args->kernel_cmdline;
-    const char *initrd_filename = args->initrd_filename;
-    const char *boot_device = args->boot_device;
 
     pc_cpus_init(cpu_model);
 
-    if (kvmclock_enabled) {
+    if (pc_args->kvmclock_enabled) {
         kvmclock_create();
     }
 
@@ -220,7 +220,12 @@ static void pc_init1(QEMUMachineInitArgs *args,
 
 static void pc_init_pci(QEMUMachineInitArgs *args)
 {
-    pc_init1(args, 1, 1);
+    PCInitArgs pc_args = {
+        .qemu_args = args,
+        .pci_enabled = true,
+        .kvmclock_enabled = true,
+    };
+    pc_init1(&pc_args);
 }
 
 static void pc_init_pci_1_3(QEMUMachineInitArgs *args)
@@ -231,14 +236,24 @@ static void pc_init_pci_1_3(QEMUMachineInitArgs *args)
 
 static void pc_init_pci_no_kvmclock(QEMUMachineInitArgs *args)
 {
-    pc_init1(args, 1, 0);
+    PCInitArgs pc_args = {
+        .qemu_args = args,
+        .pci_enabled = true,
+        .kvmclock_enabled = false,
+    };
+    pc_init1(&pc_args);
 }
 
 static void pc_init_isa(QEMUMachineInitArgs *args)
 {
+    PCInitArgs pc_args = {
+        .qemu_args = args,
+        .pci_enabled = false,
+        .kvmclock_enabled = false,
+    };
     if (args->cpu_model == NULL)
         args->cpu_model = "486";
-    pc_init1(args, 0, 1);
+    pc_init1(&pc_args);
 }
 
 #ifdef CONFIG_XEN
