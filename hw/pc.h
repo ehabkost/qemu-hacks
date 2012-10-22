@@ -9,6 +9,7 @@
 #include "net.h"
 #include "memory.h"
 #include "ioapic.h"
+#include "fw_cfg.h"
 
 /* PC-style peripherals (also used by other machines).  */
 
@@ -79,14 +80,14 @@ void pc_register_ferr_irq(qemu_irq irq);
 void pc_acpi_smi_interrupt(void *opaque, int irq, int level);
 
 void pc_cpus_init(const char *cpu_model);
-void *pc_memory_init(MemoryRegion *system_memory,
-                    const char *kernel_filename,
-                    const char *kernel_cmdline,
-                    const char *initrd_filename,
-                    ram_addr_t below_4g_mem_size,
-                    ram_addr_t above_4g_mem_size,
-                    MemoryRegion *rom_memory,
-                    MemoryRegion **ram_memory);
+FWCfgState *pc_memory_init(MemoryRegion *system_memory,
+                           const char *kernel_filename,
+                           const char *kernel_cmdline,
+                           const char *initrd_filename,
+                           ram_addr_t below_4g_mem_size,
+                           ram_addr_t above_4g_mem_size,
+                           MemoryRegion *rom_memory,
+                           MemoryRegion **ram_memory);
 qemu_irq *pc_allocate_cpu_irq(void);
 DeviceState *pc_vga_init(ISABus *isa_bus, PCIBus *pci_bus);
 void pc_basic_device_init(ISABus *isa_bus, qemu_irq *gsi,
@@ -118,7 +119,7 @@ int acpi_table_add(const char *table_desc);
 
 i2c_bus *piix4_pm_init(PCIBus *bus, int devfn, uint32_t smb_io_base,
                        qemu_irq sci_irq, qemu_irq smi_irq,
-                       int kvm_enabled, void *fw_cfg);
+                       int kvm_enabled, FWCfgState *fw_cfg);
 void piix4_smbus_register_device(SMBusDevice *dev, uint8_t addr);
 
 /* hpet.c */

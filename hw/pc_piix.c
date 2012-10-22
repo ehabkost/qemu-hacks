@@ -84,7 +84,7 @@ static void pc_init1(MemoryRegion *system_memory,
     MemoryRegion *ram_memory;
     MemoryRegion *pci_memory;
     MemoryRegion *rom_memory;
-    void *fw_cfg = NULL;
+    FWCfgState *fw_cfg = NULL;
 
     pc_cpus_init(cpu_model);
 
