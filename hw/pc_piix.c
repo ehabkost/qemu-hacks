@@ -143,14 +143,13 @@ static void pc_init1(PCInitArgs *pc_args)
     void *fw_cfg = NULL;
     QEMUMachineInitArgs *qemu_args = pc_args->qemu_args;
     ram_addr_t ram_size = qemu_args->ram_size;
-    const char *cpu_model = qemu_args->cpu_model;
     const char *kernel_filename = qemu_args->kernel_filename;
     const char *kernel_cmdline = qemu_args->kernel_cmdline;
     const char *initrd_filename = qemu_args->initrd_filename;
     const char *boot_device = qemu_args->boot_device;
     bool pci_enabled = pc_args->pci_enabled;
 
-    pc_cpus_init(cpu_model);
+    pc_cpus_init(pc_args);
 
     if (pc_args->kvmclock_enabled) {
         kvmclock_create();
