@@ -100,6 +100,19 @@ static void stub_vmstate_unregister(DeviceState *dev,
 }
 QEMU_WEAK_ALIAS(vmstate_unregister, stub_vmstate_unregister);
 
+
+/* sysbus stub functions
+ *
+ * The real implementation is on sysbus.c, but the stub functions will be used
+ * on cases where sysbus.c is not compiled in (e.g. *-user).
+ */
+
+static BusState *sysbus_get_none(void)
+{
+    return NULL;
+}
+QEMU_WEAK_ALIAS(sysbus_get_default, sysbus_get_none);
+
 const VMStateDescription *qdev_get_vmsd(DeviceState *dev)
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
