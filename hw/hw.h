@@ -13,6 +13,7 @@
 #include "qemu-file.h"
 #include "vmstate.h"
 #include "qemu-log.h"
+#include "qdev-reset.h"
 
 #ifdef NEED_CPU_H
 #if TARGET_LONG_BITS == 64
@@ -35,11 +36,6 @@
 #define qemu_get_sbetls qemu_get_sbe32s
 #endif
 #endif
-
-typedef void QEMUResetHandler(void *opaque);
-
-void qemu_register_reset(QEMUResetHandler *func, void *opaque);
-void qemu_unregister_reset(QEMUResetHandler *func, void *opaque);
 
 /* handler to set the boot_device order for a specific type of QEMUMachine */
 /* return 0 if success */
