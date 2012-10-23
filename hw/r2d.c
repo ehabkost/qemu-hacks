@@ -24,6 +24,7 @@
  */
 
 #include "sysbus.h"
+#include "hw/reset.h"
 #include "hw.h"
 #include "sh.h"
 #include "devices.h"

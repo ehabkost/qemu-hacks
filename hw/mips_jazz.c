@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "mips.h"
 #include "mips_cpudevs.h"

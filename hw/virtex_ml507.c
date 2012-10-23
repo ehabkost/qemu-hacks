@@ -23,6 +23,7 @@
  */
 
 #include "sysbus.h"
+#include "hw/reset.h"
 #include "hw.h"
 #include "serial.h"
 #include "net.h"

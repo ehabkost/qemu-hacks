@@ -18,6 +18,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "i2c.h"
 #include "qemu-timer.h"

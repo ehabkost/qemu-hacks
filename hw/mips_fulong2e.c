@@ -18,6 +18,7 @@
  * http://www.loongsondeveloper.com/doc/Loongson2EUserGuide.pdf
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "pc.h"
 #include "serial.h"

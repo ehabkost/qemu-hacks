@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "hw/reset.h"
 #include "hw.h"
 #include "ps2.h"
 #include "console.h"

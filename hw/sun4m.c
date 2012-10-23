@@ -27,6 +27,7 @@
 #include "nvram.h"
 #include "sparc32_dma.h"
 #include "fdc.h"
+#include "hw/reset.h"
 #include "sysemu.h"
 #include "net.h"
 #include "boards.h"

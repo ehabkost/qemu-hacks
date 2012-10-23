@@ -25,6 +25,7 @@
  *
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "hw/spapr.h"
 #include "hw/xics.h"

@@ -28,6 +28,7 @@
 #include "qemu-config.h"
 #include "qemu-common.h"
 #include "device_tree.h"
+#include "hw/reset.h"
 #include "loader.h"
 #include "elf.h"
 

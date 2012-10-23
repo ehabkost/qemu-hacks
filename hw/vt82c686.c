@@ -10,6 +10,7 @@
  * GNU GPL, version 2 or (at your option) any later version.
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "pc.h"
 #include "vt82c686.h"

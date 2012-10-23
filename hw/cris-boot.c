@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "loader.h"
 #include "elf.h"

@@ -39,6 +39,7 @@
 
 #include <assert.h>
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "pci.h"
 #include "pc.h"

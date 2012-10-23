@@ -21,6 +21,7 @@
 #include <linux/kvm_para.h>
 
 #include "qemu-common.h"
+#include "hw/reset.h"
 #include "sysemu.h"
 #include "kvm.h"
 #include "kvm_i386.h"

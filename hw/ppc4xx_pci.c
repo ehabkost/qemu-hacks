@@ -19,6 +19,7 @@
 /* This file implements emulation of the 32-bit PCI controller found in some
  * 4xx SoCs, such as the 440EP. */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "ppc.h"
 #include "ppc4xx.h"

@@ -22,6 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "hw/reset.h"
 #include <hw/hw.h>
 #include <hw/ppc_mac.h>
 #include <hw/mac_dbdma.h>

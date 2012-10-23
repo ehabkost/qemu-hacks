@@ -18,6 +18,7 @@
 #include "qemu-common.h"
 #include "e500.h"
 #include "net.h"
+#include "hw/reset.h"
 #include "hw/hw.h"
 #include "hw/serial.h"
 #include "hw/pci.h"

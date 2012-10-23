@@ -32,6 +32,7 @@
 
 #include "hyperv.h"
 
+#include "hw/reset.h"
 #include "hw/hw.h"
 #if defined(CONFIG_KVM)
 #include <linux/kvm_para.h>

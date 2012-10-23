@@ -27,6 +27,7 @@
 
 #include "net.h"
 #include "qdev.h"
+#include "hw/reset.h"
 #include "sysemu.h"
 #include "error.h"
 #include "qapi/qapi-visit-core.h"

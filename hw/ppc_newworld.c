@@ -46,6 +46,7 @@
  * 0001:05:0c.0 IDE interface [0101]: Broadcom K2 SATA [1166:0240]
  *
  */
+#include "hw/reset.h"
 #include "hw.h"
 #include "ppc.h"
 #include "ppc_mac.h"

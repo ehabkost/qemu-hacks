@@ -41,6 +41,7 @@
  */
 
 #include <stddef.h>             /* offsetof */
+#include "hw/reset.h"
 #include "hw.h"
 #include "pci.h"
 #include "net.h"

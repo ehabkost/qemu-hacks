@@ -36,6 +36,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "hw/reset.h"
 #include "hw.h"
 #include "isa.h"
 #include "mac_dbdma.h"

@@ -28,6 +28,7 @@
 #include "i2c.h"
 #include "devices.h"
 #include "flash.h"
+#include "hw/reset.h"
 #include "hw.h"
 #include "bt.h"
 #include "loader.h"

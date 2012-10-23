@@ -18,6 +18,7 @@
  */
 
 #include "sysbus.h"
+#include "hw/reset.h"
 #include "hw.h"
 #include "net.h"
 #include "flash.h"

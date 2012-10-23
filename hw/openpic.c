@@ -33,6 +33,7 @@
  * Serial interrupts, as implemented in Raven chipset are not supported yet.
  *
  */
+#include "hw/reset.h"
 #include "hw.h"
 #include "ppc_mac.h"
 #include "pci.h"

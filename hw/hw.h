@@ -37,11 +37,6 @@
 #endif
 #endif
 
-typedef void QEMUResetHandler(void *opaque);
-
-void qemu_register_reset(QEMUResetHandler *func, void *opaque);
-void qemu_unregister_reset(QEMUResetHandler *func, void *opaque);
-
 /* handler to set the boot_device order for a specific type of QEMUMachine */
 /* return 0 if success */
 typedef int QEMUBootSetHandler(void *opaque, const char *boot_devices);

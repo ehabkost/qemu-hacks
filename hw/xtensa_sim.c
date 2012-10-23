@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "hw/reset.h"
 #include "sysemu.h"
 #include "boards.h"
 #include "loader.h"

@@ -27,6 +27,7 @@
 #include "qemu-char.h"
 #include "qemu-timer.h"
 #include "exec-memory.h"
+#include "hw/reset.h"
 
 //#define DEBUG_SERIAL
 

@@ -8,6 +8,7 @@
  */
 
 #include "config.h"
+#include "hw/reset.h"
 #include "hw.h"
 #include "arm-misc.h"
 #include "sysemu.h"

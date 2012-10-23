@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include "sysbus.h"
+#include "hw/reset.h"
 #include "sysemu.h"
 #include "qemu-timer.h"
 #include "ptimer.h"

@@ -7,6 +7,7 @@
  * This code is licensed under the GPL.
  */
 
+#include "hw/reset.h"
 #include "sysbus.h"
 #include "arm-misc.h"
 #include "loader.h"

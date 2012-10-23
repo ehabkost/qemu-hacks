@@ -27,6 +27,7 @@
  *
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "sysemu.h"
 #include "sysbus.h"

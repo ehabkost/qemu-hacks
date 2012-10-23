@@ -26,6 +26,7 @@
 /* #define VERBOSE_ES1370 */
 #define SILENT_ES1370
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "audiodev.h"
 #include "audio/audio.h"

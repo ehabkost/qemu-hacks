@@ -7,6 +7,7 @@
  * All peripherial devices are attached to this "bus" with
  * the standard PC ISA addresses.
 */
+#include "hw/reset.h"
 #include "hw.h"
 #include "mips.h"
 #include "mips_cpudevs.h"

@@ -28,6 +28,7 @@
 #include <hw/pci.h>
 #include <hw/isa.h>
 #include "block.h"
+#include "hw/reset.h"
 #include "sysemu.h"
 #include "dma.h"
 

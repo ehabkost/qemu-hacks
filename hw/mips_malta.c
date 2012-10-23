@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "pc.h"
 #include "serial.h"

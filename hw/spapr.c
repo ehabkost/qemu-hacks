@@ -25,6 +25,7 @@
  *
  */
 #include "sysemu.h"
+#include "hw/reset.h"
 #include "hw.h"
 #include "elf.h"
 #include "net.h"

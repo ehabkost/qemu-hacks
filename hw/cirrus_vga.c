@@ -26,6 +26,7 @@
  * Reference: Finn Thogersons' VGADOC4b
  *   available at http://home.worldonline.dk/~finth/
  */
+#include "hw/reset.h"
 #include "hw.h"
 #include "pci.h"
 #include "console.h"

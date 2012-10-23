@@ -17,6 +17,7 @@
  * GNU GPL, version 2 or (at your option) any later version.
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "audiodev.h"
 #include "audio/audio.h"

@@ -42,6 +42,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "hw/reset.h"
 #include "hw.h"
 #include "disas.h"
 #include "monitor.h"

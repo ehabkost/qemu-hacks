@@ -1,5 +1,6 @@
 common-obj-y = usb/ ide/
 common-obj-y += loader.o
+common-obj-y += reset.o
 common-obj-$(CONFIG_VIRTIO) += virtio-console.o
 common-obj-$(CONFIG_VIRTIO) += virtio-rng.o
 common-obj-$(CONFIG_VIRTIO_PCI) += virtio-pci.o

@@ -14,6 +14,7 @@
 #include "hw/pc.h"
 #include "hw/xen_common.h"
 #include "hw/xen_backend.h"
+#include "hw/reset.h"
 #include "qmp-commands.h"
 
 #include "range.h"

@@ -25,6 +25,7 @@
 #include "qemu-option.h"
 #include "qemu-config.h"
 #include "sysemu.h"
+#include "hw/reset.h"
 #include "hw/hw.h"
 #include "hw/msi.h"
 #include "gdbstub.h"

@@ -14,6 +14,7 @@
 #include "config.h"
 #include "qemu-common.h"
 #include "net.h"
+#include "hw/reset.h"
 #include "hw.h"
 #include "pci.h"
 #include "boards.h"
