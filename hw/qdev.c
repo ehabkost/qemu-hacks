@@ -97,6 +97,18 @@ GCC_WEAK void vmstate_unregister(DeviceState *dev,
 {
 }
 
+
+/* sysbus stub functions
+ *
+ * The real implementation is on sysbus.c, but the stub functions will be used
+ * on cases where sysbus.c is not compiled in (e.g. *-user).
+ */
+
+GCC_WEAK BusState *sysbus_get_default(void)
+{
+    return NULL;
+}
+
 const VMStateDescription *qdev_get_vmsd(DeviceState *dev)
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
