@@ -5,5 +5,6 @@
 #include "qdev-core.h"
 #include "qdev-properties.h"
 #include "qdev-monitor.h"
+#include "qdev-reset.h"
 
 #endif
