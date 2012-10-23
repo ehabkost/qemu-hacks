@@ -193,7 +193,10 @@ void qbus_free(BusState *bus);
 
 #define FROM_QBUS(type, dev) DO_UPCAST(type, qbus, dev)
 
-/* This should go away once we get rid of the NULL bus hack */
+/* This should go away once we get rid of the NULL bus hack.
+ * This has a weak alias for a stub function on qdev.c (for *-user, that
+ * doesn't have a main system bus).
+ */
 BusState *sysbus_get_default(void);
 
 char *qdev_get_fw_dev_path(DeviceState *dev);
