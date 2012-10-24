@@ -15,6 +15,8 @@
 #include <glib.h>
 #include <string.h>
 #include "qapi/qmp-core.h"
+#include <glib.h>
+#include <string.h>
 
 static QTAILQ_HEAD(QmpCommandList, QmpCommand) qmp_commands =
     QTAILQ_HEAD_INITIALIZER(qmp_commands);

@@ -164,6 +164,8 @@ static inline void qemu_timersub(const struct timeval *val1,
 #define qemu_timersub timersub
 #endif
 
+int qemu_open(const char *name, int flags, ...);
+int qemu_close(int fd);
 void qemu_set_cloexec(int fd);
 
 void qemu_set_version(const char *);

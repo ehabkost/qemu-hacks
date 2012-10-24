@@ -7,6 +7,7 @@
 #include "qemu/object.h"
 #include "hw/irq.h"
 #include "error.h"
+#include "qemu-common.h"
 
 enum DevState {
     DEV_STATE_CREATED = 1,
@@ -21,6 +22,8 @@ enum {
 #define DEVICE(obj) OBJECT_CHECK(DeviceState, (obj), TYPE_DEVICE)
 #define DEVICE_CLASS(klass) OBJECT_CLASS_CHECK(DeviceClass, (klass), TYPE_DEVICE)
 #define DEVICE_GET_CLASS(obj) OBJECT_GET_CLASS(DeviceClass, (obj), TYPE_DEVICE)
+
+typedef struct DeviceState DeviceState;
 
 typedef int (*qdev_initfn)(DeviceState *dev);
 typedef int (*qdev_event)(DeviceState *dev);
