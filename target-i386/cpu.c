@@ -45,56 +45,6 @@
 #include "hw/apic_internal.h"
 #endif
 
-/* feature flags taken from "Intel Processor Identification and the CPUID
- * Instruction" and AMD's "CPUID Specification".  In cases of disagreement
- * between feature naming conventions, aliases may be added.
- */
-static const char *feature_name[] = {
-    "fpu", "vme", "de", "pse",
-    "tsc", "msr", "pae", "mce",
-    "cx8", "apic", NULL, "sep",
-    "mtrr", "pge", "mca", "cmov",
-    "pat", "pse36", "pn" /* Intel psn */, "clflush" /* Intel clfsh */,
-    NULL, "ds" /* Intel dts */, "acpi", "mmx",
-    "fxsr", "sse", "sse2", "ss",
-    "ht" /* Intel htt */, "tm", "ia64", "pbe",
-};
-static const char *ext_feature_name[] = {
-    "pni|sse3" /* Intel,AMD sse3 */, "pclmulqdq|pclmuldq", "dtes64", "monitor",
-    "ds_cpl", "vmx", "smx", "est",
-    "tm2", "ssse3", "cid", NULL,
-    "fma", "cx16", "xtpr", "pdcm",
-    NULL, "pcid", "dca", "sse4.1|sse4_1",
-    "sse4.2|sse4_2", "x2apic", "movbe", "popcnt",
-    "tsc-deadline", "aes", "xsave", "osxsave",
-    "avx", "f16c", "rdrand", "hypervisor",
-};
-/* Feature names that are already defined on feature_name[] but are set on
- * CPUID[8000_0001].EDX on AMD CPUs don't have their names on
- * ext2_feature_name[]. They are copied automatically to cpuid_ext2_features
- * if and only if CPU vendor is AMD.
- */
-static const char *ext2_feature_name[] = {
-    NULL /* fpu */, NULL /* vme */, NULL /* de */, NULL /* pse */,
-    NULL /* tsc */, NULL /* msr */, NULL /* pae */, NULL /* mce */,
-    NULL /* cx8 */ /* AMD CMPXCHG8B */, NULL /* apic */, NULL, "syscall",
-    NULL /* mtrr */, NULL /* pge */, NULL /* mca */, NULL /* cmov */,
-    NULL /* pat */, NULL /* pse36 */, NULL, NULL /* Linux mp */,
-    "nx|xd", NULL, "mmxext", NULL /* mmx */,
-    NULL /* fxsr */, "fxsr_opt|ffxsr", "pdpe1gb" /* AMD Page1GB */, "rdtscp",
-    NULL, "lm|i64", "3dnowext", "3dnow",
-};
-static const char *ext3_feature_name[] = {
-    "lahf_lm" /* AMD LahfSahf */, "cmp_legacy", "svm", "extapic" /* AMD ExtApicSpace */,
-    "cr8legacy" /* AMD AltMovCr8 */, "abm", "sse4a", "misalignsse",
-    "3dnowprefetch", "osvw", "ibs", "xop",
-    "skinit", "wdt", NULL, "lwp",
-    "fma4", "tce", NULL, "nodeid_msr",
-    NULL, "tbm", "topoext", "perfctr_core",
-    "perfctr_nb", NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL,
-};
-
 #if defined(CONFIG_KVM)
 static void x86_cpu_get_kvmclock(Object *obj, Visitor *v, void *opaque,
                                  const char *name, Error **errp)
@@ -1606,40 +1556,12 @@ error:
     return -1;
 }
 
-/* generate a composite string into buf of all cpuid names in featureset
- * selected by fbits.  indicate truncation at bufsize in the event of overflow.
- * if flags, suppress names undefined in featureset.
- */
-static void listflags(char *buf, int bufsize, uint32_t fbits,
-    const char **featureset, uint32_t flags)
-{
-    const char **p = &featureset[31];
-    char *q, *b, bit;
-    int nc;
-
-    b = 4 <= bufsize ? buf + (bufsize -= 3) - 1 : NULL;
-    *buf = '\0';
-    for (q = buf, bit = 31; fbits && bufsize; --p, fbits &= ~(1 << bit), --bit)
-        if (fbits & 1 << bit && (*p || !flags)) {
-            if (*p)
-                nc = snprintf(q, bufsize, "%s%s", q == buf ? "" : " ", *p);
-            else
-                nc = snprintf(q, bufsize, "%s[%d]", q == buf ? "" : " ", bit);
-            if (bufsize <= nc) {
-                if (b) {
-                    memcpy(b, "...", sizeof("..."));
-                }
-                return;
-            }
-            q += nc;
-            bufsize -= nc;
-        }
-}
-
 /* generate CPU information. */
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
     x86_def_t *def;
+    const Property *prop;
+    const DeviceClass *dc;
 
     for (def = x86_defs; def; def = def->next) {
         (*cpu_fprintf)(f, "x86 %16s  %-48s\n", def->name, def->model_id);
@@ -1647,15 +1569,15 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
     if (kvm_enabled()) {
         (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
     }
-    (*cpu_fprintf)(f, "\nRecognized CPUID flags:\n");
-    listflags(buf, sizeof(buf), (uint32_t)~0, feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext_feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext2_feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
-    listflags(buf, sizeof(buf), (uint32_t)~0, ext3_feature_name, 1);
-    (*cpu_fprintf)(f, "  %s\n", buf);
+    (*cpu_fprintf)(f, "\nRecognized CPUID flags:\n ");
+    QDEV_CLASS_FOREACH(dc, DEVICE_CLASS(object_class_by_name(TYPE_X86_CPU))) {
+        QDEV_PROP_FOREACH(prop, dc) {
+            if (strncmp(prop->name, "f-", 2) == 0) {
+                (*cpu_fprintf)(f, " %s", prop->name + 2);
+            }
+        }
+    }
+    (*cpu_fprintf)(f, "\n");                                   \
 }
 
 CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
