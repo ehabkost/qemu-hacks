@@ -37,6 +37,11 @@
 #if defined(CONFIG_KVM)
 #include <linux/kvm_para.h>
 #endif
+#include "hw/xen.h"
+#include "hw/apic_internal.h"
+#ifndef CONFIG_USER_ONLY
+#include "sysemu.h"
+#endif
 
 #if defined(CONFIG_KVM)
 static void x86_cpu_get_kvmclock(Object *obj, Visitor *v, void *opaque,
