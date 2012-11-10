@@ -1208,6 +1208,33 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
+/* Find a CPU model definition and put the result on a X86CPUDefinition struct
+ */
+static int cpu_x86_find_cpudef(const char *name,
+                               X86CPUDefinition *result,
+                               Error **errp)
+{
+    X86CPUDefinition *def;
+
+    for (def = x86_defs; def; def = def->next)
+        if (name && !strcmp(name, def->name))
+            break;
+    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
+        kvm_cpu_fill_host(result);
+    } else if (!def) {
+        goto error;
+    } else {
+        memcpy(result, def, sizeof(*def));
+    }
+    return 0;
+
+error:
+    if (!error_is_set(errp)) {
+        error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
+    }
+    return -1;
+}
+
 static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
                                 const char *cpu_model, Error **errp)
 {
@@ -1237,15 +1264,8 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
     name = model_pieces[0];
     features = model_pieces[1];
 
-    for (def = x86_defs; def; def = def->next)
-        if (name && !strcmp(name, def->name))
-            break;
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-        kvm_cpu_fill_host(x86_cpu_def);
-    } else if (!def) {
+    if (cpu_x86_find_cpudef(name, x86_cpu_def, errp) < 0) {
         goto error;
-    } else {
-        memcpy(x86_cpu_def, def, sizeof(*def));
     }
 
     add_flagname_to_bitmaps("hypervisor", &plus_features,
