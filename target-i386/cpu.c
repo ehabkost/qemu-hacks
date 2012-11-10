@@ -1213,9 +1213,10 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
 {
     unsigned int i;
     X86CPUDefinition *def;
-
-    char *s = g_strdup(cpu_model);
-    char *featurestr, *name = strtok(s, ",");
+    char *name; /* CPU model name */
+    char *features; /* Full feature "key=value,..." string */
+    char *featurestr; /* Single 'key=value" string being parsed */
+    gchar **model_pieces; /* array after split of name,features */
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = 0;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
@@ -1227,6 +1228,14 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
     uint32_t minus_kvm_features = 0, minus_svm_features = 0;
     uint32_t minus_7_0_ebx_features = 0;
     uint32_t numvalue;
+
+    model_pieces = g_strsplit(cpu_model, ",", 2);
+    if (!model_pieces[0]) {
+        goto error;
+    }
+
+    name = model_pieces[0];
+    features = model_pieces[1];
 
     for (def = x86_defs; def; def = def->next)
         if (name && !strcmp(name, def->name))
@@ -1243,7 +1252,7 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
             &plus_ext_features, &plus_ext2_features, &plus_ext3_features,
             &plus_kvm_features, &plus_svm_features,  &plus_7_0_ebx_features);
 
-    featurestr = strtok(NULL, ",");
+    featurestr = features ? strtok(features, ",") : NULL;
 
     while (featurestr) {
         char *val;
@@ -1377,11 +1386,11 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
     if (x86_cpu_def->cpuid_7_0_ebx_features && x86_cpu_def->level < 7) {
         x86_cpu_def->level = 7;
     }
-    g_free(s);
+    g_strfreev(model_pieces);
     return 0;
 
 error:
-    g_free(s);
+    g_strfreev(model_pieces);
     if (!error_is_set(errp)) {
         error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
     }
