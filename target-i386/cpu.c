@@ -1602,8 +1602,7 @@ void x86_cpudef_setup(void)
         X86CPUDefinition *def = &builtin_x86_defs[i];
         def->next = x86_defs;
 
-        /* Look for specific "cpudef" models that */
-        /* have the QEMU version in .model_id */
+        /* Look for specific models that have the QEMU version in .model_id */
         for (j = 0; j < ARRAY_SIZE(model_with_versions); j++) {
             if (strcmp(model_with_versions[j], def->name) == 0) {
                 pstrcpy(def->model_id, sizeof(def->model_id),
