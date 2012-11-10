@@ -1235,15 +1235,11 @@ error:
     return -1;
 }
 
-static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
-                                const char *cpu_model, Error **errp)
+static int cpu_x86_parse_featurestr(X86CPUDefinition *x86_cpu_def,
+                                    char *features, Error **errp)
 {
     unsigned int i;
-    X86CPUDefinition *def;
-    char *name; /* CPU model name */
-    char *features; /* Full feature "key=value,..." string */
     char *featurestr; /* Single 'key=value" string being parsed */
-    gchar **model_pieces; /* array after split of name,features */
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = 0;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
@@ -1255,18 +1251,6 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
     uint32_t minus_kvm_features = 0, minus_svm_features = 0;
     uint32_t minus_7_0_ebx_features = 0;
     uint32_t numvalue;
-
-    model_pieces = g_strsplit(cpu_model, ",", 2);
-    if (!model_pieces[0]) {
-        goto error;
-    }
-
-    name = model_pieces[0];
-    features = model_pieces[1];
-
-    if (cpu_x86_find_cpudef(name, x86_cpu_def, errp) < 0) {
-        goto error;
-    }
 
     add_flagname_to_bitmaps("hypervisor", &plus_features,
             &plus_ext_features, &plus_ext2_features, &plus_ext3_features,
@@ -1406,11 +1390,9 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
     if (x86_cpu_def->cpuid_7_0_ebx_features && x86_cpu_def->level < 7) {
         x86_cpu_def->level = 7;
     }
-    g_strfreev(model_pieces);
     return 0;
 
 error:
-    g_strfreev(model_pieces);
     if (!error_is_set(errp)) {
         error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
     }
@@ -1589,6 +1571,8 @@ X86CPU *cpu_x86_init(const char *cpu_string)
     CPUX86State *env;
     Error *error = NULL;
     X86CPUDefinition def;
+    char *name, *features;
+    gchar **model_pieces;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
@@ -1596,7 +1580,18 @@ X86CPU *cpu_x86_init(const char *cpu_string)
 
     memset(&def, 0, sizeof(def));
 
-    if (cpu_x86_find_by_name(&def, cpu_string, &error) < 0) {
+    model_pieces = g_strsplit(cpu_string, ",", 2);
+    if (!model_pieces[0]) {
+        goto error;
+    }
+    name = model_pieces[0];
+    features = model_pieces[1];
+
+    if (cpu_x86_find_cpudef(name, &def, &error) < 0) {
+        goto error;
+    }
+
+    if (cpu_x86_parse_featurestr(&def, features, &error) < 0) {
         goto error;
     }
 
@@ -1608,8 +1603,11 @@ X86CPU *cpu_x86_init(const char *cpu_string)
     if (error) {
         goto error;
     }
+
+    g_strfreev(model_pieces);
     return cpu;
 error:
+    g_strfreev(model_pieces);
     object_delete(OBJECT(cpu));
     if (error) {
         error_report("cpu_x86_init: %s", error_get_pretty(error));
