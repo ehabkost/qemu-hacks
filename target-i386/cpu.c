@@ -1254,15 +1254,12 @@ error:
     return -1;
 }
 
-/* Parse full "model,+feature,-feature,feature=foo" CPU model string
+/* Parse "+feature,-feature,feature=foo" CPU feature string
  */
-static int cpu_x86_parse_cpu_model(x86_def_t *x86_cpu_def, const char *cpu_model)
+static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
 {
     unsigned int i;
-    char *name; /* CPU model name */
-    char *features; /* Full feature "key=value,..." string */
     char *featurestr; /* Single 'key=value" string being parsed */
-    gchar **model_pieces; /* array after split of name,features */
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = 0;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
@@ -1274,18 +1271,6 @@ static int cpu_x86_parse_cpu_model(x86_def_t *x86_cpu_def, const char *cpu_model
     uint32_t minus_kvm_features = 0, minus_svm_features = 0;
     uint32_t minus_7_0_ebx_features = 0;
     uint32_t numvalue;
-
-    model_pieces = g_strsplit(cpu_model, ",", 2);
-    if (!model_pieces[0]) {
-        goto error;
-    }
-
-    name = model_pieces[0];
-    features = model_pieces[1];
-
-    if (cpu_x86_find_by_name(x86_cpu_def, name) < 0) {
-        goto error;
-    }
 
     add_flagname_to_bitmaps("hypervisor", &plus_features,
             &plus_ext_features, &plus_ext2_features, &plus_ext3_features,
@@ -1425,11 +1410,9 @@ static int cpu_x86_parse_cpu_model(x86_def_t *x86_cpu_def, const char *cpu_model
     if (x86_cpu_def->cpuid_7_0_ebx_features && x86_cpu_def->level < 7) {
         x86_cpu_def->level = 7;
     }
-    g_strfreev(model_pieces);
     return 0;
 
 error:
-    g_strfreev(model_pieces);
     return -1;
 }
 
@@ -1539,11 +1522,24 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     CPUX86State *env = &cpu->env;
     x86_def_t def1, *def = &def1;
     Error *error = NULL;
+    char *name, *features;
+    gchar **model_pieces;
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_parse_cpu_model(def, cpu_model) < 0) {
-        return -1;
+    model_pieces = g_strsplit(cpu_model, ",", 2);
+    if (!model_pieces[0]) {
+        goto error;
+    }
+    name = model_pieces[0];
+    features = model_pieces[1];
+
+    if (cpu_x86_find_by_name(def, name) < 0) {
+        goto error;
+    }
+
+    if (cpu_x86_parse_featurestr(def, features) < 0) {
+        goto error;
     }
 
     assert(def->vendor1);
@@ -1584,7 +1580,12 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
         error_free(error);
         return -1;
     }
+
+    g_strfreev(model_pieces);
     return 0;
+error:
+    g_strfreev(model_pieces);
+    return -1;
 }
 
 #if !defined(CONFIG_USER_ONLY)
