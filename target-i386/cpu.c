@@ -1551,32 +1551,24 @@ static int cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     return 0;
 }
 
-static int cpu_x86_register(X86CPU *cpu, const char *cpu_model, Error **errp)
-{
-    X86CPUDefinition def1, *def = &def1;
-
-    memset(def, 0, sizeof(*def));
-
-    if (cpu_x86_find_by_name(def, cpu_model) < 0) {
-        return -1;
-    }
-    if (cpudef_2_x86_cpu(cpu, def, errp) < 0) {
-        return -1;
-    }
-    return 0;
-}
-
 X86CPU *cpu_x86_init(const char *cpu_model)
 {
     X86CPU *cpu;
     CPUX86State *env;
     Error *error = NULL;
+    X86CPUDefinition def1, *def = &def1;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
 
-    if (cpu_x86_register(cpu, cpu_model, &error) < 0) {
+    memset(def, 0, sizeof(*def));
+
+    if (cpu_x86_find_by_name(def, cpu_model) < 0) {
+        goto error;
+    }
+
+    if (cpudef_2_x86_cpu(cpu, def, &error) < 0) {
         goto error;
     }
 
