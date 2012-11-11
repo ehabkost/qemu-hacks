@@ -1209,7 +1209,7 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
 }
 
 static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
-                                const char *cpu_model)
+                                const char *cpu_model, Error **errp)
 {
     unsigned int i;
     X86CPUDefinition *def;
@@ -1382,6 +1382,9 @@ static int cpu_x86_find_by_name(X86CPUDefinition *x86_cpu_def,
 
 error:
     g_free(s);
+    if (!error_is_set(errp)) {
+        error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
+    }
     return -1;
 }
 
@@ -1564,7 +1567,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_find_by_name(def, cpu_model) < 0) {
+    if (cpu_x86_find_by_name(def, cpu_model, &error) < 0) {
         goto error;
     }
 
