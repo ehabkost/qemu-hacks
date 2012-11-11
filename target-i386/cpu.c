@@ -1486,7 +1486,7 @@ static void filter_features_for_kvm(X86CPU *cpu)
 }
 #endif
 
-static int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
+static int cpu_x86_register(X86CPU *cpu, const char *cpu_model, Error **errp)
 {
     CPUX86State *env = &cpu->env;
     X86CPUDefinition def1, *def = &def1;
@@ -1551,8 +1551,7 @@ static int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     }
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
     if (error) {
-        fprintf(stderr, "%s\n", error_get_pretty(error));
-        error_free(error);
+        error_propagate(errp, error);
         return -1;
     }
     return 0;
@@ -1568,7 +1567,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
 
-    if (cpu_x86_register(cpu, cpu_model) < 0) {
+    if (cpu_x86_register(cpu, cpu_model, &error) < 0) {
         goto error;
     }
 
