@@ -1511,18 +1511,19 @@ static int cpu_x86_register(X86CPU *cpu, const char *cpu_model, Error **errp)
     object_property_set_int(OBJECT(cpu), def->family, "family", &error);
     object_property_set_int(OBJECT(cpu), def->model, "model", &error);
     object_property_set_int(OBJECT(cpu), def->stepping, "stepping", &error);
+    object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", &error);
+    object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
+                            "tsc-frequency", &error);
+    object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
     env->cpuid_features = def->features;
     env->cpuid_ext_features = def->ext_features;
     env->cpuid_ext2_features = def->ext2_features;
     env->cpuid_ext3_features = def->ext3_features;
-    object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", &error);
     env->cpuid_kvm_features = def->kvm_features;
     env->cpuid_svm_features = def->svm_features;
     env->cpuid_ext4_features = def->ext4_features;
     env->cpuid_7_0_ebx_features = def->cpuid_7_0_ebx_features;
     env->cpuid_xlevel2 = def->xlevel2;
-    object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
-                            "tsc-frequency", &error);
 
     /* On AMD CPUs, some CPUID[8000_0001].EDX bits must match the bits on
      * CPUID[1].EDX.
@@ -1549,7 +1550,6 @@ static int cpu_x86_register(X86CPU *cpu, const char *cpu_model, Error **errp)
         filter_features_for_kvm(cpu);
 #endif
     }
-    object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
     if (error) {
         error_propagate(errp, error);
         return -1;
