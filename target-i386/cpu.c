@@ -1588,19 +1588,19 @@ X86CPU *cpu_x86_init(const char *cpu_string)
     X86CPU *cpu;
     CPUX86State *env;
     Error *error = NULL;
-    X86CPUDefinition def1, *def = &def1;
+    X86CPUDefinition def;
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
     env->cpu_model_str = cpu_string;
 
-    memset(def, 0, sizeof(*def));
+    memset(&def, 0, sizeof(def));
 
-    if (cpu_x86_find_by_name(def, cpu_string, &error) < 0) {
+    if (cpu_x86_find_by_name(&def, cpu_string, &error) < 0) {
         goto error;
     }
 
-    if (cpudef_2_x86_cpu(cpu, def, &error) < 0) {
+    if (cpudef_2_x86_cpu(cpu, &def, &error) < 0) {
         goto error;
     }
 
