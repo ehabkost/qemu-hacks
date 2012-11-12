@@ -1583,7 +1583,7 @@ static int cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     return 0;
 }
 
-X86CPU *cpu_x86_init(const char *cpu_model)
+X86CPU *cpu_x86_init(const char *cpu_string)
 {
     X86CPU *cpu;
     CPUX86State *env;
@@ -1592,11 +1592,11 @@ X86CPU *cpu_x86_init(const char *cpu_model)
 
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
-    env->cpu_model_str = cpu_model;
+    env->cpu_model_str = cpu_string;
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_find_by_name(def, cpu_model, &error) < 0) {
+    if (cpu_x86_find_by_name(def, cpu_string, &error) < 0) {
         goto error;
     }
 
