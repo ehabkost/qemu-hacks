@@ -25,6 +25,7 @@
 #define CPUArchState struct CPULM32State
 
 #include "config.h"
+#include "hw/qdev-core.h"
 #include "qemu-common.h"
 #include "cpu-defs.h"
 struct CPULM32State;

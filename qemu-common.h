@@ -24,7 +24,6 @@
 typedef struct QEMUTimer QEMUTimer;
 typedef struct QEMUFile QEMUFile;
 typedef struct QEMUBH QEMUBH;
-typedef struct DeviceState DeviceState;
 
 struct Monitor;
 typedef struct Monitor Monitor;

@@ -11,6 +11,7 @@
 
 #include "bswap.h"
 #include "qemu-queue.h"
+#include "hw/qdev-core.h"
 
 #if !defined(CONFIG_USER_ONLY)
 

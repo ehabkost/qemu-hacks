@@ -17,6 +17,8 @@ typedef struct BusState BusState;
 
 typedef struct BusClass BusClass;
 
+typedef struct DeviceState DeviceState;
+
 typedef struct Monitor Monitor;
 
 enum DevState {
