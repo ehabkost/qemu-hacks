@@ -1,6 +1,7 @@
 #ifndef _LIBSLIRP_H
 #define _LIBSLIRP_H
 
+#include "hw/qdev-core.h"
 #include "qemu-common.h"
 
 struct Slirp;

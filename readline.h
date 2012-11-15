@@ -1,6 +1,7 @@
 #ifndef READLINE_H
 #define READLINE_H
 
+#include "hw/qdev-core.h"
 #include "qemu-common.h"
 
 #define READLINE_CMD_BUF_SIZE 4095

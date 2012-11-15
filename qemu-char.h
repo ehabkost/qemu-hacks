@@ -1,6 +1,7 @@
 #ifndef QEMU_CHAR_H
 #define QEMU_CHAR_H
 
+#include "hw/qdev-core.h"
 #include "qemu-common.h"
 #include "qemu-queue.h"
 #include "qemu-option.h"

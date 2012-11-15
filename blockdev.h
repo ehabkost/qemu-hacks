@@ -13,6 +13,7 @@
 #include "block.h"
 #include "error.h"
 #include "qemu-queue.h"
+#include "hw/qdev-core.h"
 
 void blockdev_mark_auto_del(BlockDriverState *bs);
 void blockdev_auto_del(BlockDriverState *bs);

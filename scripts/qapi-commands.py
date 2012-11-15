@@ -341,6 +341,7 @@ def gen_command_decl_prologue(header, guard, prefix=""):
 #ifndef %(guard)s
 #define %(guard)s
 
+#include "hw/qdev-core.h"
 #include "%(prefix)sqapi-types.h"
 #include "qdict.h"
 #include "error.h"

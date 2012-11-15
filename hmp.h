@@ -14,6 +14,7 @@
 #ifndef HMP_H
 #define HMP_H
 
+#include "hw/qdev-core.h"
 #include "qemu-common.h"
 #include "qapi-types.h"
 #include "qdict.h"

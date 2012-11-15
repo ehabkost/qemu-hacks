@@ -25,8 +25,6 @@ typedef struct QEMUTimer QEMUTimer;
 typedef struct QEMUFile QEMUFile;
 typedef struct QEMUBH QEMUBH;
 
-struct Monitor;
-typedef struct Monitor Monitor;
 typedef struct MigrationParams MigrationParams;
 
 /* we put basic includes here to avoid repeating them in device drivers */
