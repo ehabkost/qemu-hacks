@@ -108,10 +108,6 @@ void bdrv_iostatus_reset(BlockDriverState *bs);
 void bdrv_iostatus_disable(BlockDriverState *bs);
 bool bdrv_iostatus_is_enabled(const BlockDriverState *bs);
 void bdrv_iostatus_set_err(BlockDriverState *bs, int error);
-void bdrv_info_print(Monitor *mon, const QObject *data);
-void bdrv_info(Monitor *mon, QObject **ret_data);
-void bdrv_stats_print(Monitor *mon, const QObject *data);
-void bdrv_info_stats(Monitor *mon, QObject **ret_data);
 
 /* disk I/O throttling */
 void bdrv_io_limits_enable(BlockDriverState *bs);
