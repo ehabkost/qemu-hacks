@@ -17,6 +17,8 @@ typedef struct BusState BusState;
 
 typedef struct BusClass BusClass;
 
+typedef struct Monitor Monitor;
+
 enum DevState {
     DEV_STATE_CREATED = 1,
     DEV_STATE_INITIALIZED,
