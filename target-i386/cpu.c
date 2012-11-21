@@ -1486,17 +1486,11 @@ static void filter_features_for_kvm(X86CPU *cpu)
 }
 #endif
 
-static int cpu_x86_register(X86CPU *cpu, const char *cpu_model, Error **errp)
+static int cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
 {
     CPUX86State *env = &cpu->env;
-    X86CPUDefinition def1, *def = &def1;
     Error *error = NULL;
 
-    memset(def, 0, sizeof(*def));
-
-    if (cpu_x86_find_by_name(def, cpu_model) < 0) {
-        return -1;
-    }
     if (def->vendor1) {
         env->cpuid_vendor1 = def->vendor1;
         env->cpuid_vendor2 = def->vendor2;
@@ -1552,6 +1546,21 @@ static int cpu_x86_register(X86CPU *cpu, const char *cpu_model, Error **errp)
     }
     if (error) {
         error_propagate(errp, error);
+        return -1;
+    }
+    return 0;
+}
+
+static int cpu_x86_register(X86CPU *cpu, const char *cpu_model, Error **errp)
+{
+    X86CPUDefinition def1, *def = &def1;
+
+    memset(def, 0, sizeof(*def));
+
+    if (cpu_x86_find_by_name(def, cpu_model) < 0) {
+        return -1;
+    }
+    if (cpudef_2_x86_cpu(cpu, def, errp) < 0) {
         return -1;
     }
     return 0;
