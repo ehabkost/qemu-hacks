@@ -275,14 +275,14 @@ static Property cpu_x86_properties[] = {
     FEAT("f-perfctr_nb", env.cpuid_ext3_features, 24, false),
 #if defined(CONFIG_KVM)
     DEFINE_PROP_KVMCLOCK("f-kvmclock", env.cpuid_kvm_features),
-    FEAT("f-kvmclock1", env.cpuid_kvm_features,  0, false),
-    FEAT("f-kvm_nopiodelay", env.cpuid_kvm_features,  1, false),
-    FEAT("f-kvm_mmu", env.cpuid_kvm_features,  2, false),
-    FEAT("f-kvmclock2", env.cpuid_kvm_features,  3, false),
-    FEAT("f-kvm_asyncpf", env.cpuid_kvm_features,  4, false),
-    FEAT("f-kvm_steal_tm", env.cpuid_kvm_features,  5, false),
+    FEAT("f-kvmclock1", env.cpuid_kvm_features,  0, true),
+    FEAT("f-kvm_nopiodelay", env.cpuid_kvm_features,  1, true),
+    FEAT("f-kvm_mmu", env.cpuid_kvm_features,  2, true),
+    FEAT("f-kvmclock2", env.cpuid_kvm_features,  3, true),
+    FEAT("f-kvm_asyncpf", env.cpuid_kvm_features,  4, true),
+    FEAT("f-kvm_steal_tm", env.cpuid_kvm_features,  5, true),
     FEAT("f-kvm_pv_eoi", env.cpuid_kvm_features,  6, false),
-    FEAT("f-kvmclock_stable", env.cpuid_kvm_features,  24, false),
+    FEAT("f-kvmclock_stable", env.cpuid_kvm_features,  24, true),
 #endif
     FEAT("f-npt", env.cpuid_svm_features,  0, false),
     FEAT("f-lbrv", env.cpuid_svm_features,  1, false),
@@ -322,17 +322,10 @@ typedef struct model_features_t {
 int check_cpuid = 0;
 int enforce_cpuid = 0;
 
+static uint32_t kvm_default_features;
 #if defined(CONFIG_KVM)
-static uint32_t kvm_default_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
-        (1 << KVM_FEATURE_NOP_IO_DELAY) |
-        (1 << KVM_FEATURE_MMU_OP) |
-        (1 << KVM_FEATURE_CLOCKSOURCE2) |
-        (1 << KVM_FEATURE_ASYNC_PF) |
-        (1 << KVM_FEATURE_STEAL_TIME) |
-        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
 static const uint32_t kvm_pv_eoi_features = (0x1 << KVM_FEATURE_PV_EOI);
 #else
-static uint32_t kvm_default_features = 0;
 static const uint32_t kvm_pv_eoi_features = 0;
 #endif
 
@@ -1757,7 +1750,7 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
         goto error;
     }
 
-    def->kvm_features |= kvm_default_features;
+    def->kvm_features |= kvm_default_features | cpu->env.cpuid_kvm_features;
     def->ext_features |= cpu->env.cpuid_ext_features & CPUID_EXT_HYPERVISOR;
 
     if (cpu_x86_parse_featurestr(def, features) < 0) {
