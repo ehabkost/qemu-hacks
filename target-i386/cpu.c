@@ -281,7 +281,7 @@ static Property cpu_x86_properties[] = {
     FEAT("f-kvmclock2", env.cpuid_kvm_features,  3, true),
     FEAT("f-kvm_asyncpf", env.cpuid_kvm_features,  4, true),
     FEAT("f-kvm_steal_tm", env.cpuid_kvm_features,  5, true),
-    FEAT("f-kvm_pv_eoi", env.cpuid_kvm_features,  6, false),
+    FEAT("f-kvm_pv_eoi", env.cpuid_kvm_features,  6, true),
     FEAT("f-kvmclock_stable", env.cpuid_kvm_features,  24, true),
 #endif
     FEAT("f-npt", env.cpuid_svm_features,  0, false),
@@ -321,18 +321,6 @@ typedef struct model_features_t {
 
 int check_cpuid = 0;
 int enforce_cpuid = 0;
-
-static uint32_t kvm_default_features;
-#if defined(CONFIG_KVM)
-static const uint32_t kvm_pv_eoi_features = (0x1 << KVM_FEATURE_PV_EOI);
-#else
-static const uint32_t kvm_pv_eoi_features = 0;
-#endif
-
-void enable_kvm_pv_eoi(void)
-{
-    kvm_default_features |= kvm_pv_eoi_features;
-}
 
 void host_cpuid(uint32_t function, uint32_t count,
                 uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
@@ -1750,7 +1738,7 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
         goto error;
     }
 
-    def->kvm_features |= kvm_default_features | cpu->env.cpuid_kvm_features;
+    def->kvm_features |= cpu->env.cpuid_kvm_features;
     def->ext_features |= cpu->env.cpuid_ext_features & CPUID_EXT_HYPERVISOR;
 
     if (cpu_x86_parse_featurestr(def, features) < 0) {
