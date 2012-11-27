@@ -1263,7 +1263,7 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
     /* Features to be added*/
     uint32_t plus_features = 0, plus_ext_features = 0;
     uint32_t plus_ext2_features = 0, plus_ext3_features = 0;
-    uint32_t plus_kvm_features = kvm_default_features, plus_svm_features = 0;
+    uint32_t plus_kvm_features = 0, plus_svm_features = 0;
     uint32_t plus_7_0_ebx_features = 0;
     /* Features to be removed */
     uint32_t minus_features = 0, minus_ext_features = 0;
@@ -1271,10 +1271,6 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
     uint32_t minus_kvm_features = 0, minus_svm_features = 0;
     uint32_t minus_7_0_ebx_features = 0;
     uint32_t numvalue;
-
-    add_flagname_to_bitmaps("hypervisor", &plus_features,
-            &plus_ext_features, &plus_ext2_features, &plus_ext3_features,
-            &plus_kvm_features, &plus_svm_features,  &plus_7_0_ebx_features);
 
     featurestr = features ? strtok(features, ",") : NULL;
 
@@ -1537,6 +1533,12 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     if (cpu_x86_find_by_name(def, name) < 0) {
         goto error;
     }
+
+    def->kvm_features |= kvm_default_features;
+    add_flagname_to_bitmaps("hypervisor", &def->features,
+            &def->ext_features, &def->ext2_features, &def->ext3_features,
+            &def->kvm_features, &def->svm_features,
+            &def->cpuid_7_0_ebx_features);
 
     if (cpu_x86_parse_featurestr(def, features) < 0) {
         goto error;
