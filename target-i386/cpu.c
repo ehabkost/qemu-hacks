@@ -1640,11 +1640,9 @@ static void listflags(char *buf, int bufsize, uint32_t fbits,
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
     x86_def_t *def;
-    char buf[256];
 
     for (def = x86_defs; def; def = def->next) {
-        snprintf(buf, sizeof(buf), "%s", def->name);
-        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->model_id);
+        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", def->name, def->model_id);
     }
     if (kvm_enabled()) {
         (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
