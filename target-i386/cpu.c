@@ -124,6 +124,42 @@ static const char *cpuid_7_0_ebx_feature_name[] = {
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
 
+#if defined(CONFIG_KVM)
+static void x86_cpu_get_kvmclock(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    bool value = cpu->env.cpuid_kvm_features;
+    value = (value & KVM_FEATURE_CLOCKSOURCE) &&
+            (value & KVM_FEATURE_CLOCKSOURCE2);
+    visit_type_bool(v, &value, name, errp);
+}
+
+static void x86_cpu_set_kvmclock(Object *obj, Visitor *v, void *opaque,
+                                 const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    bool value;
+    visit_type_bool(v, &value, name, errp);
+    if (value == true) {
+        cpu->env.cpuid_kvm_features |= KVM_FEATURE_CLOCKSOURCE |
+                                      KVM_FEATURE_CLOCKSOURCE2;
+    } else {
+        cpu->env.cpuid_kvm_features &= ~(KVM_FEATURE_CLOCKSOURCE |
+                                       KVM_FEATURE_CLOCKSOURCE2);
+    }
+}
+
+PropertyInfo qdev_prop_kvmclock = {
+    .name  = "boolean",
+    .get   = x86_cpu_get_kvmclock,
+    .set   = x86_cpu_set_kvmclock,
+};
+#define DEFINE_PROP_KVMCLOCK(_n, _f)                                           \
+    DEFINE_PROP(_n, X86CPU, _f, qdev_prop_kvmclock, uint32_t)
+
+#endif
+
 #define FEAT(_name, _field, _bit, _val) \
     DEFINE_PROP_BIT(_name, X86CPU, _field, _bit, _val)
 
@@ -238,7 +274,8 @@ static Property cpu_x86_properties[] = {
     FEAT("f-perfctr_core", env.cpuid_ext3_features, 23, false),
     FEAT("f-perfctr_nb", env.cpuid_ext3_features, 24, false),
 #if defined(CONFIG_KVM)
-    FEAT("f-kvmclock", env.cpuid_kvm_features,  0, false),
+    DEFINE_PROP_KVMCLOCK("f-kvmclock", env.cpuid_kvm_features),
+    FEAT("f-kvmclock1", env.cpuid_kvm_features,  0, false),
     FEAT("f-kvm_nopiodelay", env.cpuid_kvm_features,  1, false),
     FEAT("f-kvm_mmu", env.cpuid_kvm_features,  2, false),
     FEAT("f-kvmclock2", env.cpuid_kvm_features,  3, false),
