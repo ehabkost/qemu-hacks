@@ -1208,33 +1208,6 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
-/* Find a CPU model definition and put the result on a X86CPUDefinition struct
- */
-static int cpu_x86_find_cpudef(const char *name,
-                               X86CPUDefinition *result,
-                               Error **errp)
-{
-    X86CPUDefinition *def;
-
-    for (def = x86_defs; def; def = def->next)
-        if (name && !strcmp(name, def->name))
-            break;
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-        kvm_cpu_fill_host(result);
-    } else if (!def) {
-        goto error;
-    } else {
-        memcpy(result, def, sizeof(*def));
-    }
-    return 0;
-
-error:
-    if (!error_is_set(errp)) {
-        error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
-    }
-    return -1;
-}
-
 static int cpu_x86_parse_featurestr(X86CPU *cpu, char *features, Error **errp)
 {
     CPUX86State *env = &cpu->env;
@@ -1563,13 +1536,50 @@ static int cpudef_2_x86_cpu(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     }
     return 0;
 }
+/* Create a X86CPU object, based on the model name
+ */
+static X86CPU *cpu_x86_new(const char *name, Error **errp)
+{
+    X86CPUDefinition cpudef;
+    X86CPU *cpu = NULL;
+
+    memset(&cpudef, 0, sizeof(cpudef));
+
+    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
+        kvm_cpu_fill_host(&cpudef);
+    } else {
+        X86CPUDefinition *d;
+        for (d = x86_defs; d; d = d->next) {
+            if (name && !strcmp(name, d->name)) {
+                memcpy(&cpudef, d, sizeof(cpudef));
+                break;
+            }
+        }
+        if (!d) {
+            goto error;
+        }
+    }
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+
+    if (cpudef_2_x86_cpu(cpu, &cpudef, errp) < 0) {
+        goto error;
+    }
+
+    return cpu;
+
+error:
+    if (!error_is_set(errp)) {
+        error_set(errp, QERR_INVALID_PARAMETER_COMBINATION);
+    }
+    return NULL;
+}
 
 X86CPU *cpu_x86_init(const char *cpu_string)
 {
     X86CPU *cpu = NULL;
     CPUX86State *env;
     Error *error = NULL;
-    X86CPUDefinition def;
     char *name, *features;
     gchar **model_pieces;
 
@@ -1580,19 +1590,12 @@ X86CPU *cpu_x86_init(const char *cpu_string)
     name = model_pieces[0];
     features = model_pieces[1];
 
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    cpu = cpu_x86_new(name, &error);
+    if (!cpu) {
+        goto error;
+    }
     env = &cpu->env;
     env->cpu_model_str = cpu_string;
-
-    memset(&def, 0, sizeof(def));
-
-    if (cpu_x86_find_cpudef(name, &def, &error) < 0) {
-        goto error;
-    }
-
-    if (cpudef_2_x86_cpu(cpu, &def, &error) < 0) {
-        goto error;
-    }
 
     if (cpu_x86_parse_featurestr(cpu, features, &error) < 0) {
         goto error;
