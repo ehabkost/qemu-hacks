@@ -921,25 +921,25 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
     return 0;
 }
 
-/* best effort attempt to inform user requested cpu flags aren't making
- * their way to the guest.  Note: ft[].check_feat ideally should be
- * specified via a guest_def field to suppress report of extraneous flags.
+/* Check if any flags are going to be filtered out because they are not
+ * supported by the host.
  *
  * This function may be called only if KVM is enabled.
  */
-static int kvm_check_features_against_host(X86CPUDefinition *guest_def)
+static int kvm_check_features_against_host(X86CPU *cpu)
 {
+    CPUX86State *env = &cpu->env;
     X86CPUDefinition host_def;
     uint32_t mask;
     int rv, i;
     struct model_features_t ft[] = {
-        {&guest_def->features, &host_def.features,
+        {&env->cpuid_features, &host_def.features,
             ~0, feature_name, 0x00000000},
-        {&guest_def->ext_features, &host_def.ext_features,
+        {&env->cpuid_ext_features, &host_def.ext_features,
             ~CPUID_EXT_HYPERVISOR, ext_feature_name, 0x00000001},
-        {&guest_def->ext2_features, &host_def.ext2_features,
+        {&env->cpuid_ext2_features, &host_def.ext2_features,
             ~PPRO_FEATURES, ext2_feature_name, 0x80000000},
-        {&guest_def->ext3_features, &host_def.ext3_features,
+        {&env->cpuid_ext3_features, &host_def.ext3_features,
             ~CPUID_EXT3_SVM, ext3_feature_name, 0x80000001}};
 
     assert(kvm_enabled());
@@ -1384,7 +1384,7 @@ static int cpu_x86_parse_featurestr(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
     x86_cpu_def->svm_features &= ~minus_svm_features;
     x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
     if (check_cpuid && kvm_enabled()) {
-        if (kvm_check_features_against_host(x86_cpu_def) && enforce_cpuid) {
+        if (kvm_check_features_against_host(cpu) && enforce_cpuid) {
             error_set(errp, QERR_MISSING_HOST_CAP);
             goto error;
         }
