@@ -1383,12 +1383,6 @@ static int cpu_x86_parse_featurestr(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
     x86_cpu_def->kvm_features &= ~minus_kvm_features;
     x86_cpu_def->svm_features &= ~minus_svm_features;
     x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
-    if (check_cpuid && kvm_enabled()) {
-        if (kvm_check_features_against_host(cpu) && enforce_cpuid) {
-            error_set(errp, QERR_MISSING_HOST_CAP);
-            goto error;
-        }
-    }
     if (x86_cpu_def->cpuid_7_0_ebx_features && x86_cpu_def->level < 7) {
         x86_cpu_def->level = 7;
     }
@@ -2112,6 +2106,13 @@ static void x86_cpu_apic_init(X86CPU *cpu, Error **errp)
 void x86_cpu_realize(Object *obj, Error **errp)
 {
     X86CPU *cpu = X86_CPU(obj);
+
+    if (check_cpuid && kvm_enabled()) {
+        if (kvm_check_features_against_host(cpu) && enforce_cpuid) {
+            error_set(errp, QERR_MISSING_HOST_CAP);
+            return;
+        }
+    }
 
 #ifndef CONFIG_USER_ONLY
     qemu_register_reset(x86_cpu_machine_reset_cb, cpu);
