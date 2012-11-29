@@ -1384,8 +1384,10 @@ static int cpu_x86_parse_featurestr(X86CPUDefinition *x86_cpu_def,
     x86_cpu_def->svm_features &= ~minus_svm_features;
     x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
     if (check_cpuid && kvm_enabled()) {
-        if (kvm_check_features_against_host(x86_cpu_def) && enforce_cpuid)
+        if (kvm_check_features_against_host(x86_cpu_def) && enforce_cpuid) {
+            error_set(errp, QERR_MISSING_HOST_CAP);
             goto error;
+        }
     }
     if (x86_cpu_def->cpuid_7_0_ebx_features && x86_cpu_def->level < 7) {
         x86_cpu_def->level = 7;

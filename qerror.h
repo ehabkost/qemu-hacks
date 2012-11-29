@@ -168,6 +168,9 @@ void assert_no_error(Error *err);
 #define QERR_MIGRATION_NOT_SUPPORTED \
     ERROR_CLASS_GENERIC_ERROR, "State blocked by non-migratable device '%s'"
 
+#define QERR_MISSING_HOST_CAP \
+    ERROR_CLASS_K_V_M_MISSING_CAP, "Host does not support requested features"
+
 #define QERR_MISSING_PARAMETER \
     ERROR_CLASS_GENERIC_ERROR, "Parameter '%s' is missing"
 
