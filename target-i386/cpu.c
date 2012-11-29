@@ -1235,7 +1235,7 @@ error:
     return -1;
 }
 
-static int cpu_x86_parse_featurestr(X86CPUDefinition *x86_cpu_def,
+static int cpu_x86_parse_featurestr(X86CPU *cpu, X86CPUDefinition *x86_cpu_def,
                                     char *features, Error **errp)
 {
     unsigned int i;
@@ -1593,7 +1593,7 @@ X86CPU *cpu_x86_init(const char *cpu_string)
         goto error;
     }
 
-    if (cpu_x86_parse_featurestr(&def, features, &error) < 0) {
+    if (cpu_x86_parse_featurestr(cpu, &def, features, &error) < 0) {
         goto error;
     }
 
