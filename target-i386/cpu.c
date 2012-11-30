@@ -1235,7 +1235,9 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
-static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *cpu_model)
+/* Parse full "model,+feature,-feature,feature=foo" CPU model string
+ */
+static int cpu_x86_parse_cpu_model(x86_def_t *x86_cpu_def, const char *cpu_model)
 {
     unsigned int i;
     x86_def_t *def;
@@ -1529,7 +1531,7 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 
     memset(def, 0, sizeof(*def));
 
-    if (cpu_x86_find_by_name(def, cpu_model) < 0) {
+    if (cpu_x86_parse_cpu_model(def, cpu_model) < 0) {
         return -1;
     }
 
