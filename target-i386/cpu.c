@@ -1235,12 +1235,30 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
+static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
+{
+    x86_def_t *def;
+
+    for (def = x86_defs; def; def = def->next)
+        if (name && !strcmp(name, def->name))
+            break;
+    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
+        kvm_cpu_fill_host(x86_cpu_def);
+    } else if (!def) {
+        goto error;
+    } else {
+        memcpy(x86_cpu_def, def, sizeof(*def));
+    }
+    return 0;
+error:
+    return -1;
+}
+
 /* Parse full "model,+feature,-feature,feature=foo" CPU model string
  */
 static int cpu_x86_parse_cpu_model(x86_def_t *x86_cpu_def, const char *cpu_model)
 {
     unsigned int i;
-    x86_def_t *def;
     char *name; /* CPU model name */
     char *features; /* Full feature "key=value,..." string */
     char *featurestr; /* Single 'key=value" string being parsed */
@@ -1265,15 +1283,8 @@ static int cpu_x86_parse_cpu_model(x86_def_t *x86_cpu_def, const char *cpu_model
     name = model_pieces[0];
     features = model_pieces[1];
 
-    for (def = x86_defs; def; def = def->next)
-        if (name && !strcmp(name, def->name))
-            break;
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-        kvm_cpu_fill_host(x86_cpu_def);
-    } else if (!def) {
+    if (cpu_x86_find_by_name(x86_cpu_def, name) < 0) {
         goto error;
-    } else {
-        memcpy(x86_cpu_def, def, sizeof(*def));
     }
 
     add_flagname_to_bitmaps("hypervisor", &plus_features,
