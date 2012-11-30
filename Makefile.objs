@@ -1,4 +1,13 @@
 #######################################################################
+# general compiler flags
+
+QEMU_CFLAGS += $(GLIB_CFLAGS)
+QEMU_CFLAGS += -I$(SRC_PATH)/include
+
+vl.o: QEMU_CFLAGS+=$(GPROF_CFLAGS)
+vl.o: QEMU_CFLAGS+=$(SDL_CFLAGS)
+
+#######################################################################
 # Stub library, linked in tools
 stub-obj-y = stubs/
 
@@ -235,12 +244,6 @@ universal-obj-y += $(qapi-obj-y)
 
 qga-obj-y = qga/ qemu-ga.o module.o qemu-tool.o
 qga-obj-$(CONFIG_POSIX) += qemu-sockets.o qemu-option.o
-
-vl.o: QEMU_CFLAGS+=$(GPROF_CFLAGS)
-
-vl.o: QEMU_CFLAGS+=$(SDL_CFLAGS)
-
-QEMU_CFLAGS+=$(GLIB_CFLAGS)
 
 nested-vars += \
 	stub-obj-y \
