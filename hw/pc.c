@@ -862,6 +862,33 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
     }
 }
 
+/* Similar to cpu_init(), but with additional PC-specific initalization steps
+ */
+static void pc_cpu_init(int cpu_index, PCInitArgs *args)
+{
+    X86CPU *cpu = NULL;
+    Error *error = NULL;
+
+    cpu = cpu_x86_create(args->qemu_args->cpu_model, &error);
+    if (error) {
+        goto error;
+    }
+
+    x86_cpu_realize(OBJECT(cpu), &error);
+    if (error) {
+        goto error;
+    }
+    return;
+
+error:
+    if (cpu) {
+        object_delete(OBJECT(cpu));
+    }
+    error_report("%s", error_get_pretty(error));
+    error_free(error);
+    exit(1);
+}
+
 void pc_cpus_init(PCInitArgs *args)
 {
     int i;
@@ -872,10 +899,7 @@ void pc_cpus_init(PCInitArgs *args)
     }
 
     for (i = 0; i < smp_cpus; i++) {
-        if (!cpu_x86_init(args->qemu_args->cpu_model)) {
-            fprintf(stderr, "Unable to find x86 CPU definition\n");
-            exit(1);
-        }
+        pc_cpu_init(i, args);
     }
 }
 
