@@ -824,6 +824,31 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
     }
 }
 
+static X86CPU *pc_cpu_init(const char *cpu_model)
+{
+    X86CPU *cpu = NULL;
+    Error *error = NULL;
+
+    cpu = cpu_x86_create(cpu_model, &error);
+    if (error) {
+        goto error;
+    }
+
+    x86_cpu_realize(OBJECT(cpu), &error);
+    if (error) {
+        goto error;
+    }
+    return cpu;
+
+error:
+    if (cpu) {
+        object_delete(OBJECT(cpu));
+    }
+    error_report("%s", error_get_pretty(error));
+    error_free(error);
+    return NULL;
+}
+
 void pc_cpus_init(const char *cpu_model)
 {
     int i;
@@ -838,7 +863,7 @@ void pc_cpus_init(const char *cpu_model)
     }
 
     for (i = 0; i < smp_cpus; i++) {
-        if (!cpu_x86_init(cpu_model)) {
+        if (!pc_cpu_init(cpu_model)) {
             fprintf(stderr, "Unable to find x86 CPU definition\n");
             exit(1);
         }
