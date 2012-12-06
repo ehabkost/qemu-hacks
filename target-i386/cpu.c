@@ -1491,7 +1491,7 @@ static void filter_features_for_kvm(X86CPU *cpu)
 /* Create and initialize a X86CPU object, based on the full CPU model string
  * (that may include "+feature,-feature,feature=xxx" feature strings)
  */
-X86CPU *cpu_x86_create(const char *cpu_model)
+X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
 {
     X86CPU *cpu;
     CPUX86State *env;
@@ -1508,16 +1508,20 @@ X86CPU *cpu_x86_create(const char *cpu_model)
 
     model_pieces = g_strsplit(cpu_model, ",", 2);
     if (!model_pieces[0]) {
+        error_setg(errp, "invalid CPU model string: %s", cpu_model);
         goto error;
     }
     name = model_pieces[0];
     features = model_pieces[1];
 
     if (cpu_x86_find_by_name(def, name) < 0) {
+        error_setg(errp, "CPU model not found: %s", name);
         goto error;
     }
 
     if (cpu_x86_parse_featurestr(def, features) < 0) {
+        error_setg(errp, "Error parsing feature string: %s",
+                   features ? features : "(none)");
         goto error;
     }
     if (def->vendor1) {
@@ -1574,7 +1578,7 @@ X86CPU *cpu_x86_create(const char *cpu_model)
     }
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
     if (error) {
-        fprintf(stderr, "%s\n", error_get_pretty(error));
+        error_propagate(errp, error);
         error_free(error);
         goto error;
     }
