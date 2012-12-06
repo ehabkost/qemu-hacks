@@ -143,6 +143,12 @@ static void qapi_dealloc_type_enum(Visitor *v, int *obj, const char *strings[],
 {
 }
 
+static void qapi_dealloc_type_unit_suffixed_int(Visitor *v, int64_t *obj,
+                                                const char *name,
+                                                const int unit, Error **errp)
+{
+}
+
 Visitor *qapi_dealloc_get_visitor(QapiDeallocVisitor *v)
 {
     return &v->visitor;
@@ -170,6 +176,7 @@ QapiDeallocVisitor *qapi_dealloc_visitor_new(void)
     v->visitor.type_str = qapi_dealloc_type_str;
     v->visitor.type_number = qapi_dealloc_type_number;
     v->visitor.type_size = qapi_dealloc_type_size;
+    v->visitor.type_unit_suffixed_int = qapi_dealloc_type_unit_suffixed_int;
 
     QTAILQ_INIT(&v->stack);
 

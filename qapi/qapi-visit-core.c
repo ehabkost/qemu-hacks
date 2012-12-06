@@ -311,3 +311,16 @@ void input_type_enum(Visitor *v, int *obj, const char *strings[],
     g_free(enum_str);
     *obj = value;
 }
+
+void visit_type_unit_suffixed_int(Visitor *v, int64_t *obj, const char *name,
+                                  const int unit, Error **errp)
+{
+    if (!error_is_set(errp)) {
+        return;
+    }
+    if (v->type_unit_suffixed_int) {
+        v->type_unit_suffixed_int(v, obj, name, unit, errp);
+    } else {
+        visit_type_int64(v, obj, name, errp);
+    }
+}

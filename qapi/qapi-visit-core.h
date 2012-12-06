@@ -62,6 +62,12 @@ struct Visitor
     void (*type_int64)(Visitor *v, int64_t *obj, const char *name, Error **errp);
     /* visit_type_size() falls back to (*type_uint64)() if type_size is unset */
     void (*type_size)(Visitor *v, uint64_t *obj, const char *name, Error **errp);
+    /*
+     * visit_unit_suffixed_int() falls back to (*type_int64)()
+     * if type_unit_suffixed_int is unset
+    */
+    void (*type_unit_suffixed_int)(Visitor *v, int64_t *obj, const char *name,
+                                   const int unit, Error **errp);
 };
 
 void visit_start_handle(Visitor *v, void **obj, const char *kind,
@@ -91,5 +97,7 @@ void visit_type_size(Visitor *v, uint64_t *obj, const char *name, Error **errp);
 void visit_type_bool(Visitor *v, bool *obj, const char *name, Error **errp);
 void visit_type_str(Visitor *v, char **obj, const char *name, Error **errp);
 void visit_type_number(Visitor *v, double *obj, const char *name, Error **errp);
+void visit_type_unit_suffixed_int(Visitor *v, int64_t *obj, const char *name,
+                                  const int unit, Error **errp);
 
 #endif
