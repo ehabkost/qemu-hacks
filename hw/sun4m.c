@@ -866,7 +866,7 @@ static void sun4m_hw_init(const struct sun4m_hwdef *hwdef, ram_addr_t RAM_size,
     qemu_irq *cpu_halt;
     unsigned long kernel_size;
     DriveInfo *fd[MAX_FD];
-    void *fw_cfg;
+    FWCfgState *fw_cfg;
     unsigned int num_vsimms;
 
     /* init CPUs */
@@ -1576,7 +1576,7 @@ static void sun4d_hw_init(const struct sun4d_hwdef *hwdef, ram_addr_t RAM_size,
         espdma_irq, ledma_irq;
     qemu_irq esp_reset, dma_enable;
     unsigned long kernel_size;
-    void *fw_cfg;
+    FWCfgState *fw_cfg;
     DeviceState *dev;
 
     /* init CPUs */
@@ -1776,7 +1776,7 @@ static void sun4c_hw_init(const struct sun4c_hwdef *hwdef, ram_addr_t RAM_size,
     qemu_irq fdc_tc;
     unsigned long kernel_size;
     DriveInfo *fd[MAX_FD];
-    void *fw_cfg;
+    FWCfgState *fw_cfg;
     DeviceState *dev;
     unsigned int i;
 
