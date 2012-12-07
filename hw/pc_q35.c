@@ -57,14 +57,17 @@ static void pc_cmos_set_s3_resume(void *opaque, int irq, int level)
 }
 
 /* PC hardware initialisation */
-static void pc_q35_init(QEMUMachineInitArgs *args)
+static void pc_q35_init(PCInitArgs *pc_args)
 {
-    ram_addr_t ram_size = args->ram_size;
-    const char *cpu_model = args->cpu_model;
-    const char *kernel_filename = args->kernel_filename;
-    const char *kernel_cmdline = args->kernel_cmdline;
-    const char *initrd_filename = args->initrd_filename;
-    const char *boot_device = args->boot_device;
+    int i;
+    QEMUMachineInitArgs *qemu_args = pc_args->qemu_args;
+    ram_addr_t ram_size = qemu_args->ram_size;
+    const char *cpu_model = qemu_args->cpu_model;
+    const char *kernel_filename = qemu_args->kernel_filename;
+    const char *kernel_cmdline = qemu_args->kernel_cmdline;
+    const char *initrd_filename = qemu_args->initrd_filename;
+    const char *boot_device = qemu_args->boot_device;
+    bool pci_enabled = pc_args->pci_enabled;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
     Q35PCIHost *q35_host;
     PCIBus *host_bus;
@@ -79,18 +82,18 @@ static void pc_q35_init(QEMUMachineInitArgs *args)
     MemoryRegion *system_io = get_system_io();
     GSIState *gsi_state;
     ISABus *isa_bus;
-    int pci_enabled = 1;
     qemu_irq *cpu_irq;
     qemu_irq *gsi;
     qemu_irq *i8259;
-    int i;
     ICH9LPCState *ich9_lpc;
     PCIDevice *ahci;
     qemu_irq *cmos_s3;
 
     pc_cpus_init(cpu_model);
 
-    kvmclock_create();
+    if (pc_args->kvmclock_enabled) {
+        kvmclock_create();
+    }
 
     if (ram_size >= 0xb0000000) {
         above_4g_mem_size = ram_size - 0xb0000000;
@@ -100,7 +103,6 @@ static void pc_q35_init(QEMUMachineInitArgs *args)
         below_4g_mem_size = ram_size;
     }
 
-    /* pci enabled */
     if (pci_enabled) {
         pci_memory = g_new(MemoryRegion, 1);
         memory_region_init(pci_memory, "pci", INT64_MAX);
@@ -209,11 +211,21 @@ static void pc_q35_init(QEMUMachineInitArgs *args)
     }
 }
 
+static void pc_q35_initfn(QEMUMachineInitArgs *args)
+{
+    PCInitArgs pc_args = {
+        .qemu_args = args,
+        .pci_enabled = true,
+        .kvmclock_enabled = true,
+    };
+    pc_q35_init(&pc_args);
+}
+
 static QEMUMachine pc_q35_machine = {
     .name = "q35-next",
     .alias = "q35",
     .desc = "Q35 chipset PC",
-    .init = pc_q35_init,
+    .init = pc_q35_initfn,
     .max_cpus = 255,
 };
 
