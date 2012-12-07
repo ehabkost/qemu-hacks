@@ -62,7 +62,6 @@ static void pc_q35_init(PCInitArgs *pc_args)
     int i;
     QEMUMachineInitArgs *qemu_args = pc_args->qemu_args;
     ram_addr_t ram_size = qemu_args->ram_size;
-    const char *cpu_model = qemu_args->cpu_model;
     const char *kernel_filename = qemu_args->kernel_filename;
     const char *kernel_cmdline = qemu_args->kernel_cmdline;
     const char *initrd_filename = qemu_args->initrd_filename;
@@ -89,7 +88,7 @@ static void pc_q35_init(PCInitArgs *pc_args)
     PCIDevice *ahci;
     qemu_irq *cmos_s3;
 
-    pc_cpus_init(cpu_model);
+    pc_cpus_init(pc_args);
 
     if (pc_args->kvmclock_enabled) {
         kvmclock_create();
