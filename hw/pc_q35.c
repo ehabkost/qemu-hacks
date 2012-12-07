@@ -75,6 +75,8 @@ static void pc_q35_init(QEMUMachineInitArgs *args)
     MemoryRegion *pci_memory;
     MemoryRegion *rom_memory;
     MemoryRegion *ram_memory;
+    MemoryRegion *system_memory = get_system_memory();
+    MemoryRegion *system_io = get_system_io();
     GSIState *gsi_state;
     ISABus *isa_bus;
     int pci_enabled = 1;
@@ -105,12 +107,12 @@ static void pc_q35_init(QEMUMachineInitArgs *args)
         rom_memory = pci_memory;
     } else {
         pci_memory = NULL;
-        rom_memory = get_system_memory();
+        rom_memory = system_memory;
     }
 
     /* allocate ram and load rom/bios */
     if (!xen_enabled()) {
-        pc_memory_init(get_system_memory(), kernel_filename, kernel_cmdline,
+        pc_memory_init(system_memory, kernel_filename, kernel_cmdline,
                        initrd_filename, below_4g_mem_size, above_4g_mem_size,
                        rom_memory, &ram_memory);
     }
@@ -130,8 +132,8 @@ static void pc_q35_init(QEMUMachineInitArgs *args)
 
     q35_host->mch.ram_memory = ram_memory;
     q35_host->mch.pci_address_space = pci_memory;
-    q35_host->mch.system_memory = get_system_memory();
-    q35_host->mch.address_space_io = get_system_io();;
+    q35_host->mch.system_memory = system_memory;
+    q35_host->mch.address_space_io = system_io;;
     q35_host->mch.below_4g_mem_size = below_4g_mem_size;
     q35_host->mch.above_4g_mem_size = above_4g_mem_size;
     /* pci */
