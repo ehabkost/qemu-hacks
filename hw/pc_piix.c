@@ -162,7 +162,7 @@ static void pc_init1(MemoryRegion *system_memory,
 
     pc_register_ferr_irq(gsi[13]);
 
-    pc_vga_init(isa_bus, pci_enabled ? pci_bus : NULL);
+    pc_vga_init(isa_bus, pci_bus);
     if (xen_enabled()) {
         pci_create_simple(pci_bus, -1, "xen-platform");
     }
@@ -192,7 +192,7 @@ static void pc_init1(MemoryRegion *system_memory,
         }
     }
 
-    audio_init(isa_bus, pci_enabled ? pci_bus : NULL);
+    audio_init(isa_bus, pci_bus);
 
     pc_cmos_init(below_4g_mem_size, above_4g_mem_size, boot_device,
                  floppy, idebus[0], idebus[1], rtc_state);
