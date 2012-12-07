@@ -153,7 +153,7 @@ static void ppc_core99_init(QEMUMachineInitArgs *args)
     MemoryRegion *ide_mem[3];
     int ppc_boot_device;
     DriveInfo *hd[MAX_IDE_BUS * MAX_IDE_DEVS];
-    void *fw_cfg;
+    FWCfgState *fw_cfg;
     void *dbdma;
     int machine_arch;
 
