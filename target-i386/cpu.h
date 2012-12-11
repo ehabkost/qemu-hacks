@@ -694,6 +694,21 @@ typedef enum TPRAccess {
     TPR_ACCESS_WRITE,
 } TPRAccess;
 
+typedef enum X86CPUFeatureWord {
+    FEAT_1_EDX,         /* CPUID[1].EDX */
+    FEAT_1_ECX,         /* CPUID[1].ECX */
+    FEAT_7_0_EBX,       /* CPUID[EAX=7,ECX=0].EBX */
+    FEAT_80000001_EDX,  /* CPUID[8000_0001].EDX */
+    FEAT_80000001_ECX,  /* CPUID[8000_0001].ECX */
+    FEAT_C0000001_EDX,  /* CPUID[C000_0001].EDX */
+    FEAT_KVM,           /* CPUID[4000_0001].EAX (KVM_CPUID_FEATURES) */
+    FEAT_SVM,           /* CPUID[8000_000A].EDX */
+    FEATURE_WORDS,      /* Size of the features arrays */
+} FeatureWord;
+
+/* An array of feature words */
+typedef uint32_t X86CPUFeatureWords[FEATURE_WORDS];
+
 typedef struct CPUX86State {
     /* standard registers */
     target_ulong regs[CPU_NB_REGS];
@@ -800,24 +815,15 @@ typedef struct CPUX86State {
     uint64_t pat;
 
     /* processor features (e.g. for CPUID insn) */
-    uint32_t cpuid_level;
+    uint32_t cpuid_level, cpuid_xlevel, cpuid_xlevel2;
+    X86CPUFeatureWords features;
     uint32_t cpuid_vendor1;
     uint32_t cpuid_vendor2;
     uint32_t cpuid_vendor3;
     uint32_t cpuid_version;
-    uint32_t cpuid_features;
-    uint32_t cpuid_ext_features;
-    uint32_t cpuid_xlevel;
     uint32_t cpuid_model[12];
-    uint32_t cpuid_ext2_features;
-    uint32_t cpuid_ext3_features;
     uint32_t cpuid_apic_id;
     int cpuid_vendor_override;
-    /* Store the results of Centaur's CPUID instructions */
-    uint32_t cpuid_xlevel2;
-    uint32_t cpuid_ext4_features;
-    /* Flags from CPUID[EAX=7,ECX=0].EBX */
-    uint32_t cpuid_7_0_ebx_features;
 
     /* MTRRs */
     uint64_t mtrr_fixed[11];
@@ -831,8 +837,6 @@ typedef struct CPUX86State {
     uint8_t soft_interrupt;
     uint8_t has_error_code;
     uint32_t sipi_vector;
-    uint32_t cpuid_kvm_features;
-    uint32_t cpuid_svm_features;
     bool tsc_valid;
     int tsc_khz;
     void *kvm_xsave_buf;
