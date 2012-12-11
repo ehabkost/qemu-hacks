@@ -1583,9 +1583,13 @@ static void filter_features_for_kvm(X86CPU *cpu)
 }
 #endif
 
-int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
+/* Create and initialize a X86CPU object, based on the full CPU model string
+ * (that may include "+feature,-feature,feature=xxx,feature" feature strings)
+ */
+X86CPU *cpu_x86_create(const char *cpu_model)
 {
-    CPUX86State *env = &cpu->env;
+    X86CPU *cpu = NULL;
+    CPUX86State *env;
     x86_def_t def1, *def = &def1;
     Error *error = NULL;
     char *name, *features;
@@ -1605,6 +1609,10 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
         error_setg(&error, "Unable to find CPU definition: %s", name);
         goto out;
     }
+
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_model;
 
     if (cpu_x86_parse_featurestr(def, features) < 0) {
         error_setg(&error, "Invalid cpu_model string format: %s", cpu_model);
@@ -1639,9 +1647,12 @@ out:
     if (error) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
-        return -1;
+        if (cpu) {
+            object_delete(OBJECT(cpu));
+        }
+        return NULL;
     }
-    return 0;
+    return cpu;
 }
 
 #if !defined(CONFIG_USER_ONLY)
