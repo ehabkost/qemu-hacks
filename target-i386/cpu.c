@@ -1527,7 +1527,7 @@ static void filter_features_for_kvm(X86CPU *cpu)
 /* Create and initialize a X86CPU object, based on the full CPU model string
  * (that may include "+feature,-feature,feature=xxx,feature" feature strings)
  */
-X86CPU *cpu_x86_create(const char *cpu_model)
+X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
 {
     X86CPU *cpu = NULL;
     CPUX86State *env;
@@ -1574,8 +1574,7 @@ out:
     QDECREF(props);
     g_strfreev(model_pieces);
     if (error) {
-        fprintf(stderr, "%s\n", error_get_pretty(error));
-        error_free(error);
+        error_propagate(errp, error);
         if (cpu) {
             object_delete(OBJECT(cpu));
         }
