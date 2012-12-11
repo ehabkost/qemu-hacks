@@ -23,6 +23,7 @@
 #include "sysemu/sysemu.h"
 #include "monitor/monitor.h"
 #endif
+#include "qemu/error-report.h"
 
 //#define DEBUG_MMU
 
@@ -1240,21 +1241,27 @@ int cpu_x86_get_descr_debug(CPUX86State *env, unsigned int selector,
 
 X86CPU *cpu_x86_init(const char *cpu_model)
 {
-    X86CPU *cpu;
+    X86CPU *cpu = NULL;
     Error *error = NULL;
 
-    cpu = cpu_x86_create(cpu_model);
-    if (!cpu) {
-        return NULL;
+    cpu = cpu_x86_create(cpu_model, &error);
+    if (error) {
+        goto error;
     }
 
     x86_cpu_realize(OBJECT(cpu), &error);
     if (error) {
-        error_free(error);
-        object_delete(OBJECT(cpu));
-        return NULL;
+        goto error;
     }
     return cpu;
+
+error:
+    if (cpu) {
+        object_delete(OBJECT(cpu));
+    }
+    error_report("%s", error_get_pretty(error));
+    error_free(error);
+    return NULL;
 }
 
 #if !defined(CONFIG_USER_ONLY)
