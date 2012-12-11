@@ -1524,8 +1524,13 @@ static void filter_features_for_kvm(X86CPU *cpu)
 }
 #endif
 
-int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
+/* Create and initialize a X86CPU object, based on the full CPU model string
+ * (that may include "+feature,-feature,feature=xxx,feature" feature strings)
+ */
+X86CPU *cpu_x86_create(const char *cpu_model)
 {
+    X86CPU *cpu = NULL;
+    CPUX86State *env;
     x86_def_t def1, *def = &def1;
     QDict *props = NULL;
     Error *error = NULL;
@@ -1547,6 +1552,10 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
         goto out;
     }
 
+    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    env = &cpu->env;
+    env->cpu_model_str = cpu_model;
+
     def->kvm_features |= kvm_default_features;
     add_flagname_to_bitmaps("hypervisor", &def->features,
                             &def->ext_features, &def->ext2_features,
@@ -1567,9 +1576,12 @@ out:
     if (error) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
-        return -1;
+        if (cpu) {
+            object_delete(OBJECT(cpu));
+        }
+        return NULL;
     }
-    return 0;
+    return cpu;
 }
 
 #if !defined(CONFIG_USER_ONLY)
