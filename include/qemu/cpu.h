@@ -21,6 +21,7 @@
 #define QEMU_CPU_H
 
 #include "qemu/object.h"
+#include "qemu-common.h"
 #include "qemu-thread.h"
 
 /**
@@ -80,6 +81,17 @@ struct CPUState {
     /* TODO Move common fields from CPUArchState here. */
 };
 
+/**
+ * CPUListState:
+ * @cpu_fprintf: Print function.
+ * @file: File to print to using @cpu_fprint.
+ *
+ * State commonly used for iterating over CPU models.
+ */
+typedef struct CPUListState {
+    fprintf_function cpu_fprintf;
+    FILE *file;
+} CPUListState;
 
 /**
  * cpu_reset:
