@@ -1,6 +1,12 @@
 #ifndef QEMU_TYPEDEFS_H
 #define QEMU_TYPEDEFS_H
 
+#include "compiler.h"
+#include <stdio.h>
+
+typedef int (*fprintf_function)(FILE *f, const char *fmt, ...)
+    GCC_FMT_ATTR(2, 3);
+
 /* A load of opaque types so that device init declarations don't have to
    pull in all the real definitions.  */
 typedef struct QEMUTimer QEMUTimer;

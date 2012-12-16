@@ -12,7 +12,6 @@
 #ifndef QEMU_COMMON_H
 #define QEMU_COMMON_H
 
-#include "compiler.h"
 #include "config-host.h"
 #include "qemu-types.h"
 
@@ -24,7 +23,6 @@
 
 /* we put basic includes here to avoid repeating them in device drivers */
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
@@ -94,9 +92,6 @@ struct iovec {
 #else
 #include <sys/uio.h>
 #endif
-
-typedef int (*fprintf_function)(FILE *f, const char *fmt, ...)
-    GCC_FMT_ATTR(2, 3);
 
 #ifdef _WIN32
 #define fsync _commit
