@@ -31,7 +31,7 @@ int kvmppc_reset_htab(int shift_hint);
 uint64_t kvmppc_rma_size(uint64_t current_size, unsigned int hash_shift);
 #endif /* !CONFIG_USER_ONLY */
 const ppc_def_t *kvmppc_host_cpu_def(void);
-int kvmppc_fixup_cpu(CPUPPCState *env);
+int kvmppc_fixup_cpu(PowerPCCPU *cpu);
 
 #else
 
@@ -120,7 +120,7 @@ static inline const ppc_def_t *kvmppc_host_cpu_def(void)
     return NULL;
 }
 
-static inline int kvmppc_fixup_cpu(CPUPPCState *env)
+static inline int kvmppc_fixup_cpu(PowerPCCPU *cpu)
 {
     return -1;
 }

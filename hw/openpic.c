@@ -157,7 +157,8 @@ static inline int test_bit(uint32_t *field, int bit)
 
 static int get_current_cpu(void)
 {
-  return cpu_single_env->cpu_index;
+    CPUState *cpu_single_cpu = ENV_GET_CPU(cpu_single_env);
+    return cpu_single_cpu->cpu_index;
 }
 
 static uint32_t openpic_cpu_read_internal(void *opaque, hwaddr addr,

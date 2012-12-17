@@ -766,8 +766,9 @@ void kvm_arch_pre_run(CPUState *cs, struct kvm_run *run)
 
         dprintf("injected interrupt %d\n", irq);
         r = kvm_vcpu_ioctl(cs, KVM_INTERRUPT, &irq);
-        if (r < 0)
-            printf("cpu %d fail inject %x\n", env->cpu_index, irq);
+        if (r < 0) {
+            printf("cpu %d fail inject %x\n", cs->cpu_index, irq);
+        }
 
         /* Always wake up soon in case the interrupt was level based */
         qemu_mod_timer(idle_timer, qemu_get_clock_ns(vm_clock) +
@@ -1238,14 +1239,15 @@ const ppc_def_t *kvmppc_host_cpu_def(void)
     return spec;
 }
 
-int kvmppc_fixup_cpu(CPUPPCState *env)
+int kvmppc_fixup_cpu(PowerPCCPU *cpu)
 {
+    CPUState *cs = CPU(cpu);
     int smt;
 
     /* Adjust cpu index for SMT */
     smt = kvmppc_smt_threads();
-    env->cpu_index = (env->cpu_index / smp_threads) * smt
-        + (env->cpu_index % smp_threads);
+    cs->cpu_index = (cs->cpu_index / smp_threads) * smt
+        + (cs->cpu_index % smp_threads);
 
     return 0;
 }
