@@ -302,26 +302,6 @@ static void add_flagname_to_bitmaps(const char *flagname, uint32_t *features,
             fprintf(stderr, "CPU feature %s not found\n", flagname);
 }
 
-typedef struct x86_def_t {
-    struct x86_def_t *next;
-    const char *name;
-    uint32_t level;
-    char vendor[CPUID_VENDOR_SZ + 1];
-    int family;
-    int model;
-    int stepping;
-    int tsc_khz;
-    uint32_t features, ext_features, ext2_features, ext3_features;
-    uint32_t kvm_features, svm_features;
-    uint32_t xlevel;
-    char model_id[48];
-    /* Store the results of Centaur's CPUID instructions */
-    uint32_t ext4_features;
-    uint32_t xlevel2;
-    /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
-    uint32_t cpuid_7_0_ebx_features;
-} x86_def_t;
-
 #define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
 #define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
           CPUID_MSR | CPUID_MCE | CPUID_CX8 | CPUID_MMX | CPUID_APIC)
@@ -360,473 +340,769 @@ typedef struct x86_def_t {
 #define TCG_SVM_FEATURES 0
 #define TCG_7_0_EBX_FEATURES (CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_SMAP)
 
-/* maintains list of cpu model definitions
- */
-static x86_def_t *x86_defs = {NULL};
 
-/* built-in cpu model definitions (deprecated)
+/* CPU class name definitions: */
+
+#define X86_CPU_CLASS_SUFFIX "-" TYPE_X86_CPU
+#define CPU_CLASS_NAME(name) (name X86_CPU_CLASS_SUFFIX)
+
+/* -cpu "host" */
+#define TYPE_X86_HOST_CPU CPU_CLASS_NAME("host")
+
+/* Return X86CPUClass for a CPU model name */
+static X86CPUClass *x86_cpu_class_by_name(const char *name)
+{
+    X86CPUClass *cc;
+    char *class_name = g_strdup_printf(CPU_CLASS_NAME("%s"), name);
+    cc =  X86_CPU_CLASS(object_class_by_name(class_name));
+    g_free(class_name);
+    return cc;
+}
+
+/* Return the simple model name for a X86CPUClass
+ *
+ * The caller is responsible for freeing the returned string using g_free().
  */
-static x86_def_t builtin_x86_defs[] = {
-    {
-        .name = "qemu64",
-        .level = 4,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 6,
-        .model = 2,
-        .stepping = 3,
-        .features = PPRO_FEATURES |
+static char *x86_cpu_class_get_model_name(X86CPUClass *cc)
+{
+    const char *class_name = object_class_get_name(OBJECT_CLASS(cc));
+    if (g_str_has_suffix(class_name, X86_CPU_CLASS_SUFFIX)) {
+        return g_strndup(class_name,
+                         strlen(class_name) - strlen(X86_CPU_CLASS_SUFFIX));
+    } else {
+        return g_strdup(class_name);
+    }
+}
+
+
+static void x86_cpu_class_init_qemu64(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 4;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 6;
+    cc->model = 2;
+    cc->stepping = 3;
+    cc->features |= PPRO_FEATURES |
             CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36,
-        .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_CX16 | CPUID_EXT_POPCNT,
-        .ext2_features = (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .ext3_features = CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
-            CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
-        .xlevel = 0x8000000A,
-    },
-    {
-        .name = "phenom",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 16,
-        .model = 2,
-        .stepping = 3,
-        .features = PPRO_FEATURES |
+            CPUID_PSE36;
+    cc->ext_features |= CPUID_EXT_SSE3 | CPUID_EXT_CX16 | CPUID_EXT_POPCNT;
+    cc->ext2_features |= (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
+            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
+            CPUID_EXT3_ABM | CPUID_EXT3_SSE4A;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "QEMU Virtual CPU version ");
+    pstrcat(cc->model_id, sizeof(cc->model_id), qemu_get_version());
+}
+
+static const TypeInfo x86_cpu_qemu64_type_info = {
+    .name = CPU_CLASS_NAME("qemu64"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_qemu64,
+};
+
+static void x86_cpu_class_init_phenom(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 5;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 16;
+    cc->model = 2;
+    cc->stepping = 3;
+    cc->features |= PPRO_FEATURES |
             CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36 | CPUID_VME | CPUID_HT,
-        .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_CX16 |
-            CPUID_EXT_POPCNT,
-        .ext2_features = (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
+            CPUID_PSE36 | CPUID_VME | CPUID_HT;
+    cc->ext_features |= CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_CX16 |
+            CPUID_EXT_POPCNT;
+    cc->ext2_features |= (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
             CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX |
             CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT | CPUID_EXT2_MMXEXT |
-            CPUID_EXT2_FFXSR | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP,
-        /* Missing: CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC,
-                    CPUID_EXT3_CR8LEG,
-                    CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH,
+            CPUID_EXT2_FFXSR | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP;
+        /* Missing: CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC;
+                    CPUID_EXT3_CR8LEG;
+                    CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH;
                     CPUID_EXT3_OSVW, CPUID_EXT3_IBS */
-        .ext3_features = CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
-            CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
-        .svm_features = CPUID_SVM_NPT | CPUID_SVM_LBRV,
-        .xlevel = 0x8000001A,
-        .model_id = "AMD Phenom(tm) 9550 Quad-Core Processor"
-    },
-    {
-        .name = "core2duo",
-        .level = 10,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 15,
-        .stepping = 11,
-        .features = PPRO_FEATURES |
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
+            CPUID_EXT3_ABM | CPUID_EXT3_SSE4A;
+    cc->svm_features |= CPUID_SVM_NPT | CPUID_SVM_LBRV;
+    cc->xlevel = 0x8000001A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "AMD Phenom(tm) 9550 Quad-Core Processor");
+}
+
+static const TypeInfo x86_cpu_phenom_type_info = {
+    .name = CPU_CLASS_NAME("phenom"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_phenom,
+};
+
+static void x86_cpu_class_init_core2duo(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 10;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 15;
+    cc->stepping = 11;
+    cc->features |= PPRO_FEATURES |
             CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
             CPUID_PSE36 | CPUID_VME | CPUID_DTS | CPUID_ACPI | CPUID_SS |
-            CPUID_HT | CPUID_TM | CPUID_PBE,
-        .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_SSSE3 |
+            CPUID_HT | CPUID_TM | CPUID_PBE;
+    cc->ext_features |= CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_SSSE3 |
             CPUID_EXT_DTES64 | CPUID_EXT_DSCPL | CPUID_EXT_VMX | CPUID_EXT_EST |
-            CPUID_EXT_TM2 | CPUID_EXT_CX16 | CPUID_EXT_XTPR | CPUID_EXT_PDCM,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz",
-    },
-    {
-        .name = "kvm64",
-        .level = 5,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
+            CPUID_EXT_TM2 | CPUID_EXT_CX16 | CPUID_EXT_XTPR | CPUID_EXT_PDCM;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz");
+}
+
+static const TypeInfo x86_cpu_core2duo_type_info = {
+    .name = CPU_CLASS_NAME("core2duo"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_core2duo,
+};
+
+static void x86_cpu_class_init_kvm64(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 5;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 15;
+    cc->model = 6;
+    cc->stepping = 1;
         /* Missing: CPUID_VME, CPUID_HT */
-        .features = PPRO_FEATURES |
+    cc->features |= PPRO_FEATURES |
             CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36,
+            CPUID_PSE36;
         /* Missing: CPUID_EXT_POPCNT, CPUID_EXT_MONITOR */
-        .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_CX16,
+    cc->ext_features |= CPUID_EXT_SSE3 | CPUID_EXT_CX16;
         /* Missing: CPUID_EXT2_PDPE1GB, CPUID_EXT2_RDTSCP */
-        .ext2_features = (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        /* Missing: CPUID_EXT3_LAHF_LM, CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC,
-                    CPUID_EXT3_CR8LEG, CPUID_EXT3_ABM, CPUID_EXT3_SSE4A,
-                    CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH,
+    cc->ext2_features |= (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
+            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX;
+        /* Missing: CPUID_EXT3_LAHF_LM, CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC;
+                    CPUID_EXT3_CR8LEG, CPUID_EXT3_ABM, CPUID_EXT3_SSE4A;
+                    CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH;
                     CPUID_EXT3_OSVW, CPUID_EXT3_IBS, CPUID_EXT3_SVM */
-        .ext3_features = 0,
-        .xlevel = 0x80000008,
-        .model_id = "Common KVM processor"
-    },
-    {
-        .name = "qemu32",
-        .level = 4,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 3,
-        .stepping = 3,
-        .features = PPRO_FEATURES,
-        .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_POPCNT,
-        .xlevel = 0x80000004,
-    },
-    {
-        .name = "kvm32",
-        .level = 5,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features = PPRO_FEATURES |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_PSE36,
-        .ext_features = CPUID_EXT_SSE3,
-        .ext2_features = PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES,
-        .ext3_features = 0,
-        .xlevel = 0x80000008,
-        .model_id = "Common 32-bit KVM processor"
-    },
-    {
-        .name = "coreduo",
-        .level = 10,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 14,
-        .stepping = 8,
-        .features = PPRO_FEATURES | CPUID_VME |
+    cc->ext3_features |= 0;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Common KVM processor");
+}
+
+static const TypeInfo x86_cpu_kvm64_type_info = {
+    .name = CPU_CLASS_NAME("kvm64"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_kvm64,
+};
+
+static void x86_cpu_class_init_qemu32(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 4;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 3;
+    cc->stepping = 3;
+    cc->features |= PPRO_FEATURES;
+    cc->ext_features |= CPUID_EXT_SSE3 | CPUID_EXT_POPCNT;
+    cc->xlevel = 0x80000004;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "QEMU Virtual CPU version ");
+    pstrcat(cc->model_id, sizeof(cc->model_id), qemu_get_version());
+}
+
+static const TypeInfo x86_cpu_qemu32_type_info = {
+    .name = CPU_CLASS_NAME("qemu32"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_qemu32,
+};
+
+static void x86_cpu_class_init_kvm32(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 5;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 15;
+    cc->model = 6;
+    cc->stepping = 1;
+    cc->features |= PPRO_FEATURES |
+            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_PSE36;
+    cc->ext_features |= CPUID_EXT_SSE3;
+    cc->ext2_features |= PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES;
+    cc->ext3_features |= 0;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Common 32-bit KVM processor");
+}
+
+static const TypeInfo x86_cpu_kvm32_type_info = {
+    .name = CPU_CLASS_NAME("kvm32"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_kvm32,
+};
+
+static void x86_cpu_class_init_coreduo(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 10;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 14;
+    cc->stepping = 8;
+    cc->features |= PPRO_FEATURES | CPUID_VME |
             CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_DTS | CPUID_ACPI |
-            CPUID_SS | CPUID_HT | CPUID_TM | CPUID_PBE,
-        .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_VMX |
-            CPUID_EXT_EST | CPUID_EXT_TM2 | CPUID_EXT_XTPR | CPUID_EXT_PDCM,
-        .ext2_features = CPUID_EXT2_NX,
-        .xlevel = 0x80000008,
-        .model_id = "Genuine Intel(R) CPU           T2600  @ 2.16GHz",
-    },
-    {
-        .name = "486",
-        .level = 1,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 4,
-        .model = 0,
-        .stepping = 0,
-        .features = I486_FEATURES,
-        .xlevel = 0,
-    },
-    {
-        .name = "pentium",
-        .level = 1,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 5,
-        .model = 4,
-        .stepping = 3,
-        .features = PENTIUM_FEATURES,
-        .xlevel = 0,
-    },
-    {
-        .name = "pentium2",
-        .level = 2,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 5,
-        .stepping = 2,
-        .features = PENTIUM2_FEATURES,
-        .xlevel = 0,
-    },
-    {
-        .name = "pentium3",
-        .level = 2,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 7,
-        .stepping = 3,
-        .features = PENTIUM3_FEATURES,
-        .xlevel = 0,
-    },
-    {
-        .name = "athlon",
-        .level = 2,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 6,
-        .model = 2,
-        .stepping = 3,
-        .features = PPRO_FEATURES | CPUID_PSE36 | CPUID_VME | CPUID_MTRR |
-            CPUID_MCA,
-        .ext2_features = (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
-            CPUID_EXT2_MMXEXT | CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT,
-        .xlevel = 0x80000008,
-    },
-    {
-        .name = "n270",
+            CPUID_SS | CPUID_HT | CPUID_TM | CPUID_PBE;
+    cc->ext_features |= CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_VMX |
+            CPUID_EXT_EST | CPUID_EXT_TM2 | CPUID_EXT_XTPR | CPUID_EXT_PDCM;
+    cc->ext2_features |= CPUID_EXT2_NX;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Genuine Intel(R) CPU           T2600  @ 2.16GHz");
+}
+
+static const TypeInfo x86_cpu_coreduo_type_info = {
+    .name = CPU_CLASS_NAME("coreduo"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_coreduo,
+};
+
+static void x86_cpu_class_init_486(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 1;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 4;
+    cc->model = 0;
+    cc->stepping = 0;
+    cc->features |= I486_FEATURES;
+    cc->xlevel = 0;
+}
+
+static const TypeInfo x86_cpu_486_type_info = {
+    .name = CPU_CLASS_NAME("486"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_486,
+};
+
+static void x86_cpu_class_init_pentium(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 1;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 5;
+    cc->model = 4;
+    cc->stepping = 3;
+    cc->features |= PENTIUM_FEATURES;
+    cc->xlevel = 0;
+}
+
+static const TypeInfo x86_cpu_pentium_type_info = {
+    .name = CPU_CLASS_NAME("pentium"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_pentium,
+};
+
+static void x86_cpu_class_init_pentium2(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 2;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 5;
+    cc->stepping = 2;
+    cc->features |= PENTIUM2_FEATURES;
+    cc->xlevel = 0;
+}
+
+static const TypeInfo x86_cpu_pentium2_type_info = {
+    .name = CPU_CLASS_NAME("pentium2"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_pentium2,
+};
+
+static void x86_cpu_class_init_pentium3(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 2;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 7;
+    cc->stepping = 3;
+    cc->features |= PENTIUM3_FEATURES;
+    cc->xlevel = 0;
+}
+
+static const TypeInfo x86_cpu_pentium3_type_info = {
+    .name = CPU_CLASS_NAME("pentium3"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_pentium3,
+};
+
+static void x86_cpu_class_init_athlon(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 2;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 6;
+    cc->model = 2;
+    cc->stepping = 3;
+    cc->features |= PPRO_FEATURES | CPUID_PSE36 | CPUID_VME | CPUID_MTRR |
+            CPUID_MCA;
+    cc->ext2_features |= (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
+            CPUID_EXT2_MMXEXT | CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "QEMU Virtual CPU version ");
+    pstrcat(cc->model_id, sizeof(cc->model_id), qemu_get_version());
+}
+
+static const TypeInfo x86_cpu_athlon_type_info = {
+    .name = CPU_CLASS_NAME("athlon"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_athlon,
+};
+
+static void x86_cpu_class_init_n270(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
         /* original is on level 10 */
-        .level = 5,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 28,
-        .stepping = 2,
-        .features = PPRO_FEATURES |
+    cc->level = 5;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 28;
+    cc->stepping = 2;
+    cc->features |= PPRO_FEATURES |
             CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_VME | CPUID_DTS |
-            CPUID_ACPI | CPUID_SS | CPUID_HT | CPUID_TM | CPUID_PBE,
+            CPUID_ACPI | CPUID_SS | CPUID_HT | CPUID_TM | CPUID_PBE;
             /* Some CPUs got no CPUID_SEP */
-        .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_SSSE3 |
-            CPUID_EXT_DSCPL | CPUID_EXT_EST | CPUID_EXT_TM2 | CPUID_EXT_XTPR,
-        .ext2_features = (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
-            CPUID_EXT2_NX,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000000A,
-        .model_id = "Intel(R) Atom(TM) CPU N270   @ 1.60GHz",
-    },
-    {
-        .name = "Conroe",
-        .level = 2,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 2,
-        .stepping = 3,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+    cc->ext_features |= CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_SSSE3 |
+            CPUID_EXT_DSCPL | CPUID_EXT_EST | CPUID_EXT_TM2 | CPUID_EXT_XTPR;
+    cc->ext2_features |= (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
+            CPUID_EXT2_NX;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Intel(R) Atom(TM) CPU N270   @ 1.60GHz");
+}
+
+static const TypeInfo x86_cpu_n270_type_info = {
+    .name = CPU_CLASS_NAME("n270"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_n270,
+};
+
+static void x86_cpu_class_init_Conroe(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 2;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 2;
+    cc->stepping = 3;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_SSSE3 | CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000000A,
-        .model_id = "Intel Celeron_4x0 (Conroe/Merom Class Core 2)",
-    },
-    {
-        .name = "Penryn",
-        .level = 2,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 2,
-        .stepping = 3,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_SSSE3 | CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Intel Celeron_4x0 (Conroe/Merom Class Core 2)");
+}
+
+static const TypeInfo x86_cpu_Conroe_type_info = {
+    .name = CPU_CLASS_NAME("Conroe"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Conroe,
+};
+
+static void x86_cpu_class_init_Penryn(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 2;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 2;
+    cc->stepping = 3;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-             CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000000A,
-        .model_id = "Intel Core 2 Duo P9xxx (Penryn Class Core 2)",
-    },
-    {
-        .name = "Nehalem",
-        .level = 2,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 2,
-        .stepping = 3,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
+             CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Intel Core 2 Duo P9xxx (Penryn Class Core 2)");
+}
+
+static const TypeInfo x86_cpu_Penryn_type_info = {
+    .name = CPU_CLASS_NAME("Penryn"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Penryn,
+};
+
+static void x86_cpu_class_init_Nehalem(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 2;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 2;
+    cc->stepping = 3;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-             CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000000A,
-        .model_id = "Intel Core i7 9xx (Nehalem Class Core i7)",
-    },
-    {
-        .name = "Westmere",
-        .level = 11,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 44,
-        .stepping = 1,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
+             CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Intel Core i7 9xx (Nehalem Class Core i7)");
+}
+
+static const TypeInfo x86_cpu_Nehalem_type_info = {
+    .name = CPU_CLASS_NAME("Nehalem"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Nehalem,
+};
+
+static void x86_cpu_class_init_Westmere(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 11;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 44;
+    cc->stepping = 1;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
              CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-             CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000000A,
-        .model_id = "Westmere E56xx/L56xx/X56xx (Nehalem-C)",
-    },
-    {
-        .name = "SandyBridge",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 42,
-        .stepping = 1,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Westmere E56xx/L56xx/X56xx (Nehalem-C)");
+}
+
+static const TypeInfo x86_cpu_Westmere_type_info = {
+    .name = CPU_CLASS_NAME("Westmere"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Westmere,
+};
+
+static void x86_cpu_class_init_SandyBridge(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 0xd;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 42;
+    cc->stepping = 1;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
              CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_POPCNT |
              CPUID_EXT_X2APIC | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
              CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-             CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-             CPUID_EXT2_SYSCALL,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000000A,
-        .model_id = "Intel Xeon E312xx (Sandy Bridge)",
-    },
-    {
-        .name = "Haswell",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 60,
-        .stepping = 1,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
+             CPUID_EXT2_SYSCALL;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Intel Xeon E312xx (Sandy Bridge)");
+}
+
+static const TypeInfo x86_cpu_SandyBridge_type_info = {
+    .name = CPU_CLASS_NAME("SandyBridge"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_SandyBridge,
+};
+
+static void x86_cpu_class_init_Haswell(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 0xd;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_INTEL);
+    cc->family = 6;
+    cc->model = 60;
+    cc->stepping = 1;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
              CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
              CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
              CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
              CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-             CPUID_EXT_PCID,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-             CPUID_EXT2_SYSCALL,
-        .ext3_features = CPUID_EXT3_LAHF_LM,
-        .cpuid_7_0_ebx_features = CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
+             CPUID_EXT_PCID;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
+             CPUID_EXT2_SYSCALL;
+    cc->ext3_features |= CPUID_EXT3_LAHF_LM;
+    cc->cpuid_7_0_ebx_features |= CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
             CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
             CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM,
-        .xlevel = 0x8000000A,
-        .model_id = "Intel Core Processor (Haswell)",
-    },
-    {
-        .name = "Opteron_G1",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+            CPUID_7_0_EBX_RTM;
+    cc->xlevel = 0x8000000A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "Intel Core Processor (Haswell)");
+}
+
+static const TypeInfo x86_cpu_Haswell_type_info = {
+    .name = CPU_CLASS_NAME("Haswell"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Haswell,
+};
+
+static void x86_cpu_class_init_Opteron_G1(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 5;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 15;
+    cc->model = 6;
+    cc->stepping = 1;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_FXSR | CPUID_EXT2_MMX |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_FXSR | CPUID_EXT2_MMX |
              CPUID_EXT2_NX | CPUID_EXT2_PSE36 | CPUID_EXT2_PAT |
              CPUID_EXT2_CMOV | CPUID_EXT2_MCA | CPUID_EXT2_PGE |
              CPUID_EXT2_MTRR | CPUID_EXT2_SYSCALL | CPUID_EXT2_APIC |
              CPUID_EXT2_CX8 | CPUID_EXT2_MCE | CPUID_EXT2_PAE | CPUID_EXT2_MSR |
-             CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU,
-        .xlevel = 0x80000008,
-        .model_id = "AMD Opteron 240 (Gen 1 Class Opteron)",
-    },
-    {
-        .name = "Opteron_G2",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "AMD Opteron 240 (Gen 1 Class Opteron)");
+}
+
+static const TypeInfo x86_cpu_Opteron_G1_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G1"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G1,
+};
+
+static void x86_cpu_class_init_Opteron_G2(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 5;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 15;
+    cc->model = 6;
+    cc->stepping = 1;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_CX16 | CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_FXSR |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_CX16 | CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_FXSR |
              CPUID_EXT2_MMX | CPUID_EXT2_NX | CPUID_EXT2_PSE36 |
              CPUID_EXT2_PAT | CPUID_EXT2_CMOV | CPUID_EXT2_MCA |
              CPUID_EXT2_PGE | CPUID_EXT2_MTRR | CPUID_EXT2_SYSCALL |
              CPUID_EXT2_APIC | CPUID_EXT2_CX8 | CPUID_EXT2_MCE |
              CPUID_EXT2_PAE | CPUID_EXT2_MSR | CPUID_EXT2_TSC | CPUID_EXT2_PSE |
-             CPUID_EXT2_DE | CPUID_EXT2_FPU,
-        .ext3_features = CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "AMD Opteron 22xx (Gen 2 Class Opteron)",
-    },
-    {
-        .name = "Opteron_G3",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_EXT2_DE | CPUID_EXT2_FPU;
+    cc->ext3_features |= CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "AMD Opteron 22xx (Gen 2 Class Opteron)");
+}
+
+static const TypeInfo x86_cpu_Opteron_G2_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G2"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G2,
+};
+
+static void x86_cpu_class_init_Opteron_G3(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 5;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 15;
+    cc->model = 6;
+    cc->stepping = 1;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_POPCNT | CPUID_EXT_CX16 | CPUID_EXT_MONITOR |
-             CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_FXSR |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_POPCNT | CPUID_EXT_CX16 | CPUID_EXT_MONITOR |
+             CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_FXSR |
              CPUID_EXT2_MMX | CPUID_EXT2_NX | CPUID_EXT2_PSE36 |
              CPUID_EXT2_PAT | CPUID_EXT2_CMOV | CPUID_EXT2_MCA |
              CPUID_EXT2_PGE | CPUID_EXT2_MTRR | CPUID_EXT2_SYSCALL |
              CPUID_EXT2_APIC | CPUID_EXT2_CX8 | CPUID_EXT2_MCE |
              CPUID_EXT2_PAE | CPUID_EXT2_MSR | CPUID_EXT2_TSC | CPUID_EXT2_PSE |
-             CPUID_EXT2_DE | CPUID_EXT2_FPU,
-        .ext3_features = CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A |
-             CPUID_EXT3_ABM | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "AMD Opteron 23xx (Gen 3 Class Opteron)",
-    },
-    {
-        .name = "Opteron_G4",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 21,
-        .model = 1,
-        .stepping = 2,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_EXT2_DE | CPUID_EXT2_FPU;
+    cc->ext3_features |= CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A |
+             CPUID_EXT3_ABM | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x80000008;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "AMD Opteron 23xx (Gen 3 Class Opteron)");
+}
+
+static const TypeInfo x86_cpu_Opteron_G3_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G3"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G3,
+};
+
+static void x86_cpu_class_init_Opteron_G4(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 0xd;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 21;
+    cc->model = 1;
+    cc->stepping = 2;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
              CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
              CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-             CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_RDTSCP |
+             CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_RDTSCP |
              CPUID_EXT2_PDPE1GB | CPUID_EXT2_FXSR | CPUID_EXT2_MMX |
              CPUID_EXT2_NX | CPUID_EXT2_PSE36 | CPUID_EXT2_PAT |
              CPUID_EXT2_CMOV | CPUID_EXT2_MCA | CPUID_EXT2_PGE |
              CPUID_EXT2_MTRR | CPUID_EXT2_SYSCALL | CPUID_EXT2_APIC |
              CPUID_EXT2_CX8 | CPUID_EXT2_MCE | CPUID_EXT2_PAE | CPUID_EXT2_MSR |
-             CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU,
-        .ext3_features = CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
+             CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU;
+    cc->ext3_features |= CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
              CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
              CPUID_EXT3_SSE4A | CPUID_EXT3_ABM | CPUID_EXT3_SVM |
-             CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000001A,
-        .model_id = "AMD Opteron 62xx class CPU",
-    },
-    {
-        .name = "Opteron_G5",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 21,
-        .model = 2,
-        .stepping = 0,
-        .features = CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
+             CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000001A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "AMD Opteron 62xx class CPU");
+}
+
+static const TypeInfo x86_cpu_Opteron_G4_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G4"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G4,
+};
+
+static void x86_cpu_class_init_Opteron_G5(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->level = 0xd;
+    pstrcpy(cc->vendor, sizeof(cc->vendor), CPUID_VENDOR_AMD);
+    cc->family = 21;
+    cc->model = 2;
+    cc->stepping = 0;
+    cc->features |= CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
              CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
              CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
              CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-             CPUID_DE | CPUID_FP87,
-        .ext_features = CPUID_EXT_F16C | CPUID_EXT_AVX | CPUID_EXT_XSAVE |
+             CPUID_DE | CPUID_FP87;
+    cc->ext_features |= CPUID_EXT_F16C | CPUID_EXT_AVX | CPUID_EXT_XSAVE |
              CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
              CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_FMA |
-             CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
-        .ext2_features = CPUID_EXT2_LM | CPUID_EXT2_RDTSCP |
+             CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3;
+    cc->ext2_features |= CPUID_EXT2_LM | CPUID_EXT2_RDTSCP |
              CPUID_EXT2_PDPE1GB | CPUID_EXT2_FXSR | CPUID_EXT2_MMX |
              CPUID_EXT2_NX | CPUID_EXT2_PSE36 | CPUID_EXT2_PAT |
              CPUID_EXT2_CMOV | CPUID_EXT2_MCA | CPUID_EXT2_PGE |
              CPUID_EXT2_MTRR | CPUID_EXT2_SYSCALL | CPUID_EXT2_APIC |
              CPUID_EXT2_CX8 | CPUID_EXT2_MCE | CPUID_EXT2_PAE | CPUID_EXT2_MSR |
-             CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU,
-        .ext3_features = CPUID_EXT3_TBM | CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
+             CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU;
+    cc->ext3_features |= CPUID_EXT3_TBM | CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
              CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
              CPUID_EXT3_SSE4A | CPUID_EXT3_ABM | CPUID_EXT3_SVM |
-             CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x8000001A,
-        .model_id = "AMD Opteron 63xx class CPU",
-    },
+             CPUID_EXT3_LAHF_LM;
+    cc->xlevel = 0x8000001A;
+    pstrcpy(cc->model_id, sizeof(cc->model_id), "AMD Opteron 63xx class CPU");
+}
+
+static const TypeInfo x86_cpu_Opteron_G5_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G5"),
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G5,
 };
 
 static void x86cpu_vendor_words2str(char *dst, uint32_t ebx, uint32_t ecx,
@@ -857,67 +1133,6 @@ static int cpu_x86_fill_model_id(char *str)
     return 0;
 }
 
-/* Fill a x86_def_t struct with information about the host CPU, and
- * the CPU features supported by the host hardware + host kernel
- *
- * This function may be called only if KVM is enabled.
- */
-static void kvm_cpu_fill_host(x86_def_t *x86_cpu_def)
-{
-    KVMState *s = kvm_state;
-    uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
-
-    assert(kvm_enabled());
-
-    x86_cpu_def->name = "host";
-    host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
-    x86cpu_vendor_words2str(x86_cpu_def->vendor, ebx, edx, ecx);
-
-    host_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
-    x86_cpu_def->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
-    x86_cpu_def->model = ((eax >> 4) & 0x0F) | ((eax & 0xF0000) >> 12);
-    x86_cpu_def->stepping = eax & 0x0F;
-
-    x86_cpu_def->level = kvm_arch_get_supported_cpuid(s, 0x0, 0, R_EAX);
-    x86_cpu_def->features = kvm_arch_get_supported_cpuid(s, 0x1, 0, R_EDX);
-    x86_cpu_def->ext_features = kvm_arch_get_supported_cpuid(s, 0x1, 0, R_ECX);
-
-    if (x86_cpu_def->level >= 7) {
-        x86_cpu_def->cpuid_7_0_ebx_features =
-                    kvm_arch_get_supported_cpuid(s, 0x7, 0, R_EBX);
-    } else {
-        x86_cpu_def->cpuid_7_0_ebx_features = 0;
-    }
-
-    x86_cpu_def->xlevel = kvm_arch_get_supported_cpuid(s, 0x80000000, 0, R_EAX);
-    x86_cpu_def->ext2_features =
-                kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_EDX);
-    x86_cpu_def->ext3_features =
-                kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_ECX);
-
-    cpu_x86_fill_model_id(x86_cpu_def->model_id);
-
-    /* Call Centaur's CPUID instruction. */
-    if (!strcmp(x86_cpu_def->vendor, CPUID_VENDOR_VIA)) {
-        host_cpuid(0xC0000000, 0, &eax, &ebx, &ecx, &edx);
-        eax = kvm_arch_get_supported_cpuid(s, 0xC0000000, 0, R_EAX);
-        if (eax >= 0xC0000001) {
-            /* Support VIA max extended level */
-            x86_cpu_def->xlevel2 = eax;
-            host_cpuid(0xC0000001, 0, &eax, &ebx, &ecx, &edx);
-            x86_cpu_def->ext4_features =
-                    kvm_arch_get_supported_cpuid(s, 0xC0000001, 0, R_EDX);
-        }
-    }
-
-    /* Other KVM-specific feature fields: */
-    x86_cpu_def->svm_features =
-        kvm_arch_get_supported_cpuid(s, 0x8000000A, 0, R_EDX);
-    x86_cpu_def->kvm_features =
-        kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
-
-}
-
 static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
 {
     int i;
@@ -945,31 +1160,30 @@ static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
 static int kvm_check_features_against_host(X86CPU *cpu)
 {
     CPUX86State *env = &cpu->env;
-    x86_def_t host_def;
+    X86CPUClass *host_class = x86_cpu_class_by_name("host");
     uint32_t mask;
     int rv, i;
     struct model_features_t ft[] = {
-        {&env->cpuid_features, &host_def.features,
+        {&env->cpuid_features, &host_class->features,
             feature_name, 0x00000001, R_EDX},
-        {&env->cpuid_ext_features, &host_def.ext_features,
+        {&env->cpuid_ext_features, &host_class->ext_features,
             ext_feature_name, 0x00000001, R_ECX},
-        {&env->cpuid_ext2_features, &host_def.ext2_features,
+        {&env->cpuid_ext2_features, &host_class->ext2_features,
             ext2_feature_name, 0x80000001, R_EDX},
-        {&env->cpuid_ext3_features, &host_def.ext3_features,
+        {&env->cpuid_ext3_features, &host_class->ext3_features,
             ext3_feature_name, 0x80000001, R_ECX},
-        {&env->cpuid_ext4_features, &host_def.ext4_features,
+        {&env->cpuid_ext4_features, &host_class->ext4_features,
             NULL, 0xC0000001, R_EDX},
-        {&env->cpuid_7_0_ebx_features, &host_def.cpuid_7_0_ebx_features,
+        {&env->cpuid_7_0_ebx_features, &host_class->cpuid_7_0_ebx_features,
             cpuid_7_0_ebx_feature_name, 7, R_EBX},
-        {&env->cpuid_svm_features, &host_def.svm_features,
+        {&env->cpuid_svm_features, &host_class->svm_features,
             svm_feature_name, 0x8000000A, R_EDX},
-        {&env->cpuid_kvm_features, &host_def.kvm_features,
+        {&env->cpuid_kvm_features, host_class->kvm_features,
             kvm_feature_name, KVM_CPUID_FEATURES, R_EAX},
     };
 
     assert(kvm_enabled());
 
-    kvm_cpu_fill_host(&host_def);
     for (rv = 0, i = 0; i < ARRAY_SIZE(ft); ++i)
         for (mask = 1; mask; mask <<= 1)
             if (*ft[i].guest_feat & mask &&
@@ -1228,78 +1442,6 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
-static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
-{
-    CPUX86State *env = &cpu->env;
-
-    assert(def->vendor[0]);
-    object_property_set_str(OBJECT(cpu), def->vendor, "vendor", errp);
-    object_property_set_int(OBJECT(cpu), def->level, "level", errp);
-    object_property_set_int(OBJECT(cpu), def->family, "family", errp);
-    object_property_set_int(OBJECT(cpu), def->model, "model", errp);
-    object_property_set_int(OBJECT(cpu), def->stepping, "stepping", errp);
-    env->cpuid_features = def->features;
-    env->cpuid_ext_features = def->ext_features;
-    env->cpuid_ext2_features = def->ext2_features;
-    env->cpuid_ext3_features = def->ext3_features;
-    object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", errp);
-    env->cpuid_kvm_features = def->kvm_features;
-    env->cpuid_svm_features = def->svm_features;
-    env->cpuid_ext4_features = def->ext4_features;
-    env->cpuid_7_0_ebx_features = def->cpuid_7_0_ebx_features;
-    env->cpuid_xlevel2 = def->xlevel2;
-    object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
-                            "tsc-frequency", errp);
-    object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
-}
-
-static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
-{
-
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-#ifdef CONFIG_KVM
-        kvm_cpu_fill_host(x86_cpu_def);
-#endif
-    } else {
-        x86_def_t *def;
-
-        for (def = x86_defs; def; def = def->next) {
-            if (name && !strcmp(name, def->name)) {
-                break;
-            }
-        }
-
-        if (!def) {
-            return -1;
-        }
-
-        memcpy(x86_cpu_def, def, sizeof(*def));
-        /* sysenter isn't supported on compatibility mode on AMD, syscall
-         * isn't supported in compatibility mode on Intel.
-         * Normally we advertise the actual cpu vendor, but you can override
-         * this using the 'vendor' property if you want to use KVM's
-         * sysenter/syscall emulation in compatibility mode and when doing
-         * cross vendor migration
-         */
-        if (kvm_enabled()) {
-            uint32_t  ebx = 0, ecx = 0, edx = 0;
-            host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
-            x86cpu_vendor_words2str(x86_cpu_def->vendor, ebx, edx, ecx);
-        }
-
-        x86_cpu_def->kvm_features |= kvm_default_features;
-        add_flagname_to_bitmaps("hypervisor", &x86_cpu_def->features,
-                                &x86_cpu_def->ext_features,
-                                &x86_cpu_def->ext2_features,
-                                &x86_cpu_def->ext3_features,
-                                &x86_cpu_def->kvm_features,
-                                &x86_cpu_def->svm_features,
-                                &x86_cpu_def->cpuid_7_0_ebx_features);
-    }
-
-    return 0;
-}
-
 /* Set features on X86CPU object based on a provide key,value list */
 static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
 {
@@ -1466,19 +1608,61 @@ static void listflags(char *buf, int bufsize, uint32_t fbits,
         }
 }
 
-/* generate CPU information. */
+/* Sort alphabetically by type name, listing kvm_required models last. */
+static gint x86_cpu_list_compare(gconstpointer a, gconstpointer b)
+{
+    ObjectClass *class_a = (ObjectClass *)a;
+    ObjectClass *class_b = (ObjectClass *)b;
+    X86CPUClass *cc_a = X86_CPU_CLASS(class_a);
+    X86CPUClass *cc_b = X86_CPU_CLASS(class_b);
+    const char *name_a, *name_b;
+
+    if (cc_a->kvm_required != cc_b->kvm_required) {
+        /* kvm_required items go last */
+        return cc_a->kvm_required ? 1 : -1;
+    } else {
+        name_a = object_class_get_name(class_a);
+        name_b = object_class_get_name(class_b);
+        return strcmp(name_a, name_b);
+    }
+}
+
+static GSList *get_sorted_cpu_model_list(void)
+{
+    GSList *list;
+
+    list = object_class_get_list(TYPE_X86_CPU, false);
+    list = g_slist_sort(list, x86_cpu_list_compare);
+    return list;
+}
+
+static void x86_cpu_list_entry(gpointer data, gpointer user_data)
+{
+    ObjectClass *oc = data;
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    CPUListState *s = user_data;
+    char *name = x86_cpu_class_get_model_name(cc);
+
+    (*s->cpu_fprintf)(s->file, "x86 %16s  %-48s\n",
+                      name, cc->model_id);
+    g_free(name);
+}
+
+/* list available CPU models and flags */
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
-    x86_def_t *def;
+    CPUListState s = {
+        .file = f,
+        .cpu_fprintf = cpu_fprintf,
+    };
+    GSList *list;
     char buf[256];
 
-    for (def = x86_defs; def; def = def->next) {
-        snprintf(buf, sizeof(buf), "%s", def->name);
-        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->model_id);
-    }
-    if (kvm_enabled()) {
-        (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
-    }
+    (*cpu_fprintf)(f, "Available CPUs:\n");
+    list = get_sorted_cpu_model_list();
+    g_slist_foreach(list, x86_cpu_list_entry, &s);
+    g_slist_free(list);
+
     (*cpu_fprintf)(f, "\nRecognized CPUID flags:\n");
     listflags(buf, sizeof(buf), (uint32_t)~0, feature_name, 1);
     (*cpu_fprintf)(f, "  %s\n", buf);
@@ -1490,24 +1674,31 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
     (*cpu_fprintf)(f, "  %s\n", buf);
 }
 
+static void x86_cpu_definition_entry(gpointer data, gpointer user_data)
+{
+    ObjectClass *oc = data;
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    CpuDefinitionInfoList **cpu_list = user_data;
+    CpuDefinitionInfoList *entry;
+    CpuDefinitionInfo *info;
+
+    info = g_malloc0(sizeof(*info));
+    info->name = x86_cpu_class_get_model_name(cc);
+
+    entry = g_malloc0(sizeof(*entry));
+    entry->value = info;
+    entry->next = *cpu_list;
+    *cpu_list = entry;
+}
+
 CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 {
     CpuDefinitionInfoList *cpu_list = NULL;
-    x86_def_t *def;
+    GSList *list;
 
-    for (def = x86_defs; def; def = def->next) {
-        CpuDefinitionInfoList *entry;
-        CpuDefinitionInfo *info;
-
-        info = g_malloc0(sizeof(*info));
-        info->name = g_strdup(def->name);
-
-        entry = g_malloc0(sizeof(*entry));
-        entry->value = info;
-        entry->next = cpu_list;
-        cpu_list = entry;
-    }
-
+    list = get_sorted_cpu_model_list();
+    g_slist_foreach(list, x86_cpu_definition_entry, &cpu_list);
+    g_slist_free(list);
     return cpu_list;
 }
 
@@ -1543,14 +1734,12 @@ static void filter_features_for_kvm(X86CPU *cpu)
 X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
 {
     X86CPU *cpu = NULL;
+    X86CPUClass *cc;
     CPUX86State *env;
-    x86_def_t def1, *def = &def1;
     QDict *props = NULL;
     Error *error = NULL;
     char *name, *features;
     gchar **model_pieces;
-
-    memset(def, 0, sizeof(*def));
 
     model_pieces = g_strsplit(cpu_model, ",", 2);
     if (!model_pieces[0]) {
@@ -1560,16 +1749,20 @@ X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
     name = model_pieces[0];
     features = model_pieces[1];
 
-    if (cpu_x86_find_by_name(def, name) < 0) {
+    cc = x86_cpu_class_by_name(name);
+    if (!cc) {
         error_setg(&error, "Unable to find CPU definition: %s", name);
         goto out;
     }
 
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
+    if (cc->kvm_required && !kvm_enabled()) {
+        error_setg(&error, "CPU model '%s' requires KVM", name);
+        goto out;
+    }
+
+    cpu = X86_CPU(object_new(object_class_get_name(OBJECT_CLASS(cc))));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
-
-    cpudef_2_x86_cpu(cpu, def, &error);
 
     if (cpu_x86_parse_featurestr(cpu, features, &props) < 0) {
         error_setg(&error, "Invalid cpu_model string format: %s", cpu_model);
@@ -1599,33 +1792,6 @@ void cpu_clear_apic_feature(CPUX86State *env)
 }
 
 #endif /* !CONFIG_USER_ONLY */
-
-/* Initialize list of CPU models, filling some non-static fields if necessary
- */
-void x86_cpudef_setup(void)
-{
-    int i, j;
-    static const char *model_with_versions[] = { "qemu32", "qemu64", "athlon" };
-
-    for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
-        x86_def_t *def = &builtin_x86_defs[i];
-        def->next = x86_defs;
-
-        /* Look for specific "cpudef" models that */
-        /* have the QEMU version in .model_id */
-        for (j = 0; j < ARRAY_SIZE(model_with_versions); j++) {
-            if (strcmp(model_with_versions[j], def->name) == 0) {
-                pstrcpy(def->model_id, sizeof(def->model_id),
-                        "QEMU Virtual CPU version ");
-                pstrcat(def->model_id, sizeof(def->model_id),
-                        qemu_get_version());
-                break;
-            }
-        }
-
-        x86_defs = def;
-    }
-}
 
 static void get_cpuid_vendor(CPUX86State *env, uint32_t *ebx,
                              uint32_t *ecx, uint32_t *edx)
@@ -2139,7 +2305,10 @@ void x86_cpu_realize(Object *obj, Error **errp)
 static void x86_cpu_initfn(Object *obj)
 {
     X86CPU *cpu = X86_CPU(obj);
+    X86CPUClass *cc = X86_CPU_GET_CLASS(cpu);
+    Error *error = NULL;
     CPUX86State *env = &cpu->env;
+    char vendor[CPUID_VENDOR_SZ + 1];
     static int inited;
 
     cpu_exec_init(env);
@@ -2179,6 +2348,48 @@ static void x86_cpu_initfn(Object *obj)
         cpu_set_debug_excp_handler(breakpoint_handler);
 #endif
     }
+
+    /* sysenter isn't supported on compatibility mode on AMD, syscall
+     * isn't supported in compatibility mode on Intel.
+     * Normally we advertise the actual cpu vendor, but you can override
+     * this using the 'vendor' property if you want to use KVM's
+     * sysenter/syscall emulation in compatibility mode and when doing
+     * cross vendor migration
+     */
+    if (kvm_enabled()) {
+        uint32_t  ebx = 0, ecx = 0, edx = 0;
+        host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
+        x86cpu_vendor_words2str(vendor, ebx, edx, ecx);
+        object_property_set_str(OBJECT(cpu), vendor, "vendor", &error);
+    } else {
+        assert(cc->vendor[0]);
+        object_property_set_str(OBJECT(cpu), cc->vendor, "vendor", &error);
+    }
+
+    object_property_set_int(OBJECT(cpu), cc->level, "level", &error);
+    object_property_set_int(OBJECT(cpu), cc->family, "family", &error);
+    object_property_set_int(OBJECT(cpu), cc->model, "model", &error);
+    object_property_set_int(OBJECT(cpu), cc->stepping, "stepping", &error);
+    env->cpuid_features = cc->features;
+    env->cpuid_ext_features = cc->ext_features;
+    env->cpuid_ext2_features = cc->ext2_features;
+    env->cpuid_ext3_features = cc->ext3_features;
+    object_property_set_int(OBJECT(cpu), cc->xlevel, "xlevel", &error);
+    env->cpuid_kvm_features = *cc->kvm_features;
+    env->cpuid_svm_features = cc->svm_features;
+    env->cpuid_ext4_features = cc->ext4_features;
+    env->cpuid_7_0_ebx_features = cc->cpuid_7_0_ebx_features;
+    env->cpuid_xlevel2 = cc->xlevel2;
+    object_property_set_int(OBJECT(cpu), (int64_t)cc->tsc_khz * 1000,
+                            "tsc-frequency", &error);
+    object_property_set_str(OBJECT(cpu), cc->model_id, "model-id", &error);
+
+
+    if (error) {
+        error_report("cpu_init: %s", error_get_pretty(error));
+        exit(1);
+    }
+
 }
 
 static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
@@ -2188,6 +2399,9 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
 
     xcc->parent_reset = cc->reset;
     cc->reset = x86_cpu_reset;
+
+    xcc->ext_features |= CPUID_EXT_HYPERVISOR;
+    xcc->kvm_features = &kvm_default_features;
 }
 
 static const TypeInfo x86_cpu_type_info = {
@@ -2195,14 +2409,117 @@ static const TypeInfo x86_cpu_type_info = {
     .parent = TYPE_CPU,
     .instance_size = sizeof(X86CPU),
     .instance_init = x86_cpu_initfn,
-    .abstract = false,
+    .abstract = true,
     .class_size = sizeof(X86CPUClass),
     .class_init = x86_cpu_common_class_init,
 };
 
+#ifdef CONFIG_KVM
+
+/* Called by kvm_init() so the "host" CPU class can finish the KVM-dependent
+ * part of its initialization.
+ */
+void x86_cpu_finish_host_class_init(KVMState *s)
+{
+    X86CPUClass *cc = x86_cpu_class_by_name("host");
+    uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
+    static uint32_t host_kvm_features;
+
+    assert(kvm_enabled());
+
+    host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
+    x86cpu_vendor_words2str(cc->vendor, ebx, edx, ecx);
+
+    host_cpuid(0x1, 0, &eax, &ebx, &ecx, &edx);
+    cc->family = ((eax >> 8) & 0x0F) + ((eax >> 20) & 0xFF);
+    cc->model = ((eax >> 4) & 0x0F) | ((eax & 0xF0000) >> 12);
+    cc->stepping = eax & 0x0F;
+
+    cc->level = kvm_arch_get_supported_cpuid(s, 0x0, 0, R_EAX);
+    cc->features = kvm_arch_get_supported_cpuid(s, 0x1, 0, R_EDX);
+    cc->ext_features = kvm_arch_get_supported_cpuid(s, 0x1, 0, R_ECX);
+
+    if (cc->level >= 7) {
+        cc->cpuid_7_0_ebx_features =
+                    kvm_arch_get_supported_cpuid(s, 0x7, 0, R_EBX);
+    } else {
+        cc->cpuid_7_0_ebx_features = 0;
+    }
+
+    cc->xlevel = kvm_arch_get_supported_cpuid(s, 0x80000000, 0, R_EAX);
+    cc->ext2_features =
+                kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_EDX);
+    cc->ext3_features =
+                kvm_arch_get_supported_cpuid(s, 0x80000001, 0, R_ECX);
+
+    cpu_x86_fill_model_id(cc->model_id);
+
+    /* Call Centaur's CPUID instruction. */
+    if (!strcmp(cc->vendor, CPUID_VENDOR_VIA)) {
+        host_cpuid(0xC0000000, 0, &eax, &ebx, &ecx, &edx);
+        eax = kvm_arch_get_supported_cpuid(s, 0xC0000000, 0, R_EAX);
+        if (eax >= 0xC0000001) {
+            /* Support VIA max extended level */
+            cc->xlevel2 = eax;
+            host_cpuid(0xC0000001, 0, &eax, &ebx, &ecx, &edx);
+            cc->ext4_features =
+                    kvm_arch_get_supported_cpuid(s, 0xC0000001, 0, R_EDX);
+        }
+    }
+
+    /* Other KVM-specific feature fields: */
+    cc->svm_features =
+        kvm_arch_get_supported_cpuid(s, 0x8000000A, 0, R_EDX);
+    host_kvm_features =
+        kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
+    cc->kvm_features = &host_kvm_features;
+}
+
+static void x86_cpu_host_class_init(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->kvm_required = true;
+}
+
+static const TypeInfo x86_host_cpu_type_info = {
+    .name = TYPE_X86_HOST_CPU,
+    .parent = TYPE_X86_CPU,
+    .class_init = x86_cpu_host_class_init,
+};
+
+#endif /* CONFIG_KVM */
+
+
 static void x86_cpu_register_types(void)
 {
     type_register_static(&x86_cpu_type_info);
+#ifdef CONFIG_KVM
+    type_register_static(&x86_host_cpu_type_info);
+#endif
+    type_register_static(&x86_cpu_qemu64_type_info);
+    type_register_static(&x86_cpu_phenom_type_info);
+    type_register_static(&x86_cpu_core2duo_type_info);
+    type_register_static(&x86_cpu_kvm64_type_info);
+    type_register_static(&x86_cpu_qemu32_type_info);
+    type_register_static(&x86_cpu_kvm32_type_info);
+    type_register_static(&x86_cpu_coreduo_type_info);
+    type_register_static(&x86_cpu_486_type_info);
+    type_register_static(&x86_cpu_pentium_type_info);
+    type_register_static(&x86_cpu_pentium2_type_info);
+    type_register_static(&x86_cpu_pentium3_type_info);
+    type_register_static(&x86_cpu_athlon_type_info);
+    type_register_static(&x86_cpu_n270_type_info);
+    type_register_static(&x86_cpu_Conroe_type_info);
+    type_register_static(&x86_cpu_Penryn_type_info);
+    type_register_static(&x86_cpu_Nehalem_type_info);
+    type_register_static(&x86_cpu_Westmere_type_info);
+    type_register_static(&x86_cpu_SandyBridge_type_info);
+    type_register_static(&x86_cpu_Haswell_type_info);
+    type_register_static(&x86_cpu_Opteron_G1_type_info);
+    type_register_static(&x86_cpu_Opteron_G2_type_info);
+    type_register_static(&x86_cpu_Opteron_G3_type_info);
+    type_register_static(&x86_cpu_Opteron_G4_type_info);
+    type_register_static(&x86_cpu_Opteron_G5_type_info);
 }
 
 type_init(x86_cpu_register_types)

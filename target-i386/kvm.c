@@ -767,6 +767,8 @@ int kvm_arch_init(KVMState *s)
             }
         }
     }
+
+    x86_cpu_finish_host_class_init(s);
     return 0;
 }
 
