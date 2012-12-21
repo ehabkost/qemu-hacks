@@ -49,6 +49,32 @@ typedef struct X86CPUClass {
     /*< public >*/
 
     void (*parent_reset)(CPUState *cpu);
+
+    /* Original model name for -cpu ? listing */
+    const char *model_name;
+
+    /* CPU model definition information: */
+    uint32_t level;
+    char vendor[CPUID_VENDOR_SZ + 1];
+    int family;
+    int model;
+    int stepping;
+    int tsc_khz;
+    uint32_t features, ext_features, ext2_features, ext3_features;
+    /* KVM features are a pointer because currently we change the default
+     * set of features using compatibility functions on the machine init
+     * function, and those may be called after class_init.
+     */
+    uint32_t *kvm_features;
+    uint32_t svm_features;
+    uint32_t xlevel;
+    char model_id[48];
+    /* Store the results of Centaur's CPUID instructions */
+    uint32_t ext4_features;
+    uint32_t xlevel2;
+    /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
+    uint32_t cpuid_7_0_ebx_features;
+    bool kvm_required;
 } X86CPUClass;
 
 /**

@@ -131,6 +131,9 @@ void *kvm_arch_vmalloc(ram_addr_t size);
 void kvm_setup_guest_memory(void *start, size_t size);
 
 void kvm_flush_coalesced_mmio_buffer(void);
+
+void x86_cpu_finish_host_class_init(KVMState *s);
+
 #endif
 
 int kvm_insert_breakpoint(CPUArchState *current_env, target_ulong addr,
