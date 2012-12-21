@@ -1303,7 +1303,7 @@ static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
 
 /* Parse "+feature,-feature,feature=foo" CPU feature string
  */
-static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
+static int cpu_x86_parse_featurestr(X86CPU *cpu, char *features,
                                     QDict **props)
 {
     char *featurestr; /* Single 'key=value" string being parsed */
@@ -1374,7 +1374,7 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
                     fprintf(stderr, "bad numerical value %s\n", val);
                     goto error;
                 }
-                x86_cpu_def->tsc_khz = tsc_freq / 1000;
+                cpu->env.tsc_khz = tsc_freq / 1000;
             } else if (!strcmp(featurestr, "hv_spinlocks")) {
                 char *err;
                 numvalue = strtoul(val, &err, 0);
@@ -1400,20 +1400,20 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
             goto error;
         }
     }
-    x86_cpu_def->features |= plus_features;
-    x86_cpu_def->ext_features |= plus_ext_features;
-    x86_cpu_def->ext2_features |= plus_ext2_features;
-    x86_cpu_def->ext3_features |= plus_ext3_features;
-    x86_cpu_def->kvm_features |= plus_kvm_features;
-    x86_cpu_def->svm_features |= plus_svm_features;
-    x86_cpu_def->cpuid_7_0_ebx_features |= plus_7_0_ebx_features;
-    x86_cpu_def->features &= ~minus_features;
-    x86_cpu_def->ext_features &= ~minus_ext_features;
-    x86_cpu_def->ext2_features &= ~minus_ext2_features;
-    x86_cpu_def->ext3_features &= ~minus_ext3_features;
-    x86_cpu_def->kvm_features &= ~minus_kvm_features;
-    x86_cpu_def->svm_features &= ~minus_svm_features;
-    x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
+    cpu->env.cpuid_features |= plus_features;
+    cpu->env.cpuid_ext_features |= plus_ext_features;
+    cpu->env.cpuid_ext2_features |= plus_ext2_features;
+    cpu->env.cpuid_ext3_features |= plus_ext3_features;
+    cpu->env.cpuid_kvm_features |= plus_kvm_features;
+    cpu->env.cpuid_svm_features |= plus_svm_features;
+    cpu->env.cpuid_7_0_ebx_features |= plus_7_0_ebx_features;
+    cpu->env.cpuid_features &= ~minus_features;
+    cpu->env.cpuid_ext_features &= ~minus_ext_features;
+    cpu->env.cpuid_ext2_features &= ~minus_ext2_features;
+    cpu->env.cpuid_ext3_features &= ~minus_ext3_features;
+    cpu->env.cpuid_kvm_features &= ~minus_kvm_features;
+    cpu->env.cpuid_svm_features &= ~minus_svm_features;
+    cpu->env.cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
     g_strfreev(feat_array);
     return 0;
 
@@ -1561,12 +1561,13 @@ X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
                             &def->ext3_features, &def->kvm_features,
                             &def->svm_features, &def->cpuid_7_0_ebx_features);
 
-    if (cpu_x86_parse_featurestr(def, features, &props) < 0) {
+    cpudef_2_x86_cpu(cpu, def, &error);
+
+    if (cpu_x86_parse_featurestr(cpu, features, &props) < 0) {
         error_setg(&error, "Invalid cpu_model string format: %s", cpu_model);
         goto out;
     }
 
-    cpudef_2_x86_cpu(cpu, def, &error);
     cpu_x86_set_props(cpu, props, &error);
 
 out:
