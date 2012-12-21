@@ -1244,6 +1244,15 @@ static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
             host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
             x86cpu_vendor_words2str(x86_cpu_def->vendor, ebx, edx, ecx);
         }
+
+        x86_cpu_def->kvm_features |= kvm_default_features;
+        add_flagname_to_bitmaps("hypervisor", &x86_cpu_def->features,
+                                &x86_cpu_def->ext_features,
+                                &x86_cpu_def->ext2_features,
+                                &x86_cpu_def->ext3_features,
+                                &x86_cpu_def->kvm_features,
+                                &x86_cpu_def->svm_features,
+                                &x86_cpu_def->cpuid_7_0_ebx_features);
     }
 
     return 0;
@@ -1517,12 +1526,6 @@ X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
     cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
-
-    def->kvm_features |= kvm_default_features;
-    add_flagname_to_bitmaps("hypervisor", &def->features,
-                            &def->ext_features, &def->ext2_features,
-                            &def->ext3_features, &def->kvm_features,
-                            &def->svm_features, &def->cpuid_7_0_ebx_features);
 
     cpudef_2_x86_cpu(cpu, def, &error);
 
