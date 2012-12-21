@@ -1211,12 +1211,19 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
 }
 
-static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
+static X86CPU *x86_cpu_create_from_name(const char *name, Error **errp)
 {
+    Error *error = NULL;
+    X86CPU *cpu = NULL;
+    x86_def_t def1, *x86_cpu_def = &def1;
+
+    memset(&def1, 0, sizeof(def1));
 
     if (kvm_enabled() && name && strcmp(name, "host") == 0) {
 #ifdef CONFIG_KVM
+        cpu = X86_CPU(object_new(TYPE_X86_CPU));
         kvm_cpu_fill_host(x86_cpu_def);
+        cpudef_2_x86_cpu(cpu, x86_cpu_def, &error);
 #endif
     } else {
         x86_def_t *def;
@@ -1228,9 +1235,11 @@ static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
         }
 
         if (!def) {
-            return -1;
+            error_setg(&error, "Unable to find CPU definition: %s", name);
+            goto out;
         }
 
+        cpu = X86_CPU(object_new(TYPE_X86_CPU));
         memcpy(x86_cpu_def, def, sizeof(*def));
         /* sysenter isn't supported on compatibility mode on AMD, syscall
          * isn't supported in compatibility mode on Intel.
@@ -1253,9 +1262,19 @@ static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
                                 &x86_cpu_def->kvm_features,
                                 &x86_cpu_def->svm_features,
                                 &x86_cpu_def->cpuid_7_0_ebx_features);
+
+        cpudef_2_x86_cpu(cpu, x86_cpu_def, &error);
     }
 
-    return 0;
+out:
+    if (error) {
+        error_propagate(errp, error);
+        if (cpu) {
+            object_delete(OBJECT(cpu));
+        }
+        return NULL;
+    }
+    return cpu;
 }
 
 /* Set features on X86CPU object based on a provide key,value list */
@@ -1502,13 +1521,10 @@ X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
 {
     X86CPU *cpu = NULL;
     CPUX86State *env;
-    x86_def_t def1, *def = &def1;
     QDict *props = NULL;
     Error *error = NULL;
     char *name, *features;
     gchar **model_pieces;
-
-    memset(def, 0, sizeof(*def));
 
     model_pieces = g_strsplit(cpu_model, ",", 2);
     if (!model_pieces[0]) {
@@ -1518,16 +1534,13 @@ X86CPU *cpu_x86_create(const char *cpu_model, Error **errp)
     name = model_pieces[0];
     features = model_pieces[1];
 
-    if (cpu_x86_find_by_name(def, name) < 0) {
-        error_setg(&error, "Unable to find CPU definition: %s", name);
+    cpu = x86_cpu_create_from_name(name, &error);
+    if (error) {
         goto out;
     }
 
-    cpu = X86_CPU(object_new(TYPE_X86_CPU));
     env = &cpu->env;
     env->cpu_model_str = cpu_model;
-
-    cpudef_2_x86_cpu(cpu, def, &error);
 
     if (cpu_x86_parse_featurestr(cpu, features, &props) < 0) {
         error_setg(&error, "Invalid cpu_model string format: %s", cpu_model);
