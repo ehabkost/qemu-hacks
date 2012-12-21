@@ -1255,20 +1255,24 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
 
 static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
 {
-    x86_def_t *def;
 
-    for (def = x86_defs; def; def = def->next) {
-        if (name && !strcmp(name, def->name)) {
-            break;
-        }
-    }
     if (kvm_enabled() && name && strcmp(name, "host") == 0) {
 #ifdef CONFIG_KVM
         kvm_cpu_fill_host(x86_cpu_def);
 #endif
-    } else if (!def) {
-        return -1;
     } else {
+        x86_def_t *def;
+
+        for (def = x86_defs; def; def = def->next) {
+            if (name && !strcmp(name, def->name)) {
+                break;
+            }
+        }
+
+        if (!def) {
+            return -1;
+        }
+
         memcpy(x86_cpu_def, def, sizeof(*def));
         /* sysenter isn't supported on compatibility mode on AMD, syscall
          * isn't supported in compatibility mode on Intel.
