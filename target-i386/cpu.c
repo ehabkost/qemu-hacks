@@ -388,6 +388,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "core2duo",
         .level = 10,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 6,
         .model = 15,
         .stepping = 11,
@@ -432,6 +435,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "qemu32",
         .level = 4,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 6,
         .model = 3,
         .stepping = 3,
@@ -442,6 +448,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "kvm32",
         .level = 5,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 15,
         .model = 6,
         .stepping = 1,
@@ -456,6 +465,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "coreduo",
         .level = 10,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 6,
         .model = 14,
         .stepping = 8,
@@ -471,6 +483,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "486",
         .level = 1,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 4,
         .model = 0,
         .stepping = 0,
@@ -480,6 +495,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "pentium",
         .level = 1,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 5,
         .model = 4,
         .stepping = 3,
@@ -489,6 +507,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "pentium2",
         .level = 2,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 6,
         .model = 5,
         .stepping = 2,
@@ -498,6 +519,9 @@ static x86_def_t builtin_x86_defs[] = {
     {
         .name = "pentium3",
         .level = 2,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 6,
         .model = 7,
         .stepping = 3,
@@ -523,6 +547,9 @@ static x86_def_t builtin_x86_defs[] = {
         .name = "n270",
         /* original is on level 10 */
         .level = 5,
+        .vendor1 = CPUID_VENDOR_INTEL_1,
+        .vendor2 = CPUID_VENDOR_INTEL_2,
+        .vendor3 = CPUID_VENDOR_INTEL_3,
         .family = 6,
         .model = 28,
         .stepping = 2,
