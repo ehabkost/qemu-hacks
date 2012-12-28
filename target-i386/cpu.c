@@ -1274,6 +1274,34 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
+static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
+{
+    CPUX86State *env = &cpu->env;
+
+    assert(def->vendor1);
+    env->cpuid_vendor1 = def->vendor1;
+    env->cpuid_vendor2 = def->vendor2;
+    env->cpuid_vendor3 = def->vendor3;
+    env->cpuid_vendor_override = def->vendor_override;
+    object_property_set_int(OBJECT(cpu), def->level, "level", errp);
+    object_property_set_int(OBJECT(cpu), def->family, "family", errp);
+    object_property_set_int(OBJECT(cpu), def->model, "model", errp);
+    object_property_set_int(OBJECT(cpu), def->stepping, "stepping", errp);
+    env->cpuid_features = def->features;
+    env->cpuid_ext_features = def->ext_features;
+    env->cpuid_ext2_features = def->ext2_features;
+    env->cpuid_ext3_features = def->ext3_features;
+    object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", errp);
+    env->cpuid_kvm_features = def->kvm_features;
+    env->cpuid_svm_features = def->svm_features;
+    env->cpuid_ext4_features = def->ext4_features;
+    env->cpuid_7_0_ebx_features = def->cpuid_7_0_ebx_features;
+    env->cpuid_xlevel2 = def->xlevel2;
+    object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
+                            "tsc-frequency", errp);
+    object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
+}
+
 static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
 {
     x86_def_t *def;
@@ -1554,7 +1582,6 @@ static void filter_features_for_kvm(X86CPU *cpu)
 
 int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 {
-    CPUX86State *env = &cpu->env;
     x86_def_t def1, *def = &def1;
     Error *error = NULL;
     char *name, *features;
@@ -1582,29 +1609,9 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     if (cpu_x86_parse_featurestr(def, features) < 0) {
         goto error;
     }
-    assert(def->vendor1);
-    env->cpuid_vendor1 = def->vendor1;
-    env->cpuid_vendor2 = def->vendor2;
-    env->cpuid_vendor3 = def->vendor3;
-    env->cpuid_vendor_override = def->vendor_override;
-    object_property_set_int(OBJECT(cpu), def->level, "level", &error);
-    object_property_set_int(OBJECT(cpu), def->family, "family", &error);
-    object_property_set_int(OBJECT(cpu), def->model, "model", &error);
-    object_property_set_int(OBJECT(cpu), def->stepping, "stepping", &error);
-    env->cpuid_features = def->features;
-    env->cpuid_ext_features = def->ext_features;
-    env->cpuid_ext2_features = def->ext2_features;
-    env->cpuid_ext3_features = def->ext3_features;
-    object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", &error);
-    env->cpuid_kvm_features = def->kvm_features;
-    env->cpuid_svm_features = def->svm_features;
-    env->cpuid_ext4_features = def->ext4_features;
-    env->cpuid_7_0_ebx_features = def->cpuid_7_0_ebx_features;
-    env->cpuid_xlevel2 = def->xlevel2;
-    object_property_set_int(OBJECT(cpu), (int64_t)def->tsc_khz * 1000,
-                            "tsc-frequency", &error);
 
-    object_property_set_str(OBJECT(cpu), def->model_id, "model-id", &error);
+    cpudef_2_x86_cpu(cpu, def, &error);
+
     if (error) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
         error_free(error);
