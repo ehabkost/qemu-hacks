@@ -1605,22 +1605,23 @@ static X86CPU *x86_cpu_create_from_name(const char *name, Error **errp)
 {
     Error *error = NULL;
     X86CPU *cpu = NULL;
+    ObjectClass *oc;
+    X86CPUClass *cc;
     char *class_name = g_strdup_printf(CPU_CLASS_NAME("%s"), name);
 
-
-    if (kvm_enabled() && name && strcmp(name, "host") == 0) {
-#ifdef CONFIG_KVM
-        cpu = X86_CPU(object_new(TYPE_X86_HOST_CPU));
-#endif
-    } else {
-
-        if (!object_class_by_name(class_name)) {
-            error_setg(&error, "Unable to find CPU definition: %s", name);
-            goto out;
-        }
-
-        cpu = X86_CPU(object_new(class_name));
+    oc = object_class_by_name(class_name);
+    if (!oc) {
+        error_setg(&error, "Unable to find CPU definition: %s", name);
+        goto out;
     }
+
+    cc = X86_CPU_CLASS(oc);
+    if (cc->kvm_required && !kvm_enabled()) {
+        error_setg(&error, "CPU model '%s' requires KVM", name);
+        goto out;
+    }
+
+    cpu = X86_CPU(object_new(class_name));
 
 out:
     g_free(class_name);
@@ -2499,6 +2500,12 @@ static void x86_host_cpu_initfn(Object *obj)
     }
 }
 
+static void x86_host_cpu_class_init(ObjectClass *oc, void *data)
+{
+    X86CPUClass *cc = X86_CPU_CLASS(oc);
+    cc->kvm_required = true;
+}
+
 static const TypeInfo x86_host_cpu_type_info = {
     .name = TYPE_X86_HOST_CPU,
     .parent = TYPE_X86_CPU,
@@ -2506,6 +2513,7 @@ static const TypeInfo x86_host_cpu_type_info = {
     .instance_init = x86_host_cpu_initfn,
     .abstract = false,
     .class_size = sizeof(X86CPUClass),
+    .class_init = x86_host_cpu_class_init,
 };
 
 #endif /* CONFIG_KVM */

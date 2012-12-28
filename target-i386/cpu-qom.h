@@ -49,6 +49,7 @@ typedef struct X86CPUClass {
     /*< public >*/
 
     void (*parent_reset)(CPUState *cpu);
+    bool kvm_required;
 } X86CPUClass;
 
 /**
