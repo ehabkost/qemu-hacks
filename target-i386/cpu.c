@@ -1282,9 +1282,25 @@ static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
     return 0;
 }
 
+/* Set features on X86CPU object based on a provide key,value list */
+static void cpu_x86_set_props(X86CPU *cpu, QDict *features, Error **errp)
+{
+    const QDictEntry *ent;
+
+    for (ent = qdict_first(features); ent; ent = qdict_next(features, ent)) {
+        const QString *qval = qobject_to_qstring(qdict_entry_value(ent));
+        object_property_parse(OBJECT(cpu), qstring_get_str(qval),
+                              qdict_entry_key(ent), errp);
+        if (error_is_set(errp)) {
+            return;
+        }
+    }
+}
+
 /* Parse "+feature,-feature,feature=foo" CPU feature string
  */
-static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
+static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
+                                    QDict **props)
 {
     char *featurestr; /* Single 'key=value" string being parsed */
     /* Features to be added */
@@ -1298,10 +1314,11 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
     uint32_t minus_kvm_features = 0, minus_svm_features = 0;
     uint32_t minus_7_0_ebx_features = 0;
     uint32_t numvalue;
+    gchar **feat_array = g_strsplit(features ? features : "", ",", 0);
+    *props = qdict_new();
+    int j = 0;
 
-    featurestr = features ? strtok(features, ",") : NULL;
-
-    while (featurestr) {
+    while ((featurestr = feat_array[j++])) {
         char *val;
         if (featurestr[0] == '+') {
             add_flagname_to_bitmaps(featurestr + 1, &plus_features,
@@ -1398,7 +1415,6 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
             fprintf(stderr, "feature string `%s' not in format (+feature|-feature|feature=xyz)\n", featurestr);
             goto error;
         }
-        featurestr = strtok(NULL, ",");
     }
     x86_cpu_def->features |= plus_features;
     x86_cpu_def->ext_features |= plus_ext_features;
@@ -1414,9 +1430,11 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
     x86_cpu_def->kvm_features &= ~minus_kvm_features;
     x86_cpu_def->svm_features &= ~minus_svm_features;
     x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
+    g_strfreev(feat_array);
     return 0;
 
 error:
+    g_strfreev(feat_array);
     return -1;
 }
 
@@ -1524,6 +1542,7 @@ static void filter_features_for_kvm(X86CPU *cpu)
 int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
 {
     x86_def_t def1, *def = &def1;
+    QDict *props = NULL;
     Error *error = NULL;
     char *name, *features;
     gchar **model_pieces;
@@ -1549,14 +1568,16 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
                             &def->ext3_features, &def->kvm_features,
                             &def->svm_features, &def->cpuid_7_0_ebx_features);
 
-    if (cpu_x86_parse_featurestr(def, features) < 0) {
+    if (cpu_x86_parse_featurestr(def, features, &props) < 0) {
         error_setg(&error, "Invalid cpu_model string format: %s", cpu_model);
         goto out;
     }
 
     cpudef_2_x86_cpu(cpu, def, &error);
+    cpu_x86_set_props(cpu, props, &error);
 
 out:
+    QDECREF(props);
     g_strfreev(model_pieces);
     if (error) {
         fprintf(stderr, "%s\n", error_get_pretty(error));
