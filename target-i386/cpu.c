@@ -1377,6 +1377,8 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
                     goto error;
                 }
                 if (numvalue < 0x80000000) {
+                    fprintf(stderr, "xlevel value shall always be >= 0x80000000"
+                            ", fixup will be deprecated in future versions\n");
                     numvalue += 0x80000000;
                 }
                 x86_cpu_def->xlevel = numvalue;
