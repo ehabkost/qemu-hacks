@@ -875,6 +875,18 @@ static x86_def_t builtin_x86_defs[] = {
     },
 };
 
+static void x86cpu_vendor_words2str(char *dst, uint32_t ebx, uint32_t ecx,
+                                    uint32_t edx)
+{
+    int i;
+    for (i = 0; i < 4; i++) {
+        dst[i] = ebx >> (8 * i);
+        dst[i + 4] = edx >> (8 * i);
+        dst[i + 8] = ecx >> (8 * i);
+    }
+    dst[CPUID_VENDOR_SZ] = '\0';
+}
+
 #ifdef CONFIG_KVM
 static int cpu_x86_fill_model_id(char *str)
 {
@@ -1167,15 +1179,10 @@ static char *x86_cpuid_get_vendor(Object *obj, Error **errp)
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
     char *value;
-    int i;
 
     value = (char *)g_malloc(CPUID_VENDOR_SZ + 1);
-    for (i = 0; i < 4; i++) {
-        value[i    ] = env->cpuid_vendor1 >> (8 * i);
-        value[i + 4] = env->cpuid_vendor2 >> (8 * i);
-        value[i + 8] = env->cpuid_vendor3 >> (8 * i);
-    }
-    value[CPUID_VENDOR_SZ] = '\0';
+    x86cpu_vendor_words2str(value, env->cpuid_vendor1, env->cpuid_vendor2,
+                            env->cpuid_vendor3);
     return value;
 }
 
