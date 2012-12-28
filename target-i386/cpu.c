@@ -330,6 +330,14 @@ typedef struct x86_def_t {
 #define TCG_SVM_FEATURES 0
 #define TCG_7_0_EBX_FEATURES (CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_SMAP)
 
+
+/* CPU class name definitions: */
+
+#define CPU_CLASS_NAME(name) (name "-" TYPE_X86_CPU)
+
+#define TYPE_X86_HOST_CPU CPU_CLASS_NAME("host")
+
+
 /* maintains list of cpu model definitions
  */
 static x86_def_t *x86_defs = {NULL};
@@ -1221,9 +1229,7 @@ static X86CPU *x86_cpu_create_from_name(const char *name, Error **errp)
 
     if (kvm_enabled() && name && strcmp(name, "host") == 0) {
 #ifdef CONFIG_KVM
-        cpu = X86_CPU(object_new(TYPE_X86_CPU));
-        kvm_cpu_fill_host(x86_cpu_def);
-        cpudef_2_x86_cpu(cpu, x86_cpu_def, &error);
+        cpu = X86_CPU(object_new(TYPE_X86_HOST_CPU));
 #endif
     } else {
         x86_def_t *def;
@@ -2168,9 +2174,42 @@ static const TypeInfo x86_cpu_type_info = {
     .class_init = x86_cpu_common_class_init,
 };
 
+#ifdef CONFIG_KVM
+
+static void x86_host_cpu_initfn(Object *obj)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    Error *err = NULL;
+    x86_def_t cpudef;
+
+    memset(&cpudef, 0, sizeof(cpudef));
+    kvm_cpu_fill_host(&cpudef);
+    cpudef_2_x86_cpu(cpu, &cpudef, &err);
+
+    if (err) {
+        error_report("unexpected cpu init error: %s", error_get_pretty(err));
+        exit(1);
+    }
+}
+
+static const TypeInfo x86_host_cpu_type_info = {
+    .name = TYPE_X86_HOST_CPU,
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .instance_init = x86_host_cpu_initfn,
+    .abstract = false,
+    .class_size = sizeof(X86CPUClass),
+};
+
+#endif /* CONFIG_KVM */
+
+
 static void x86_cpu_register_types(void)
 {
     type_register_static(&x86_cpu_type_info);
+#ifdef CONFIG_KVM
+    type_register_static(&x86_host_cpu_type_info);
+#endif
 }
 
 type_init(x86_cpu_register_types)
