@@ -1346,13 +1346,7 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
                 }
                 x86_cpu_def->family = numvalue;
             } else if (!strcmp(featurestr, "model")) {
-                char *err;
-                numvalue = strtoul(val, &err, 0);
-                if (!*val || *err || numvalue > 0xff) {
-                    fprintf(stderr, "bad numerical value %s\n", val);
-                    goto error;
-                }
-                x86_cpu_def->model = numvalue;
+                qdict_put(*props, featurestr, qstring_from_str(val));
             } else if (!strcmp(featurestr, "stepping")) {
                 qdict_put(*props, featurestr, qstring_from_str(val));
             } else if (!strcmp(featurestr, "level")) {
