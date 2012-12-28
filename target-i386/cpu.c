@@ -1376,7 +1376,7 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
                 }
                 x86_cpu_def->xlevel = numvalue;
             } else if (!strcmp(featurestr, "vendor")) {
-                pstrcpy(x86_cpu_def->vendor, sizeof(x86_cpu_def->vendor), val);
+                qdict_put(*props, featurestr, qstring_from_str(val));
             } else if (!strcmp(featurestr, "model_id")) {
                 pstrcpy(x86_cpu_def->model_id, sizeof(x86_cpu_def->model_id),
                         val);
