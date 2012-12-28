@@ -1329,6 +1329,7 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
                 x86_cpu_def->level = numvalue;
             } else if (!strcmp(featurestr, "xlevel")) {
                 char *err;
+                QString *s;
                 numvalue = strtoul(val, &err, 0);
                 if (!*val || *err) {
                     fprintf(stderr, "bad numerical value %s\n", val);
@@ -1339,7 +1340,9 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
                             ", fixup will be deprecated in future versions\n");
                     numvalue += 0x80000000;
                 }
-                x86_cpu_def->xlevel = numvalue;
+                s = qstring_new();
+                qstring_append_int(s, numvalue);
+                qdict_put(*props, featurestr, s);
             } else if (!strcmp(featurestr, "vendor")) {
                 qdict_put(*props, featurestr, qstring_from_str(val));
             } else if (!strcmp(featurestr, "model_id")) {
