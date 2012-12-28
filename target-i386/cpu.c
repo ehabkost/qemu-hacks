@@ -1382,8 +1382,7 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features,
             } else if (!strcmp(featurestr, "vendor")) {
                 qdict_put(*props, featurestr, qstring_from_str(val));
             } else if (!strcmp(featurestr, "model_id")) {
-                pstrcpy(x86_cpu_def->model_id, sizeof(x86_cpu_def->model_id),
-                        val);
+                qdict_put(*props, "model-id", qstring_from_str(val));
             } else if (!strcmp(featurestr, "tsc_freq")) {
                 int64_t tsc_freq;
                 char *err;
