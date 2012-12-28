@@ -273,8 +273,6 @@ static void add_flagname_to_bitmaps(const char *flagname, uint32_t *features,
 }
 
 typedef struct x86_def_t {
-    struct x86_def_t *next;
-    const char *name;
     uint32_t level;
     char vendor[CPUID_VENDOR_SZ + 1];
     int family;
@@ -335,18 +333,51 @@ typedef struct x86_def_t {
 
 #define CPU_CLASS_NAME(name) (name "-" TYPE_X86_CPU)
 
+/* -cpu "host" */
 #define TYPE_X86_HOST_CPU CPU_CLASS_NAME("host")
 
 
-/* maintains list of cpu model definitions
- */
-static x86_def_t *x86_defs = {NULL};
+/* Base class for predefined CPU models: */
+#define TYPE_X86_PREDEF_CPU TYPE_X86_CPU "-predefined"
 
-/* built-in cpu model definitions (deprecated)
+#define PREDEF_X86_CPU_CLASS(klass) \
+    OBJECT_CLASS_CHECK(PredefX86CPUClass, (klass), TYPE_X86_PREDEF_CPU)
+#define PREDEF_X86_CPU(obj) \
+    OBJECT_CHECK(X86CPU, (obj), TYPE_X86_PREDEF_CPU)
+#define PREDEF_X86_CPU_GET_CLASS(obj) \
+    OBJECT_GET_CLASS(PredefX86CPUClass, (obj), TYPE_X86_PREDEF_CPU)
+
+
+/**
+ * PredefX86CPUClass:
+ *
+ * A predefined x86 CPU model.
  */
-static x86_def_t builtin_x86_defs[] = {
-    {
-        .name = "qemu64",
+typedef struct PredefX86CPUClass {
+    /*< private >*/
+    X86CPUClass parent_class;
+    /*< public >*/
+
+    x86_def_t cpudef;
+} PredefX86CPUClass;
+
+
+static void x86_cpu_predef_initfn(Object *obj);
+
+static const TypeInfo predef_x86_cpu_type_info = {
+    .name = TYPE_X86_PREDEF_CPU,
+    .parent = TYPE_X86_CPU,
+    .instance_size = sizeof(X86CPU),
+    .instance_init = x86_cpu_predef_initfn,
+    .abstract = true,
+    .class_size = sizeof(PredefX86CPUClass),
+};
+
+
+static void x86_cpu_class_init_qemu64(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 4,
         .vendor = CPUID_VENDOR_AMD,
         .family = 6,
@@ -361,9 +392,24 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
             CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
         .xlevel = 0x8000000A,
-    },
-    {
-        .name = "phenom",
+    };
+    pstrcpy(cc->cpudef.model_id, sizeof(cc->cpudef.model_id), "QEMU Virtual CPU version ");
+    pstrcat(cc->cpudef.model_id, sizeof(cc->cpudef.model_id), qemu_get_version());
+}
+
+static const TypeInfo x86_cpu_qemu64_type_info = {
+    .name = CPU_CLASS_NAME("qemu64"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_qemu64,
+};
+
+static void x86_cpu_class_init_phenom(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 16,
@@ -387,9 +433,22 @@ static x86_def_t builtin_x86_defs[] = {
         .svm_features = CPUID_SVM_NPT | CPUID_SVM_LBRV,
         .xlevel = 0x8000001A,
         .model_id = "AMD Phenom(tm) 9550 Quad-Core Processor"
-    },
-    {
-        .name = "core2duo",
+    };
+}
+
+static const TypeInfo x86_cpu_phenom_type_info = {
+    .name = CPU_CLASS_NAME("phenom"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_phenom,
+};
+
+static void x86_cpu_class_init_core2duo(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 10,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -406,9 +465,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x80000008,
         .model_id = "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz",
-    },
-    {
-        .name = "kvm64",
+    };
+}
+
+static const TypeInfo x86_cpu_core2duo_type_info = {
+    .name = CPU_CLASS_NAME("core2duo"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_core2duo,
+};
+
+static void x86_cpu_class_init_kvm64(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 5,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 15,
@@ -430,9 +502,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = 0,
         .xlevel = 0x80000008,
         .model_id = "Common KVM processor"
-    },
-    {
-        .name = "qemu32",
+    };
+}
+
+static const TypeInfo x86_cpu_kvm64_type_info = {
+    .name = CPU_CLASS_NAME("kvm64"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_kvm64,
+};
+
+static void x86_cpu_class_init_qemu32(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 4,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -441,9 +526,24 @@ static x86_def_t builtin_x86_defs[] = {
         .features = PPRO_FEATURES,
         .ext_features = CPUID_EXT_SSE3 | CPUID_EXT_POPCNT,
         .xlevel = 0x80000004,
-    },
-    {
-        .name = "kvm32",
+    };
+    pstrcpy(cc->cpudef.model_id, sizeof(cc->cpudef.model_id), "QEMU Virtual CPU version ");
+    pstrcat(cc->cpudef.model_id, sizeof(cc->cpudef.model_id), qemu_get_version());
+}
+
+static const TypeInfo x86_cpu_qemu32_type_info = {
+    .name = CPU_CLASS_NAME("qemu32"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_qemu32,
+};
+
+static void x86_cpu_class_init_kvm32(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 5,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 15,
@@ -456,9 +556,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = 0,
         .xlevel = 0x80000008,
         .model_id = "Common 32-bit KVM processor"
-    },
-    {
-        .name = "coreduo",
+    };
+}
+
+static const TypeInfo x86_cpu_kvm32_type_info = {
+    .name = CPU_CLASS_NAME("kvm32"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_kvm32,
+};
+
+static void x86_cpu_class_init_coreduo(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 10,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -472,9 +585,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext2_features = CPUID_EXT2_NX,
         .xlevel = 0x80000008,
         .model_id = "Genuine Intel(R) CPU           T2600  @ 2.16GHz",
-    },
-    {
-        .name = "486",
+    };
+}
+
+static const TypeInfo x86_cpu_coreduo_type_info = {
+    .name = CPU_CLASS_NAME("coreduo"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_coreduo,
+};
+
+static void x86_cpu_class_init_486(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 1,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 4,
@@ -482,9 +608,22 @@ static x86_def_t builtin_x86_defs[] = {
         .stepping = 0,
         .features = I486_FEATURES,
         .xlevel = 0,
-    },
-    {
-        .name = "pentium",
+    };
+}
+
+static const TypeInfo x86_cpu_486_type_info = {
+    .name = CPU_CLASS_NAME("486"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_486,
+};
+
+static void x86_cpu_class_init_pentium(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 1,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 5,
@@ -492,9 +631,22 @@ static x86_def_t builtin_x86_defs[] = {
         .stepping = 3,
         .features = PENTIUM_FEATURES,
         .xlevel = 0,
-    },
-    {
-        .name = "pentium2",
+    };
+}
+
+static const TypeInfo x86_cpu_pentium_type_info = {
+    .name = CPU_CLASS_NAME("pentium"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_pentium,
+};
+
+static void x86_cpu_class_init_pentium2(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -502,9 +654,22 @@ static x86_def_t builtin_x86_defs[] = {
         .stepping = 2,
         .features = PENTIUM2_FEATURES,
         .xlevel = 0,
-    },
-    {
-        .name = "pentium3",
+    };
+}
+
+static const TypeInfo x86_cpu_pentium2_type_info = {
+    .name = CPU_CLASS_NAME("pentium2"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_pentium2,
+};
+
+static void x86_cpu_class_init_pentium3(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -512,9 +677,22 @@ static x86_def_t builtin_x86_defs[] = {
         .stepping = 3,
         .features = PENTIUM3_FEATURES,
         .xlevel = 0,
-    },
-    {
-        .name = "athlon",
+    };
+}
+
+static const TypeInfo x86_cpu_pentium3_type_info = {
+    .name = CPU_CLASS_NAME("pentium3"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_pentium3,
+};
+
+static void x86_cpu_class_init_athlon(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 2,
         .vendor = CPUID_VENDOR_AMD,
         .family = 6,
@@ -525,9 +703,24 @@ static x86_def_t builtin_x86_defs[] = {
         .ext2_features = (PPRO_FEATURES & CPUID_EXT2_AMD_ALIASES) |
             CPUID_EXT2_MMXEXT | CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT,
         .xlevel = 0x80000008,
-    },
-    {
-        .name = "n270",
+    };
+    pstrcpy(cc->cpudef.model_id, sizeof(cc->cpudef.model_id), "QEMU Virtual CPU version ");
+    pstrcat(cc->cpudef.model_id, sizeof(cc->cpudef.model_id), qemu_get_version());
+}
+
+static const TypeInfo x86_cpu_athlon_type_info = {
+    .name = CPU_CLASS_NAME("athlon"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_athlon,
+};
+
+static void x86_cpu_class_init_n270(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         /* original is on level 10 */
         .level = 5,
         .vendor = CPUID_VENDOR_INTEL,
@@ -545,9 +738,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel(R) Atom(TM) CPU N270   @ 1.60GHz",
-    },
-    {
-        .name = "Conroe",
+    };
+}
+
+static const TypeInfo x86_cpu_n270_type_info = {
+    .name = CPU_CLASS_NAME("n270"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_n270,
+};
+
+static void x86_cpu_class_init_Conroe(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -563,9 +769,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Celeron_4x0 (Conroe/Merom Class Core 2)",
-    },
-    {
-        .name = "Penryn",
+    };
+}
+
+static const TypeInfo x86_cpu_Conroe_type_info = {
+    .name = CPU_CLASS_NAME("Conroe"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Conroe,
+};
+
+static void x86_cpu_class_init_Penryn(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -582,9 +801,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Core 2 Duo P9xxx (Penryn Class Core 2)",
-    },
-    {
-        .name = "Nehalem",
+    };
+}
+
+static const TypeInfo x86_cpu_Penryn_type_info = {
+    .name = CPU_CLASS_NAME("Penryn"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Penryn,
+};
+
+static void x86_cpu_class_init_Nehalem(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 2,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -601,9 +833,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Core i7 9xx (Nehalem Class Core i7)",
-    },
-    {
-        .name = "Westmere",
+    };
+}
+
+static const TypeInfo x86_cpu_Nehalem_type_info = {
+    .name = CPU_CLASS_NAME("Nehalem"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Nehalem,
+};
+
+static void x86_cpu_class_init_Westmere(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 11,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -621,9 +866,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Westmere E56xx/L56xx/X56xx (Nehalem-C)",
-    },
-    {
-        .name = "SandyBridge",
+    };
+}
+
+static const TypeInfo x86_cpu_Westmere_type_info = {
+    .name = CPU_CLASS_NAME("Westmere"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Westmere,
+};
+
+static void x86_cpu_class_init_SandyBridge(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 0xd,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -644,9 +902,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Xeon E312xx (Sandy Bridge)",
-    },
-    {
-        .name = "Haswell",
+    };
+}
+
+static const TypeInfo x86_cpu_SandyBridge_type_info = {
+    .name = CPU_CLASS_NAME("SandyBridge"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_SandyBridge,
+};
+
+static void x86_cpu_class_init_Haswell(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 0xd,
         .vendor = CPUID_VENDOR_INTEL,
         .family = 6,
@@ -672,9 +943,22 @@ static x86_def_t builtin_x86_defs[] = {
             CPUID_7_0_EBX_RTM,
         .xlevel = 0x8000000A,
         .model_id = "Intel Core Processor (Haswell)",
-    },
-    {
-        .name = "Opteron_G1",
+    };
+}
+
+static const TypeInfo x86_cpu_Haswell_type_info = {
+    .name = CPU_CLASS_NAME("Haswell"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Haswell,
+};
+
+static void x86_cpu_class_init_Opteron_G1(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 15,
@@ -694,9 +978,22 @@ static x86_def_t builtin_x86_defs[] = {
              CPUID_EXT2_TSC | CPUID_EXT2_PSE | CPUID_EXT2_DE | CPUID_EXT2_FPU,
         .xlevel = 0x80000008,
         .model_id = "AMD Opteron 240 (Gen 1 Class Opteron)",
-    },
-    {
-        .name = "Opteron_G2",
+    };
+}
+
+static const TypeInfo x86_cpu_Opteron_G1_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G1"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G1,
+};
+
+static void x86_cpu_class_init_Opteron_G2(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 15,
@@ -718,9 +1015,22 @@ static x86_def_t builtin_x86_defs[] = {
         .ext3_features = CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
         .xlevel = 0x80000008,
         .model_id = "AMD Opteron 22xx (Gen 2 Class Opteron)",
-    },
-    {
-        .name = "Opteron_G3",
+    };
+}
+
+static const TypeInfo x86_cpu_Opteron_G2_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G2"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G2,
+};
+
+static void x86_cpu_class_init_Opteron_G3(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 5,
         .vendor = CPUID_VENDOR_AMD,
         .family = 15,
@@ -744,9 +1054,22 @@ static x86_def_t builtin_x86_defs[] = {
              CPUID_EXT3_ABM | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
         .xlevel = 0x80000008,
         .model_id = "AMD Opteron 23xx (Gen 3 Class Opteron)",
-    },
-    {
-        .name = "Opteron_G4",
+    };
+}
+
+static const TypeInfo x86_cpu_Opteron_G3_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G3"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G3,
+};
+
+static void x86_cpu_class_init_Opteron_G4(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 0xd,
         .vendor = CPUID_VENDOR_AMD,
         .family = 21,
@@ -774,9 +1097,22 @@ static x86_def_t builtin_x86_defs[] = {
              CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000001A,
         .model_id = "AMD Opteron 62xx class CPU",
-    },
-    {
-        .name = "Opteron_G5",
+    };
+}
+
+static const TypeInfo x86_cpu_Opteron_G4_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G4"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G4,
+};
+
+static void x86_cpu_class_init_Opteron_G5(ObjectClass *oc, void *data)
+{
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_CLASS(oc);
+    cc->cpudef = (x86_def_t) {
         .level = 0xd,
         .vendor = CPUID_VENDOR_AMD,
         .family = 21,
@@ -804,7 +1140,16 @@ static x86_def_t builtin_x86_defs[] = {
              CPUID_EXT3_LAHF_LM,
         .xlevel = 0x8000001A,
         .model_id = "AMD Opteron 63xx class CPU",
-    },
+    };
+}
+
+static const TypeInfo x86_cpu_Opteron_G5_type_info = {
+    .name = CPU_CLASS_NAME("Opteron_G5"),
+    .parent = TYPE_X86_PREDEF_CPU,
+    .instance_size = sizeof(X86CPU),
+    .abstract = false,
+    .class_size = sizeof(PredefX86CPUClass),
+    .class_init = x86_cpu_class_init_Opteron_G5,
 };
 
 static void x86cpu_vendor_words2str(char *dst, uint32_t ebx, uint32_t ecx,
@@ -847,7 +1192,6 @@ static void kvm_cpu_fill_host(x86_def_t *x86_cpu_def)
 
     assert(kvm_enabled());
 
-    x86_cpu_def->name = "host";
     host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
     x86cpu_vendor_words2str(x86_cpu_def->vendor, ebx, edx, ecx);
 
@@ -1219,60 +1563,67 @@ static void cpudef_2_x86_cpu(X86CPU *cpu, x86_def_t *def, Error **errp)
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
 }
 
+static void x86_cpu_predef_initfn(Object *obj)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    PredefX86CPUClass *cc = PREDEF_X86_CPU_GET_CLASS(cpu);
+    Error *error = NULL;
+    x86_def_t cpudef;
+
+    memcpy(&cpudef, &cc->cpudef, sizeof(cpudef));
+    /* sysenter isn't supported on compatibility mode on AMD, syscall
+     * isn't supported in compatibility mode on Intel.
+     * Normally we advertise the actual cpu vendor, but you can override
+     * this using the 'vendor' property if you want to use KVM's
+     * sysenter/syscall emulation in compatibility mode and when doing
+     * cross vendor migration
+     */
+    if (kvm_enabled()) {
+        uint32_t  ebx = 0, ecx = 0, edx = 0;
+        host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
+        x86cpu_vendor_words2str(cpudef.vendor, ebx, edx, ecx);
+    }
+
+    cpudef.kvm_features |= kvm_default_features;
+    add_flagname_to_bitmaps("hypervisor", &cpudef.features,
+                            &cpudef.ext_features,
+                            &cpudef.ext2_features,
+                            &cpudef.ext3_features,
+                            &cpudef.kvm_features,
+                            &cpudef.svm_features,
+                            &cpudef.cpuid_7_0_ebx_features);
+
+    cpudef_2_x86_cpu(cpu, &cpudef, &error);
+
+    if (error) {
+        error_report("cpu_init: %s", error_get_pretty(error));
+        exit(1);
+    }
+}
+
 static X86CPU *x86_cpu_create_from_name(const char *name, Error **errp)
 {
     Error *error = NULL;
     X86CPU *cpu = NULL;
-    x86_def_t def1, *x86_cpu_def = &def1;
+    char *class_name = g_strdup_printf(CPU_CLASS_NAME("%s"), name);
 
-    memset(&def1, 0, sizeof(def1));
 
     if (kvm_enabled() && name && strcmp(name, "host") == 0) {
 #ifdef CONFIG_KVM
         cpu = X86_CPU(object_new(TYPE_X86_HOST_CPU));
 #endif
     } else {
-        x86_def_t *def;
 
-        for (def = x86_defs; def; def = def->next) {
-            if (name && !strcmp(name, def->name)) {
-                break;
-            }
-        }
-
-        if (!def) {
+        if (!object_class_by_name(class_name)) {
             error_setg(&error, "Unable to find CPU definition: %s", name);
             goto out;
         }
 
-        cpu = X86_CPU(object_new(TYPE_X86_CPU));
-        memcpy(x86_cpu_def, def, sizeof(*def));
-        /* sysenter isn't supported on compatibility mode on AMD, syscall
-         * isn't supported in compatibility mode on Intel.
-         * Normally we advertise the actual cpu vendor, but you can override
-         * this using the 'vendor' property if you want to use KVM's
-         * sysenter/syscall emulation in compatibility mode and when doing
-         * cross vendor migration
-         */
-        if (kvm_enabled()) {
-            uint32_t  ebx = 0, ecx = 0, edx = 0;
-            host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
-            x86cpu_vendor_words2str(x86_cpu_def->vendor, ebx, edx, ecx);
-        }
-
-        x86_cpu_def->kvm_features |= kvm_default_features;
-        add_flagname_to_bitmaps("hypervisor", &x86_cpu_def->features,
-                                &x86_cpu_def->ext_features,
-                                &x86_cpu_def->ext2_features,
-                                &x86_cpu_def->ext3_features,
-                                &x86_cpu_def->kvm_features,
-                                &x86_cpu_def->svm_features,
-                                &x86_cpu_def->cpuid_7_0_ebx_features);
-
-        cpudef_2_x86_cpu(cpu, x86_cpu_def, &error);
+        cpu = X86_CPU(object_new(class_name));
     }
 
 out:
+    g_free(class_name);
     if (error) {
         error_propagate(errp, error);
         if (cpu) {
@@ -1452,13 +1803,9 @@ static void listflags(char *buf, int bufsize, uint32_t fbits,
 /* generate CPU information. */
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 {
-    x86_def_t *def;
     char buf[256];
 
-    for (def = x86_defs; def; def = def->next) {
-        snprintf(buf, sizeof(buf), "%s", def->name);
-        (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->model_id);
-    }
+    /***** TODO: class listing */
     if (kvm_enabled()) {
         (*cpu_fprintf)(f, "x86 %16s\n", "[host]");
     }
@@ -1476,20 +1823,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
 CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 {
     CpuDefinitionInfoList *cpu_list = NULL;
-    x86_def_t *def;
-
-    for (def = x86_defs; def; def = def->next) {
-        CpuDefinitionInfoList *entry;
-        CpuDefinitionInfo *info;
-
-        info = g_malloc0(sizeof(*info));
-        info->name = g_strdup(def->name);
-
-        entry = g_malloc0(sizeof(*entry));
-        entry->value = info;
-        entry->next = cpu_list;
-        cpu_list = entry;
-    }
+    /***** TODO: class listing */
 
     return cpu_list;
 }
@@ -1576,33 +1910,6 @@ void cpu_clear_apic_feature(CPUX86State *env)
 }
 
 #endif /* !CONFIG_USER_ONLY */
-
-/* Initialize list of CPU models, filling some non-static fields if necessary
- */
-void x86_cpudef_setup(void)
-{
-    int i, j;
-    static const char *model_with_versions[] = { "qemu32", "qemu64", "athlon" };
-
-    for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
-        x86_def_t *def = &builtin_x86_defs[i];
-        def->next = x86_defs;
-
-        /* Look for specific "cpudef" models that */
-        /* have the QEMU version in .model_id */
-        for (j = 0; j < ARRAY_SIZE(model_with_versions); j++) {
-            if (strcmp(model_with_versions[j], def->name) == 0) {
-                pstrcpy(def->model_id, sizeof(def->model_id),
-                        "QEMU Virtual CPU version ");
-                pstrcat(def->model_id, sizeof(def->model_id),
-                        qemu_get_version());
-                break;
-            }
-        }
-
-        x86_defs = def;
-    }
-}
 
 static void get_cpuid_vendor(CPUX86State *env, uint32_t *ebx,
                              uint32_t *ecx, uint32_t *edx)
@@ -2169,7 +2476,7 @@ static const TypeInfo x86_cpu_type_info = {
     .parent = TYPE_CPU,
     .instance_size = sizeof(X86CPU),
     .instance_init = x86_cpu_initfn,
-    .abstract = false,
+    .abstract = true,
     .class_size = sizeof(X86CPUClass),
     .class_init = x86_cpu_common_class_init,
 };
@@ -2210,6 +2517,31 @@ static void x86_cpu_register_types(void)
 #ifdef CONFIG_KVM
     type_register_static(&x86_host_cpu_type_info);
 #endif
+    type_register_static(&predef_x86_cpu_type_info);
+    type_register_static(&x86_cpu_qemu64_type_info);
+    type_register_static(&x86_cpu_phenom_type_info);
+    type_register_static(&x86_cpu_core2duo_type_info);
+    type_register_static(&x86_cpu_kvm64_type_info);
+    type_register_static(&x86_cpu_qemu32_type_info);
+    type_register_static(&x86_cpu_kvm32_type_info);
+    type_register_static(&x86_cpu_coreduo_type_info);
+    type_register_static(&x86_cpu_486_type_info);
+    type_register_static(&x86_cpu_pentium_type_info);
+    type_register_static(&x86_cpu_pentium2_type_info);
+    type_register_static(&x86_cpu_pentium3_type_info);
+    type_register_static(&x86_cpu_athlon_type_info);
+    type_register_static(&x86_cpu_n270_type_info);
+    type_register_static(&x86_cpu_Conroe_type_info);
+    type_register_static(&x86_cpu_Penryn_type_info);
+    type_register_static(&x86_cpu_Nehalem_type_info);
+    type_register_static(&x86_cpu_Westmere_type_info);
+    type_register_static(&x86_cpu_SandyBridge_type_info);
+    type_register_static(&x86_cpu_Haswell_type_info);
+    type_register_static(&x86_cpu_Opteron_G1_type_info);
+    type_register_static(&x86_cpu_Opteron_G2_type_info);
+    type_register_static(&x86_cpu_Opteron_G3_type_info);
+    type_register_static(&x86_cpu_Opteron_G4_type_info);
+    type_register_static(&x86_cpu_Opteron_G5_type_info);
 }
 
 type_init(x86_cpu_register_types)

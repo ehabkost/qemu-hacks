@@ -864,7 +864,6 @@ typedef struct CPUX86State {
 X86CPU *cpu_x86_init(const char *cpu_model);
 int cpu_x86_exec(CPUX86State *s);
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf);
-void x86_cpudef_setup(void);
 int cpu_x86_support_mca_broadcast(CPUX86State *env);
 
 int cpu_get_pic_interrupt(CPUX86State *s);
@@ -1046,7 +1045,6 @@ static inline CPUX86State *cpu_init(const char *cpu_model)
 #define cpu_gen_code cpu_x86_gen_code
 #define cpu_signal_handler cpu_x86_signal_handler
 #define cpu_list x86_cpu_list
-#define cpudef_setup	x86_cpudef_setup
 
 #define CPU_SAVE_VERSION 12
 
