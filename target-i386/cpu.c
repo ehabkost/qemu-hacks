@@ -1580,15 +1580,10 @@ int cpu_x86_register(X86CPU *cpu, const char *cpu_model)
     if (cpu_x86_parse_featurestr(def, features) < 0) {
         goto error;
     }
-    if (def->vendor1) {
-        env->cpuid_vendor1 = def->vendor1;
-        env->cpuid_vendor2 = def->vendor2;
-        env->cpuid_vendor3 = def->vendor3;
-    } else {
-        env->cpuid_vendor1 = CPUID_VENDOR_INTEL_1;
-        env->cpuid_vendor2 = CPUID_VENDOR_INTEL_2;
-        env->cpuid_vendor3 = CPUID_VENDOR_INTEL_3;
-    }
+    assert(def->vendor1);
+    env->cpuid_vendor1 = def->vendor1;
+    env->cpuid_vendor2 = def->vendor2;
+    env->cpuid_vendor3 = def->vendor3;
     env->cpuid_vendor_override = def->vendor_override;
     object_property_set_int(OBJECT(cpu), def->level, "level", &error);
     object_property_set_int(OBJECT(cpu), def->family, "family", &error);
