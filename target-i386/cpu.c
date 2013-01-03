@@ -933,6 +933,7 @@ static void kvm_cpu_fill_host(x86_def_t *x86_cpu_def)
 #endif /* CONFIG_KVM */
 }
 
+#ifdef CONFIG_KVM
 static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
 {
     int i;
@@ -981,6 +982,7 @@ static int kvm_check_features_against_host(x86_def_t *guest_def)
                 }
     return rv;
 }
+#endif
 
 static void x86_cpuid_version_get_family(Object *obj, Visitor *v, void *opaque,
                                          const char *name, Error **errp)
@@ -1404,10 +1406,12 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
     x86_cpu_def->kvm_features &= ~minus_kvm_features;
     x86_cpu_def->svm_features &= ~minus_svm_features;
     x86_cpu_def->cpuid_7_0_ebx_features &= ~minus_7_0_ebx_features;
+#ifdef CONFIG_KVM
     if (check_cpuid && kvm_enabled()) {
         if (kvm_check_features_against_host(x86_cpu_def) && enforce_cpuid)
             goto error;
     }
+#endif
     return 0;
 
 error:
