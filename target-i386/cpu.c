@@ -206,22 +206,16 @@ typedef struct model_features_t {
 int check_cpuid = 0;
 int enforce_cpuid = 0;
 
-#if defined(CONFIG_KVM)
 static uint32_t kvm_default_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
         (1 << KVM_FEATURE_NOP_IO_DELAY) |
         (1 << KVM_FEATURE_CLOCKSOURCE2) |
         (1 << KVM_FEATURE_ASYNC_PF) |
         (1 << KVM_FEATURE_STEAL_TIME) |
         (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
-static const uint32_t kvm_pv_eoi_features = (0x1 << KVM_FEATURE_PV_EOI);
-#else
-static uint32_t kvm_default_features = 0;
-static const uint32_t kvm_pv_eoi_features = 0;
-#endif
 
 void enable_kvm_pv_eoi(void)
 {
-    kvm_default_features |= kvm_pv_eoi_features;
+    kvm_default_features |= (1UL << KVM_FEATURE_PV_EOI);
 }
 
 void host_cpuid(uint32_t function, uint32_t count,
@@ -1343,12 +1337,14 @@ static int cpu_x86_parse_featurestr(x86_def_t *x86_cpu_def, char *features)
     unsigned int i;
     char *featurestr; /* Single 'key=value" string being parsed */
     /* Features to be added */
-    FeatureWordArray plus_features = {
-        [FEAT_KVM] = kvm_default_features,
-    };
+    FeatureWordArray plus_features = { 0 };
     /* Features to be removed */
     FeatureWordArray minus_features = { 0 };
     uint32_t numvalue;
+
+    if (kvm_enabled()) {
+        plus_features[FEAT_KVM] = kvm_default_features;
+    }
 
     add_flagname_to_bitmaps("hypervisor", plus_features);
 
