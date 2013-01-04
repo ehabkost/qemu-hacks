@@ -217,6 +217,7 @@ static void pc_init1(MemoryRegion *system_memory,
     }
 }
 
+/* machine init function for pc-0.14 - pc-1.2 */
 static void pc_init_pci(QEMUMachineInitArgs *args)
 {
     ram_addr_t ram_size = args->ram_size;
@@ -236,6 +237,12 @@ static void pc_init_pci_1_3(QEMUMachineInitArgs *args)
 {
     enable_kvm_pv_eoi();
     pc_init_pci(args);
+}
+
+static void pc_init_pci_1_4(QEMUMachineInitArgs *args)
+{
+    disable_kvm_mmu_op();
+    pc_init_pci_1_3(args);
 }
 
 static void pc_init_pci_no_kvmclock(QEMUMachineInitArgs *args)
@@ -285,7 +292,7 @@ static QEMUMachine pc_machine_v1_4 = {
     .name = "pc-1.4",
     .alias = "pc",
     .desc = "Standard PC",
-    .init = pc_init_pci_1_3,
+    .init = pc_init_pci_1_4,
     .max_cpus = 255,
     .is_default = 1,
 };
