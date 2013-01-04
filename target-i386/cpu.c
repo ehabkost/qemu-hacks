@@ -167,6 +167,14 @@ void disable_kvm_mmu_op(void)
 #endif
 }
 
+void disable_kvm_mmu_op(void)
+{
+#ifdef CONFIG_KVM
+    if (kvm_enabled())
+        kvm_default_features &= ~(1UL << KVM_FEATURE_MMU_OP);
+#endif
+}
+
 void host_cpuid(uint32_t function, uint32_t count,
                 uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
 {
