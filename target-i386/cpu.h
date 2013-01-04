@@ -1219,5 +1219,6 @@ void do_smm_enter(CPUX86State *env1);
 void cpu_report_tpr_access(CPUX86State *env, TPRAccess access);
 
 void enable_kvm_pv_eoi(void);
+void disable_kvm_mmu_op(void);
 
 #endif /* CPU_I386_H */
