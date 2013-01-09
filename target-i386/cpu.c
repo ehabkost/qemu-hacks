@@ -1311,6 +1311,20 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
+static void x86_cpuid_get_apic_id(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    visit_type_uint32(v, &cpu->env.cpuid_apic_id, name, errp);
+}
+
+static void x86_cpuid_set_apic_id(Object *obj, Visitor *v, void *opaque,
+                                const char *name, Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    visit_type_uint32(v, &cpu->env.cpuid_apic_id, name, errp);
+}
+
 static int cpu_x86_find_by_name(x86_def_t *x86_cpu_def, const char *name)
 {
     x86_def_t *def;
@@ -2212,6 +2226,7 @@ static void x86_cpu_initfn(Object *obj)
 
     cpu_exec_init(env);
 
+
     object_property_add(obj, "family", "int",
                         x86_cpuid_version_get_family,
                         x86_cpuid_version_set_family, NULL, NULL, NULL);
@@ -2236,6 +2251,9 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "tsc-frequency", "int",
                         x86_cpuid_get_tsc_freq,
                         x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
+    object_property_add(obj, "apic-id", "int",
+                        x86_cpuid_get_apic_id,
+                        x86_cpuid_set_apic_id, NULL, NULL, NULL);
 
     env->cpuid_apic_id = cs->cpu_index;
 
