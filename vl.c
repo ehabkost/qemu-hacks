@@ -1350,52 +1350,58 @@ error:
     exit(1);
 }
 
-static void numa_add(const char *optarg)
+static void numa_node_add(const char *optarg)
 {
     char option[128];
     char *endptr;
     unsigned long long nodenr;
+
+    if (nb_numa_nodes >= MAX_NODES) {
+        fprintf(stderr, "qemu: too many NUMA nodes\n");
+        exit(1);
+    }
+
+    if (get_param_value(option, 128, "nodeid", optarg) == 0) {
+        nodenr = nb_numa_nodes;
+    } else {
+        if (parse_uint_full(option, &nodenr, 10) < 0) {
+            fprintf(stderr, "qemu: Invalid NUMA nodeid: %s\n", option);
+            exit(1);
+        }
+    }
+
+    if (nodenr >= MAX_NODES) {
+        fprintf(stderr, "qemu: invalid NUMA nodeid: %llu\n", nodenr);
+        exit(1);
+    }
+
+    if (get_param_value(option, 128, "mem", optarg) == 0) {
+        node_mem[nodenr] = 0;
+    } else {
+        int64_t sval;
+        sval = strtosz(option, &endptr);
+        if (sval < 0 || *endptr) {
+            fprintf(stderr, "qemu: invalid numa mem size: %s\n", optarg);
+            exit(1);
+        }
+        node_mem[nodenr] = sval;
+    }
+    if (get_param_value(option, 128, "cpus", optarg) != 0) {
+        numa_node_parse_cpus(nodenr, option);
+    }
+    nb_numa_nodes++;
+}
+
+static void numa_add(const char *optarg)
+{
+    char option[128];
 
     optarg = get_opt_name(option, 128, optarg, ',');
     if (*optarg == ',') {
         optarg++;
     }
     if (!strcmp(option, "node")) {
-
-        if (nb_numa_nodes >= MAX_NODES) {
-            fprintf(stderr, "qemu: too many NUMA nodes\n");
-            exit(1);
-        }
-
-        if (get_param_value(option, 128, "nodeid", optarg) == 0) {
-            nodenr = nb_numa_nodes;
-        } else {
-            if (parse_uint_full(option, &nodenr, 10) < 0) {
-                fprintf(stderr, "qemu: Invalid NUMA nodeid: %s\n", option);
-                exit(1);
-            }
-        }
-
-        if (nodenr >= MAX_NODES) {
-            fprintf(stderr, "qemu: invalid NUMA nodeid: %llu\n", nodenr);
-            exit(1);
-        }
-
-        if (get_param_value(option, 128, "mem", optarg) == 0) {
-            node_mem[nodenr] = 0;
-        } else {
-            int64_t sval;
-            sval = strtosz(option, &endptr);
-            if (sval < 0 || *endptr) {
-                fprintf(stderr, "qemu: invalid numa mem size: %s\n", optarg);
-                exit(1);
-            }
-            node_mem[nodenr] = sval;
-        }
-        if (get_param_value(option, 128, "cpus", optarg) != 0) {
-            numa_node_parse_cpus(nodenr, option);
-        }
-        nb_numa_nodes++;
+        numa_node_add(optarg);
     } else {
         fprintf(stderr, "Invalid -numa option: %s\n", option);
         exit(1);
