@@ -1112,6 +1112,11 @@ static void numa_node_add(const char *optarg)
         nodenr = strtoull(option, NULL, 10);
     }
 
+    if (nodenr >= MAX_NODES) {
+        fprintf(stderr, "qemu: invalid NUMA nodeid: %d\n", nodenr);
+        exit(1);
+    }
+
     if (get_param_value(option, 128, "mem", optarg) == 0) {
         node_mem[nodenr] = 0;
     } else {
