@@ -99,8 +99,54 @@ DEF("numa", HAS_ARG, QEMU_OPTION_numa,
 STEXI
 @item -numa @var{opts}
 @findex -numa
-Simulate a multi node NUMA system. If mem and cpus are omitted, resources
-are split equally.
+Deprecated. See the @option{-numa-node} option.
+ETEXI
+
+DEF("numa-node", HAS_ARG, QEMU_OPTION_numa_node,
+    "-numa-node [nodeid=@var{nodeid}][,mem=@var{size}][,cpus=@var{cpuranges}\n", QEMU_ARCH_ALL)
+STEXI
+@item -numa-node @var{opts}
+@findex -numa-node
+
+Define a NUMA node.
+
+@table @option
+@item nodeid=@var{nodeid}
+Index of the NUMA node, starting with 0. If omitted, NUMA nodes will be defined
+in the order they appear.
+
+@item mem=@var{size}
+
+Sets the RAM size of the NUMA node (in MB, of no unit is specified). If size
+of all nodes is omitted, memory is split equally.
+
+@item cpus=@var{cpus}
+
+@var{cpus} is a list of CPU indexes or CPU index ranges in the format:
+@samp{@var{start}[-@var{end}]}, separated by commas or semicolons.
+
+Note that commas used in values in key=value options have to be escaped, using
+@samp{,,}.
+
+The @option{cpus} option may appear multiple times, to assign multiple CPUs or
+CPU ranges to a node.
+
+If no node has CPU ranges assigned, CPUs will be split equally between the
+nodes.
+@end table
+
+Examples:
+
+@example
+-numa-node nodeid=1,mem=1024,cpus=0,,2,,4,,6 \
+-numa-node nodeid=0,mem=1024,cpus=1,,3,,5,,7
+@end example
+
+@example
+-numa-node mem=1024,cpus=0-3,,8-11 \
+-numa-node mem=1024,cpus=4-7,cpus=12-15
+@end example
+
 ETEXI
 
 DEF("add-fd", HAS_ARG, QEMU_OPTION_add_fd,

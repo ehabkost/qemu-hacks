@@ -487,6 +487,30 @@ static QemuOptsList qemu_add_fd_opts = {
     },
 };
 
+static QemuOptsList qemu_numa_node_opts = {
+    .name = "numa-node",
+    .head = QTAILQ_HEAD_INITIALIZER(qemu_numa_node_opts.head),
+    .implied_opt_name = "type",
+    .desc = {
+        {
+            .name = "cpus",
+            .type = QEMU_OPT_STRING,
+            .help = "CPU range in the format N[-M]",
+        },
+        {
+            .name = "mem",
+            .type = QEMU_OPT_STRING,
+            .help = "RAM size for node, in MB",
+        },
+        {
+            .name = "nodeid",
+            .type = QEMU_OPT_NUMBER,
+            .help = "Node ID",
+        },
+        { /* end of list */ }
+    },
+};
+
 static QemuOptsList qemu_object_opts = {
     .name = "object",
     .implied_opt_name = "qom-type",
@@ -1362,49 +1386,73 @@ static void numa_node_parse_cpus(int nodenr, const char *option)
     g_strfreev(parts);
 }
 
-static void handle_numa_node_opt(unsigned nodenr,
-                                 const char *option, const char *value)
+static int parse_numa_node_opt(const char *name, const char *value,
+                                void *opaque)
 {
-    char *endptr;
-    if (!strcmp(option, "mem")) {
-        int64_t sval;
-        sval = strtosz(value, &endptr);
-        if (sval < 0 || *endptr) {
-            fprintf(stderr, "qemu: invalid numa mem size: %s\n", value);
-            exit(1);
-        }
-        node_mem[nodenr] = sval;
-    } else if (!strcmp(option, "cpus")) {
-        numa_node_parse_cpus(nodenr, value);
+    uint64_t nodenr = *(uint64_t *)opaque;
+    if (!strcmp(name, "cpus")) {
+        return numa_node_parse_cpus(nodenr, value);
     }
+    return 0;
 }
 
-/* Handle "-numa node,..." option. It has its own custom parsing because
- * it is a legacy option that doesn't follow the QemuOpts syntax.
+static int parse_numa_node(QemuOpts *opts, void *opaque)
+{
+    uint64_t nodenr;
+    const char *memstr;
+    int64_t mem;
+
+    if (nb_numa_nodes >= MAX_NODES) {
+        fprintf(stderr, "qemu: too many NUMA nodes\n");
+        return -1;
+    }
+
+    nodenr = qemu_opt_get_number(opts, "nodeid", nb_numa_nodes);
+
+    if (nodenr >= MAX_NODES) {
+        fprintf(stderr, "qemu: invalid NUMA nodeid: %" PRIu64 "\n", nodenr);
+        return -1;
+    }
+
+    memstr = qemu_opt_get(opts, "mem");
+    if (memstr) {
+        char *endptr;
+        mem = strtosz(memstr, &endptr);
+        if (mem < 0 || *endptr) {
+            fprintf(stderr, "qemu: invalid numa mem size: %s\n", memstr);
+            return -1;
+        }
+    } else {
+        mem = 0;
+    }
+
+    node_mem[nodenr] = mem;
+
+    /* There may be multiple "cpus" options set */
+    if (qemu_opt_foreach(opts, parse_numa_node_opt, &nodenr, 1) < 0) {
+        return -1;
+    }
+
+    nb_numa_nodes++;
+
+    return 0;
+}
+
+
+/* Parse legacy -numa option
+ *
+ * The option will be translated to a numa-node config option.
  */
-static void numa_node_add(const char *optarg)
+static void parse_legacy_numa_node(const char *optarg)
 {
     char option[128];
     char value[128];
     const char *p;
-    unsigned long long nodenr;
-
-    if (nb_numa_nodes >= MAX_NODES) {
-        fprintf(stderr, "qemu: too many NUMA nodes\n");
-        exit(1);
-    }
-
-    if (get_param_value(option, 128, "nodeid", optarg) == 0) {
-        nodenr = nb_numa_nodes;
-    } else {
-        if (parse_uint_full(option, &nodenr, 10) < 0) {
-            fprintf(stderr, "qemu: Invalid NUMA nodeid: %s\n", option);
-            exit(1);
-        }
-    }
-
-    if (nodenr >= MAX_NODES) {
-        fprintf(stderr, "qemu: invalid NUMA nodeid: %llu\n", nodenr);
+    Error *error = NULL;
+    QemuOpts *opts = qemu_opts_create(qemu_find_opts("numa-node"),
+                                      NULL, 0, &error);
+    if (error) {
+        error_report("%s", error_get_pretty(error));
         exit(1);
     }
 
@@ -1423,7 +1471,10 @@ static void numa_node_add(const char *optarg)
             p++;
         }
 
-        handle_numa_node_opt(nodenr, option, value);
+        if (qemu_opt_set(opts, option, value) < 0) {
+            fprintf(stderr, "Invalid numa option: %s=%s\n", option, value);
+            exit(1);
+        }
 
         /* special case for "cpus", as it can contain unescaped commas */
         if (!strcmp(option, "cpus")) {
@@ -1432,7 +1483,10 @@ static void numa_node_add(const char *optarg)
                 if (*p == ',') {
                     p++;
                 }
-                handle_numa_node_opt(nodenr, "cpus", value);
+                if (qemu_opt_set(opts, "cpus", value) < 0) {
+                    fprintf(stderr, "Invalid numa option: cpus=%s\n", value);
+                    exit(1);
+                }
             }
         }
     }
@@ -1440,7 +1494,8 @@ static void numa_node_add(const char *optarg)
     nb_numa_nodes++;
 }
 
-static void numa_add(const char *optarg)
+/* Parse legacy "-numa" option */
+static void legacy_numa_add(const char *optarg)
 {
     char option[128];
 
@@ -1449,7 +1504,7 @@ static void numa_add(const char *optarg)
         optarg++;
     }
     if (!strcmp(option, "node")) {
-        numa_node_add(optarg);
+        parse_legacy_numa_node(optarg);
     } else {
         fprintf(stderr, "Invalid -numa option: %s\n", option);
         exit(1);
@@ -2953,6 +3008,7 @@ int main(int argc, char **argv, char **envp)
     qemu_add_opts(&qemu_boot_opts);
     qemu_add_opts(&qemu_sandbox_opts);
     qemu_add_opts(&qemu_add_fd_opts);
+    qemu_add_opts(&qemu_numa_node_opts);
     qemu_add_opts(&qemu_object_opts);
     qemu_add_opts(&qemu_tpmdev_opts);
     qemu_add_opts(&qemu_realtime_opts);
@@ -3142,7 +3198,13 @@ int main(int argc, char **argv, char **envp)
                 }
                 break;
             case QEMU_OPTION_numa:
-                numa_add(optarg);
+                legacy_numa_add(optarg);
+                break;
+            case QEMU_OPTION_numa_node:
+                opts = qemu_opts_parse(qemu_find_opts("numa-node"), optarg, 0);
+                if (!opts) {
+                    exit(1);
+                }
                 break;
             case QEMU_OPTION_display:
                 display_type = select_display(optarg);
@@ -4266,6 +4328,11 @@ int main(int argc, char **argv, char **envp)
     default_drive(default_sdcard, snapshot, IF_SD, 0, SD_OPTS);
 
     register_savevm_live(NULL, "ram", 0, 4, &savevm_ram_handlers, NULL);
+
+    if (qemu_opts_foreach(qemu_find_opts("numa-node"),
+                          parse_numa_node, NULL, 1) < 0) {
+        exit(1);
+    }
 
     if (nb_numa_nodes > 0) {
         int i;
