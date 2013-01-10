@@ -1052,7 +1052,7 @@ char *get_boot_devices_list(uint32_t *size)
     return list;
 }
 
-static void numa_node_parse_cpu_range(int nodenr, const char *cpus)
+static int numa_node_parse_cpu_range(int nodenr, const char *cpus)
 {
     char *endptr;
     unsigned long long value, endvalue;
@@ -1088,62 +1088,113 @@ static void numa_node_parse_cpu_range(int nodenr, const char *cpus)
     }
 
     bitmap_set(node_cpumask[nodenr], value, endvalue-value+1);
-    return;
+    return 0;
 
 error:
     fprintf(stderr, "qemu: Invalid NUMA CPU range: %s\n", cpus);
-    exit(1);
+    return -1;
 }
 
-static void numa_node_parse_cpus(int nodenr, const char *option)
+static int numa_node_parse_cpus(int nodenr, const char *option)
 {
     char **parts;
-    int i;
+    int i, r = 0;
 
     parts = g_strsplit_set(option, ",;", 0);
     for (i = 0; parts[i]; i++) {
-        numa_node_parse_cpu_range(nodenr, parts[i]);
+        r = numa_node_parse_cpu_range(nodenr, parts[i]);
+        if (r < 0) {
+            break;
+        }
     }
     g_strfreev(parts);
+    return r;
 }
 
-static void numa_node_add(const char *optarg)
+static int parse_numa_node_opt(const char *name, const char *value,
+                                void *opaque)
 {
-    char option[128];
-    char *endptr;
-    int nodenr;
+    uint64_t nodenr = *(uint64_t *)opaque;
+    if (!strcmp(name, "cpus")) {
+        return numa_node_parse_cpus(nodenr, value);
+    }
+    return 0;
+}
+
+static int parse_numa_node(QemuOpts *opts, void *opaque)
+{
+    uint64_t nodenr;
+    const char *memstr;
+    int64_t mem;
 
     if (nb_numa_nodes >= MAX_NODES) {
         fprintf(stderr, "qemu: too many NUMA nodes\n");
-        exit(1);
+        return -1;
     }
 
-    if (get_param_value(option, 128, "nodeid", optarg) == 0) {
-        nodenr = nb_numa_nodes;
-    } else {
-        nodenr = strtoull(option, NULL, 10);
-    }
+    nodenr = qemu_opt_get_number(opts, "nodeid", nb_numa_nodes);
 
     if (nodenr >= MAX_NODES) {
-        fprintf(stderr, "qemu: invalid NUMA nodeid: %d\n", nodenr);
+        fprintf(stderr, "qemu: invalid NUMA nodeid: %" PRIu64 "\n", nodenr);
+        return -1;
+    }
+
+    memstr = qemu_opt_get(opts, "mem");
+    if (memstr) {
+        char *endptr;
+        mem = strtosz(memstr, &endptr);
+        if (mem < 0 || *endptr) {
+            fprintf(stderr, "qemu: invalid numa mem size: %s\n", memstr);
+            return -1;
+        }
+    } else {
+        mem = 0;
+    }
+
+    node_mem[nodenr] = mem;
+
+    /* There may be multiple "cpus" options set */
+    if (qemu_opt_foreach(opts, parse_numa_node_opt, &nodenr, 1) < 0) {
+        return -1;
+    }
+
+    nb_numa_nodes++;
+
+    return 0;
+}
+
+/* Parse legacy -numa option
+ *
+ * The option will be translated to a numa-node config option.
+ */
+static void parse_legacy_numa_node(const char *optarg)
+{
+    char option[128];
+    char value[128];
+    const char *p = optarg;
+    Error *error = NULL;
+    QemuOpts *opts = qemu_opts_create(qemu_find_opts("numa-node"),
+                                      NULL, 0, &error);
+    if (error) {
+        error_report("%s", error_get_pretty(error));
         exit(1);
     }
 
-    if (get_param_value(option, 128, "mem", optarg) == 0) {
-        node_mem[nodenr] = 0;
-    } else {
-        int64_t sval;
-        sval = strtosz(option, &endptr);
-        if (sval < 0 || *endptr) {
-            fprintf(stderr, "qemu: invalid numa mem size: %s\n", optarg);
+    while (*p) {
+        p = get_opt_name(option, 128, p, '=');
+        if (*p == '=') {
+            p++;
+        } else {
+            fprintf(stderr, "Invalid -numa option: %s\n", optarg);
             exit(1);
         }
-        node_mem[nodenr] = sval;
+
+        p = get_opt_value(value, 128, p);
+        if (*p == ',') {
+            p++;
+        }
+        qemu_opt_set(opts, option, value);
     }
-    if (get_param_value(option, 128, "cpus", optarg) != 0) {
-        numa_node_parse_cpus(nodenr, option);
-    }
-    nb_numa_nodes++;
 }
 
 static void numa_add(const char *optarg)
@@ -1155,7 +1206,7 @@ static void numa_add(const char *optarg)
         optarg++;
     }
     if (!strcmp(option, "node")) {
-        numa_node_add(optarg);
+        parse_legacy_numa_node(optarg);
     } else {
         fprintf(stderr, "Invalid -numa option: %s\n", option);
         exit(1);
@@ -2812,6 +2863,12 @@ int main(int argc, char **argv, char **envp)
             case QEMU_OPTION_numa:
                 numa_add(optarg);
                 break;
+            case QEMU_OPTION_numa_node:
+                opts = qemu_opts_parse(qemu_find_opts("numa-node"), optarg, 0);
+                if (!opts) {
+                    exit(1);
+                }
+                break;
             case QEMU_OPTION_display:
                 display_type = select_display(optarg);
                 break;
@@ -3855,6 +3912,11 @@ int main(int argc, char **argv, char **envp)
     default_drive(default_sdcard, snapshot, IF_SD, 0, SD_OPTS);
 
     register_savevm_live(NULL, "ram", 0, 4, &savevm_ram_handlers, NULL);
+
+    if (qemu_opts_foreach(qemu_find_opts("numa-node"),
+                          parse_numa_node, NULL, 1) < 0) {
+        exit(1);
+    }
 
     if (nb_numa_nodes > 0) {
         int i;

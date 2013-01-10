@@ -647,6 +647,30 @@ static QemuOptsList qemu_object_opts = {
     },
 };
 
+static QemuOptsList qemu_numa_node_opts = {
+    .name = "numa-node",
+    .head = QTAILQ_HEAD_INITIALIZER(qemu_numa_node_opts.head),
+    .implied_opt_name = "type",
+    .desc = {
+        {
+            .name = "cpus",
+            .type = QEMU_OPT_STRING,
+            .help = "CPU range in the format N[-M]",
+        },
+        {
+            .name = "mem",
+            .type = QEMU_OPT_STRING,
+            .help = "RAM size for node, in MB",
+        },
+        {
+            .name = "nodeid",
+            .type = QEMU_OPT_NUMBER,
+            .help = "Node ID",
+        },
+        { /* end of list */ }
+    },
+};
+
 static QemuOptsList *vm_config_groups[32] = {
     &qemu_drive_opts,
     &qemu_chardev_opts,
@@ -664,6 +688,7 @@ static QemuOptsList *vm_config_groups[32] = {
     &qemu_sandbox_opts,
     &qemu_add_fd_opts,
     &qemu_object_opts,
+    &qemu_numa_node_opts,
     NULL,
 };
 
