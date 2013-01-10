@@ -1061,6 +1061,11 @@ static void numa_node_add(const char *optarg)
 
     value = endvalue = 0ULL;
 
+    if (nb_numa_nodes >= MAX_NODES) {
+        fprintf(stderr, "qemu: too many NUMA nodes\n");
+        exit(1);
+    }
+
     if (get_param_value(option, 128, "nodeid", optarg) == 0) {
         nodenr = nb_numa_nodes;
     } else {
@@ -2762,10 +2767,6 @@ int main(int argc, char **argv, char **envp)
                 }
                 break;
             case QEMU_OPTION_numa:
-                if (nb_numa_nodes >= MAX_NODES) {
-                    fprintf(stderr, "qemu: too many NUMA nodes\n");
-                    exit(1);
-                }
                 numa_add(optarg);
                 break;
             case QEMU_OPTION_display:
