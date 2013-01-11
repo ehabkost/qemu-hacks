@@ -1057,11 +1057,28 @@ static void numa_node_parse_cpus(int nodenr, const char *cpus)
     char *endptr;
     unsigned long long value, endvalue;
 
+    /* Empty strings will be ignored, and not considered an error */
+    if (!*cpus) {
+        return;
+    }
+
     value = strtoull(cpus, &endptr, 10);
     if (*endptr == '-') {
-        endvalue = strtoull(endptr+1, &endptr, 10);
+        endptr++;
+        if (!*endptr) {
+            goto error;
+        }
+        endvalue = strtoull(endptr, &endptr, 10);
     } else {
         endvalue = value;
+    }
+
+    if (*endptr != '\0')  {
+        goto error;
+    }
+
+    if (endvalue < value) {
+        goto error;
     }
 
     if (!(endvalue < MAX_CPUMASK_BITS)) {
@@ -1071,6 +1088,11 @@ static void numa_node_parse_cpus(int nodenr, const char *cpus)
     }
 
     bitmap_set(node_cpumask[nodenr], value, endvalue-value+1);
+    return;
+
+error:
+    fprintf(stderr, "qemu: Invalid NUMA CPU range: %s\n", cpus);
+    exit(1);
 }
 
 static void numa_node_add(const char *optarg)
