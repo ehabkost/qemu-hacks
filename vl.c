@@ -1194,6 +1194,17 @@ static void parse_legacy_numa_node(const char *optarg)
             p++;
         }
         qemu_opt_set(opts, option, value);
+
+        /* special case for "cpus", as it can contain "," */
+        if (!strcmp(option, "cpus")) {
+            while (isdigit(*p)) {
+                p = get_opt_value(value, 128, p);
+                if (*p == ',') {
+                    p++;
+                }
+                qemu_opt_set(opts, "cpus", value);
+            }
+        }
     }
 }
 
