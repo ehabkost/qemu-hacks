@@ -1306,7 +1306,7 @@ char *get_boot_devices_list(size_t *size)
     return list;
 }
 
-static void numa_node_parse_cpus(int nodenr, const char *cpus)
+static void numa_node_parse_cpu_range(int nodenr, const char *cpus)
 {
     char *endptr;
     unsigned long long value, endvalue;
@@ -1348,6 +1348,18 @@ static void numa_node_parse_cpus(int nodenr, const char *cpus)
 error:
     fprintf(stderr, "qemu: Invalid NUMA CPU range: %s\n", cpus);
     exit(1);
+}
+
+static void numa_node_parse_cpus(int nodenr, const char *option)
+{
+    char **parts;
+    int i;
+
+    parts = g_strsplit_set(option, ",", 0);
+    for (i = 0; parts[i]; i++) {
+        numa_node_parse_cpu_range(nodenr, parts[i]);
+    }
+    g_strfreev(parts);
 }
 
 static void numa_node_add(const char *optarg)
