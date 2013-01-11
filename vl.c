@@ -1052,14 +1052,32 @@ char *get_boot_devices_list(uint32_t *size)
     return list;
 }
 
+static void numa_node_parse_cpus(int nodenr, const char *cpus)
+{
+    char *endptr;
+    unsigned long long value, endvalue;
+
+    value = strtoull(cpus, &endptr, 10);
+    if (*endptr == '-') {
+        endvalue = strtoull(endptr+1, &endptr, 10);
+    } else {
+        endvalue = value;
+    }
+
+    if (!(endvalue < MAX_CPUMASK_BITS)) {
+        endvalue = MAX_CPUMASK_BITS - 1;
+        fprintf(stderr, "A max of %d CPUs are supported in a guest\n",
+                MAX_CPUMASK_BITS);
+    }
+
+    bitmap_set(node_cpumask[nodenr], value, endvalue-value+1);
+}
+
 static void numa_node_add(const char *optarg)
 {
     char option[128];
     char *endptr;
-    unsigned long long value, endvalue;
     int nodenr;
-
-    value = endvalue = 0ULL;
 
     if (nb_numa_nodes >= MAX_NODES) {
         fprintf(stderr, "qemu: too many NUMA nodes\n");
@@ -1084,21 +1102,7 @@ static void numa_node_add(const char *optarg)
         node_mem[nodenr] = sval;
     }
     if (get_param_value(option, 128, "cpus", optarg) != 0) {
-        value = strtoull(option, &endptr, 10);
-        if (*endptr == '-') {
-            endvalue = strtoull(endptr+1, &endptr, 10);
-        } else {
-            endvalue = value;
-        }
-
-        if (!(endvalue < MAX_CPUMASK_BITS)) {
-            endvalue = MAX_CPUMASK_BITS - 1;
-            fprintf(stderr,
-                "A max of %d CPUs are supported in a guest\n",
-                 MAX_CPUMASK_BITS);
-        }
-
-        bitmap_set(node_cpumask[nodenr], value, endvalue-value+1);
+        numa_node_parse_cpus(nodenr, option);
     }
     nb_numa_nodes++;
 }
