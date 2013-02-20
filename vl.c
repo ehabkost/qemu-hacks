@@ -1424,6 +1424,17 @@ static void numa_node_add(const char *optarg)
         }
 
         handle_numa_node_opt(nodenr, option, value);
+
+        /* special case for "cpus", as it can contain unescaped commas */
+        if (!strcmp(option, "cpus")) {
+            while (isdigit(*p)) {
+                p = get_opt_value(value, 128, p);
+                if (*p == ',') {
+                    p++;
+                }
+                handle_numa_node_opt(nodenr, "cpus", value);
+            }
+        }
     }
 
     nb_numa_nodes++;
