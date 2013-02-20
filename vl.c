@@ -1362,10 +1362,31 @@ static void numa_node_parse_cpus(int nodenr, const char *option)
     g_strfreev(parts);
 }
 
+static void handle_numa_node_opt(unsigned nodenr,
+                                 const char *option, const char *value)
+{
+    char *endptr;
+    if (!strcmp(option, "mem")) {
+        int64_t sval;
+        sval = strtosz(value, &endptr);
+        if (sval < 0 || *endptr) {
+            fprintf(stderr, "qemu: invalid numa mem size: %s\n", value);
+            exit(1);
+        }
+        node_mem[nodenr] = sval;
+    } else if (!strcmp(option, "cpus")) {
+        numa_node_parse_cpus(nodenr, value);
+    }
+}
+
+/* Handle "-numa node,..." option. It has its own custom parsing because
+ * it is a legacy option that doesn't follow the QemuOpts syntax.
+ */
 static void numa_node_add(const char *optarg)
 {
     char option[128];
-    char *endptr;
+    char value[128];
+    const char *p;
     unsigned long long nodenr;
 
     if (nb_numa_nodes >= MAX_NODES) {
@@ -1387,20 +1408,24 @@ static void numa_node_add(const char *optarg)
         exit(1);
     }
 
-    if (get_param_value(option, 128, "mem", optarg) == 0) {
-        node_mem[nodenr] = 0;
-    } else {
-        int64_t sval;
-        sval = strtosz(option, &endptr);
-        if (sval < 0 || *endptr) {
-            fprintf(stderr, "qemu: invalid numa mem size: %s\n", optarg);
+    p = optarg;
+    while (*p) {
+        p = get_opt_name(option, 128, p, '=');
+        if (*p == '=') {
+            p++;
+        } else {
+            fprintf(stderr, "Invalid -numa option: %s\n", optarg);
             exit(1);
         }
-        node_mem[nodenr] = sval;
+
+        p = get_opt_value(value, 128, p);
+        if (*p == ',') {
+            p++;
+        }
+
+        handle_numa_node_opt(nodenr, option, value);
     }
-    if (get_param_value(option, 128, "cpus", optarg) != 0) {
-        numa_node_parse_cpus(nodenr, option);
-    }
+
     nb_numa_nodes++;
 }
 
