@@ -1372,11 +1372,11 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, void *opaque,
     cpu->env.tsc_khz = value / 1000;
 }
 
+/* Generic getter for "feature-words" and "filtered-features" properties */
 static void x86_cpu_get_feature_words(Object *obj, Visitor *v, void *opaque,
                                    const char *name, Error **errp)
 {
-    X86CPU *cpu = X86_CPU(obj);
-    CPUX86State *env = &cpu->env;
+    uint32_t *array = (uint32_t *)opaque;
     FeatureWord w;
     Error *err = NULL;
     X86CPUFeatureWordInfo word_infos[FEATURE_WORDS] = { };
@@ -1390,7 +1390,7 @@ static void x86_cpu_get_feature_words(Object *obj, Visitor *v, void *opaque,
         qwi->has_cpuid_input_ecx = wi->cpuid_needs_ecx;
         qwi->cpuid_input_ecx = wi->cpuid_ecx;
         qwi->cpuid_register = x86_reg_info_32[wi->cpuid_reg].qapi_enum;
-        qwi->features = env->features[w];
+        qwi->features = array[w];
 
         /* List will be in reverse order, but order shouldn't matter */
         list_entries[w].next = list;
@@ -2354,7 +2354,10 @@ static void x86_cpu_initfn(Object *obj)
                         x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
     object_property_add(obj, "feature-words", "X86CPUFeatureWordInfo",
                         x86_cpu_get_feature_words,
-                        NULL, NULL, NULL, NULL);
+                        NULL, NULL, (void *)env->features, NULL);
+    object_property_add(obj, "filtered-features", "X86CPUFeatureWordInfo",
+                        x86_cpu_get_feature_words,
+                        NULL, NULL, (void *)cpu->filtered_features, NULL);
 
     env->cpuid_apic_id = x86_cpu_apic_id_from_index(cs->cpu_index);
 
