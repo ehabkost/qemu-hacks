@@ -349,6 +349,8 @@ static void add_flagname_to_bitmaps(const char *flagname,
 typedef struct x86_def_t {
     const char *name;
     uint32_t level;
+    uint32_t xlevel;
+    uint32_t xlevel2;
     /* vendor is zero-terminated, 12 character ASCII string */
     char vendor[CPUID_VENDOR_SZ + 1];
     int family;
@@ -356,11 +358,9 @@ typedef struct x86_def_t {
     int stepping;
     uint32_t features, ext_features, ext2_features, ext3_features;
     uint32_t kvm_features, svm_features;
-    uint32_t xlevel;
     char model_id[48];
     /* Store the results of Centaur's CPUID instructions */
     uint32_t ext4_features;
-    uint32_t xlevel2;
     /* The feature bits on CPUID[EAX=7,ECX=0].EBX */
     uint32_t cpuid_7_0_ebx_features;
 } x86_def_t;
