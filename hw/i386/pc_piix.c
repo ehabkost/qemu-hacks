@@ -235,10 +235,15 @@ static void pc_init_pci(QEMUMachineInitArgs *args)
              initrd_filename, cpu_model, 1, 1);
 }
 
+static void pc_init_pci_1_4(QEMUMachineInitArgs *args)
+{
+    pc_init_pci(args);
+}
+
 static void pc_init_pci_1_3(QEMUMachineInitArgs *args)
 {
     enable_compat_apic_id_mode();
-    pc_init_pci(args);
+    pc_init_pci_1_4(args);
 }
 
 /* PC machine init function for pc-0.14 to pc-1.2 */
@@ -309,7 +314,7 @@ static QEMUMachine pc_i440fx_machine_v1_5 = {
 static QEMUMachine pc_i440fx_machine_v1_4 = {
     .name = "pc-i440fx-1.4",
     .desc = "Standard PC (i440FX + PIIX, 1996)",
-    .init = pc_init_pci,
+    .init = pc_init_pci_1_4,
     .max_cpus = 255,
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_1_4,
