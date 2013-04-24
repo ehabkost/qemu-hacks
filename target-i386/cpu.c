@@ -245,6 +245,16 @@ static uint32_t kvm_default_features = (1 << KVM_FEATURE_CLOCKSOURCE) |
         (1 << KVM_FEATURE_PV_EOI) |
         (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT);
 
+/* Enables passthrough of CPUID leaf 0xA by default, for compatibility with old
+ * machine-types.
+ */
+static bool default_pmu_passthrough;
+
+void x86_cpu_enable_pmu_passthrough(void)
+{
+    default_pmu_passthrough = true;
+}
+
 void disable_kvm_pv_eoi(void)
 {
     kvm_default_features &= ~(1UL << KVM_FEATURE_PV_EOI);
@@ -375,6 +385,12 @@ typedef struct x86_def_t {
     int stepping;
     FeatureWordArray features;
     char model_id[48];
+
+    /* Enable direct passthrough of PMU leaf from the GET_SUPPORTED_CPUID
+     * data returned by the kernel. This is not migration-safe and should
+     * never be enabled by default.
+     */
+    bool cpuid_pmu_passthrough;
 } x86_def_t;
 
 #define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
@@ -1120,6 +1136,8 @@ static void kvm_cpu_fill_host(x86_def_t *x86_cpu_def)
     x86_cpu_def->features[FEAT_KVM] =
         kvm_arch_get_supported_cpuid(s, KVM_CPUID_FEATURES, 0, R_EAX);
 
+    x86_cpu_def->cpuid_pmu_passthrough = true;
+
 #endif /* CONFIG_KVM */
 }
 
@@ -1735,8 +1753,12 @@ static void cpu_x86_register(X86CPU *cpu, const char *name, Error **errp)
         return;
     }
 
+    /* Defaults & compat bits that are not in the builtin_x86_defs table: */
     if (kvm_enabled()) {
         def->features[FEAT_KVM] |= kvm_default_features;
+    }
+    if (default_pmu_passthrough) {
+        def->cpuid_pmu_passthrough = true;
     }
     def->features[FEAT_1_ECX] |= CPUID_EXT_HYPERVISOR;
 
@@ -1755,6 +1777,7 @@ static void cpu_x86_register(X86CPU *cpu, const char *name, Error **errp)
     env->features[FEAT_C000_0001_EDX] = def->features[FEAT_C000_0001_EDX];
     env->features[FEAT_7_0_EBX] = def->features[FEAT_7_0_EBX];
     env->cpuid_xlevel2 = def->xlevel2;
+    env->cpuid_pmu_passthrough = def->cpuid_pmu_passthrough;
 
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
 }
@@ -1986,7 +2009,7 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         break;
     case 0xA:
         /* Architectural Performance Monitoring Leaf */
-        if (kvm_enabled()) {
+        if (kvm_enabled() && env->cpuid_pmu_passthrough) {
             KVMState *s = cs->kvm_state;
 
             *eax = kvm_arch_get_supported_cpuid(s, 0xA, count, R_EAX);

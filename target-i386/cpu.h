@@ -843,6 +843,12 @@ typedef struct CPUX86State {
     uint32_t cpuid_vendor3;
     uint32_t cpuid_version;
     FeatureWordArray features;
+
+    /* Enable direct passthrough of PMU leaf from the GET_SUPPORTED_CPUID
+     * data returned by the kernel. This is not migration-safe and should
+     * never be enabled by default.
+     */
+    bool cpuid_pmu_passthrough;
     uint32_t cpuid_model[12];
     uint32_t cpuid_apic_id;
 
@@ -1258,6 +1264,7 @@ void x86_cpu_compat_set_features(const char *cpu_model, FeatureWord w,
                                  uint32_t feat_add, uint32_t feat_remove);
 void x86_cpu_compat_set_level(const char *cpu_model, uint32_t level);
 void x86_cpu_compat_set_model(const char *cpu_model, uint32_t model);
+void x86_cpu_enable_pmu_passthrough(void);
 
 
 /* Return name of 32-bit register, from a R_* constant */

@@ -213,6 +213,7 @@ static void pc_q35_init_1_4(QEMUMachineInitArgs *args)
 {
     x86_cpu_compat_set_features("n270", FEAT_1_ECX, 0, CPUID_EXT_MOVBE);
     x86_cpu_compat_set_model("486", 0);
+    x86_cpu_enable_pmu_passthrough();
     pc_q35_init(args);
 }
 
