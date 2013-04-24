@@ -1256,6 +1256,7 @@ void disable_kvm_pv_eoi(void);
 
 void x86_cpu_compat_set_features(const char *cpu_model, FeatureWord w,
                                  uint32_t feat_add, uint32_t feat_remove);
+void x86_cpu_compat_set_level(const char *cpu_model, uint32_t level);
 
 
 /* Return name of 32-bit register, from a R_* constant */

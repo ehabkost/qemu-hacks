@@ -996,6 +996,28 @@ void x86_cpu_compat_set_features(const char *cpu_model, FeatureWord w,
     }
 }
 
+/**
+ * x86_cpu_compat_set_level:
+ * @cpu_model: CPU model name to be changed. If NULL, all CPU models are changed
+ * @level: New value for 'level' field on CPU model
+ *
+ * Change CPU model 'level' field for compatibility.
+ *
+ * This function may be used by machine-type compatibility functions
+ * to set a backwards-compatible value for the 'level' field on CPU models.
+ */
+void x86_cpu_compat_set_level(const char *cpu_model, uint32_t level)
+{
+    x86_def_t *def;
+    int i;
+    for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); i++) {
+        def = &builtin_x86_defs[i];
+        if (!cpu_model || !strcmp(cpu_model, def->name)) {
+            def->level = level;
+        }
+    }
+}
+
 #ifdef CONFIG_KVM
 static int cpu_x86_fill_model_id(char *str)
 {
