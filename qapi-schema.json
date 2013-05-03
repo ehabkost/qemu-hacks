@@ -3599,14 +3599,20 @@
   'data': [ 'EAX', 'EBX', 'ECX', 'EDX', 'ESP', 'EBP', 'ESI', 'EDI' ] }
 
 ##
+# @X86CPUIDInput
+#
+##
+{ 'type': 'X86CPUIDInput',
+  'data': { 'register': 'X86CPURegister32',
+                               'value': 'int' } }
+
+##
 # @X86CPUFeatureWordInfo
 #
 # Information about a X86 CPU feature word
 #
-# @cpuid-input-eax: Input EAX value for CPUID instruction for that feature word
-#
-# @cpuid-input-ecx: #optional Input ECX value for CPUID instruction for that
-#                   feature word
+# @input: a list of entries representing register values used as input for
+#         the CPUID instruction
 #
 # @cpuid-register: Output register containing the feature bits
 #
@@ -3615,7 +3621,6 @@
 # Since: 1.5
 ##
 { 'type': 'X86CPUFeatureWordInfo',
-  'data': { 'cpuid-input-eax': 'int',
-            '*cpuid-input-ecx': 'int',
-            'cpuid-register': 'X86CPURegister32',
+  'data': { 'cpuid-input': [ 'X86CPUIDInput' ],
+            'output-register': 'X86CPURegister32',
             'features': 'int' } }
