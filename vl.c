@@ -1391,7 +1391,7 @@ static int parse_numa_node_opt(const char *name, const char *value,
 {
     uint64_t nodenr = *(uint64_t *)opaque;
     if (!strcmp(name, "cpus")) {
-        return numa_node_parse_cpus(nodenr, value);
+        numa_node_parse_cpus(nodenr, value);
     }
     return 0;
 }
