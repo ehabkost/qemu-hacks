@@ -104,9 +104,12 @@ tests/test-xbzrle$(EXESUF): tests/test-xbzrle.o xbzrle.o page_cache.o libqemuuti
 tests/test-cutils$(EXESUF): tests/test-cutils.o util/cutils.o
 tests/test-int128$(EXESUF): tests/test-int128.o
 tests/test-qdev-global-prop$(EXESUF): tests/test-qdev-global-prop.o \
-	hw/qdev.o hw/qdev-properties.o \
+	hw/core/qdev.o hw/core/qdev-properties.o \
 	$(test-qapi-obj-y) $(qom-obj-y) \
-	qemu-option.o \
+	qom/object.o qom/container.o \
+	qom/qom-qobject.o \
+	hw/core/irq.o \
+	libqemuutil.a libqemustub.a \
 	tests/fake-qdev.o
 
 tests/test-qapi-types.c tests/test-qapi-types.h :\
