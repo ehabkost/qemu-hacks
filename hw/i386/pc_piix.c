@@ -240,6 +240,15 @@ static void pc_compat_1_6(QEMUMachineInitArgs *args)
 {
     has_pci_info = false;
     rom_file_in_ram = false;
+    x86_cpu_compat_set_features("Conroe", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Penryn", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Nehalem", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Westmere", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Opteron_G1", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Opteron_G2", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Opteron_G3", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Opteron_G4", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
+    x86_cpu_compat_set_features("Opteron_G5", FEAT_1_ECX, 0, CPUID_EXT_X2APIC);
 }
 
 static void pc_compat_1_5(QEMUMachineInitArgs *args)
