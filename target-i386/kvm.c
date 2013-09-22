@@ -88,7 +88,7 @@ bool kvm_allows_irq0_override(void)
     return !kvm_irqchip_in_kernel() || kvm_has_gsi_routing();
 }
 
-static struct kvm_cpuid2 *try_get_cpuid(KVMState *s, int max)
+static struct kvm_cpuid2 *try_get_cpuid(KVMState *s, int ioctl, int max)
 {
     struct kvm_cpuid2 *cpuid;
     int r, size;
@@ -96,7 +96,7 @@ static struct kvm_cpuid2 *try_get_cpuid(KVMState *s, int max)
     size = sizeof(*cpuid) + max * sizeof(*cpuid->entries);
     cpuid = (struct kvm_cpuid2 *)g_malloc0(size);
     cpuid->nent = max;
-    r = kvm_ioctl(s, KVM_GET_SUPPORTED_CPUID, cpuid);
+    r = kvm_ioctl(s, ioctl, cpuid);
     if (r == 0 && cpuid->nent >= max) {
         r = -E2BIG;
     }
@@ -105,7 +105,10 @@ static struct kvm_cpuid2 *try_get_cpuid(KVMState *s, int max)
             g_free(cpuid);
             return NULL;
         } else {
-            fprintf(stderr, "KVM_GET_SUPPORTED_CPUID failed: %s\n",
+            fprintf(stderr, "%s failed: %s\n",
+                    (ioctl == (int)KVM_GET_SUPPORTED_CPUID
+                     ? "KVM_GET_SUPPORTED_CPUID"
+                     : "KVM_GET_EMULATED_CPUID"),
                     strerror(-r));
             exit(1);
         }
@@ -120,7 +123,17 @@ static struct kvm_cpuid2 *get_supported_cpuid(KVMState *s)
 {
     struct kvm_cpuid2 *cpuid;
     int max = 1;
-    while ((cpuid = try_get_cpuid(s, max)) == NULL) {
+    while ((cpuid = try_get_cpuid(s, KVM_GET_SUPPORTED_CPUID, max)) == NULL) {
+        max *= 2;
+    }
+    return cpuid;
+}
+
+static struct kvm_cpuid2 *get_emulated_cpuid(KVMState *s)
+{
+    struct kvm_cpuid2 *cpuid;
+    int max = 1;
+    while ((cpuid = try_get_cpuid(s, KVM_GET_EMULATED_CPUID, max)) == NULL) {
         max *= 2;
     }
     return cpuid;
@@ -246,6 +259,23 @@ uint32_t kvm_arch_get_supported_cpuid(KVMState *s, uint32_t function,
     }
 
     return ret;
+}
+
+uint32_t kvm_arch_get_emulated_cpuid(KVMState *s, uint32_t function,
+                                     uint32_t index, int reg)
+{
+    struct kvm_cpuid2 *cpuid __attribute__((unused));
+
+    if (!kvm_check_extension(s, KVM_CAP_EXT_EMUL_CPUID))
+        return 0;
+
+    cpuid = get_emulated_cpuid(s);
+
+    struct kvm_cpuid_entry2 *entry = cpuid_find_entry(cpuid, function, index);
+    if (entry)
+        return cpuid_entry_get_reg(entry, reg);
+
+    return 0;
 }
 
 typedef struct HWPoisonPage {
