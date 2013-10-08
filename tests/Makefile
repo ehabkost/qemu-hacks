@@ -52,6 +52,7 @@ check-unit-y += tests/test-int128$(EXESUF)
 gcov-files-test-int128-y =
 check-unit-y += tests/test-bitops$(EXESUF)
 check-unit-y += tests/test-qdev-global-props$(EXESUF)
+check-unit-y += tests/test-vmstate$(EXESUF)
 
 check-block-$(CONFIG_POSIX) += tests/qemu-iotests-quick.sh
 
@@ -135,6 +136,9 @@ tests/test-qdev-global-props$(EXESUF): tests/test-qdev-global-props.o \
 	qom/object.o qom/container.o qom/qom-qobject.o \
 	$(test-qapi-obj-y) \
 	libqemuutil.a libqemustub.a
+tests/test-vmstate$(EXESUF): tests/test-vmstate.o \
+	vmstate.o qemu-file.o \
+	libqemuutil.a
 
 tests/test-qapi-types.c tests/test-qapi-types.h :\
 $(SRC_PATH)/tests/qapi-schema/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-types.py
