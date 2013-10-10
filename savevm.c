@@ -1694,50 +1694,53 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
             return ret;
     }
     for (field = vmsd->fields; field->name; field++) {
-        if ((field->field_exists &&
-             field->field_exists(opaque, version_id)) ||
-            (!field->field_exists &&
-             field->version_id <= version_id)) {
-            void *base_addr = opaque + field->offset;
-            int i, n_elems = 1;
-            int size = field->size;
-
-            if (field->flags & VMS_VBUFFER) {
-                size = *(int32_t *)(opaque+field->size_offset);
-                if (field->flags & VMS_MULTIPLY) {
-                    size *= field->size;
-                }
+        if (field->field_exists) {
+            if (!field->field_exists(opaque, version_id)) {
+                continue;
             }
-            if (field->flags & VMS_ARRAY) {
-                n_elems = field->num;
-            } else if (field->flags & VMS_VARRAY_INT32) {
-                n_elems = *(int32_t *)(opaque+field->num_offset);
-            } else if (field->flags & VMS_VARRAY_UINT32) {
-                n_elems = *(uint32_t *)(opaque+field->num_offset);
-            } else if (field->flags & VMS_VARRAY_UINT16) {
-                n_elems = *(uint16_t *)(opaque+field->num_offset);
-            } else if (field->flags & VMS_VARRAY_UINT8) {
-                n_elems = *(uint8_t *)(opaque+field->num_offset);
-            }
-            if (field->flags & VMS_POINTER) {
-                base_addr = *(void **)base_addr + field->start;
-            }
-            for (i = 0; i < n_elems; i++) {
-                void *addr = base_addr + size * i;
+        } else if (field->version_id > version_id) {
+            continue;
+        }
 
-                if (field->flags & VMS_ARRAY_OF_POINTER) {
-                    addr = *(void **)addr;
-                }
-                if (field->flags & VMS_STRUCT) {
-                    ret = vmstate_load_state(f, field->vmsd, addr,
-                                             field->vmsd->version_id);
-                } else {
-                    ret = field->info->get(f, addr, size);
+        void *base_addr = opaque + field->offset;
+        int i, n_elems = 1;
+        int size = field->size;
 
-                }
-                if (ret < 0) {
-                    return ret;
-                }
+        if (field->flags & VMS_VBUFFER) {
+            size = *(int32_t *)(opaque+field->size_offset);
+            if (field->flags & VMS_MULTIPLY) {
+                size *= field->size;
+            }
+        }
+        if (field->flags & VMS_ARRAY) {
+            n_elems = field->num;
+        } else if (field->flags & VMS_VARRAY_INT32) {
+            n_elems = *(int32_t *)(opaque+field->num_offset);
+        } else if (field->flags & VMS_VARRAY_UINT32) {
+            n_elems = *(uint32_t *)(opaque+field->num_offset);
+        } else if (field->flags & VMS_VARRAY_UINT16) {
+            n_elems = *(uint16_t *)(opaque+field->num_offset);
+        } else if (field->flags & VMS_VARRAY_UINT8) {
+            n_elems = *(uint8_t *)(opaque+field->num_offset);
+        }
+        if (field->flags & VMS_POINTER) {
+            base_addr = *(void **)base_addr + field->start;
+        }
+        for (i = 0; i < n_elems; i++) {
+            void *addr = base_addr + size * i;
+
+            if (field->flags & VMS_ARRAY_OF_POINTER) {
+                addr = *(void **)addr;
+            }
+            if (field->flags & VMS_STRUCT) {
+                ret = vmstate_load_state(f, field->vmsd, addr,
+                                         field->vmsd->version_id);
+            } else {
+                ret = field->info->get(f, addr, size);
+
+            }
+            if (ret < 0) {
+                return ret;
             }
         }
     }
@@ -1760,43 +1763,45 @@ void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
         vmsd->pre_save(opaque);
     }
     for (field = vmsd->fields; field->name; field++) {
-        if (!field->field_exists ||
-            field->field_exists(opaque, vmsd->version_id)) {
-            void *base_addr = opaque + field->offset;
-            int i, n_elems = 1;
-            int size = field->size;
+        if (field->field_exists &&
+            !field->field_exists(opaque, vmsd->version_id)) {
+            continue;
+        }
 
-            if (field->flags & VMS_VBUFFER) {
-                size = *(int32_t *)(opaque+field->size_offset);
-                if (field->flags & VMS_MULTIPLY) {
-                    size *= field->size;
-                }
-            }
-            if (field->flags & VMS_ARRAY) {
-                n_elems = field->num;
-            } else if (field->flags & VMS_VARRAY_INT32) {
-                n_elems = *(int32_t *)(opaque+field->num_offset);
-            } else if (field->flags & VMS_VARRAY_UINT32) {
-                n_elems = *(uint32_t *)(opaque+field->num_offset);
-            } else if (field->flags & VMS_VARRAY_UINT16) {
-                n_elems = *(uint16_t *)(opaque+field->num_offset);
-            } else if (field->flags & VMS_VARRAY_UINT8) {
-                n_elems = *(uint8_t *)(opaque+field->num_offset);
-            }
-            if (field->flags & VMS_POINTER) {
-                base_addr = *(void **)base_addr + field->start;
-            }
-            for (i = 0; i < n_elems; i++) {
-                void *addr = base_addr + size * i;
+        void *base_addr = opaque + field->offset;
+        int i, n_elems = 1;
+        int size = field->size;
 
-                if (field->flags & VMS_ARRAY_OF_POINTER) {
-                    addr = *(void **)addr;
-                }
-                if (field->flags & VMS_STRUCT) {
-                    vmstate_save_state(f, field->vmsd, addr);
-                } else {
-                    field->info->put(f, addr, size);
-                }
+        if (field->flags & VMS_VBUFFER) {
+            size = *(int32_t *)(opaque+field->size_offset);
+            if (field->flags & VMS_MULTIPLY) {
+                size *= field->size;
+            }
+        }
+        if (field->flags & VMS_ARRAY) {
+            n_elems = field->num;
+        } else if (field->flags & VMS_VARRAY_INT32) {
+            n_elems = *(int32_t *)(opaque+field->num_offset);
+        } else if (field->flags & VMS_VARRAY_UINT32) {
+            n_elems = *(uint32_t *)(opaque+field->num_offset);
+        } else if (field->flags & VMS_VARRAY_UINT16) {
+            n_elems = *(uint16_t *)(opaque+field->num_offset);
+        } else if (field->flags & VMS_VARRAY_UINT8) {
+            n_elems = *(uint8_t *)(opaque+field->num_offset);
+        }
+        if (field->flags & VMS_POINTER) {
+            base_addr = *(void **)base_addr + field->start;
+        }
+        for (i = 0; i < n_elems; i++) {
+            void *addr = base_addr + size * i;
+
+            if (field->flags & VMS_ARRAY_OF_POINTER) {
+                addr = *(void **)addr;
+            }
+            if (field->flags & VMS_STRUCT) {
+                vmstate_save_state(f, field->vmsd, addr);
+            } else {
+                field->info->put(f, addr, size);
             }
         }
     }
