@@ -1676,7 +1676,7 @@ static int vmstate_subsection_load(QEMUFile *f, const VMStateDescription *vmsd,
 int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
                        void *opaque, int version_id)
 {
-    VMStateField *field = vmsd->fields;
+    VMStateField *field;
     int ret;
 
     if (version_id > vmsd->version_id) {
@@ -1693,7 +1693,7 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
         if (ret)
             return ret;
     }
-    while(field->name) {
+    for (field = vmsd->fields; field->name; field++) {
         if ((field->field_exists &&
              field->field_exists(opaque, version_id)) ||
             (!field->field_exists &&
@@ -1740,7 +1740,6 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
                 }
             }
         }
-        field++;
     }
     ret = vmstate_subsection_load(f, vmsd, opaque);
     if (ret != 0) {
@@ -1755,12 +1754,12 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
 void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
                         void *opaque)
 {
-    VMStateField *field = vmsd->fields;
+    VMStateField *field;
 
     if (vmsd->pre_save) {
         vmsd->pre_save(opaque);
     }
-    while(field->name) {
+    for (field = vmsd->fields; field->name; field++) {
         if (!field->field_exists ||
             field->field_exists(opaque, vmsd->version_id)) {
             void *base_addr = opaque + field->offset;
@@ -1800,7 +1799,6 @@ void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
                 }
             }
         }
-        field++;
     }
     vmstate_subsection_save(f, vmsd, opaque);
 }
