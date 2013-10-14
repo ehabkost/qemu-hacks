@@ -126,6 +126,7 @@ struct VMStateDescription {
     const char *name;
     int unmigratable;
     int version_id;
+    int max_version_id;
     int minimum_version_id;
     int minimum_version_id_old;
     LoadStateHandler *load_state_old;

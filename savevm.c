@@ -1679,7 +1679,7 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
     VMStateField *field;
     int ret;
 
-    if (version_id > vmsd->version_id) {
+    if (version_id > MAX(vmsd->version_id, vmsd->max_version_id)) {
         return -EINVAL;
     }
     if (version_id < vmsd->minimum_version_id_old) {
