@@ -1767,6 +1767,9 @@ void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
             !field->field_exists(opaque, vmsd->version_id)) {
             continue;
         }
+        if (field->version_id > vmsd->version_id) {
+            continue;
+        }
 
         void *base_addr = opaque + field->offset;
         int i, n_elems = 1;
