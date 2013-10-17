@@ -1694,11 +1694,10 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
             return ret;
     }
     for (field = vmsd->fields; field->name; field++) {
-        if (field->field_exists) {
-            if (!field->field_exists(opaque, version_id)) {
-                continue;
-            }
-        } else if (field->version_id > version_id) {
+        if (field->field_exists && !field->field_exists(opaque, version_id)) {
+            continue;
+        }
+        if (field->version_id > version_id) {
             continue;
         }
 
