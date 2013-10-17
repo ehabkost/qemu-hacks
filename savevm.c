@@ -1668,42 +1668,16 @@ void vmstate_unregister(DeviceState *dev, const VMStateDescription *vmsd,
     }
 }
 
-static void vmstate_subsection_save(QEMUFile *f, const VMStateDescription *vmsd,
-                                    void *opaque);
-static int vmstate_subsection_load(QEMUFile *f, const VMStateDescription *vmsd,
-                                   void *opaque);
 
-static int vmstate_get_field(QEMUFile *f, const VMStateDescription *vmsd,
-                             VMStateField *field, void *addr, size_t size)
-{
-    if (field->flags & VMS_STRUCT) {
-        return vmstate_load_state(f, field->vmsd, addr,
-                                  field->vmsd->version_id);
-    } else {
-        return field->info->get(f, addr, size);
-    }
-}
+typedef int (*vmstate_field_func)(QEMUFile *f, const VMStateDescription *vmsd,
+                                  VMStateField *field, void *addr, size_t size);
 
-int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
-                       void *opaque, int version_id)
+static int vmstate_walk_fields(QEMUFile *f, const VMStateDescription *vmsd,
+                               void *opaque, int version_id,
+                               vmstate_field_func func)
 {
     VMStateField *field;
-    int ret;
 
-    if (version_id > MAX(vmsd->version_id, vmsd->max_version_id)) {
-        return -EINVAL;
-    }
-    if (version_id < vmsd->minimum_version_id_old) {
-        return -EINVAL;
-    }
-    if  (version_id < vmsd->minimum_version_id) {
-        return vmsd->load_state_old(f, opaque, version_id);
-    }
-    if (vmsd->pre_load) {
-        int ret = vmsd->pre_load(opaque);
-        if (ret)
-            return ret;
-    }
     for (field = vmsd->fields; field->name; field++) {
         if (field->field_exists && !field->field_exists(opaque, version_id)) {
             continue;
@@ -1742,11 +1716,53 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
             if (field->flags & VMS_ARRAY_OF_POINTER) {
                 addr = *(void **)addr;
             }
-            ret = vmstate_get_field(f, vmsd, field, addr, size);
+            int ret = func(f, vmsd, field, addr, size);
             if (ret < 0) {
                 return ret;
             }
         }
+    }
+    return 0;
+}
+
+static void vmstate_subsection_save(QEMUFile *f, const VMStateDescription *vmsd,
+                                    void *opaque);
+static int vmstate_subsection_load(QEMUFile *f, const VMStateDescription *vmsd,
+                                   void *opaque);
+
+static int vmstate_get_field(QEMUFile *f, const VMStateDescription *vmsd,
+                             VMStateField *field, void *addr, size_t size)
+{
+    if (field->flags & VMS_STRUCT) {
+        return vmstate_load_state(f, field->vmsd, addr,
+                                  field->vmsd->version_id);
+    } else {
+        return field->info->get(f, addr, size);
+    }
+}
+
+int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
+                       void *opaque, int version_id)
+{
+    int ret;
+
+    if (version_id > MAX(vmsd->version_id, vmsd->max_version_id)) {
+        return -EINVAL;
+    }
+    if (version_id < vmsd->minimum_version_id_old) {
+        return -EINVAL;
+    }
+    if  (version_id < vmsd->minimum_version_id) {
+        return vmsd->load_state_old(f, opaque, version_id);
+    }
+    if (vmsd->pre_load) {
+        int ret = vmsd->pre_load(opaque);
+        if (ret)
+            return ret;
+    }
+    ret = vmstate_walk_fields(f, vmsd, opaque, version_id, vmstate_get_field);
+    if (ret < 0) {
+        return ret;
     }
     ret = vmstate_subsection_load(f, vmsd, opaque);
     if (ret != 0) {
@@ -1758,7 +1774,7 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
     return 0;
 }
 
-static void vmstate_put_field(QEMUFile *f, const VMStateDescription *vmsd,
+static int vmstate_put_field(QEMUFile *f, const VMStateDescription *vmsd,
                              VMStateField *field, void *addr, size_t size)
 {
     if (field->flags & VMS_STRUCT) {
@@ -1766,58 +1782,16 @@ static void vmstate_put_field(QEMUFile *f, const VMStateDescription *vmsd,
     } else {
         field->info->put(f, addr, size);
     }
+    return 0;
 }
 
 void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
                         void *opaque)
 {
-    VMStateField *field;
-
     if (vmsd->pre_save) {
         vmsd->pre_save(opaque);
     }
-    for (field = vmsd->fields; field->name; field++) {
-        if (field->field_exists &&
-            !field->field_exists(opaque, vmsd->version_id)) {
-            continue;
-        }
-        if (field->version_id > vmsd->version_id) {
-            continue;
-        }
-
-        void *base_addr = opaque + field->offset;
-        int i, n_elems = 1;
-        int size = field->size;
-
-        if (field->flags & VMS_VBUFFER) {
-            size = *(int32_t *)(opaque+field->size_offset);
-            if (field->flags & VMS_MULTIPLY) {
-                size *= field->size;
-            }
-        }
-        if (field->flags & VMS_ARRAY) {
-            n_elems = field->num;
-        } else if (field->flags & VMS_VARRAY_INT32) {
-            n_elems = *(int32_t *)(opaque+field->num_offset);
-        } else if (field->flags & VMS_VARRAY_UINT32) {
-            n_elems = *(uint32_t *)(opaque+field->num_offset);
-        } else if (field->flags & VMS_VARRAY_UINT16) {
-            n_elems = *(uint16_t *)(opaque+field->num_offset);
-        } else if (field->flags & VMS_VARRAY_UINT8) {
-            n_elems = *(uint8_t *)(opaque+field->num_offset);
-        }
-        if (field->flags & VMS_POINTER) {
-            base_addr = *(void **)base_addr + field->start;
-        }
-        for (i = 0; i < n_elems; i++) {
-            void *addr = base_addr + size * i;
-
-            if (field->flags & VMS_ARRAY_OF_POINTER) {
-                addr = *(void **)addr;
-            }
-            vmstate_put_field(f, vmsd, field, addr, size);
-        }
-    }
+    vmstate_walk_fields(f, vmsd, opaque, vmsd->version_id, vmstate_put_field);
     vmstate_subsection_save(f, vmsd, opaque);
 }
 
