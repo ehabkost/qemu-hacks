@@ -1673,6 +1673,17 @@ static void vmstate_subsection_save(QEMUFile *f, const VMStateDescription *vmsd,
 static int vmstate_subsection_load(QEMUFile *f, const VMStateDescription *vmsd,
                                    void *opaque);
 
+static int vmstate_get_field(QEMUFile *f, const VMStateDescription *vmsd,
+                             VMStateField *field, void *addr, size_t size)
+{
+    if (field->flags & VMS_STRUCT) {
+        return vmstate_load_state(f, field->vmsd, addr,
+                                  field->vmsd->version_id);
+    } else {
+        return field->info->get(f, addr, size);
+    }
+}
+
 int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
                        void *opaque, int version_id)
 {
@@ -1731,13 +1742,7 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
             if (field->flags & VMS_ARRAY_OF_POINTER) {
                 addr = *(void **)addr;
             }
-            if (field->flags & VMS_STRUCT) {
-                ret = vmstate_load_state(f, field->vmsd, addr,
-                                         field->vmsd->version_id);
-            } else {
-                ret = field->info->get(f, addr, size);
-
-            }
+            ret = vmstate_get_field(f, vmsd, field, addr, size);
             if (ret < 0) {
                 return ret;
             }
@@ -1751,6 +1756,16 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
         return vmsd->post_load(opaque, version_id);
     }
     return 0;
+}
+
+static void vmstate_put_field(QEMUFile *f, const VMStateDescription *vmsd,
+                             VMStateField *field, void *addr, size_t size)
+{
+    if (field->flags & VMS_STRUCT) {
+        vmstate_save_state(f, field->vmsd, addr);
+    } else {
+        field->info->put(f, addr, size);
+    }
 }
 
 void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
@@ -1800,11 +1815,7 @@ void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
             if (field->flags & VMS_ARRAY_OF_POINTER) {
                 addr = *(void **)addr;
             }
-            if (field->flags & VMS_STRUCT) {
-                vmstate_save_state(f, field->vmsd, addr);
-            } else {
-                field->info->put(f, addr, size);
-            }
+            vmstate_put_field(f, vmsd, field, addr, size);
         }
     }
     vmstate_subsection_save(f, vmsd, opaque);
