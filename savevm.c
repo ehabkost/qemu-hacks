@@ -137,14 +137,12 @@ struct QEMUFile {
     int last_error;
 };
 
-typedef struct QEMUFileStdio
-{
+typedef struct QEMUFileStdio {
     FILE *stdio_file;
     QEMUFile *file;
 } QEMUFileStdio;
 
-typedef struct QEMUFileSocket
-{
+typedef struct QEMUFileSocket {
     int fd;
     QEMUFile *file;
 } QEMUFileSocket;
@@ -310,7 +308,7 @@ QEMUFile *qemu_popen_cmd(const char *command, const char *mode)
 
     s->stdio_file = stdio_file;
 
-    if(mode[0] == 'r') {
+    if (mode[0] == 'r') {
         s->file = qemu_fopen_ops(s, &stdio_pipe_read_ops);
     } else {
         s->file = qemu_fopen_ops(s, &stdio_pipe_write_ops);
@@ -429,7 +427,7 @@ QEMUFile *qemu_fdopen(int fd, const char *mode)
     s = g_malloc0(sizeof(QEMUFileSocket));
     s->fd = fd;
 
-    if(mode[0] == 'r') {
+    if (mode[0] == 'r') {
         s->file = qemu_fopen_ops(s, &unix_read_ops);
     } else {
         s->file = qemu_fopen_ops(s, &unix_write_ops);
@@ -493,8 +491,8 @@ QEMUFile *qemu_fopen(const char *filename, const char *mode)
     s->stdio_file = fopen(filename, mode);
     if (!s->stdio_file)
         goto fail;
-    
-    if(mode[0] == 'w') {
+
+    if (mode[0] == 'w') {
         s->file = qemu_fopen_ops(s, &stdio_file_write_ops);
     } else {
         s->file = qemu_fopen_ops(s, &stdio_file_read_ops);
@@ -1693,7 +1691,7 @@ int vmstate_load_state(QEMUFile *f, const VMStateDescription *vmsd,
         if (ret)
             return ret;
     }
-    while(field->name) {
+    while (field->name) {
         if ((field->field_exists &&
              field->field_exists(opaque, version_id)) ||
             (!field->field_exists &&
@@ -1759,7 +1757,7 @@ void vmstate_save_state(QEMUFile *f, const VMStateDescription *vmsd,
     if (vmsd->pre_save) {
         vmsd->pre_save(opaque);
     }
-    while(field->name) {
+    while (field->name) {
         if (!field->field_exists ||
             field->field_exists(opaque, vmsd->version_id)) {
             void *base_addr = opaque + field->offset;
@@ -1818,7 +1816,7 @@ static void vmstate_save(QEMUFile *f, SaveStateEntry *se)
         se->ops->save_state(f, se->opaque);
         return;
     }
-    vmstate_save_state(f,se->vmsd, se->opaque);
+    vmstate_save_state(f, se->vmsd, se->opaque);
 }
 
 bool qemu_savevm_state_blocked(Error **errp)
@@ -1846,7 +1844,7 @@ void qemu_savevm_state_begin(QEMUFile *f,
         }
         se->ops->set_params(params, se->opaque);
     }
-    
+
     qemu_put_be32(f, QEMU_VM_FILE_MAGIC);
     qemu_put_be32(f, QEMU_VM_FILE_VERSION);
 
@@ -2106,7 +2104,7 @@ static SaveStateEntry *find_se(const char *idstr, int instance_id)
 
 static const VMStateDescription *vmstate_get_subsection(const VMStateSubsection *sub, char *idstr)
 {
-    while(sub && sub->needed) {
+    while (sub && sub->needed) {
         if (strcmp(idstr, sub->vmsd->name) == 0) {
             return sub->vmsd;
         }
@@ -2326,8 +2324,7 @@ static int del_existing_snapshots(Monitor *mon, const char *name)
     bs = NULL;
     while ((bs = bdrv_next(bs))) {
         if (bdrv_can_snapshot(bs) &&
-            bdrv_snapshot_find(bs, snapshot, name) >= 0)
-        {
+            bdrv_snapshot_find(bs, snapshot, name) >= 0) {
             bdrv_snapshot_delete_by_id_or_name(bs, name, &err);
             if (error_is_set(&err)) {
                 monitor_printf(mon,
