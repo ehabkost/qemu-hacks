@@ -235,7 +235,7 @@ static const char *ext4_feature_name[] = {
 };
 
 static const char *kvm_feature_name[] = {
-    "kvmclock", "kvm-nopiodelay", "kvm-mmu", "kvmclock",
+    "kvmclock1", "kvm-nopiodelay", "kvm-mmu", "kvmclock2",
     "kvm-asyncpf", "kvm-steal-time", "kvm-pv-eoi", "kvm-pv-unhalt",
     NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,
@@ -526,85 +526,6 @@ void host_cpuid(uint32_t function, uint32_t count,
         *ecx = vec[2];
     if (edx)
         *edx = vec[3];
-}
-
-#define iswhite(c) ((c) && ((c) <= ' ' || '~' < (c)))
-
-/* general substring compare of *[s1..e1) and *[s2..e2).  sx is start of
- * a substring.  ex if !NULL points to the first char after a substring,
- * otherwise the string is assumed to sized by a terminating nul.
- * Return lexical ordering of *s1:*s2.
- */
-static int sstrcmp(const char *s1, const char *e1, const char *s2,
-    const char *e2)
-{
-    for (;;) {
-        if (!*s1 || !*s2 || *s1 != *s2)
-            return (*s1 - *s2);
-        ++s1, ++s2;
-        if (s1 == e1 && s2 == e2)
-            return (0);
-        else if (s1 == e1)
-            return (*s2);
-        else if (s2 == e2)
-            return (*s1);
-    }
-}
-
-/* compare *[s..e) to *altstr.  *altstr may be a simple string or multiple
- * '|' delimited (possibly empty) strings in which case search for a match
- * within the alternatives proceeds left to right.  Return 0 for success,
- * non-zero otherwise.
- */
-static int altcmp(const char *s, const char *e, const char *altstr)
-{
-    const char *p, *q;
-
-    for (q = p = altstr; ; ) {
-        while (*p && *p != '|')
-            ++p;
-        if ((q == p && !*s) || (q != p && !sstrcmp(s, e, q, p)))
-            return (0);
-        if (!*p)
-            return (1);
-        else
-            q = ++p;
-    }
-}
-
-/* search featureset for flag *[s..e), if found set corresponding bit in
- * *pval and return true, otherwise return false
- */
-static bool lookup_feature(uint32_t *pval, const char *s, const char *e,
-                           const char **featureset)
-{
-    uint32_t mask;
-    const char **ppc;
-    bool found = false;
-
-    for (mask = 1, ppc = featureset; mask; mask <<= 1, ++ppc) {
-        if (*ppc && !altcmp(s, e, *ppc)) {
-            *pval |= mask;
-            found = true;
-        }
-    }
-    return found;
-}
-
-static void add_flagname_to_bitmaps(const char *flagname,
-                                    FeatureWordArray words)
-{
-    FeatureWord w;
-    for (w = 0; w < FEATURE_WORDS; w++) {
-        FeatureWordInfo *wi = &feature_word_info[w];
-        if (wi->feat_names &&
-            lookup_feature(&words[w], flagname, NULL, wi->feat_names)) {
-            break;
-        }
-    }
-    if (w == FEATURE_WORDS) {
-        fprintf(stderr, "CPU feature %s not found\n", flagname);
-    }
 }
 
 /* CPU class name definitions: */
@@ -1747,24 +1668,35 @@ static void x86_cpu_parse_featurestr(CPUState *cs, char *features,
 {
     X86CPU *cpu = X86_CPU(cs);
     char *featurestr; /* Single 'key=value" string being parsed */
-    FeatureWord w;
-    /* Features to be added */
-    FeatureWordArray plus_features = { 0 };
-    /* Features to be removed */
-    FeatureWordArray minus_features = { 0 };
     uint32_t numvalue;
-    CPUX86State *env = &cpu->env;
     Error *local_err = NULL;
+    QDict *props = qdict_new();
+    const QDictEntry *ent;
 
     featurestr = features ? strtok(features, ",") : NULL;
 
     while (featurestr) {
         char *val;
         feat2prop(featurestr);
-        if (featurestr[0] == '+') {
-            add_flagname_to_bitmaps(featurestr + 1, plus_features);
-        } else if (featurestr[0] == '-') {
-            add_flagname_to_bitmaps(featurestr + 1, minus_features);
+        if (featurestr[0] == '+' || featurestr[0] == '-') {
+            const gchar *feat = featurestr + 1;
+            gchar *cpuid_fname = NULL;
+
+            if (strncmp(feat, "feat-", 5)) {
+                cpuid_fname = g_strconcat("feat-", feat, NULL);
+                feat = cpuid_fname;
+            }
+
+            if (featurestr[0] == '+') {
+                /* preseve legacy behaviour, if feature was disabled once
+                 * do not allow to enable it again */
+                if (!qdict_haskey(props, feat)) {
+                    qdict_put(props, feat, qstring_from_str("on"));
+                }
+            } else {
+                qdict_put(props, feat, qstring_from_str("off"));
+            }
+            g_free(cpuid_fname);
         } else if ((val = strchr(featurestr, '='))) {
             *val = 0; val++;
             if (!strcmp(featurestr, "xlevel")) {
@@ -1826,15 +1758,21 @@ static void x86_cpu_parse_featurestr(CPUState *cs, char *features,
         featurestr = strtok(NULL, ",");
     }
 
-    for (w = 0; w < FEATURE_WORDS; w++) {
-        env->features[w] |= plus_features[w];
-        env->features[w] &= ~minus_features[w];
+    for (ent = qdict_first(props); ent; ent = qdict_next(props, ent)) {
+        const QString *qval = qobject_to_qstring(qdict_entry_value(ent));
+        /* TODO: switch to using global properties after subclasses are done */
+        object_property_parse(OBJECT(cpu), qstring_get_str(qval),
+                              qdict_entry_key(ent), &local_err);
+        if (local_err) {
+            goto out;
+        }
     }
 
 out:
     if (local_err) {
         error_propagate(errp, local_err);
     }
+    QDECREF(props);
 }
 
 /* generate a composite string into buf of all cpuid names in featureset
@@ -2824,9 +2762,34 @@ static void x86_cpu_register_feature_prop(X86CPU *cpu,
     fp->word = w;
     fp->mask = mask;
     object_property_add(OBJECT(cpu), prop_name, "bool",
-                        x86_cpu_set_feature_prop,
                         x86_cpu_get_feature_prop,
+                        x86_cpu_set_feature_prop,
                         NULL, fp, &error_abort);
+}
+
+static void x86_cpu_register_feature_bit_props(X86CPU *cpu,
+                                               FeatureWord w,
+                                               int bit)
+{
+    int i;
+    char **names;
+    FeatureWordInfo *fi = &feature_word_info[w];
+
+    if (!fi->feat_names) {
+        return;
+    }
+    if (!fi->feat_names[bit]) {
+        return;
+    }
+
+    names = g_strsplit(fi->feat_names[bit], "|", 0);
+    for (i = 0; names[i]; i++) {
+        char *feat_name = names[i];
+        char *prop_name = g_strdup_printf("feat-%s", feat_name);
+        x86_cpu_register_feature_prop(cpu, prop_name, w, (1UL << bit));
+        g_free(prop_name);
+    }
+    g_strfreev(names);
 }
 
 static void x86_cpu_initfn(Object *obj)
@@ -2835,6 +2798,7 @@ static void x86_cpu_initfn(Object *obj)
     X86CPU *cpu = X86_CPU(obj);
     X86CPUClass *xcc = X86_CPU_GET_CLASS(obj);
     CPUX86State *env = &cpu->env;
+    FeatureWord w;
     static int inited;
 
     cs->env_ptr = env;
@@ -2882,6 +2846,13 @@ static void x86_cpu_initfn(Object *obj)
 
     cpu->hyperv_spinlock_attempts = HYPERV_SPINLOCK_NEVER_RETRY;
     env->cpuid_apic_id = x86_cpu_apic_id_from_index(cs->cpu_index);
+
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        int bit;
+        for (bit = 0; bit < 32; bit++) {
+            x86_cpu_register_feature_bit_props(cpu, w, bit);
+        }
+    }
 
     x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
 
