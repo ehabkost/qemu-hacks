@@ -63,6 +63,10 @@ typedef struct X86CPUClass {
     /* Should be eventually replaced by subclass-specific property defaults. */
     X86CPUDefinition *cpu_def;
 
+    /* Optional description of CPU model.
+     * If unavailable, cpu_def->model_id is used */
+    const char *model_description;
+
     bool kvm_required;
 
     DeviceRealize parent_realize;
