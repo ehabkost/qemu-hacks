@@ -6,3 +6,5 @@ common-obj-$(CONFIG_BRLAPI) += baum.o
 $(obj)/baum.o: QEMU_CFLAGS += $(SDL_CFLAGS) 
 
 common-obj-$(CONFIG_TPM) += tpm.o
+
+common-obj-y += hostmem.o hostmem-ram.o
