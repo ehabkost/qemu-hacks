@@ -256,8 +256,8 @@ static void s390_init(QEMUMachineInitArgs *args)
     s390_virtio_register_hcalls();
 
     /* allocate RAM */
-    memory_region_init_ram(ram, NULL, "s390.ram", my_ram_size);
-    vmstate_register_ram_global(ram);
+    /*XXX*/
+    memory_region_allocate_system_memory(ram, NULL, "s390.ram", args->ram_size);
     memory_region_add_subregion(sysmem, 0, ram);
 
     /* clear virtio region */

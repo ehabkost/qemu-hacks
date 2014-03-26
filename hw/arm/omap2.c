@@ -29,6 +29,7 @@
 #include "hw/arm/soc_dma.h"
 #include "hw/sysbus.h"
 #include "audio/audio.h"
+#include "hw/boards.h"
 
 /* Enhanced Audio Controller (CODEC only) */
 struct omap_eac_s {
@@ -2266,8 +2267,8 @@ struct omap_mpu_state_s *omap2420_mpu_init(MemoryRegion *sysmem,
     omap_clk_init(s);
 
     /* Memory-mapped stuff */
-    memory_region_init_ram(&s->sdram, NULL, "omap2.dram", s->sdram_size);
-    vmstate_register_ram_global(&s->sdram);
+    memory_region_allocate_system_memory(&s->sdram, NULL, "omap2.dram",
+                                         s->sdram_size);
     memory_region_add_subregion(sysmem, OMAP2_Q2_BASE, &s->sdram);
     memory_region_init_ram(&s->sram, NULL, "omap2.sram", s->sram_size);
     vmstate_register_ram_global(&s->sram);

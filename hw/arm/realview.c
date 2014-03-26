@@ -56,6 +56,7 @@ static void realview_init(QEMUMachineInitArgs *args,
     MemoryRegion *ram_hi = g_new(MemoryRegion, 1);
     MemoryRegion *ram_alias = g_new(MemoryRegion, 1);
     MemoryRegion *ram_hack = g_new(MemoryRegion, 1);
+    MemoryRegion *ram = g_malloc0(sizeof(*ram));
     DeviceState *dev, *sysctl, *gpio2, *pl041;
     SysBusDevice *busdev;
     qemu_irq pic[64];
@@ -133,17 +134,19 @@ static void realview_init(QEMUMachineInitArgs *args,
         proc_id = 0x02000000;
     }
 
+    memory_region_allocate_system_memory(ram, NULL, "realview.mem", ram_size);
+
     if (is_pb && ram_size > 0x20000000) {
         /* Core tile RAM.  */
         low_ram_size = ram_size - 0x20000000;
         ram_size = 0x20000000;
-        memory_region_init_ram(ram_lo, NULL, "realview.lowmem", low_ram_size);
-        vmstate_register_ram_global(ram_lo);
+        memory_region_init_alias(ram_lo, NULL, "realview.lowmem", ram,
+                                 0x20000000, low_ram_size);
         memory_region_add_subregion(sysmem, 0x20000000, ram_lo);
     }
 
-    memory_region_init_ram(ram_hi, NULL, "realview.highmem", ram_size);
-    vmstate_register_ram_global(ram_hi);
+    memory_region_init_alias(ram_hi, NULL, "realview.highmem", ram, 0,
+                             ram_size);
     low_ram_size = ram_size;
     if (low_ram_size > 0x10000000)
       low_ram_size = 0x10000000;

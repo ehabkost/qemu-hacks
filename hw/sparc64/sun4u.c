@@ -729,8 +729,8 @@ static int ram_init1(SysBusDevice *dev)
 {
     RamDevice *d = SUN4U_RAM(dev);
 
-    memory_region_init_ram(&d->ram, OBJECT(d), "sun4u.ram", d->size);
-    vmstate_register_ram_global(&d->ram);
+    memory_region_allocate_system_memory(&d->ram, OBJECT(d),
+                                         "sun4u.ram", d->size);
     sysbus_init_mmio(dev, &d->ram);
     return 0;
 }

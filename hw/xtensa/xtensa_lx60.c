@@ -198,8 +198,8 @@ static void lx_init(const LxBoardDesc *board, QEMUMachineInitArgs *args)
     }
 
     ram = g_malloc(sizeof(*ram));
-    memory_region_init_ram(ram, NULL, "lx60.dram", args->ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL,
+                                         "lx60.dram", args->ram_size);
     memory_region_add_subregion(system_memory, 0, ram);
 
     system_io = g_malloc(sizeof(*system_io));

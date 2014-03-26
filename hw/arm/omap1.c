@@ -24,6 +24,7 @@
 #include "sysemu/blockdev.h"
 #include "qemu/range.h"
 #include "hw/sysbus.h"
+#include "hw/boards.h"
 
 /* Should signal the TCMI/GPMC */
 uint32_t omap_badwidth_read8(void *opaque, hwaddr addr)
@@ -3854,8 +3855,8 @@ struct omap_mpu_state_s *omap310_mpu_init(MemoryRegion *system_memory,
     omap_clk_init(s);
 
     /* Memory-mapped stuff */
-    memory_region_init_ram(&s->emiff_ram, NULL, "omap1.dram", s->sdram_size);
-    vmstate_register_ram_global(&s->emiff_ram);
+    memory_region_allocate_system_memory(&s->emiff_ram, NULL,
+                                         "omap1.dram", s->sdram_size);
     memory_region_add_subregion(system_memory, OMAP_EMIFF_BASE, &s->emiff_ram);
     memory_region_init_ram(&s->imif_ram, NULL, "omap1.sram", s->sram_size);
     vmstate_register_ram_global(&s->imif_ram);

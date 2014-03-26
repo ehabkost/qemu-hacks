@@ -256,7 +256,8 @@ static void calxeda_init(QEMUMachineInitArgs *args, enum cxmachines machine)
 
     sysmem = get_system_memory();
     dram = g_new(MemoryRegion, 1);
-    memory_region_init_ram(dram, NULL, "highbank.dram", ram_size);
+    memory_region_allocate_system_memory(dram, NULL, "highbank.dram",
+                                         args->ram_size);
     /* SDRAM at address zero.  */
     memory_region_add_subregion(sysmem, 0, dram);
 

@@ -171,8 +171,8 @@ mips_mipssim_init(QEMUMachineInitArgs *args)
     qemu_register_reset(main_cpu_reset, reset_info);
 
     /* Allocate RAM. */
-    memory_region_init_ram(ram, NULL, "mips_mipssim.ram", ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL,
+                                         "mips_mipssim.ram", ram_size);
     memory_region_init_ram(bios, NULL, "mips_mipssim.bios", BIOS_SIZE);
     vmstate_register_ram_global(bios);
     memory_region_set_readonly(bios, true);

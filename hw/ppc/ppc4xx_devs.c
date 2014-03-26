@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include "hw/hw.h"
+#include "hw/boards.h"
 #include "hw/ppc/ppc.h"
 #include "hw/ppc/ppc4xx.h"
 #include "qemu/log.h"
@@ -682,20 +683,46 @@ ram_addr_t ppc4xx_sdram_adjust(ram_addr_t ram_size, int nr_banks,
                                hwaddr ram_sizes[],
                                const unsigned int sdram_bank_sizes[])
 {
+    MemoryRegion *ram = g_malloc0(sizeof(*ram));
     ram_addr_t size_left = ram_size;
     ram_addr_t base = 0;
+    unsigned int bank_size;
     int i;
     int j;
 
     for (i = 0; i < nr_banks; i++) {
         for (j = 0; sdram_bank_sizes[j] != 0; j++) {
-            unsigned int bank_size = sdram_bank_sizes[j];
+            bank_size = sdram_bank_sizes[j];
+            if (bank_size <= size_left) {
+                size_left -= bank_size;
+            }
+        }
+        if (!size_left) {
+            /* No need to use the remaining banks. */
+            break;
+        }
+    }
+
+    ram_size -= size_left;
+    if (size_left) {
+        printf("Truncating memory to %d MiB to fit SDRAM controller limits.\n",
+               (int)(ram_size >> 20));
+    }
+
+    memory_region_allocate_system_memory(ram, NULL, "ppc4xx.sdram", ram_size);
+    vmstate_register_ram_global(ram);
+
+    size_left = ram_size;
+
+    for (i = 0; i < nr_banks; i++) {
+        for (j = 0; sdram_bank_sizes[j] != 0; j++) {
+            bank_size = sdram_bank_sizes[j];
 
             if (bank_size <= size_left) {
                 char name[32];
                 snprintf(name, sizeof(name), "ppc4xx.sdram%d", i);
-                memory_region_init_ram(&ram_memories[i], NULL, name, bank_size);
-                vmstate_register_ram_global(&ram_memories[i]);
+                memory_region_init_alias(&ram_memories[i], NULL, name, ram,
+                                         base, bank_size);
                 ram_bases[i] = base;
                 ram_sizes[i] = bank_size;
                 base += bank_size;
@@ -709,11 +736,6 @@ ram_addr_t ppc4xx_sdram_adjust(ram_addr_t ram_size, int nr_banks,
             break;
         }
     }
-
-    ram_size -= size_left;
-    if (size_left)
-        printf("Truncating memory to %d MiB to fit SDRAM controller limits.\n",
-               (int)(ram_size >> 20));
 
     return ram_size;
 }

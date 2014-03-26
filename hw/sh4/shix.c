@@ -48,6 +48,7 @@ static void shix_init(QEMUMachineInitArgs *args)
     MemoryRegion *sysmem = get_system_memory();
     MemoryRegion *rom = g_new(MemoryRegion, 1);
     MemoryRegion *sdram = g_new(MemoryRegion, 2);
+    MemoryRegion *ram = g_malloc0(sizeof(*ram));
     
     if (!cpu_model)
         cpu_model = "any";
@@ -63,11 +64,14 @@ static void shix_init(QEMUMachineInitArgs *args)
     vmstate_register_ram_global(rom);
     memory_region_set_readonly(rom, true);
     memory_region_add_subregion(sysmem, 0x00000000, rom);
-    memory_region_init_ram(&sdram[0], NULL, "shix.sdram1", 0x01000000);
-    vmstate_register_ram_global(&sdram[0]);
+
+    memory_region_allocate_system_memory(ram, NULL, "shix.sdram",
+                                         0x02000000);
+    memory_region_init_alias(&sdram[0], NULL, "shix.sdram1", ram,
+                             0, 0x01000000);
     memory_region_add_subregion(sysmem, 0x08000000, &sdram[0]);
-    memory_region_init_ram(&sdram[1], NULL, "shix.sdram2", 0x01000000);
-    vmstate_register_ram_global(&sdram[1]);
+    memory_region_init_alias(&sdram[1], NULL, "shix.sdram2", ram,
+                             0x01000000, 0x01000000);
     memory_region_add_subregion(sysmem, 0x0c000000, &sdram[1]);
 
     /* Load BIOS in 0 (and access it through P2, 0xA0000000) */
