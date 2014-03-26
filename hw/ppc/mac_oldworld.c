@@ -128,8 +128,8 @@ static void ppc_heathrow_init(QEMUMachineInitArgs *args)
         exit(1);
     }
 
-    memory_region_init_ram(ram, NULL, "ppc_heathrow.ram", ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL, "ppc_heathrow.ram",
+                                         args->ram_size);
     memory_region_add_subregion(sysmem, 0, ram);
 
     /* allocate and load BIOS */

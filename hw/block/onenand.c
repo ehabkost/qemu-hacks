@@ -20,6 +20,7 @@
 
 #include "qemu-common.h"
 #include "hw/hw.h"
+#include "hw/boards.h"
 #include "hw/block/flash.h"
 #include "hw/irq.h"
 #include "sysemu/blockdev.h"
@@ -791,9 +792,9 @@ static int onenand_initfn(SysBusDevice *sbd)
     }
     s->otp = memset(g_malloc((64 + 2) << PAGE_SHIFT),
                     0xff, (64 + 2) << PAGE_SHIFT);
-    memory_region_init_ram(&s->ram, OBJECT(s), "onenand.ram",
-                           0xc000 << s->shift);
-    vmstate_register_ram_global(&s->ram);
+    memory_region_allocate_system_memory(&s->ram, OBJECT(s),
+                                         "onenand.ram",
+                                         0xc000 << s->shift);
     ram = memory_region_get_ram_ptr(&s->ram);
     s->boot[0] = ram + (0x0000 << s->shift);
     s->boot[1] = ram + (0x8000 << s->shift);

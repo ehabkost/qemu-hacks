@@ -400,8 +400,8 @@ static void machvirt_init(QEMUMachineInitArgs *args)
     }
     fdt_add_cpu_nodes(vbi);
 
-    memory_region_init_ram(ram, NULL, "mach-virt.ram", args->ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL, "mach-virt.ram",
+                                         args->ram_size);
     memory_region_add_subregion(sysmem, vbi->memmap[VIRT_MEM].base, ram);
 
     dev = qdev_create(NULL, vbi->qdevname);

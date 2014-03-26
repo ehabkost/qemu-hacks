@@ -179,8 +179,8 @@ static void mips_jazz_init(MemoryRegion *address_space,
     cc->do_unassigned_access = mips_jazz_do_unassigned_access;
 
     /* allocate RAM */
-    memory_region_init_ram(ram, NULL, "mips_jazz.ram", ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL, "mips_jazz.ram",
+                                         ram_size);
     memory_region_add_subregion(address_space, 0, ram);
 
     memory_region_init_ram(bios, NULL, "mips_jazz.bios", MAGNUM_BIOS_SIZE);

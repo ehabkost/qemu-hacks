@@ -33,6 +33,7 @@
 #include "sysemu/char.h"
 #include "sysemu/sysemu.h"
 #include "hw/ssi.h"
+#include "hw/boards.h"
 
 //#define DEBUG
 
@@ -1608,8 +1609,8 @@ StrongARMState *sa1110_init(MemoryRegion *sysmem,
         exit(1);
     }
 
-    memory_region_init_ram(&s->sdram, NULL, "strongarm.sdram", sdram_size);
-    vmstate_register_ram_global(&s->sdram);
+    memory_region_allocate_system_memory(&s->sdram, NULL,
+                                         "strongarm.sdram", sdram_size);
     memory_region_add_subregion(sysmem, SA_SDCS0, &s->sdram);
 
     s->pic = sysbus_create_varargs("strongarm_pic", 0x90050000,

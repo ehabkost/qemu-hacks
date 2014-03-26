@@ -63,8 +63,9 @@ static void cubieboard_init(QEMUMachineInitArgs *args)
         exit(1);
     }
 
-    memory_region_init_ram(&s->sdram, NULL, "cubieboard.ram", args->ram_size);
-    vmstate_register_ram_global(&s->sdram);
+    memory_region_allocate_system_memory(&s->sdram, NULL,
+                                         "cubieboard.ram",
+                                         args->ram_size);
     memory_region_add_subregion(get_system_memory(), AW_A10_SDRAM_BASE,
                                 &s->sdram);
 

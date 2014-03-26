@@ -104,8 +104,9 @@ petalogix_ml605_init(QEMUMachineInitArgs *args)
     vmstate_register_ram_global(phys_lmb_bram);
     memory_region_add_subregion(address_space_mem, 0x00000000, phys_lmb_bram);
 
-    memory_region_init_ram(phys_ram, NULL, "petalogix_ml605.ram", ram_size);
-    vmstate_register_ram_global(phys_ram);
+    memory_region_allocate_system_memory(phys_ram, NULL,
+                                         "petalogix_ml605.ram",
+                                         ram_size);
     memory_region_add_subregion(address_space_mem, ddr_base, phys_ram);
 
     dinfo = drive_get(IF_PFLASH, 0, 0);

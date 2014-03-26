@@ -245,7 +245,6 @@ static struct cris_load_info li;
 static
 void axisdev88_init(QEMUMachineInitArgs *args)
 {
-    ram_addr_t ram_size = args->ram_size;
     const char *cpu_model = args->cpu_model;
     const char *kernel_filename = args->kernel_filename;
     const char *kernel_cmdline = args->kernel_cmdline;
@@ -270,7 +269,8 @@ void axisdev88_init(QEMUMachineInitArgs *args)
     env = &cpu->env;
 
     /* allocate RAM */
-    memory_region_init_ram(phys_ram, NULL, "axisdev88.ram", ram_size);
+    memory_region_allocate_system_memory(phys_ram, NULL, "axisdev88.ram",
+                                         args->ram_size);
     vmstate_register_ram_global(phys_ram);
     memory_region_add_subregion(address_space_mem, 0x40000000, phys_ram);
 

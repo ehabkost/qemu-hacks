@@ -675,8 +675,8 @@ void ppce500_init(QEMUMachineInitArgs *args, PPCE500Params *params)
     args->ram_size = ram_size;
 
     /* Register Memory */
-    memory_region_init_ram(ram, NULL, "mpc8544ds.ram", ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL, "mpc8544ds.ram",
+                                         args->ram_size);
     memory_region_add_subregion(address_space_mem, 0, ram);
 
     dev = qdev_create(NULL, "e500-ccsr");

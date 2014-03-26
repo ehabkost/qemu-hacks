@@ -97,8 +97,7 @@ static void kzm_init(QEMUMachineInitArgs *args)
 
     /* On a real system, the first 16k is a `secure boot rom' */
 
-    memory_region_init_ram(ram, NULL, "kzm.ram", ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL, "kzm.ram", args->ram_size);
     memory_region_add_subregion(address_space_mem, KZM_RAMADDRESS, ram);
 
     memory_region_init_alias(ram_alias, NULL, "ram.alias", ram, 0, ram_size);

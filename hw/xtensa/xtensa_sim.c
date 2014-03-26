@@ -77,8 +77,8 @@ static void xtensa_sim_init(QEMUMachineInitArgs *args)
     }
 
     ram = g_malloc(sizeof(*ram));
-    memory_region_init_ram(ram, NULL, "xtensa.sram", ram_size);
-    vmstate_register_ram_global(ram);
+    memory_region_allocate_system_memory(ram, NULL, "xtensa.sram",
+                                         ram_size);
     memory_region_add_subregion(get_system_memory(), 0, ram);
 
     rom = g_malloc(sizeof(*rom));
