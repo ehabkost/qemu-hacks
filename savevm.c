@@ -232,7 +232,6 @@ typedef struct SaveStateEntry {
     const VMStateDescription *vmsd;
     void *opaque;
     CompatEntry *compat;
-    int no_migrate;
     int is_ram;
 } SaveStateEntry;
 
@@ -292,7 +291,6 @@ int register_savevm_live(DeviceState *dev,
     se->ops = ops;
     se->opaque = opaque;
     se->vmsd = NULL;
-    se->no_migrate = 0;
     /* if this is a live_savem then set is_ram */
     if (ops->save_live_setup != NULL) {
         se->is_ram = 1;
@@ -383,7 +381,6 @@ int vmstate_register_with_alias_id(DeviceState *dev, int instance_id,
     se->opaque = opaque;
     se->vmsd = vmsd;
     se->alias_id = alias_id;
-    se->no_migrate = vmsd->unmigratable;
 
     if (dev) {
         char *id = qdev_get_dev_path(dev);
@@ -452,7 +449,7 @@ bool qemu_savevm_state_blocked(Error **errp)
     SaveStateEntry *se;
 
     QTAILQ_FOREACH(se, &savevm_handlers, entry) {
-        if (se->no_migrate) {
+        if (se->vmsd && se->vmsd->unmigratable) {
             error_setg(errp, "State blocked by non-migratable device '%s'",
                        se->idstr);
             return true;
