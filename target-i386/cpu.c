@@ -1840,8 +1840,10 @@ static uint32_t x86_cpu_get_supported_feature_word(FeatureWord w)
         return kvm_arch_get_supported_cpuid(kvm_state, wi->cpuid_eax,
                                                        wi->cpuid_ecx,
                                                        wi->cpuid_reg);
-    } else {
+    } else if (tcg_enabled()) {
         return wi->tcg_features;
+    } else {
+        return UINT32_MAX;
     }
 }
 
