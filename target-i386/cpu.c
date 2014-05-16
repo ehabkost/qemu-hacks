@@ -1279,6 +1279,9 @@ static void host_x86_cpu_class_init(ObjectClass *oc, void *data)
     dc->props = host_x86_cpu_properties;
 }
 
+static uint32_t x86_cpu_get_supported_feature_word(FeatureWord w,
+                                                   bool migratable_only);
+
 static void host_x86_cpu_initfn(Object *obj)
 {
     X86CPU *cpu = X86_CPU(obj);
@@ -1293,10 +1296,8 @@ static void host_x86_cpu_initfn(Object *obj)
     env->cpuid_xlevel2 = kvm_arch_get_supported_cpuid(s, 0xC0000000, 0, R_EAX);
 
     for (w = 0; w < FEATURE_WORDS; w++) {
-        FeatureWordInfo *wi = &feature_word_info[w];
         env->features[w] =
-            kvm_arch_get_supported_cpuid(s, wi->cpuid_eax, wi->cpuid_ecx,
-                                         wi->cpuid_reg);
+            x86_cpu_get_supported_feature_word(w, cpu->migratable);
     }
     object_property_set_bool(OBJECT(cpu), true, "pmu", &error_abort);
 }
