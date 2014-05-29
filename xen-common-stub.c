@@ -14,6 +14,7 @@ void xenstore_store_pv_console_info(int i, CharDriverState *chr)
 
 int xen_init(MachineState *ms, Error **errp)
 {
-    return -ENOSYS;
+    error_setg(errp, "Xen support is not configured");;
+    return 0; /* Return value is ignored if errp is set */
 }
 
