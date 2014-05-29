@@ -37,10 +37,9 @@
 int tcg_tb_size;
 static bool tcg_allowed = true;
 
-static int tcg_init(MachineState *ms)
+static void tcg_init(MachineState *ms, Error **errp)
 {
     tcg_exec_init(tcg_tb_size * 1024 * 1024);
-    return 0;
 }
 
 static const TypeInfo accel_type = {
@@ -59,31 +58,31 @@ static AccelClass *accel_find(const char *opt_name)
     return ac;
 }
 
-static int accel_init_machine(AccelClass *acc, MachineState *ms)
+static void accel_init_machine(AccelClass *acc, MachineState *ms, Error **errp)
 {
+    Error *err = NULL;
     ObjectClass *oc = OBJECT_CLASS(acc);
     const char *cname = object_class_get_name(oc);
     AccelState *accel = ACCEL(object_new(cname));
-    int ret;
     ms->accelerator = accel;
     *(acc->allowed) = true;
-    ret = acc->init_machine(ms);
-    if (ret < 0) {
+    acc->init_machine(ms, &err);
+    if (err) {
+        error_propagate(errp, err);
         ms->accelerator = NULL;
         *(acc->allowed) = false;
         object_unref(OBJECT(accel));
     }
-    return ret;
 }
 
 int configure_accelerator(MachineState *ms)
 {
     const char *p;
     char buf[10];
-    int ret;
     bool accel_initialised = false;
     bool init_failed = false;
     AccelClass *acc = NULL;
+    Error *err = NULL;
 
     p = qemu_opt_get(qemu_get_machine_opts(), "accel");
     if (p == NULL) {
@@ -106,12 +105,12 @@ int configure_accelerator(MachineState *ms)
                    acc->name);
             continue;
         }
-        ret = accel_init_machine(acc, ms);
-        if (ret < 0) {
+        accel_init_machine(acc, ms, &err);
+        if (err) {
             init_failed = true;
             fprintf(stderr, "failed to initialize %s: %s\n",
                     acc->name,
-                    strerror(-ret));
+                    error_get_pretty(err));
         } else {
             accel_initialised = true;
         }

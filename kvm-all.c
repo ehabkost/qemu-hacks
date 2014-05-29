@@ -1411,7 +1411,7 @@ static int kvm_max_vcpus(KVMState *s)
     return (ret) ? ret : kvm_recommended_vcpus(s);
 }
 
-static int kvm_init(MachineState *ms)
+static void kvm_init(MachineState *ms, Error **errp)
 {
     MachineClass *mc = MACHINE_GET_CLASS(ms);
     static const char upgrade_note[] =
@@ -1428,7 +1428,7 @@ static int kvm_init(MachineState *ms)
     int soft_vcpus_limit, hard_vcpus_limit;
     KVMState *s;
     const KVMCapabilityInfo *missing_cap;
-    int ret;
+    int ret = 0;
     int i, type = 0;
     const char *kvm_type;
 
@@ -1616,10 +1616,11 @@ static int kvm_init(MachineState *ms)
 
     cpu_interrupt_handler = kvm_handle_interrupt;
 
-    return 0;
+    return;
 
 err:
     assert(ret < 0);
+    error_setg(errp, "%s", strerror(-ret));
     if (s->vmfd >= 0) {
         close(s->vmfd);
     }
@@ -1627,8 +1628,6 @@ err:
         close(s->fd);
     }
     g_free(s->slots);
-
-    return ret;
 }
 
 void kvm_set_sigmask_len(KVMState *s, unsigned int sigmask_len)
