@@ -2722,7 +2722,7 @@ static MachineClass *machine_parse(const char *name)
     exit(!name || !is_help_option(name));
 }
 
-static int tcg_init(MachineState *ms)
+static int tcg_init(MachineState *ms, Error **errp)
 {
     tcg_exec_init(tcg_tb_size * 1024 * 1024);
     return 0;
@@ -2732,7 +2732,7 @@ static struct {
     const char *opt_name;
     const char *name;
     int (*available)(void);
-    int (*init)(MachineState *ms);
+    int (*init)(MachineState *ms, Error **errp);
     bool *allowed;
 } accel_list[] = {
     { "tcg", "tcg", tcg_available, tcg_init, &tcg_allowed },
@@ -2748,6 +2748,7 @@ static int configure_accelerator(MachineState *ms)
     int i, ret;
     bool accel_initialised = false;
     bool init_failed = false;
+    Error *err = NULL;
 
     p = qemu_opt_get(qemu_get_machine_opts(), "accel");
     if (p == NULL) {
@@ -2768,12 +2769,18 @@ static int configure_accelerator(MachineState *ms)
                     break;
                 }
                 *(accel_list[i].allowed) = true;
-                ret = accel_list[i].init(ms);
-                if (ret < 0) {
+                ret = accel_list[i].init(ms, &err);
+                if (ret < 0 || err) {
+                    const char *msg;
+                    if (err) {
+                        msg = error_get_pretty(err);
+                    } else {
+                        msg = strerror(-ret);
+                    }
                     init_failed = true;
                     fprintf(stderr, "failed to initialize %s: %s\n",
                             accel_list[i].name,
-                            strerror(-ret));
+                            msg);
                     *(accel_list[i].allowed) = false;
                 } else {
                     accel_initialised = true;

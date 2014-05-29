@@ -34,7 +34,7 @@ int kvm_init_vcpu(CPUState *cpu)
     return -ENOSYS;
 }
 
-int kvm_init(MachineState *ms)
+int kvm_init(MachineState *ms, Error **errp)
 {
     return -ENOSYS;
 }
