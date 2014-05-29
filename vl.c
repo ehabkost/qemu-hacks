@@ -2722,17 +2722,16 @@ static MachineClass *machine_parse(const char *name)
     exit(!name || !is_help_option(name));
 }
 
-static int tcg_init(MachineState *ms, Error **errp)
+static void tcg_init(MachineState *ms, Error **errp)
 {
     tcg_exec_init(tcg_tb_size * 1024 * 1024);
-    return 0;
 }
 
 static struct {
     const char *opt_name;
     const char *name;
     int (*available)(void);
-    int (*init)(MachineState *ms, Error **errp);
+    void (*init)(MachineState *ms, Error **errp);
     bool *allowed;
 } accel_list[] = {
     { "tcg", "tcg", tcg_available, tcg_init, &tcg_allowed },
@@ -2745,7 +2744,7 @@ static int configure_accelerator(MachineState *ms)
 {
     const char *p;
     char buf[10];
-    int i, ret;
+    int i;
     bool accel_initialised = false;
     bool init_failed = false;
     Error *err = NULL;
@@ -2769,18 +2768,12 @@ static int configure_accelerator(MachineState *ms)
                     break;
                 }
                 *(accel_list[i].allowed) = true;
-                ret = accel_list[i].init(ms, &err);
-                if (ret < 0 || err) {
-                    const char *msg;
-                    if (err) {
-                        msg = error_get_pretty(err);
-                    } else {
-                        msg = strerror(-ret);
-                    }
+                accel_list[i].init(ms, &err);
+                if (err) {
                     init_failed = true;
                     fprintf(stderr, "failed to initialize %s: %s\n",
                             accel_list[i].name,
-                            msg);
+                            error_get_pretty(err));
                     *(accel_list[i].allowed) = false;
                 } else {
                     accel_initialised = true;

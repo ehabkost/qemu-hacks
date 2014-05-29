@@ -109,15 +109,13 @@ static void xen_change_state_handler(void *opaque, int running,
     }
 }
 
-int xen_init(MachineState *ms, Error **errp)
+void xen_init(MachineState *ms, Error **errp)
 {
     xen_xc = xen_xc_interface_open(0, 0, 0);
     if (xen_xc == XC_HANDLER_INITIAL_VALUE) {
         error_setg(errp, "can't open xen interface");
-        return 0; /* Return value is ignored when errp is set */
+        return;
     }
     qemu_add_vm_change_state_handler(xen_change_state_handler, NULL);
-
-    return 0;
 }
 

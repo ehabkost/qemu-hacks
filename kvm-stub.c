@@ -34,10 +34,9 @@ int kvm_init_vcpu(CPUState *cpu)
     return -ENOSYS;
 }
 
-int kvm_init(MachineState *ms, Error **errp)
+void kvm_init(MachineState *ms, Error **errp)
 {
     error_setg(errp, "KVM support is not configured");;
-    return 0; /* Return value is ignored if errp is set */
 }
 
 void kvm_flush_coalesced_mmio_buffer(void)

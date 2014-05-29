@@ -1366,7 +1366,7 @@ static int kvm_max_vcpus(KVMState *s)
     return (ret) ? ret : kvm_recommended_vcpus(s);
 }
 
-int kvm_init(MachineState *ms, Error **errp)
+void kvm_init(MachineState *ms, Error **errp)
 {
     MachineClass *mc = MACHINE_GET_CLASS(ms);
     static const char upgrade_note[] =
@@ -1562,7 +1562,7 @@ int kvm_init(MachineState *ms, Error **errp)
 
     cpu_interrupt_handler = kvm_handle_interrupt;
 
-    return 0;
+    return;
 
 err:
     assert(err);
@@ -1575,8 +1575,6 @@ err:
     }
     g_free(s->slots);
     g_free(s);
-
-    return 0; /* Return value is ignored as we use the Error** argument */
 }
 
 static void kvm_handle_io(uint16_t port, void *data, int direction, int size,

@@ -509,11 +509,9 @@ static void qtest_event(void *opaque, int event)
     }
 }
 
-int qtest_init_accel(MachineState *ms, Error **errp)
+void qtest_init_accel(MachineState *ms, Error **errp)
 {
     configure_icount("0");
-
-    return 0;
 }
 
 void qtest_init(const char *qtest_chrdev, const char *qtest_log, Error **errp)
