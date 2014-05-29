@@ -1371,7 +1371,7 @@ int kvm_init(MachineState *ms, Error **errp)
     MachineClass *mc = MACHINE_GET_CLASS(ms);
     static const char upgrade_note[] =
         "Please upgrade to at least kernel 2.6.29 or recent kvm-kmod\n"
-        "(see http://sourceforge.net/projects/kvm).\n";
+        "(see http://sourceforge.net/projects/kvm).";
     struct {
         const char *name;
         int num;
@@ -1383,9 +1383,10 @@ int kvm_init(MachineState *ms, Error **errp)
     int soft_vcpus_limit, hard_vcpus_limit;
     KVMState *s;
     const KVMCapabilityInfo *missing_cap;
-    int ret;
+    int ret = 0;
     int i, type = 0;
     const char *kvm_type;
+    Error *err = NULL;
 
     s = g_malloc0(sizeof(KVMState));
 
@@ -1404,23 +1405,22 @@ int kvm_init(MachineState *ms, Error **errp)
     s->vmfd = -1;
     s->fd = qemu_open("/dev/kvm", O_RDWR);
     if (s->fd == -1) {
-        fprintf(stderr, "Could not access KVM kernel module: %m\n");
-        ret = -errno;
+        error_setg_errno(&err, errno, "Could not access KVM kernel module");
         goto err;
     }
 
     ret = kvm_ioctl(s, KVM_GET_API_VERSION, 0);
+    if (ret < 0) {
+        error_setg_errno(&err, -ret, "Could not get KVM version");
+        goto err;
+    }
     if (ret < KVM_API_VERSION) {
-        if (ret >= 0) {
-            ret = -EINVAL;
-        }
-        fprintf(stderr, "kvm version too old\n");
+        error_setg(&err, "kvm version too old");
         goto err;
     }
 
     if (ret > KVM_API_VERSION) {
-        ret = -EINVAL;
-        fprintf(stderr, "kvm version not supported\n");
+        error_setg(&err, "kvm version not supported");
         goto err;
     }
 
@@ -1472,13 +1472,14 @@ int kvm_init(MachineState *ms, Error **errp)
     } while (ret == -EINTR);
 
     if (ret < 0) {
-        fprintf(stderr, "ioctl(KVM_CREATE_VM) failed: %d %s\n", -ret,
-                strerror(-ret));
-
+        const char *create_vm_note = "";
 #ifdef TARGET_S390X
-        fprintf(stderr, "Please add the 'switch_amode' kernel parameter to "
-                        "your host kernel command line\n");
+        create_vm_note =
+            "\nPlease add the 'switch_amode' kernel parameter to "
+            "your host kernel command line";
 #endif
+        error_setg(&err, "ioctl(KVM_CREATE_VM) failed: %s%s",
+                   strerror(-ret), create_vm_note);
         goto err;
     }
 
@@ -1489,9 +1490,8 @@ int kvm_init(MachineState *ms, Error **errp)
             kvm_check_extension_list(s, kvm_arch_required_capabilities);
     }
     if (missing_cap) {
-        ret = -EINVAL;
-        fprintf(stderr, "kvm does not support %s\n%s",
-                missing_cap->name, upgrade_note);
+        error_setg(&err,"kvm does not support %s\n%s",
+                   missing_cap->name, upgrade_note);
         goto err;
     }
 
@@ -1544,11 +1544,13 @@ int kvm_init(MachineState *ms, Error **errp)
 
     ret = kvm_arch_init(s);
     if (ret < 0) {
+        error_setg_errno(&err, -ret, "kvm_arch_init failed");
         goto err;
     }
 
     ret = kvm_irqchip_create(s);
     if (ret < 0) {
+        error_setg_errno(&err, -ret, "kvm_irqchip_create failed");
         goto err;
     }
 
@@ -1563,7 +1565,8 @@ int kvm_init(MachineState *ms, Error **errp)
     return 0;
 
 err:
-    assert(ret < 0);
+    assert(err);
+    error_propagate(errp, err);
     if (s->vmfd >= 0) {
         close(s->vmfd);
     }
@@ -1573,7 +1576,7 @@ err:
     g_free(s->slots);
     g_free(s);
 
-    return ret;
+    return 0; /* Return value is ignored as we use the Error** argument */
 }
 
 static void kvm_handle_io(uint16_t port, void *data, int direction, int size,
