@@ -2722,7 +2722,7 @@ static MachineClass *machine_parse(const char *name)
     exit(!name || !is_help_option(name));
 }
 
-static int tcg_init(MachineClass *mc)
+static int tcg_init(MachineState *ms)
 {
     tcg_exec_init(tcg_tb_size * 1024 * 1024);
     return 0;
@@ -2732,7 +2732,7 @@ static struct {
     const char *opt_name;
     const char *name;
     int (*available)(void);
-    int (*init)(MachineClass *mc);
+    int (*init)(MachineState *ms);
     bool *allowed;
 } accel_list[] = {
     { "tcg", "tcg", tcg_available, tcg_init, &tcg_allowed },
@@ -2741,7 +2741,7 @@ static struct {
     { "qtest", "QTest", qtest_available, qtest_init_accel, &qtest_allowed },
 };
 
-static int configure_accelerator(MachineClass *mc)
+static int configure_accelerator(MachineState *ms)
 {
     const char *p;
     char buf[10];
@@ -2768,7 +2768,7 @@ static int configure_accelerator(MachineClass *mc)
                     break;
                 }
                 *(accel_list[i].allowed) = true;
-                ret = accel_list[i].init(mc);
+                ret = accel_list[i].init(ms);
                 if (ret < 0) {
                     init_failed = true;
                     fprintf(stderr, "failed to initialize %s: %s\n",
@@ -4227,7 +4227,7 @@ int main(int argc, char **argv, char **envp)
         exit(1);
     }
 
-    configure_accelerator(machine_class);
+    configure_accelerator(current_machine);
 
     if (qtest_chrdev) {
         Error *local_err = NULL;

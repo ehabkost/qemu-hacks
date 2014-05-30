@@ -12,7 +12,7 @@ void xenstore_store_pv_console_info(int i, CharDriverState *chr)
 {
 }
 
-int xen_init(MachineClass *mc)
+int xen_init(MachineState *ms)
 {
     return -ENOSYS;
 }
