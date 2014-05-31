@@ -1385,7 +1385,6 @@ void kvm_init(MachineState *ms, Error **errp)
     const KVMCapabilityInfo *missing_cap;
     int ret = 0;
     int i, type = 0;
-    const char *kvm_type;
     Error *err = NULL;
 
     s = g_malloc0(sizeof(KVMState));
@@ -1458,13 +1457,11 @@ void kvm_init(MachineState *ms, Error **errp)
         nc++;
     }
 
-    kvm_type = qemu_opt_get(qemu_get_machine_opts(), "kvm-type");
     if (mc->kvm_type) {
-        type = mc->kvm_type(kvm_type);
-    } else if (kvm_type) {
-        ret = -EINVAL;
-        fprintf(stderr, "Invalid argument kvm-type=%s\n", kvm_type);
-        goto err;
+        type = mc->kvm_type(ms, &err);
+        if (err) {
+            goto err;
+        }
     }
 
     do {

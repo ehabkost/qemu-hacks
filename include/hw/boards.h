@@ -15,7 +15,7 @@ typedef void QEMUMachineResetFunc(void);
 
 typedef void QEMUMachineHotAddCPUFunc(const int64_t id, Error **errp);
 
-typedef int QEMUMachineGetKvmtypeFunc(const char *arg);
+typedef int QEMUMachineGetKvmtypeFunc(MachineState *ms, Error **errp);
 
 struct QEMUMachine {
     const char *name;

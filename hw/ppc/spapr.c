@@ -1417,22 +1417,24 @@ static void ppc_spapr_init(MachineState *machine)
     assert(spapr->fdt_skel != NULL);
 }
 
-static int spapr_kvm_type(const char *vm_type)
+static int spapr_kvm_type(MachineState *ms, Error **errp)
 {
-    if (!vm_type) {
+    SPAPRMachine *sm = SPAPR_MACHINE(ms);
+
+    if (!sm->kvm_type) {
         return 0;
     }
 
-    if (!strcmp(vm_type, "HV")) {
+    if (!strcmp(sm->kvm_type, "HV")) {
         return 1;
     }
 
-    if (!strcmp(vm_type, "PR")) {
+    if (!strcmp(sm->kvm_type, "PR")) {
         return 2;
     }
 
-    error_report("Unknown kvm-type specified '%s'", vm_type);
-    exit(1);
+    error_setg(errp, "Unknown kvm-type specified '%s'", sm->kvm_type);
+    return -1;
 }
 
 /*
