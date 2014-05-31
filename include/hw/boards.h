@@ -69,10 +69,10 @@ struct MachineClass {
     const char *alias;
     const char *desc;
 
-    void (*init)(MachineState *state);
-    void (*reset)(void);
-    void (*hot_add_cpu)(const int64_t id, Error **errp);
-    int (*kvm_type)(const char *arg);
+    QEMUMachineInitFunc *init;
+    QEMUMachineResetFunc *reset;
+    QEMUMachineHotAddCPUFunc *hot_add_cpu;
+    QEMUMachineGetKvmtypeFunc *kvm_type;
 
     BlockInterfaceType block_default_type;
     int max_cpus;
