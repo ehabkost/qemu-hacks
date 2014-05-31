@@ -99,7 +99,8 @@ struct MachineState {
     /*< public >*/
 
     char *accel;
-    bool kernel_irqchip;
+    bool require_kernel_irqchip;
+    bool disable_kernel_irqchip;
     int kvm_shadow_mem;
     char *dtb;
     char *dumpdtb;

@@ -31,14 +31,15 @@ static bool machine_get_kernel_irqchip(Object *obj, Error **errp)
 {
     MachineState *ms = MACHINE(obj);
 
-    return ms->kernel_irqchip;
+    return !ms->disable_kernel_irqchip;
 }
 
 static void machine_set_kernel_irqchip(Object *obj, bool value, Error **errp)
 {
     MachineState *ms = MACHINE(obj);
 
-    ms->kernel_irqchip = value;
+    ms->require_kernel_irqchip = value;
+    ms->disable_kernel_irqchip = !value;
 }
 
 static void machine_get_kvm_shadow_mem(Object *obj, Visitor *v,
