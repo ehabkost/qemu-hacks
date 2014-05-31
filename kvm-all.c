@@ -1315,11 +1315,11 @@ int kvm_irqchip_remove_irqfd_notifier(KVMState *s, EventNotifier *n, int virq)
            false);
 }
 
-static int kvm_irqchip_create(KVMState *s)
+static int kvm_irqchip_create(MachineState *ms, KVMState *s)
 {
     int ret;
 
-    if (!qemu_opt_get_bool(qemu_get_machine_opts(), "kernel_irqchip", true) ||
+    if (ms->disable_kernel_irqchip ||
         (!kvm_check_extension(s, KVM_CAP_IRQCHIP) &&
          (kvm_vm_enable_cap(s, KVM_CAP_S390_IRQCHIP, 0) < 0))) {
         return 0;
@@ -1545,7 +1545,7 @@ void kvm_init(MachineState *ms, Error **errp)
         goto err;
     }
 
-    ret = kvm_irqchip_create(s);
+    ret = kvm_irqchip_create(ms, s);
     if (ret < 0) {
         error_setg_errno(&err, -ret, "kvm_irqchip_create failed");
         goto err;
