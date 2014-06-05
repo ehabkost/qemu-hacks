@@ -74,6 +74,8 @@ typedef struct X86CPUClass {
  * @migratable: If set, only migratable flags will be accepted when "enforce"
  * mode is used, and only migratable flags will be included in the "host"
  * CPU model.
+ * @allow_emulation: If set, accelerator-specific code will allow emulated
+ * features to be enabled.
  *
  * An x86 CPU.
  */
@@ -91,6 +93,7 @@ typedef struct X86CPU {
     bool check_cpuid;
     bool enforce_cpuid;
     bool migratable;
+    bool allow_emulation;
 
     /* if true the CPUID code directly forward host cache leaves to the guest */
     bool cache_info_passthrough;

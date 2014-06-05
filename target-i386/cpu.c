@@ -1280,7 +1280,8 @@ static void host_x86_cpu_class_init(ObjectClass *oc, void *data)
 }
 
 static uint32_t x86_cpu_get_supported_feature_word(FeatureWord w,
-                                                   bool migratable_only);
+                                                   bool migratable_only,
+                                                   bool allow_emulation);
 
 static void host_x86_cpu_initfn(Object *obj)
 {
@@ -1297,7 +1298,8 @@ static void host_x86_cpu_initfn(Object *obj)
 
     for (w = 0; w < FEATURE_WORDS; w++) {
         env->features[w] =
-            x86_cpu_get_supported_feature_word(w, cpu->migratable);
+            x86_cpu_get_supported_feature_word(w, cpu->migratable,
+                                                  cpu->allow_emulation);
     }
     object_property_set_bool(OBJECT(cpu), true, "pmu", &error_abort);
 }
@@ -1887,7 +1889,8 @@ CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 }
 
 static uint32_t x86_cpu_get_supported_feature_word(FeatureWord w,
-                                                   bool migratable_only)
+                                                   bool migratable_only,
+                                                   bool allow_emulation)
 {
     FeatureWordInfo *wi = &feature_word_info[w];
     uint32_t r;
@@ -1896,6 +1899,11 @@ static uint32_t x86_cpu_get_supported_feature_word(FeatureWord w,
         r = kvm_arch_get_supported_cpuid(kvm_state, wi->cpuid_eax,
                                                     wi->cpuid_ecx,
                                                     wi->cpuid_reg);
+        if (allow_emulation) {
+            r |= kvm_arch_get_emulated_cpuid(kvm_state,  wi->cpuid_eax,
+                                                         wi->cpuid_ecx,
+                                                         wi->cpuid_reg);
+        }
     } else if (tcg_enabled()) {
         r = wi->tcg_features;
     } else {
@@ -1920,7 +1928,8 @@ static int x86_cpu_filter_features(X86CPU *cpu)
 
     for (w = 0; w < FEATURE_WORDS; w++) {
         uint32_t host_feat =
-            x86_cpu_get_supported_feature_word(w, cpu->migratable);
+            x86_cpu_get_supported_feature_word(w, cpu->migratable,
+                                                  cpu->allow_emulation);
         uint32_t requested_features = env->features[w];
         env->features[w] &= host_feat;
         cpu->filtered_features[w] = requested_features & ~env->features[w];
@@ -2854,6 +2863,7 @@ static Property x86_cpu_properties[] = {
     DEFINE_PROP_BOOL("hv-time", X86CPU, hyperv_time, false),
     DEFINE_PROP_BOOL("check", X86CPU, check_cpuid, false),
     DEFINE_PROP_BOOL("enforce", X86CPU, enforce_cpuid, false),
+    DEFINE_PROP_BOOL("allow-emulation", X86CPU, allow_emulation, true),
     DEFINE_PROP_END_OF_LIST()
 };
 
