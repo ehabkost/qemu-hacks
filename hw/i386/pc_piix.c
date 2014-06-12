@@ -454,7 +454,6 @@ static void pc_xen_hvm_init(MachineState *machine)
 
 static void pc_i440fx_machine_options(MachineClass *mc)
 {
-    pc_default_machine_options(mc);
     mc->desc = "Standard PC (i440FX + PIIX, 1996)";
     mc->hot_add_cpu = pc_hot_add_cpu;
 }
@@ -1017,6 +1016,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     mc->desc = "ISA-only PC";
     mc->init = pc_init_isa;
     mc->max_cpus = 1;
+    mc->hot_add_cpu = NULL;
     mc->name = "isapc";
     machine_class_add_compat_props(mc, compat_props);
 }
