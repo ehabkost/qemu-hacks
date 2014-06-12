@@ -449,6 +449,12 @@ static TypeInfo pc_i440fx_machine_v2_0_type_info = {
     .class_init = pc_i440fx_machine_v2_0_class_init,
 };
 
+static void pc_i440fx_1_7_machine_options(MachineClass *mc)
+{
+    pc_i440fx_2_1_machine_options(mc);
+    mc->default_machine_opts = NULL;
+}
+
 static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -456,6 +462,7 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_7,
         { /* end of list */ }
     };
+    pc_i440fx_1_7_machine_options(mc);
     mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
     machine_class_register_compat_props_array(mc, compat_props);
@@ -474,6 +481,7 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_6,
         { /* end of list */ }
     };
+    pc_i440fx_1_7_machine_options(mc);
     mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
     machine_class_register_compat_props_array(mc, compat_props);
@@ -492,6 +500,7 @@ static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_5,
         { /* end of list */ }
     };
+    pc_i440fx_1_7_machine_options(mc);
     mc->init = pc_init_pci_1_5;
     mc->name = "pc-i440fx-1.5";
     machine_class_register_compat_props_array(mc, compat_props);
@@ -505,6 +514,7 @@ static TypeInfo pc_i440fx_machine_v1_5_type_info = {
 
 static void pc_i440fx_1_4_machine_options(MachineClass *mc)
 {
+    pc_i440fx_1_7_machine_options(mc);
     mc->hot_add_cpu = NULL;
 }
 
