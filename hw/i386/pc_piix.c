@@ -430,8 +430,6 @@ static TypeInfo pc_i440fx_machine_v2_1_type_info = {
     .class_init = pc_i440fx_machine_v2_1_class_init,
 };
 
-#define pc_i440fx_2_0_machine_options pc_i440fx_2_1_machine_options
-
 static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -439,7 +437,7 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_2_0,
         { /* end of list */ }
     };
-    pc_i440fx_2_0_machine_options(mc);
+    pc_i440fx_2_1_machine_options(mc);
     mc->init = pc_init_pci_2_0;
     mc->name = "pc-i440fx-2.0";
     machine_class_register_compat_props_array(mc, compat_props);
