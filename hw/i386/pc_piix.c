@@ -468,16 +468,10 @@ static TypeInfo pc_i440fx_machine_type_info = {
     .abstract = true,
 };
 
-
-static void pc_i440fx_2_1_machine_options(MachineClass *mc)
-{
-    mc->default_machine_opts = "firmware=bios-256k.bin";
-}
-
 static void pc_i440fx_machine_v2_1_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
-    pc_i440fx_2_1_machine_options(mc);
+    mc->default_machine_opts = "firmware=bios-256k.bin";
     mc->alias = "pc";
     mc->init = pc_init1;
     mc->is_default = 1;
@@ -490,8 +484,6 @@ static const TypeInfo pc_i440fx_machine_v2_1_type_info = {
     .class_init = pc_i440fx_machine_v2_1_class_init,
 };
 
-#define pc_i440fx_2_0_machine_options pc_i440fx_2_1_machine_options
-
 static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -499,7 +491,9 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_2_0,
         { /* end of list */ }
     };
-    pc_i440fx_2_0_machine_options(mc);
+    pc_i440fx_machine_v2_1_class_init(oc, data);
+    mc->alias = NULL;
+    mc->is_default = false;
     mc->init = pc_init_pci_2_0;
     mc->name = "pc-i440fx-2.0";
     machine_class_add_compat_props(mc, compat_props);
@@ -518,6 +512,8 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_7,
         { /* end of list */ }
     };
+    pc_i440fx_machine_v2_0_class_init(oc, data);
+    mc->default_machine_opts = NULL;
     mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
     machine_class_add_compat_props(mc, compat_props);
@@ -536,6 +532,7 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_6,
         { /* end of list */ }
     };
+    pc_i440fx_machine_v1_7_class_init(oc, data);
     mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
     machine_class_add_compat_props(mc, compat_props);
@@ -554,6 +551,7 @@ static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_5,
         { /* end of list */ }
     };
+    pc_i440fx_machine_v1_6_class_init(oc, data);
     mc->init = pc_init_pci_1_5;
     mc->name = "pc-i440fx-1.5";
     machine_class_add_compat_props(mc, compat_props);
@@ -565,11 +563,6 @@ static const TypeInfo pc_i440fx_machine_v1_5_type_info = {
     .class_init = pc_i440fx_machine_v1_5_class_init,
 };
 
-static void pc_i440fx_1_4_machine_options(MachineClass *mc)
-{
-    mc->hot_add_cpu = NULL;
-}
-
 static void pc_i440fx_machine_v1_4_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -577,7 +570,8 @@ static void pc_i440fx_machine_v1_4_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_4,
         { /* end of list */ }
     };
-    pc_i440fx_1_4_machine_options(mc);
+    pc_i440fx_machine_v1_5_class_init(oc, data);
+    mc->hot_add_cpu = NULL;
     mc->init = pc_init_pci_1_4;
     mc->name = "pc-i440fx-1.4";
     machine_class_add_compat_props(mc, compat_props);
@@ -590,7 +584,6 @@ static const TypeInfo pc_i440fx_machine_v1_4_type_info = {
 };
 
 #define PC_COMPAT_1_3 \
-	PC_COMPAT_1_4, \
         {\
             .driver   = "usb-tablet",\
             .property = "usb_version",\
@@ -616,7 +609,7 @@ static void pc_machine_v1_3_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_3,
         { /* end of list */ }
     };
-    pc_i440fx_1_4_machine_options(mc);
+    pc_i440fx_machine_v1_4_class_init(oc, data);
     mc->init = pc_init_pci_1_3;
     mc->name = "pc-1.3";
     machine_class_add_compat_props(mc, compat_props);
@@ -629,7 +622,6 @@ static const TypeInfo pc_machine_v1_3_type_info = {
 };
 
 #define PC_COMPAT_1_2 \
-        PC_COMPAT_1_3,\
         {\
             .driver   = "nec-usb-xhci",\
             .property = "msi",\
@@ -656,12 +648,6 @@ static const TypeInfo pc_machine_v1_3_type_info = {
             .value    = "off",\
         }
 
-static void pc_i440fx_1_2_machine_options(MachineClass *mc)
-{
-    pc_i440fx_1_4_machine_options(mc);
-    mc->init = pc_init_pci_1_2;
-}
-
 static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -669,7 +655,8 @@ static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_2,
         { /* end of list */ }
     };
-    pc_i440fx_1_2_machine_options(mc);
+    pc_machine_v1_3_class_init(oc, data);
+    mc->init = pc_init_pci_1_2;
     mc->name = "pc-1.2";
     machine_class_add_compat_props(mc, compat_props);
 }
@@ -681,7 +668,6 @@ static const TypeInfo pc_machine_v1_2_type_info = {
 };
 
 #define PC_COMPAT_1_1 \
-        PC_COMPAT_1_2,\
         {\
             .driver   = "virtio-scsi-pci",\
             .property = "hotplug",\
@@ -719,7 +705,7 @@ static void pc_machine_v1_1_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_1,
         { /* end of list */ }
     };
-    pc_i440fx_1_2_machine_options(mc);
+    pc_machine_v1_2_class_init(oc, data);
     mc->name = "pc-1.1";
     machine_class_add_compat_props(mc, compat_props);
 }
@@ -757,7 +743,7 @@ static void pc_machine_v1_0_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_0,
         { /* end of list */ }
     };
-    pc_i440fx_1_2_machine_options(mc);
+    pc_machine_v1_1_class_init(oc, data);
     mc->hw_version = "1.0";
     mc->name = "pc-1.0";
     machine_class_add_compat_props(mc, compat_props);
@@ -769,20 +755,12 @@ static const TypeInfo pc_machine_v1_0_type_info = {
     .class_init = pc_machine_v1_0_class_init,
 };
 
-#define PC_COMPAT_0_15 \
-        PC_COMPAT_1_0
-
 static void pc_machine_v0_15_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
-    static GlobalProperty compat_props[] = {
-        PC_COMPAT_0_15,
-        { /* end of list */ }
-    };
-    pc_i440fx_1_2_machine_options(mc);
+    pc_machine_v1_0_class_init(oc, data);
     mc->hw_version = "0.15";
     mc->name = "pc-0.15";
-    machine_class_add_compat_props(mc, compat_props);
 }
 
 static const TypeInfo pc_machine_v0_15_type_info = {
@@ -792,7 +770,6 @@ static const TypeInfo pc_machine_v0_15_type_info = {
 };
 
 #define PC_COMPAT_0_14 \
-        PC_COMPAT_0_15,\
         {\
             .driver   = "virtio-blk-pci",\
             .property = "event_idx",\
@@ -826,7 +803,7 @@ static void pc_machine_v0_14_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_0_14, 
         { /* end of list */ }
     };
-    pc_i440fx_1_2_machine_options(mc);
+    pc_machine_v0_15_class_init(oc, data);
     mc->hw_version = "0.14";
     mc->name = "pc-0.14";
     machine_class_add_compat_props(mc, compat_props);
@@ -839,7 +816,6 @@ static const TypeInfo pc_machine_v0_14_type_info = {
 };
 
 #define PC_COMPAT_0_13 \
-        PC_COMPAT_0_14,\
         {\
             .driver   = TYPE_PCI_DEVICE,\
             .property = "command_serr_enable",\
@@ -862,12 +838,6 @@ static const TypeInfo pc_machine_v0_14_type_info = {
             .value    = stringify(0),\
         }
 
-static void pc_i440fx_0_13_machine_options(MachineClass *mc)
-{
-    pc_i440fx_1_2_machine_options(mc);
-    mc->init = pc_init_pci_no_kvmclock;
-}
-
 static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -875,7 +845,8 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_0_13,
         { /* end of list */ }
     };
-    pc_i440fx_0_13_machine_options(mc);
+    pc_machine_v0_14_class_init(oc, data);
+    mc->init = pc_init_pci_no_kvmclock;
     mc->hw_version = "0.13";
     mc->name = "pc-0.13";
     machine_class_add_compat_props(mc, compat_props);
@@ -888,7 +859,6 @@ static const TypeInfo pc_machine_v0_13_type_info = {
 };
 
 #define PC_COMPAT_0_12 \
-        PC_COMPAT_0_13,\
         {\
             .driver   = "virtio-serial-pci",\
             .property = "max_ports",\
@@ -918,7 +888,7 @@ static void pc_machine_v0_12_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_0_12,
         { /* end of list */ }
     };
-    pc_i440fx_0_13_machine_options(mc);
+    pc_machine_v0_13_class_init(oc, data);
     mc->hw_version = "0.12";
     mc->name = "pc-0.12";
     machine_class_add_compat_props(mc, compat_props);
@@ -931,7 +901,6 @@ static const TypeInfo pc_machine_v0_12_type_info = {
 };
 
 #define PC_COMPAT_0_11 \
-        PC_COMPAT_0_12,\
         {\
             .driver   = "virtio-blk-pci",\
             .property = "vectors",\
@@ -957,7 +926,7 @@ static void pc_machine_v0_11_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_0_11,
         { /* end of list */ }
     };
-    pc_i440fx_0_13_machine_options(mc);
+    pc_machine_v0_12_class_init(oc, data);
     mc->hw_version = "0.11";
     mc->name = "pc-0.11";
     machine_class_add_compat_props(mc, compat_props);
@@ -973,7 +942,6 @@ static void pc_machine_v0_10_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
-        PC_COMPAT_0_11,
         {
             .driver   = "virtio-blk-pci",
             .property = "class",
@@ -997,7 +965,7 @@ static void pc_machine_v0_10_class_init(ObjectClass *oc, void *data)
         },
         { /* end of list */ }
     };
-    pc_i440fx_0_13_machine_options(mc);
+    pc_machine_v0_11_class_init(oc, data);
     mc->hw_version = "0.10";
     mc->name = "pc-0.10";
     machine_class_add_compat_props(mc, compat_props);
