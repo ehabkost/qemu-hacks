@@ -967,7 +967,6 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     static GlobalProperty compat_props[] = {
         { /* end of list */ }
     };
-    pc_common_machine_options(mc);
     mc->desc = "ISA-only PC";
     mc->init = pc_init_isa;
     mc->max_cpus = 1;
@@ -996,7 +995,6 @@ static void xenfv_machine_class_init(ObjectClass *oc, void *data)
         },
         { /* end of list */ }
     };
-    pc_common_machine_options(mc);
     mc->desc = "Xen Fully-virtualized PC";
     mc->init = pc_xen_hvm_init;
     mc->max_cpus = HVM_MAX_VCPUS;
