@@ -254,6 +254,8 @@ typedef struct GlobalProperty {
     QTAILQ_ENTRY(GlobalProperty) next;
 } GlobalProperty;
 
+typedef QTAILQ_HEAD(GlobalPropertyList, GlobalProperty) GlobalPropertyList;
+
 /*** Board API.  This should go away once we have a machine config file.  ***/
 
 DeviceState *qdev_create(BusState *bus, const char *name);

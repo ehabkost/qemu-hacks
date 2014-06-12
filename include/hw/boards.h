@@ -4,6 +4,7 @@
 #define HW_BOARDS_H
 
 #include "qemu/typedefs.h"
+#include "qemu/queue.h"
 #include "sysemu/blockdev.h"
 #include "hw/qdev.h"
 #include "qom/object.h"
@@ -93,12 +94,19 @@ struct MachineClass {
     int is_default;
     const char *default_machine_opts;
     const char *default_boot_order;
-    GlobalProperty *compat_props;
+    GlobalPropertyList compat_props;
     const char *hw_version;
 
     HotplugHandler *(*get_hotplug_handler)(MachineState *machine,
                                            DeviceState *dev);
 };
+
+/**
+ * machine_class_add_compat_props:
+ *
+ * Adds compat props from an array to the MachineClass compat_props list.
+ */
+void machine_class_add_compat_props(MachineClass *mc, GlobalProperty *props);
 
 /**
  * MachineState:
