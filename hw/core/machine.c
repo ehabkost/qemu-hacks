@@ -290,12 +290,37 @@ static void machine_finalize(Object *obj)
     g_free(ms->firmware);
 }
 
+void machine_class_add_compat_props(MachineClass *mc, GlobalProperty *props)
+{
+    int i;
+    for (i = 0; props[i].driver; i++) {
+        mc->compat_props = g_list_append(mc->compat_props, &props[i]);
+    }
+}
+
+void machine_class_register_compat_props(MachineClass *mc)
+{
+    GList *l;
+    for (l = mc->compat_props; l; l = l->next) {
+        GlobalProperty *prop = l->data;
+        qdev_prop_register_global(prop);
+    }
+}
+
+static void machine_class_base_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    /* compat_props can't be simply memcpy()ed */
+    mc->compat_props = g_list_copy(mc->compat_props);
+}
+
 static const TypeInfo machine_info = {
     .name = TYPE_MACHINE,
     .parent = TYPE_OBJECT,
     .abstract = true,
     .class_size = sizeof(MachineClass),
     .instance_size = sizeof(MachineState),
+    .class_base_init = machine_class_base_init,
     .instance_init = machine_initfn,
     .instance_finalize = machine_finalize,
 };

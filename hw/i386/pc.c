@@ -1556,8 +1556,10 @@ static void pc_generic_machine_class_init(ObjectClass *oc, void *data)
     mc->is_default = qm->is_default;
     mc->default_machine_opts = qm->default_machine_opts;
     mc->default_boot_order = qm->default_boot_order;
-    mc->compat_props = qm->compat_props;
     mc->hw_version = qm->hw_version;
+    if (qm->compat_props) {
+        machine_class_add_compat_props(mc, qm->compat_props);
+    }
 }
 
 void qemu_register_pc_machine(QEMUMachine *m)
