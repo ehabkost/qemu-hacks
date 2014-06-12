@@ -392,15 +392,25 @@ static void pc_xen_hvm_init(MachineState *machine)
 }
 #endif
 
-static void pc_i440fx_machine_options(MachineClass *mc)
+static void pc_i440fx_machine_class_init(ObjectClass *oc, void *data)
 {
+    MachineClass *mc = MACHINE_CLASS(oc);
     mc->desc = "Standard PC (i440FX + PIIX, 1996)";
     mc->hot_add_cpu = pc_hot_add_cpu;
 }
 
+#define TYPE_PC_I440FX_MACHINE "pc-i440fx" TYPE_MACHINE_SUFFIX
+
+static TypeInfo pc_i440fx_machine_type_info = {
+    .name = TYPE_PC_I440FX_MACHINE,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_i440fx_machine_class_init,
+    .abstract = true,
+};
+
+
 static void pc_i440fx_2_1_machine_options(MachineClass *mc)
 {
-    pc_i440fx_machine_options(mc);
     mc->default_machine_opts = "firmware=bios-256k.bin";
 }
 
@@ -416,7 +426,7 @@ static void pc_i440fx_machine_v2_1_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_i440fx_machine_v2_1_type_info = {
     .name = "pc-i440fx-2.1" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_i440fx_machine_v2_1_class_init,
 };
 
@@ -437,11 +447,9 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_i440fx_machine_v2_0_type_info = {
     .name = "pc-i440fx-2.0" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_i440fx_machine_v2_0_class_init,
 };
-
-#define pc_i440fx_1_7_machine_options pc_i440fx_machine_options
 
 static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
 {
@@ -450,7 +458,6 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_7,
         { /* end of list */ }
     };
-    pc_i440fx_1_7_machine_options(mc);
     mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
     machine_class_register_compat_props_array(mc, compat_props);
@@ -458,11 +465,9 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_i440fx_machine_v1_7_type_info = {
     .name = "pc-i440fx-1.7" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_i440fx_machine_v1_7_class_init,
 };
-
-#define pc_i440fx_1_6_machine_options pc_i440fx_machine_options
 
 static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
 {
@@ -471,7 +476,6 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_6,
         { /* end of list */ }
     };
-    pc_i440fx_1_6_machine_options(mc);
     mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
     machine_class_register_compat_props_array(mc, compat_props);
@@ -479,7 +483,7 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_i440fx_machine_v1_6_type_info = {
     .name = "pc-i440fx-1.6" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_i440fx_machine_v1_6_class_init,
 };
 
@@ -490,7 +494,6 @@ static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_5,
         { /* end of list */ }
     };
-    pc_i440fx_1_6_machine_options(mc);
     mc->init = pc_init_pci_1_5;
     mc->name = "pc-i440fx-1.5";
     machine_class_register_compat_props_array(mc, compat_props);
@@ -498,13 +501,12 @@ static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_i440fx_machine_v1_5_type_info = {
     .name = "pc-i440fx-1.5" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_i440fx_machine_v1_5_class_init,
 };
 
 static void pc_i440fx_1_4_machine_options(MachineClass *mc)
 {
-    pc_i440fx_1_6_machine_options(mc);
     mc->hot_add_cpu = NULL;
 }
 
@@ -523,7 +525,7 @@ static void pc_i440fx_machine_v1_4_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_i440fx_machine_v1_4_type_info = {
     .name = "pc-i440fx-1.4" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_i440fx_machine_v1_4_class_init,
 };
 
@@ -562,7 +564,7 @@ static void pc_machine_v1_3_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v1_3_type_info = {
     .name = "pc-1.3" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v1_3_class_init,
 };
 
@@ -614,7 +616,7 @@ static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v1_2_type_info = {
     .name = "pc-1.2" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v1_2_class_init,
 };
 
@@ -664,7 +666,7 @@ static void pc_machine_v1_1_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v1_1_type_info = {
     .name = "pc-1.1" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v1_1_class_init,
 };
 
@@ -703,7 +705,7 @@ static void pc_machine_v1_0_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v1_0_type_info = {
     .name = "pc-1.0" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v1_0_class_init,
 };
 
@@ -725,7 +727,7 @@ static void pc_machine_v0_15_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v0_15_type_info = {
     .name = "pc-0.15" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v0_15_class_init,
 };
 
@@ -773,7 +775,7 @@ static void pc_machine_v0_14_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v0_14_type_info = {
     .name = "pc-0.14" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v0_14_class_init,
 };
 
@@ -823,7 +825,7 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v0_13_type_info = {
     .name = "pc-0.13" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v0_13_class_init,
 };
 
@@ -875,7 +877,7 @@ static void pc_machine_v0_12_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v0_12_type_info = {
     .name = "pc-0.12" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v0_12_class_init,
 };
 
@@ -915,7 +917,7 @@ static void pc_machine_v0_11_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v0_11_type_info = {
     .name = "pc-0.11" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v0_11_class_init,
 };
 
@@ -955,7 +957,7 @@ static void pc_machine_v0_10_class_init(ObjectClass *oc, void *data)
 
 static TypeInfo pc_machine_v0_10_type_info = {
     .name = "pc-0.10" TYPE_MACHINE_SUFFIX,
-    .parent = TYPE_PC_MACHINE,
+    .parent = TYPE_PC_I440FX_MACHINE,
     .class_init = pc_machine_v0_10_class_init,
 };
 
@@ -1012,6 +1014,7 @@ static TypeInfo xenfv_machine_type_info = {
 
 static void pc_machine_init(void)
 {
+    type_register_static(&pc_i440fx_machine_type_info);
     type_register_static(&pc_i440fx_machine_v2_1_type_info);
     type_register_static(&pc_i440fx_machine_v2_0_type_info);
     type_register_static(&pc_i440fx_machine_v1_7_type_info);
