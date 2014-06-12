@@ -449,11 +449,6 @@ static TypeInfo pc_q35_machine_v1_5_type_info = {
     .class_init = pc_q35_machine_v1_5_class_init,
 };
 
-static void pc_q35_1_4_machine_options(MachineClass *mc)
-{
-    mc->hot_add_cpu = NULL;
-}
-
 static void pc_q35_machine_v1_4_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -461,7 +456,7 @@ static void pc_q35_machine_v1_4_class_init(ObjectClass *oc, void *data)
         PC_COMPAT_1_4,
         { /* end of list */ }
     };
-    pc_q35_1_4_machine_options(mc);
+    mc->hot_add_cpu = NULL;
     mc->init = pc_q35_init_1_4;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-1.4";
