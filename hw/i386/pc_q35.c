@@ -306,15 +306,24 @@ static void pc_q35_init_1_4(MachineState *machine)
     pc_q35_init(machine);
 }
 
-static void pc_q35_machine_options(MachineClass *mc)
+static void pc_q35_machine_class_init(ObjectClass *oc, void *data)
 {
+    MachineClass *mc = MACHINE_CLASS(oc);
     mc->desc = "Standard PC (Q35 + ICH9, 2009)";
     mc->hot_add_cpu = pc_hot_add_cpu;
 }
 
+#define TYPE_PC_Q35_MACHINE "pc-q35" TYPE_MACHINE_SUFFIX
+
+static TypeInfo pc_q35_machine_type_info = {
+    .name = TYPE_PC_Q35_MACHINE,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_q35_machine_class_init,
+    .abstract = true,
+};
+
 static void pc_q35_2_1_machine_options(MachineClass *mc)
 {
-    pc_q35_machine_options(mc);
     mc->default_machine_opts = "firmware=bios-256k.bin";
 }
 
@@ -354,8 +363,6 @@ static TypeInfo pc_q35_machine_v2_0_type_info = {
     .class_init = pc_q35_machine_v2_0_class_init,
 };
 
-#define pc_q35_1_7_machine_options pc_q35_machine_options
-
 static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -363,7 +370,6 @@ static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
         PC_Q35_COMPAT_1_7,
         { /* end of list */ }
     };
-    pc_q35_1_7_machine_options(mc);
     mc->init = pc_q35_init_1_7;
     machine_class_register_compat_props_array(mc, compat_props);
     mc->name = "pc-q35-1.7";
@@ -375,8 +381,6 @@ static TypeInfo pc_q35_machine_v1_7_type_info = {
     .class_init = pc_q35_machine_v1_7_class_init,
 };
 
-#define pc_q35_1_6_machine_options pc_q35_machine_options
-
 static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -384,7 +388,6 @@ static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
         PC_Q35_COMPAT_1_6,
         { /* end of list */ }
     };
-    pc_q35_1_6_machine_options(mc);
     mc->init = pc_q35_init_1_6;
     machine_class_register_compat_props_array(mc, compat_props);
     mc->name = "pc-q35-1.6";
@@ -403,7 +406,6 @@ static void pc_q35_machine_v1_5_class_init(ObjectClass *oc, void *data)
         PC_Q35_COMPAT_1_5,
         { /* end of list */ }
     };
-    pc_q35_1_6_machine_options(mc);
     mc->init = pc_q35_init_1_5;
     machine_class_register_compat_props_array(mc, compat_props);
     mc->name = "pc-q35-1.5";
@@ -417,7 +419,6 @@ static TypeInfo pc_q35_machine_v1_5_type_info = {
 
 static void pc_q35_1_4_machine_options(MachineClass *mc)
 {
-    pc_q35_1_6_machine_options(mc);
     mc->hot_add_cpu = NULL;
 }
 
@@ -442,6 +443,7 @@ static TypeInfo pc_q35_machine_v1_4_type_info = {
 
 static void pc_q35_machine_init(void)
 {
+    type_register_static(&pc_q35_machine_type_info);
     type_register_static(&pc_q35_machine_v2_1_type_info);
     type_register_static(&pc_q35_machine_v2_0_type_info);
     type_register_static(&pc_q35_machine_v1_7_type_info);
