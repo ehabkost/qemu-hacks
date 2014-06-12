@@ -4,6 +4,7 @@
 #define HW_BOARDS_H
 
 #include "qemu/typedefs.h"
+#include "qemu/queue.h"
 #include "sysemu/blockdev.h"
 #include "hw/qdev.h"
 #include "qom/object.h"
@@ -88,7 +89,7 @@ struct MachineClass {
     int is_default;
     const char *default_machine_opts;
     const char *default_boot_order;
-    GlobalProperty *compat_props;
+    GlobalPropertyList compat_props;
     const char *hw_version;
 };
 

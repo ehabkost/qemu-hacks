@@ -946,12 +946,13 @@ void qdev_prop_register_global(GlobalProperty *prop)
     QTAILQ_INSERT_TAIL(&global_props, prop, next);
 }
 
-void qdev_prop_register_global_list(GlobalProperty *props)
+void qdev_prop_register_global_list(GlobalPropertyList *props)
 {
-    int i;
+    GlobalProperty *prop, *nprop;
 
-    for (i = 0; props[i].driver != NULL; i++) {
-        qdev_prop_register_global(props+i);
+    QTAILQ_FOREACH_SAFE(prop, props, next, nprop) {
+        QTAILQ_REMOVE(props, prop, next);
+        qdev_prop_register_global(prop);
     }
 }
 

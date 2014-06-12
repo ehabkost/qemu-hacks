@@ -1588,6 +1588,7 @@ static void machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     QEMUMachine *qm = data;
+    int i;
 
     mc->name = qm->name;
     mc->alias = qm->alias;
@@ -1608,8 +1609,13 @@ static void machine_class_init(ObjectClass *oc, void *data)
     mc->is_default = qm->is_default;
     mc->default_machine_opts = qm->default_machine_opts;
     mc->default_boot_order = qm->default_boot_order;
-    mc->compat_props = qm->compat_props;
     mc->hw_version = qm->hw_version;
+    if (qm->compat_props) {
+        for (i = 0; qm->compat_props[i].driver; i++) {
+            QTAILQ_INSERT_TAIL(&mc->compat_props, &qm->compat_props[i], next);
+        }
+    }
+
 }
 
 int qemu_register_machine(QEMUMachine *m)
@@ -4418,9 +4424,7 @@ int main(int argc, char **argv, char **envp)
             exit (i == 1 ? 1 : 0);
     }
 
-    if (machine_class->compat_props) {
-        qdev_prop_register_global_list(machine_class->compat_props);
-    }
+    qdev_prop_register_global_list(&machine_class->compat_props);
     qemu_add_globals();
 
     qdev_machine_init();

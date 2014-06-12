@@ -290,12 +290,19 @@ static void machine_finalize(Object *obj)
     g_free(ms->firmware);
 }
 
+static void machine_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    QTAILQ_INIT(&mc->compat_props);
+}
+
 static const TypeInfo machine_info = {
     .name = TYPE_MACHINE,
     .parent = TYPE_OBJECT,
     .abstract = true,
     .class_size = sizeof(MachineClass),
     .instance_size = sizeof(MachineState),
+    .class_init = machine_class_init,
     .instance_init = machine_initfn,
     .instance_finalize = machine_finalize,
 };
