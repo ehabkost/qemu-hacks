@@ -355,8 +355,6 @@ static TypeInfo pc_q35_machine_v2_1_type_info = {
     .class_init = pc_q35_machine_v2_1_class_init,
 };
 
-#define pc_q35_2_0_machine_options pc_q35_2_1_machine_options
-
 static void pc_q35_machine_v2_0_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -364,7 +362,7 @@ static void pc_q35_machine_v2_0_class_init(ObjectClass *oc, void *data)
         PC_Q35_COMPAT_2_0,
         { /* end of list */ }
     };
-    pc_q35_2_0_machine_options(mc);
+    pc_q35_2_1_machine_options(mc);
     mc->init = pc_q35_init_2_0;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-2.0";
