@@ -176,7 +176,7 @@ void qdev_prop_set_enum(DeviceState *dev, const char *name, int value);
 void qdev_prop_set_ptr(DeviceState *dev, const char *name, void *value);
 
 void qdev_prop_register_global(GlobalProperty *prop);
-void qdev_prop_register_global_list(GlobalProperty *props);
+void qdev_prop_register_global_list(GlobalPropertyList *props);
 int qdev_prop_check_global(void);
 void qdev_prop_set_globals(DeviceState *dev, Error **errp);
 void qdev_prop_set_globals_for_type(DeviceState *dev, const char *typename,
