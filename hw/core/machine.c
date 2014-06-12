@@ -290,6 +290,15 @@ static void machine_finalize(Object *obj)
     g_free(ms->firmware);
 }
 
+void machine_class_register_compat_props_array(MachineClass *mc,
+                                               GlobalProperty *props)
+{
+    int i;
+    for (i = 0; props[i].driver; i++) {
+        QTAILQ_INSERT_TAIL(&mc->compat_props, &props[i], next);
+    }
+}
+
 static void machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);

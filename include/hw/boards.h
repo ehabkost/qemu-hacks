@@ -94,6 +94,14 @@ struct MachineClass {
 };
 
 /**
+ * machine_class_register_compat_props_array:
+ *
+ * Adds compat props from an array to the MachineClass compat_props list.
+ */
+void machine_class_register_compat_props_array(MachineClass *mc,
+                                               GlobalProperty *props);
+
+/**
  * MachineState:
  */
 struct MachineState {
