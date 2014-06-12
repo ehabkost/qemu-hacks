@@ -1457,9 +1457,16 @@ void ioapic_init_gsi(GSIState *gsi_state, const char *parent_name)
     }
 }
 
+static void pc_machine_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    mc->default_boot_order = "cad";
+}
+
 static TypeInfo pc_machine_type_info = {
         .name       = TYPE_PC_MACHINE,
         .parent     = TYPE_MACHINE,
+        .class_init = pc_machine_class_init,
         .abstract   = true,
 };
 
