@@ -1688,6 +1688,7 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
 
     pcmc->get_hotplug_handler = mc->get_hotplug_handler;
     mc->get_hotplug_handler = pc_get_hotpug_handler;
+    mc->default_boot_order = "cad";
     hc->plug = pc_machine_device_plug_cb;
 }
 
