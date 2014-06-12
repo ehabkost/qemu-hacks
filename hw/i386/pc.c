@@ -1456,3 +1456,16 @@ void ioapic_init_gsi(GSIState *gsi_state, const char *parent_name)
         gsi_state->ioapic_irq[i] = qdev_get_gpio_in(dev, i);
     }
 }
+
+static TypeInfo pc_machine_type_info = {
+        .name       = TYPE_PC_MACHINE,
+        .parent     = TYPE_MACHINE,
+        .abstract   = true,
+};
+
+static void pc_machine_init(void)
+{
+    type_register_static(&pc_machine_type_info);
+}
+
+type_init(pc_machine_init);
