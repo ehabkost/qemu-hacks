@@ -1461,6 +1461,8 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     mc->default_boot_order = "cad";
+    mc->hot_add_cpu = pc_hot_add_cpu;
+    mc->max_cpus = 255;
 }
 
 static TypeInfo pc_machine_type_info = {
