@@ -59,7 +59,6 @@ static const int ide_iobase[MAX_IDE_BUS] = { 0x1f0, 0x170 };
 static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
-static bool has_pci_info;
 /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
  * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
  * pages in the host.
@@ -161,7 +160,7 @@ static void pc_init1(MachineState *machine)
 
     guest_info->has_acpi_build = pcmc->has_acpi_build;
 
-    guest_info->has_pci_info = has_pci_info;
+    guest_info->has_pci_info = pcmc->has_pci_info;
     guest_info->isapc_ram_fw = !pci_enabled;
     guest_info->has_reserved_memory = has_reserved_memory;
 
@@ -308,7 +307,6 @@ static void pc_compat_1_7(MachineState *machine)
 static void pc_compat_1_6(MachineState *machine)
 {
     pc_compat_1_7(machine);
-    has_pci_info = false;
     rom_file_has_mr = false;
 }
 
@@ -395,7 +393,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 
 static void pc_init_isa(MachineState *machine)
 {
-    has_pci_info = false;
     gigabyte_align = false;
     has_reserved_memory = false;
     option_rom_has_mr = true;
@@ -972,6 +969,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_defaults = false;
     pcmc->has_acpi_build = false;
+    pcmc->has_pci_info = false;
 }
 
 static const TypeInfo isapc_machine_type_info = {

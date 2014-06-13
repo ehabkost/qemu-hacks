@@ -58,6 +58,7 @@ struct PCMachineClass {
     bool smbios_legacy_mode;
     bool smbios_defaults;
     bool has_acpi_build;
+    bool has_pci_info;
 };
 
 typedef struct PCMachineState PCMachineState;
