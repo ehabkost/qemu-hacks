@@ -399,6 +399,20 @@ static void pc_xen_hvm_init(MachineState *machine)
 }
 #endif
 
+/**
+ * PCI440FXMachineClass;
+ */
+typedef struct PCI440FXMachineClass {
+    /*< private >*/
+    PCMachineClass parent_class;
+} PCI440FXMachineClass;
+
+#define TYPE_PC_I440FX_MACHINE "pc-i440fx" TYPE_MACHINE_SUFFIX
+#define PC_I440FX_MACHINE_CLASS(klass) \
+    OBJECT_CLASS_CHECK(PCI440FXMachineClass, (klass), TYPE_PC_I440FX_MACHINE)
+#define PC_I440FX_MACHINE_GET_CLASS(obj) \
+    OBJECT_GET_CLASS(PCI440FXMachineClass, (obj), TYPE_PC_I440FX_MACHINE)
+
 static void pc_i440fx_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -406,12 +420,11 @@ static void pc_i440fx_machine_class_init(ObjectClass *oc, void *data)
     mc->hot_add_cpu = pc_hot_add_cpu;
 }
 
-#define TYPE_PC_I440FX_MACHINE "pc-i440fx" TYPE_MACHINE_SUFFIX
-
 static TypeInfo pc_i440fx_machine_type_info = {
     .name = TYPE_PC_I440FX_MACHINE,
     .parent = TYPE_PC_MACHINE,
     .class_init = pc_i440fx_machine_class_init,
+    .class_size = sizeof(PCI440FXMachineClass),
     .abstract = true,
 };
 
