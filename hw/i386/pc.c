@@ -1664,6 +1664,7 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->get_hotplug_handler = mc->get_hotplug_handler;
     pcmc->pci_enabled = true;
     pcmc->kvmclock_enabled = true;
+    pcmc->smbios_defaults = true;
     mc->get_hotplug_handler = pc_get_hotpug_handler;
     mc->default_boot_order = "cad";
     mc->hot_add_cpu = pc_hot_add_cpu;
