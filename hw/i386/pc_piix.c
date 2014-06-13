@@ -291,14 +291,12 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    option_rom_has_mr = true;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
 
 static void pc_compat_1_6(MachineState *machine)
 {
     pc_compat_1_7(machine);
-    rom_file_has_mr = false;
 }
 
 static void pc_compat_1_5(MachineState *machine)
@@ -384,8 +382,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 
 static void pc_init_isa(MachineState *machine)
 {
-    option_rom_has_mr = true;
-    rom_file_has_mr = false;
     if (!machine->cpu_model) {
         machine->cpu_model = "486";
     }
@@ -476,6 +472,7 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     mc->default_machine_opts = NULL;
     mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
+    mc->option_rom_has_mr = true;
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_defaults = false;
     pcmc->gigabyte_align = false;
@@ -498,6 +495,7 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
     pc_i440fx_machine_v1_7_class_init(oc, data);
     mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
+    mc->rom_file_has_mr = false;
     machine_class_add_compat_props(mc, compat_props);
     pcmc->has_acpi_build = false;
 }
@@ -957,6 +955,8 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     mc->max_cpus = 1;
     mc->hot_add_cpu = NULL;
     mc->name = "isapc";
+    mc->option_rom_has_mr = true;
+    mc->rom_file_has_mr = false;
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_defaults = false;
     pcmc->has_acpi_build = false;
