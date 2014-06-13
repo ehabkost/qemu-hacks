@@ -1620,6 +1620,7 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->smbios_defaults = true;
     pcmc->has_acpi_build = true;
     pcmc->gigabyte_align = true;
+    pcmc->has_reserved_memory = true;
     mc->get_hotplug_handler = pc_get_hotpug_handler;
     mc->default_boot_order = "cad";
     mc->hot_add_cpu = pc_hot_add_cpu;

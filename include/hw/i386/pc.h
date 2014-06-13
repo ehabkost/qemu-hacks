@@ -60,6 +60,7 @@ struct PCMachineClass {
      * pages in the host.
      */
     bool gigabyte_align;
+    bool has_reserved_memory;
 };
 
 typedef struct PCMachineState PCMachineState;
