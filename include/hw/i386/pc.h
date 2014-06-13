@@ -431,6 +431,18 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
             .value    = stringify(0),\
         }
 
+/**
+ * PCMachineClass;
+ */
+typedef struct PCMachineClass {
+    /*< private >*/
+    MachineClass parent_class;
+} PCMachineClass;
+
 #define TYPE_PC_MACHINE "pc-machine"
+#define PC_MACHINE_CLASS(klass) \
+    OBJECT_CLASS_CHECK(PCMachineClass, (klass), TYPE_PC_MACHINE)
+#define PC_MACHINE_GET_CLASS(obj) \
+    OBJECT_GET_CLASS(PCMachineClass, (obj), TYPE_PC_MACHINE)
 
 #endif

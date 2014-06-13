@@ -1469,6 +1469,7 @@ static TypeInfo pc_machine_type_info = {
         .name       = TYPE_PC_MACHINE,
         .parent     = TYPE_MACHINE,
         .class_init = pc_machine_class_init,
+        .class_size = sizeof(PCMachineClass),
         .abstract   = true,
 };
 
