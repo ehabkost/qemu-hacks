@@ -55,6 +55,11 @@ struct PCMachineClass {
     bool smbios_defaults;
     bool has_acpi_build;
     bool has_pci_info;
+    /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
+     * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
+     * pages in the host.
+     */
+    bool gigabyte_align;
 };
 
 typedef struct PCMachineState PCMachineState;
