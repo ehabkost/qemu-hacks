@@ -1465,6 +1465,7 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
     mc->hot_add_cpu = pc_hot_add_cpu;
     mc->max_cpus = 255;
     pcc->kvmclock_enabled = true;
+    pcc->smbios_defaults = true;
 }
 
 static TypeInfo pc_machine_type_info = {
