@@ -59,23 +59,12 @@ static const int ide_iobase[MAX_IDE_BUS] = { 0x1f0, 0x170 };
 static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
-static bool pci_enabled = true;
-static bool has_acpi_build = true;
-static int legacy_acpi_table_size;
-static bool smbios_defaults = true;
-static bool smbios_legacy_mode;
-/* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
- * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
- * pages in the host.
- */
-static bool gigabyte_align = true;
-static bool has_reserved_memory = true;
-static bool kvmclock_enabled = true;
-
 /* PC hardware initialisation */
 static void pc_init1(MachineState *machine)
 {
     PCMachineState *pcms = PC_MACHINE(machine);
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
+    bool pci_enabled = pcmc->pci_enabled;
     MemoryRegion *system_memory = get_system_memory();
     MemoryRegion *system_io = get_system_io();
     int i;
@@ -109,7 +98,7 @@ static void pc_init1(MachineState *machine)
      * breaking migration.
      */
     if (machine->ram_size >= 0xe0000000) {
-        lowmem = gigabyte_align ? 0xc0000000 : 0xe0000000;
+        lowmem = pcmc->gigabyte_align ? 0xc0000000 : 0xe0000000;
     } else {
         lowmem = 0xe0000000;
     }
@@ -147,7 +136,7 @@ static void pc_init1(MachineState *machine)
 
     pc_cpus_init(pcms, icc_bridge);
 
-    if (kvm_enabled() && kvmclock_enabled) {
+    if (kvm_enabled() && pcmc->kvmclock_enabled) {
         kvmclock_create();
     }
 
@@ -162,18 +151,18 @@ static void pc_init1(MachineState *machine)
 
     guest_info = pc_guest_info_init(below_4g_mem_size, above_4g_mem_size);
 
-    guest_info->has_acpi_build = has_acpi_build;
-    guest_info->legacy_acpi_table_size = legacy_acpi_table_size;
+    guest_info->has_acpi_build = pcmc->has_acpi_build;
+    guest_info->legacy_acpi_table_size = pcmc->legacy_acpi_table_size;
 
     guest_info->has_pci_info = false;
     guest_info->isapc_ram_fw = !pci_enabled;
-    guest_info->has_reserved_memory = has_reserved_memory;
+    guest_info->has_reserved_memory = pcmc->has_reserved_memory;
 
-    if (smbios_defaults) {
+    if (pcmc->smbios_defaults) {
         MachineClass *mc = MACHINE_GET_CLASS(machine);
         /* These values are guest ABI, do not change */
         smbios_set_defaults("QEMU", "Standard PC (i440FX + PIIX, 1996)",
-                            mc->name, smbios_legacy_mode);
+                            mc->name, pcmc->smbios_legacy_mode);
     }
 
     /* allocate ram and load rom/bios */
@@ -300,34 +289,12 @@ static void pc_init1(MachineState *machine)
 
 static void pc_compat_2_0(MachineState *machine)
 {
-    /* This value depends on the actual DSDT and SSDT compiled into
-     * the source QEMU; unfortunately it depends on the binary and
-     * not on the machine type, so we cannot make pc-i440fx-1.7 work on
-     * both QEMU 1.7 and QEMU 2.0.
-     *
-     * Large variations cause migration to fail for more than one
-     * consecutive value of the "-smp" maxcpus option.
-     *
-     * For small variations of the kind caused by different iasl versions,
-     * the 4k rounding usually leaves slack.  However, there could be still
-     * one or two values that break.  For QEMU 1.7 and QEMU 2.0 the
-     * slack is only ~10 bytes before one "-smp maxcpus" value breaks!
-     *
-     * 6652 is valid for QEMU 2.0, the right value for pc-i440fx-1.7 on
-     * QEMU 1.7 it is 6414.  For RHEL/CentOS 7.0 it is 6418.
-     */
-    legacy_acpi_table_size = 6652;
-    smbios_legacy_mode = true;
-    has_reserved_memory = false;
 }
 
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    smbios_defaults = false;
-    gigabyte_align = false;
     option_rom_has_mr = true;
-    legacy_acpi_table_size = 6414;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
 
@@ -335,7 +302,6 @@ static void pc_compat_1_6(MachineState *machine)
 {
     pc_compat_1_7(machine);
     rom_file_has_mr = false;
-    has_acpi_build = false;
 }
 
 static void pc_compat_1_5(MachineState *machine)
@@ -367,7 +333,6 @@ static void pc_compat_1_2(MachineState *machine)
 static void pc_compat_0_13(MachineState *machine)
 {
     pc_compat_1_2(machine);
-    kvmclock_enabled = false;
 }
 
 static void pc_init_pci_2_0(MachineState *machine)
@@ -422,12 +387,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 
 static void pc_init_isa(MachineState *machine)
 {
-    pci_enabled = false;
-    has_acpi_build = false;
-    smbios_defaults = false;
-    gigabyte_align = false;
-    smbios_legacy_mode = true;
-    has_reserved_memory = false;
     option_rom_has_mr = true;
     rom_file_has_mr = false;
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
@@ -484,6 +443,7 @@ static const TypeInfo pc_i440fx_machine_v2_1_type_info = {
 static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_2_0,
         { /* end of list */ }
@@ -494,6 +454,25 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_2_0;
     mc->name = "pc-i440fx-2.0";
     machine_class_add_compat_props(mc, compat_props);
+    /* This value depends on the actual DSDT and SSDT compiled into
+     * the source QEMU; unfortunately it depends on the binary and
+     * not on the machine type, so we cannot make pc-i440fx-1.7 work on
+     * both QEMU 1.7 and QEMU 2.0.
+     *
+     * Large variations cause migration to fail for more than one
+     * consecutive value of the "-smp" maxcpus option.
+     *
+     * For small variations of the kind caused by different iasl versions,
+     * the 4k rounding usually leaves slack.  However, there could be still
+     * one or two values that break.  For QEMU 1.7 and QEMU 2.0 the
+     * slack is only ~10 bytes before one "-smp maxcpus" value breaks!
+     *
+     * 6652 is valid for QEMU 2.0, the right value for pc-i440fx-1.7 on
+     * QEMU 1.7 it is 6414.  For RHEL/CentOS 7.0 it is 6418.
+     */
+    pcmc->legacy_acpi_table_size = 6652;
+    pcmc->smbios_legacy_mode = true;
+    pcmc->has_reserved_memory = false;
 }
 
 static const TypeInfo pc_i440fx_machine_v2_0_type_info = {
@@ -505,6 +484,7 @@ static const TypeInfo pc_i440fx_machine_v2_0_type_info = {
 static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_7,
         { /* end of list */ }
@@ -514,6 +494,9 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->smbios_defaults = false;
+    pcmc->gigabyte_align = false;
+    pcmc->legacy_acpi_table_size = 6414;
 }
 
 static const TypeInfo pc_i440fx_machine_v1_7_type_info = {
@@ -525,6 +508,7 @@ static const TypeInfo pc_i440fx_machine_v1_7_type_info = {
 static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_6,
         { /* end of list */ }
@@ -533,6 +517,7 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->has_acpi_build = false;
 }
 
 static const TypeInfo pc_i440fx_machine_v1_6_type_info = {
@@ -838,6 +823,7 @@ static const TypeInfo pc_machine_v0_14_type_info = {
 static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_0_13,
         { /* end of list */ }
@@ -847,6 +833,7 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
     mc->hw_version = "0.13";
     mc->name = "pc-0.13";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->kvmclock_enabled = false;
 }
 
 static const TypeInfo pc_machine_v0_13_type_info = {
@@ -977,6 +964,7 @@ static const TypeInfo pc_machine_v0_10_type_info = {
 static void isapc_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         { /* end of list */ }
     };
@@ -987,6 +975,12 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     mc->name = "isapc";
     mc->default_cpu_model = "486";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->pci_enabled = false;
+    pcmc->has_acpi_build = false;
+    pcmc->smbios_defaults = false;
+    pcmc->gigabyte_align = false;
+    pcmc->smbios_legacy_mode = true;
+    pcmc->has_reserved_memory = false;
 }
 
 static const TypeInfo isapc_machine_type_info = {

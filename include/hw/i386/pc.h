@@ -53,6 +53,18 @@ struct PCMachineClass {
     /*< public >*/
     HotplugHandler *(*get_hotplug_handler)(MachineState *machine,
                                            DeviceState *dev);
+    bool pci_enabled;
+    bool has_acpi_build;
+    int legacy_acpi_table_size;
+    bool smbios_defaults;
+    bool smbios_legacy_mode;
+    /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
+     * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
+     * pages in the host.
+     */
+    bool gigabyte_align;
+    bool has_reserved_memory;
+    bool kvmclock_enabled;
 };
 
 typedef struct PCMachineState PCMachineState;

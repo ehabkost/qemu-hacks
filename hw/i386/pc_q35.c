@@ -49,20 +49,11 @@
 /* ICH9 AHCI has 6 ports */
 #define MAX_SATA_PORTS     6
 
-static bool has_acpi_build = true;
-static bool smbios_defaults = true;
-static bool smbios_legacy_mode;
-/* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
- * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
- * pages in the host.
- */
-static bool gigabyte_align = true;
-static bool has_reserved_memory = true;
-
 /* PC hardware initialisation */
 static void pc_q35_init(MachineState *machine)
 {
     PCMachineState *pcms = PC_MACHINE(machine);
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
     Q35PCIHost *q35_host;
     PCIHostState *phb;
@@ -97,7 +88,7 @@ static void pc_q35_init(MachineState *machine)
      * breaking migration.
      */
     if (machine->ram_size >= 0xb0000000) {
-        lowmem = gigabyte_align ? 0x80000000 : 0xb0000000;
+        lowmem = pcmc->gigabyte_align ? 0x80000000 : 0xb0000000;
     } else {
         lowmem = 0xb0000000;
     }
@@ -151,19 +142,15 @@ static void pc_q35_init(MachineState *machine)
     guest_info = pc_guest_info_init(below_4g_mem_size, above_4g_mem_size);
     guest_info->has_pci_info = false;
     guest_info->isapc_ram_fw = false;
-    guest_info->has_acpi_build = has_acpi_build;
-    guest_info->has_reserved_memory = has_reserved_memory;
+    guest_info->has_acpi_build = pcmc->has_acpi_build;
+    guest_info->has_reserved_memory = pcmc->has_reserved_memory;
+    guest_info->legacy_acpi_table_size = pcmc->legacy_acpi_table_size;
 
-    /* Migration was not supported in 2.0 for Q35, so do not bother
-     * with this hack (see hw/i386/acpi-build.c).
-     */
-    guest_info->legacy_acpi_table_size = 0;
-
-    if (smbios_defaults) {
+    if (pcmc->smbios_defaults) {
         MachineClass *mc = MACHINE_GET_CLASS(machine);
         /* These values are guest ABI, do not change */
         smbios_set_defaults("QEMU", "Standard PC (Q35 + ICH9, 2009)",
-                            mc->name, smbios_legacy_mode);
+                            mc->name, pcmc->smbios_legacy_mode);
     }
 
     /* allocate ram and load rom/bios */
@@ -279,15 +266,11 @@ static void pc_q35_init(MachineState *machine)
 
 static void pc_compat_2_0(MachineState *machine)
 {
-    smbios_legacy_mode = true;
-    has_reserved_memory = false;
 }
 
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    smbios_defaults = false;
-    gigabyte_align = false;
     option_rom_has_mr = true;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
@@ -296,7 +279,6 @@ static void pc_compat_1_6(MachineState *machine)
 {
     pc_compat_1_7(machine);
     rom_file_has_mr = false;
-    has_acpi_build = false;
 }
 
 static void pc_compat_1_5(MachineState *machine)
@@ -375,6 +357,7 @@ static TypeInfo pc_q35_machine_v2_1_type_info = {
 static void pc_q35_machine_v2_0_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_2_0,
         { /* end of list */ }
@@ -384,6 +367,8 @@ static void pc_q35_machine_v2_0_class_init(ObjectClass *oc, void *data)
     mc->init = pc_q35_init_2_0;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-2.0";
+    pcmc->smbios_legacy_mode = true;
+    pcmc->has_reserved_memory = false;
 }
 
 static TypeInfo pc_q35_machine_v2_0_type_info = {
@@ -395,6 +380,7 @@ static TypeInfo pc_q35_machine_v2_0_type_info = {
 static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_7,
         { /* end of list */ }
@@ -404,6 +390,8 @@ static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
     mc->init = pc_q35_init_1_7;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-1.7";
+    pcmc->smbios_defaults = false;
+    pcmc->gigabyte_align = false;
 }
 
 static TypeInfo pc_q35_machine_v1_7_type_info = {
@@ -415,6 +403,7 @@ static TypeInfo pc_q35_machine_v1_7_type_info = {
 static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_6,
         { /* end of list */ }
@@ -423,6 +412,7 @@ static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
     mc->init = pc_q35_init_1_6;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-1.6";
+    pcmc->has_acpi_build = false;
 }
 
 static TypeInfo pc_q35_machine_v1_6_type_info = {
