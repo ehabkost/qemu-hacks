@@ -61,8 +61,8 @@ static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 /* PC hardware initialisation */
 static void pc_init1(MachineState *machine)
 {
-    PCMachineState *pc_machine = PC_MACHINE(machine);
-    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pc_machine);
+    PCMachineState *pcms = PC_MACHINE(machine);
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
     bool pci_enabled = pcmc->pci_enabled;
     bool kvmclock_enabled = pcmc->kvmclock_enabled;
     MemoryRegion *system_memory = get_system_memory();
@@ -249,7 +249,7 @@ static void pc_init1(MachineState *machine)
 
         object_property_add_link(OBJECT(machine), PC_MACHINE_ACPI_DEVICE_PROP,
                                  TYPE_HOTPLUG_HANDLER,
-                                 (Object **)&pc_machine->acpi_dev,
+                                 (Object **)&pcms->acpi_dev,
                                  object_property_allow_set_link,
                                  OBJ_PROP_LINK_UNREF_ON_RELEASE, &error_abort);
         object_property_set_link(OBJECT(machine), OBJECT(piix4_pm),

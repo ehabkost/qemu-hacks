@@ -51,7 +51,7 @@
 /* PC hardware initialisation */
 static void pc_q35_init(MachineState *machine)
 {
-    PCMachineState *pc_machine = PC_MACHINE(machine);
+    PCMachineState *pcms = PC_MACHINE(machine);
     PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(machine);
     bool pci_enabled = pcmc->pci_enabled;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
@@ -172,7 +172,7 @@ static void pc_q35_init(MachineState *machine)
 
     object_property_add_link(OBJECT(machine), PC_MACHINE_ACPI_DEVICE_PROP,
                              TYPE_HOTPLUG_HANDLER,
-                             (Object **)&pc_machine->acpi_dev,
+                             (Object **)&pcms->acpi_dev,
                              object_property_allow_set_link,
                              OBJ_PROP_LINK_UNREF_ON_RELEASE, &error_abort);
     object_property_set_link(OBJECT(machine), OBJECT(lpc),
