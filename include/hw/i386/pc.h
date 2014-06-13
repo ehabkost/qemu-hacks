@@ -444,6 +444,7 @@ typedef struct PCMachineClass {
     bool smbios_legacy_mode;
     bool smbios_defaults;
     bool has_acpi_build;
+    bool has_pci_info;
 } PCMachineClass;
 
 #define TYPE_PC_MACHINE "pc-machine"

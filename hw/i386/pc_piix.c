@@ -58,7 +58,6 @@ static const int ide_iobase[MAX_IDE_BUS] = { 0x1f0, 0x170 };
 static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
-static bool has_pci_info;
 /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
  * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
  * pages in the host.
@@ -139,7 +138,7 @@ static void pc_init1(MachineState *machine)
 
     guest_info->has_acpi_build = pcc->has_acpi_build;
 
-    guest_info->has_pci_info = has_pci_info;
+    guest_info->has_pci_info = pcc->has_pci_info;
     guest_info->isapc_ram_fw = !pci_enabled;
 
     if (pcc->smbios_defaults) {
@@ -278,7 +277,6 @@ static void pc_compat_1_7(MachineState *machine)
 static void pc_compat_1_6(MachineState *machine)
 {
     pc_compat_1_7(machine);
-    has_pci_info = false;
     rom_file_has_mr = false;
 }
 
@@ -353,7 +351,6 @@ static void pc_init_pci_1_2(MachineState *machine)
 /* PC init function for pc-0.10 to pc-0.13, and reused by xenfv */
 static void pc_init_pci_no_kvmclock(MachineState *machine)
 {
-    has_pci_info = false;
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
     pc_init1(machine);
@@ -361,7 +358,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 
 static void pc_init_isa(MachineState *machine)
 {
-    has_pci_info = false;
     if (!machine->cpu_model) {
         machine->cpu_model = "486";
     }
