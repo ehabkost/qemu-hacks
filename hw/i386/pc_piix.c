@@ -85,12 +85,6 @@ static void pc_init1(MachineState *machine)
     FWCfgState *fw_cfg = NULL;
     PcGuestInfo *guest_info;
 
-    pcms->icc_bridge = qdev_create(NULL, TYPE_ICC_BRIDGE);
-    object_property_add_child(qdev_get_machine(), "icc-bridge",
-                              OBJECT(pcms->icc_bridge), NULL);
-
-    pc_cpus_init(machine->cpu_model, pcms->icc_bridge);
-
     if (kvm_enabled() && kvmclock_enabled) {
         kvmclock_create();
     }

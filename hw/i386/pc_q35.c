@@ -72,11 +72,6 @@ static void pc_q35_init(MachineState *machine)
     PCIDevice *ahci;
     PcGuestInfo *guest_info;
 
-    pcms->icc_bridge = qdev_create(NULL, TYPE_ICC_BRIDGE);
-    object_property_add_child(qdev_get_machine(), "icc-bridge",
-                              OBJECT(pcms->icc_bridge), NULL);
-
-    pc_cpus_init(machine->cpu_model, pcms->icc_bridge);
     pc_acpi_init("q35-acpi-dsdt.aml");
 
     kvmclock_create();

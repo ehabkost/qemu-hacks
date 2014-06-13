@@ -1622,6 +1622,12 @@ static void pc_machine_init(MachineState *machine)
         exit(1);
     }
 
+    pcms->icc_bridge = qdev_create(NULL, TYPE_ICC_BRIDGE);
+    object_property_add_child(qdev_get_machine(), "icc-bridge",
+                              OBJECT(pcms->icc_bridge), NULL);
+
+    pc_cpus_init(machine->cpu_model, icc_bridge);
+
     if (pcmc->finish_init) {
         pcmc->finish_init(machine);
     }
