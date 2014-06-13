@@ -279,53 +279,6 @@ static void pc_init1(MachineState *machine)
     }
 }
 
-static void pc_compat_1_7(MachineState *machine)
-{
-    x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
-}
-
-static void pc_compat_1_4(MachineState *machine)
-{
-    pc_compat_1_7(machine);
-    x86_cpu_compat_set_features("n270", FEAT_1_ECX, 0, CPUID_EXT_MOVBE);
-    x86_cpu_compat_set_features("Westmere", FEAT_1_ECX, 0, CPUID_EXT_PCLMULQDQ);
-}
-
-static void pc_compat_1_3(MachineState *machine)
-{
-    pc_compat_1_4(machine);
-    enable_compat_apic_id_mode();
-}
-
-static void pc_compat_1_2(MachineState *machine)
-{
-    pc_compat_1_3(machine);
-    x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
-}
-
-static void pc_compat_isa(MachineState *machine)
-{
-    if (!machine->cpu_model) {
-        machine->cpu_model = "486";
-    }
-    x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
-    enable_compat_apic_id_mode();
-}
-
-#ifdef CONFIG_XEN
-static void pc_xen_hvm_init(MachineState *machine)
-{
-    PCIBus *bus;
-
-    pc_init1(machine);
-
-    bus = pci_find_primary_bus();
-    if (bus != NULL) {
-        pci_create_simple(bus, -1, "xen-platform");
-    }
-}
-#endif
-
 /**
  * PCI440FXMachineClass;
  */
@@ -395,6 +348,11 @@ static const TypeInfo pc_i440fx_machine_v2_0_type_info = {
     .class_init = pc_i440fx_machine_v2_0_class_init,
 };
 
+static void pc_compat_1_7(MachineState *machine)
+{
+    x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
+}
+
 static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -458,6 +416,13 @@ static const TypeInfo pc_i440fx_machine_v1_5_type_info = {
     .class_init = pc_i440fx_machine_v1_5_class_init,
 };
 
+static void pc_compat_1_4(MachineState *machine)
+{
+    pc_compat_1_7(machine);
+    x86_cpu_compat_set_features("n270", FEAT_1_ECX, 0, CPUID_EXT_MOVBE);
+    x86_cpu_compat_set_features("Westmere", FEAT_1_ECX, 0, CPUID_EXT_PCLMULQDQ);
+}
+
 static void pc_i440fx_machine_v1_4_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -497,6 +462,12 @@ static const TypeInfo pc_i440fx_machine_v1_4_type_info = {
             .property = "autonegotiation",\
             .value    = "off",\
         }
+
+static void pc_compat_1_3(MachineState *machine)
+{
+    pc_compat_1_4(machine);
+    enable_compat_apic_id_mode();
+}
 
 static void pc_machine_v1_3_class_init(ObjectClass *oc, void *data)
 {
@@ -544,6 +515,12 @@ static const TypeInfo pc_machine_v1_3_type_info = {
             .property = "mmio",\
             .value    = "off",\
         }
+
+static void pc_compat_1_2(MachineState *machine)
+{
+    pc_compat_1_3(machine);
+    x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
+}
 
 static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
 {
@@ -877,6 +854,15 @@ static const TypeInfo pc_machine_v0_10_type_info = {
     .class_init = pc_machine_v0_10_class_init,
 };
 
+static void pc_compat_isa(MachineState *machine)
+{
+    if (!machine->cpu_model) {
+        machine->cpu_model = "486";
+    }
+    x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
+    enable_compat_apic_id_mode();
+}
+
 static void isapc_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -909,6 +895,18 @@ static const TypeInfo isapc_machine_type_info = {
 };
 
 #ifdef CONFIG_XEN
+static void pc_xen_hvm_init(MachineState *machine)
+{
+    PCIBus *bus;
+
+    pc_init1(machine);
+
+    bus = pci_find_primary_bus();
+    if (bus != NULL) {
+        pci_create_simple(bus, -1, "xen-platform");
+    }
+}
+
 static void xenfv_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
