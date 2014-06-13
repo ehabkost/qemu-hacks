@@ -263,14 +263,12 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    option_rom_has_mr = true;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
 
 static void pc_compat_1_6(MachineState *machine)
 {
     pc_compat_1_7(machine);
-    rom_file_has_mr = false;
 }
 
 static void pc_compat_1_5(MachineState *machine)
@@ -442,6 +440,7 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     mc->default_machine_opts = NULL;
     mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
+    mc->option_rom_has_mr = true;
     machine_class_register_compat_props_array(mc, compat_props);
     pcc->smbios_defaults = false;
     pcc->gigabyte_align = false;
@@ -464,6 +463,7 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
     pc_i440fx_machine_v1_7_class_init(oc, data);
     mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
+    mc->rom_file_has_mr = false;
     machine_class_register_compat_props_array(mc, compat_props);
     pcc->has_acpi_build = false;
 }

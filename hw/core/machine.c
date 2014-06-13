@@ -303,6 +303,8 @@ static void machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     QTAILQ_INIT(&mc->compat_props);
+    mc->rom_file_has_mr = true;
+
 }
 
 static const TypeInfo machine_info = {

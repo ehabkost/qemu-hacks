@@ -91,6 +91,8 @@ struct MachineClass {
     const char *default_boot_order;
     GlobalPropertyList compat_props;
     const char *hw_version;
+    bool option_rom_has_mr;
+    bool rom_file_has_mr;
 };
 
 /**
@@ -120,6 +122,7 @@ struct MachineState {
     bool mem_merge;
     bool usb;
     char *firmware;
+
 
     ram_addr_t ram_size;
     const char *boot_order;
