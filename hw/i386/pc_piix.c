@@ -689,6 +689,14 @@ static QEMUMachine pc_machine_v0_14 = {
             .driver   = "virtio-9p-pci",\
             .property = "vectors",\
             .value    = stringify(0),\
+        },{\
+            .driver   = "VGA",\
+            .property = "rombar",\
+            .value    = stringify(0),\
+        },{\
+            .driver   = "vmware-svga",\
+            .property = "rombar",\
+            .value    = stringify(0),\
         }
 
 #define PC_I440FX_0_13_MACHINE_OPTIONS \
@@ -700,15 +708,6 @@ static QEMUMachine pc_machine_v0_13 = {
     .name = "pc-0.13",
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_0_13,
-        {
-            .driver   = "VGA",
-            .property = "rombar",
-            .value    = stringify(0),
-        },{
-            .driver   = "vmware-svga",
-            .property = "rombar",
-            .value    = stringify(0),
-        },
         { /* end of list */ }
     },
     .hw_version = "0.13",
@@ -743,15 +742,6 @@ static QEMUMachine pc_machine_v0_12 = {
     .name = "pc-0.12",
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_0_12,
-        {
-            .driver   = "VGA",
-            .property = "rombar",
-            .value    = stringify(0),
-        },{
-            .driver   = "vmware-svga",
-            .property = "rombar",
-            .value    = stringify(0),
-        },
         { /* end of list */ }
     },
     .hw_version = "0.12",
