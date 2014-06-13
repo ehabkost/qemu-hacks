@@ -319,90 +319,149 @@ static void pc_q35_init_1_4(MachineState *machine)
     pc_q35_init(machine);
 }
 
-#define PC_Q35_MACHINE_OPTIONS \
-    PC_DEFAULT_MACHINE_OPTIONS, \
-    .desc = "Standard PC (Q35 + ICH9, 2009)", \
-    .hot_add_cpu = pc_hot_add_cpu
+static void pc_q35_machine_options(MachineClass *mc)
+{
+    pc_default_machine_options(mc);
+    mc->desc = "Standard PC (Q35 + ICH9, 2009)";
+    mc->hot_add_cpu = pc_hot_add_cpu;
+}
 
-#define PC_Q35_2_1_MACHINE_OPTIONS                      \
-    PC_Q35_MACHINE_OPTIONS,                             \
-    .default_machine_opts = "firmware=bios-256k.bin"
+static void pc_q35_2_1_machine_options(MachineClass *mc)
+{
+    pc_q35_machine_options(mc);
+    mc->default_machine_opts = "firmware=bios-256k.bin";
+}
 
-static QEMUMachine pc_q35_machine_v2_1 = {
-    PC_Q35_2_1_MACHINE_OPTIONS,
-    .name = "pc-q35-2.1",
-    .alias = "q35",
-    .init = pc_q35_init,
+static void pc_q35_machine_v2_1_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    pc_q35_2_1_machine_options(mc);
+    mc->alias = "q35";
+    mc->init = pc_q35_init;
+    mc->name = "pc-q35-2.1";
+}
+
+static TypeInfo pc_q35_machine_v2_1_type_info = {
+    .name = "pc-q35-2.1" TYPE_MACHINE_SUFFIX,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_q35_machine_v2_1_class_init,
 };
 
-#define PC_Q35_2_0_MACHINE_OPTIONS PC_Q35_2_1_MACHINE_OPTIONS
+#define pc_q35_2_0_machine_options pc_q35_2_1_machine_options
 
-static QEMUMachine pc_q35_machine_v2_0 = {
-    PC_Q35_2_0_MACHINE_OPTIONS,
-    .name = "pc-q35-2.0",
-    .init = pc_q35_init_2_0,
-    .compat_props = (GlobalProperty[]) {
+static void pc_q35_machine_v2_0_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    static GlobalProperty compat_props[] = {
         PC_Q35_COMPAT_2_0,
         { /* end of list */ }
-    },
+    };
+    pc_q35_2_0_machine_options(mc);
+    mc->init = pc_q35_init_2_0;
+    machine_class_add_compat_props(mc, compat_props);
+    mc->name = "pc-q35-2.0";
+}
+
+static TypeInfo pc_q35_machine_v2_0_type_info = {
+    .name = "pc-q35-2.0" TYPE_MACHINE_SUFFIX,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_q35_machine_v2_0_class_init,
 };
 
-#define PC_Q35_1_7_MACHINE_OPTIONS PC_Q35_MACHINE_OPTIONS
+#define pc_q35_1_7_machine_options pc_q35_machine_options
 
-static QEMUMachine pc_q35_machine_v1_7 = {
-    PC_Q35_1_7_MACHINE_OPTIONS,
-    .name = "pc-q35-1.7",
-    .init = pc_q35_init_1_7,
-    .compat_props = (GlobalProperty[]) {
+static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    static GlobalProperty compat_props[] = {
         PC_Q35_COMPAT_1_7,
         { /* end of list */ }
-    },
+    };
+    pc_q35_1_7_machine_options(mc);
+    mc->init = pc_q35_init_1_7;
+    machine_class_add_compat_props(mc, compat_props);
+    mc->name = "pc-q35-1.7";
+}
+
+static TypeInfo pc_q35_machine_v1_7_type_info = {
+    .name = "pc-q35-1.7" TYPE_MACHINE_SUFFIX,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_q35_machine_v1_7_class_init,
 };
 
-#define PC_Q35_1_6_MACHINE_OPTIONS PC_Q35_MACHINE_OPTIONS
+#define pc_q35_1_6_machine_options pc_q35_machine_options
 
-static QEMUMachine pc_q35_machine_v1_6 = {
-    PC_Q35_1_6_MACHINE_OPTIONS,
-    .name = "pc-q35-1.6",
-    .init = pc_q35_init_1_6,
-    .compat_props = (GlobalProperty[]) {
+static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    static GlobalProperty compat_props[] = {
         PC_Q35_COMPAT_1_6,
         { /* end of list */ }
-    },
+    };
+    pc_q35_1_6_machine_options(mc);
+    mc->init = pc_q35_init_1_6;
+    machine_class_add_compat_props(mc, compat_props);
+    mc->name = "pc-q35-1.6";
+}
+
+static TypeInfo pc_q35_machine_v1_6_type_info = {
+    .name = "pc-q35-1.6" TYPE_MACHINE_SUFFIX,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_q35_machine_v1_6_class_init,
 };
 
-static QEMUMachine pc_q35_machine_v1_5 = {
-    PC_Q35_1_6_MACHINE_OPTIONS,
-    .name = "pc-q35-1.5",
-    .init = pc_q35_init_1_5,
-    .compat_props = (GlobalProperty[]) {
+static void pc_q35_machine_v1_5_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    static GlobalProperty compat_props[] = {
         PC_Q35_COMPAT_1_5,
         { /* end of list */ }
-    },
+    };
+    pc_q35_1_6_machine_options(mc);
+    mc->init = pc_q35_init_1_5;
+    machine_class_add_compat_props(mc, compat_props);
+    mc->name = "pc-q35-1.5";
+}
+
+static TypeInfo pc_q35_machine_v1_5_type_info = {
+    .name = "pc-q35-1.5" TYPE_MACHINE_SUFFIX,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_q35_machine_v1_5_class_init,
 };
 
-#define PC_Q35_1_4_MACHINE_OPTIONS \
-    PC_Q35_1_6_MACHINE_OPTIONS, \
-    .hot_add_cpu = NULL
+static void pc_q35_1_4_machine_options(MachineClass *mc)
+{
+    pc_q35_1_6_machine_options(mc);
+    mc->hot_add_cpu = NULL;
+}
 
-static QEMUMachine pc_q35_machine_v1_4 = {
-    PC_Q35_1_4_MACHINE_OPTIONS,
-    .name = "pc-q35-1.4",
-    .init = pc_q35_init_1_4,
-    .compat_props = (GlobalProperty[]) {
+static void pc_q35_machine_v1_4_class_init(ObjectClass *oc, void *data)
+{
+    MachineClass *mc = MACHINE_CLASS(oc);
+    static GlobalProperty compat_props[] = {
         PC_Q35_COMPAT_1_4,
         { /* end of list */ }
-    },
+    };
+    pc_q35_1_4_machine_options(mc);
+    mc->init = pc_q35_init_1_4;
+    machine_class_add_compat_props(mc, compat_props);
+    mc->name = "pc-q35-1.4";
+}
+
+static TypeInfo pc_q35_machine_v1_4_type_info = {
+    .name = "pc-q35-1.4" TYPE_MACHINE_SUFFIX,
+    .parent = TYPE_PC_MACHINE,
+    .class_init = pc_q35_machine_v1_4_class_init,
 };
 
 static void pc_q35_machine_init(void)
 {
-    qemu_register_pc_machine(&pc_q35_machine_v2_1);
-    qemu_register_pc_machine(&pc_q35_machine_v2_0);
-    qemu_register_pc_machine(&pc_q35_machine_v1_7);
-    qemu_register_pc_machine(&pc_q35_machine_v1_6);
-    qemu_register_pc_machine(&pc_q35_machine_v1_5);
-    qemu_register_pc_machine(&pc_q35_machine_v1_4);
+    type_register_static(&pc_q35_machine_v2_1_type_info);
+    type_register_static(&pc_q35_machine_v2_0_type_info);
+    type_register_static(&pc_q35_machine_v1_7_type_info);
+    type_register_static(&pc_q35_machine_v1_6_type_info);
+    type_register_static(&pc_q35_machine_v1_5_type_info);
+    type_register_static(&pc_q35_machine_v1_4_type_info);
 }
 
 machine_init(pc_q35_machine_init);

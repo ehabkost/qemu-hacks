@@ -7,6 +7,7 @@
 #include "hw/block/fdc.h"
 #include "net/net.h"
 #include "hw/i386/ioapic.h"
+#include "hw/boards.h"
 
 #include "qemu/range.h"
 #include "qemu/bitmap.h"
@@ -499,12 +500,16 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
             .value    = stringify(0),\
         }
 
-#define PC_COMMON_MACHINE_OPTIONS \
-    .default_boot_order = "cad"
+static inline void pc_common_machine_options(MachineClass *mc)
+{
+    mc->default_boot_order = "cad";
+}
 
-#define PC_DEFAULT_MACHINE_OPTIONS \
-    PC_COMMON_MACHINE_OPTIONS, \
-    .hot_add_cpu = pc_hot_add_cpu, \
-    .max_cpus = 255
+static inline void pc_default_machine_options(MachineClass *mc)
+{
+    pc_common_machine_options(mc);
+    mc->hot_add_cpu = pc_hot_add_cpu;
+    mc->max_cpus = 255;
+}
 
 #endif
