@@ -41,6 +41,8 @@ struct PCMachineState {
 /**
  * PCMachineClass:
  * @get_hotplug_handler: pointer to parent class callback @get_hotplug_handler
+ * @finish_init: Subclass-specific function to finish initialization.
+ * @compat_func: Compatiblity function to be called before initialization.
  */
 struct PCMachineClass {
     /*< private >*/
@@ -61,6 +63,8 @@ struct PCMachineClass {
      */
     bool gigabyte_align;
     bool has_reserved_memory;
+    void (*finish_init)(MachineState *machine);
+    void (*compat_func)(MachineState *machine);
 };
 
 typedef struct PCMachineState PCMachineState;

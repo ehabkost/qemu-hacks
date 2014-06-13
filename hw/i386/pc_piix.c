@@ -301,65 +301,19 @@ static void pc_compat_1_2(MachineState *machine)
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
 }
 
-static void pc_init_pci_2_0(MachineState *machine)
-{
-    pc_compat_2_0(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_7(MachineState *machine)
-{
-    pc_compat_1_7(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_6(MachineState *machine)
-{
-    pc_compat_1_6(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_5(MachineState *machine)
-{
-    pc_compat_1_5(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_4(MachineState *machine)
-{
-    pc_compat_1_4(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_3(MachineState *machine)
-{
-    pc_compat_1_3(machine);
-    pc_init1(machine);
-}
-
-/* PC machine init function for pc-0.14 to pc-1.2 */
-static void pc_init_pci_1_2(MachineState *machine)
-{
-    pc_compat_1_2(machine);
-    pc_init1(machine);
-}
-
-/* PC init function for pc-0.10 to pc-0.13, and reused by xenfv */
-static void pc_init_pci_no_kvmclock(MachineState *machine)
+static void pc_compat_0_13(MachineState *machine)
 {
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine);
 }
 
-static void pc_init_isa(MachineState *machine)
+static void pc_compat_isa(MachineState *machine)
 {
     if (!machine->cpu_model) {
         machine->cpu_model = "486";
     }
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine);
 }
 
 #ifdef CONFIG_XEN
@@ -393,8 +347,10 @@ typedef struct PCI440FXMachineClass {
 static void pc_i440fx_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     mc->desc = "Standard PC (i440FX + PIIX, 1996)";
     mc->hot_add_cpu = pc_hot_add_cpu;
+    pcmc->finish_init = pc_init1;
 }
 
 static TypeInfo pc_i440fx_machine_type_info = {
@@ -411,7 +367,6 @@ static void pc_i440fx_machine_v2_1_class_init(ObjectClass *oc, void *data)
     PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     mc->default_machine_opts = "firmware=bios-256k.bin";
     mc->alias = "pc";
-    mc->init = pc_init1;
     mc->is_default = 1;
     mc->name = "pc-i440fx-2.1";
     pcmc->pci_enabled = true;
@@ -434,11 +389,11 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
     pc_i440fx_machine_v2_1_class_init(oc, data);
     mc->alias = NULL;
     mc->is_default = false;
-    mc->init = pc_init_pci_2_0;
     mc->name = "pc-i440fx-2.0";
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_legacy_mode = true;
     pcmc->has_reserved_memory = false;
+    pcmc->compat_func = pc_compat_2_0;
 }
 
 static TypeInfo pc_i440fx_machine_v2_0_type_info = {
@@ -457,12 +412,12 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     };
     pc_i440fx_machine_v2_0_class_init(oc, data);
     mc->default_machine_opts = NULL;
-    mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
     mc->option_rom_has_mr = true;
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_defaults = false;
     pcmc->gigabyte_align = false;
+    pcmc->compat_func = pc_compat_1_7;
 }
 
 static TypeInfo pc_i440fx_machine_v1_7_type_info = {
@@ -480,11 +435,11 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_i440fx_machine_v1_7_class_init(oc, data);
-    mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
     mc->rom_file_has_mr = false;
     machine_class_add_compat_props(mc, compat_props);
     pcmc->has_acpi_build = false;
+    pcmc->compat_func = pc_compat_1_6;
 }
 
 static TypeInfo pc_i440fx_machine_v1_6_type_info = {
@@ -496,14 +451,15 @@ static TypeInfo pc_i440fx_machine_v1_6_type_info = {
 static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_5,
         { /* end of list */ }
     };
     pc_i440fx_machine_v1_6_class_init(oc, data);
-    mc->init = pc_init_pci_1_5;
     mc->name = "pc-i440fx-1.5";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->compat_func = pc_compat_1_5;
 }
 
 static TypeInfo pc_i440fx_machine_v1_5_type_info = {
@@ -515,15 +471,16 @@ static TypeInfo pc_i440fx_machine_v1_5_type_info = {
 static void pc_i440fx_machine_v1_4_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_4,
         { /* end of list */ }
     };
     pc_i440fx_machine_v1_5_class_init(oc, data);
     mc->hot_add_cpu = NULL;
-    mc->init = pc_init_pci_1_4;
     mc->name = "pc-i440fx-1.4";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->compat_func = pc_compat_1_4;
 }
 
 static TypeInfo pc_i440fx_machine_v1_4_type_info = {
@@ -554,14 +511,15 @@ static TypeInfo pc_i440fx_machine_v1_4_type_info = {
 static void pc_machine_v1_3_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_3,
         { /* end of list */ }
     };
     pc_i440fx_machine_v1_4_class_init(oc, data);
-    mc->init = pc_init_pci_1_3;
     mc->name = "pc-1.3";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->compat_func = pc_compat_1_3;
 }
 
 static TypeInfo pc_machine_v1_3_type_info = {
@@ -600,14 +558,15 @@ static TypeInfo pc_machine_v1_3_type_info = {
 static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_2,
         { /* end of list */ }
     };
     pc_machine_v1_3_class_init(oc, data);
-    mc->init = pc_init_pci_1_2;
     mc->name = "pc-1.2";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->compat_func = pc_compat_1_2;
 }
 
 static TypeInfo pc_machine_v1_2_type_info = {
@@ -796,10 +755,11 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_machine_v0_14_class_init(oc, data);
-    mc->init = pc_init_pci_no_kvmclock;
+
     mc->hw_version = "0.13";
     mc->name = "pc-0.13";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->compat_func = pc_compat_0_13;
     pcmc->kvmclock_enabled = false;
     pcmc->has_acpi_build = false;
 }
@@ -938,11 +898,12 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     mc->desc = "ISA-only PC";
-    mc->init = pc_init_isa;
     mc->max_cpus = 1;
     mc->hot_add_cpu = NULL;
     mc->name = "isapc";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->compat_func = pc_compat_isa;
+    pcmc->finish_init = pc_init1;
     pcmc->smbios_defaults = false;
     pcmc->has_acpi_build = false;
 }
@@ -957,6 +918,7 @@ static TypeInfo isapc_machine_type_info = {
 static void xenfv_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         /* xenfv has no fwcfg and so does not load acpi from QEMU.
          * as such new acpi features don't work.
@@ -969,12 +931,12 @@ static void xenfv_machine_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     mc->desc = "Xen Fully-virtualized PC";
-    mc->init = pc_xen_hvm_init;
     mc->max_cpus = HVM_MAX_VCPUS;
     mc->default_machine_opts = "accel=xen";
     mc->hot_add_cpu = pc_hot_add_cpu;
     mc->name = "xenfv";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->finish_init = pc_xen_hvm_init;
 }
 
 static TypeInfo xenfv_machine_type_info = {

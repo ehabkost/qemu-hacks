@@ -1609,6 +1609,17 @@ static void pc_machine_initfn(Object *obj)
                         NULL, NULL, NULL, NULL);
 }
 
+static void pc_machine_init(MachineState *machine)
+{
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(machine);
+    if (pcmc->compat_func) {
+        pcmc->compat_func(machine);
+    }
+    if (pcmc->finish_init) {
+        pcmc->finish_init(machine);
+    }
+}
+
 static void pc_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -1621,6 +1632,7 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->has_acpi_build = true;
     pcmc->gigabyte_align = true;
     pcmc->has_reserved_memory = true;
+    mc->init = pc_machine_init;
     mc->get_hotplug_handler = pc_get_hotpug_handler;
     mc->default_boot_order = "cad";
     mc->hot_add_cpu = pc_hot_add_cpu;
