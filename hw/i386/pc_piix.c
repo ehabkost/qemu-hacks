@@ -75,7 +75,7 @@ static bool kvmclock_enabled = true;
 /* PC hardware initialisation */
 static void pc_init1(MachineState *machine)
 {
-    PCMachineState *pc_machine = PC_MACHINE(machine);
+    PCMachineState *pcms = PC_MACHINE(machine);
     MemoryRegion *system_memory = get_system_memory();
     MemoryRegion *system_io = get_system_io();
     int i;
@@ -117,13 +117,13 @@ static void pc_init1(MachineState *machine)
     /* Handle the machine opt max-ram-below-4g.  It is basically doing
      * min(qemu limit, user limit).
      */
-    if (lowmem > pc_machine->max_ram_below_4g) {
-        lowmem = pc_machine->max_ram_below_4g;
+    if (lowmem > pcms->max_ram_below_4g) {
+        lowmem = pcms->max_ram_below_4g;
         if (machine->ram_size - lowmem > lowmem &&
             lowmem & ((1ULL << 30) - 1)) {
             error_report("Warning: Large machine and max_ram_below_4g(%"PRIu64
                          ") not a multiple of 1G; possible bad performance.",
-                         pc_machine->max_ram_below_4g);
+                         pcms->max_ram_below_4g);
         }
     }
 
@@ -286,7 +286,7 @@ static void pc_init1(MachineState *machine)
 
         object_property_add_link(OBJECT(machine), PC_MACHINE_ACPI_DEVICE_PROP,
                                  TYPE_HOTPLUG_HANDLER,
-                                 (Object **)&pc_machine->acpi_dev,
+                                 (Object **)&pcms->acpi_dev,
                                  object_property_allow_set_link,
                                  OBJ_PROP_LINK_UNREF_ON_RELEASE, &error_abort);
         object_property_set_link(OBJECT(machine), OBJECT(piix4_pm),
