@@ -53,6 +53,7 @@ struct PCMachineClass {
     bool kvmclock_enabled;
     bool smbios_legacy_mode;
     bool smbios_defaults;
+    bool has_acpi_build;
 };
 
 typedef struct PCMachineState PCMachineState;
