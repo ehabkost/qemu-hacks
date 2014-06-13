@@ -60,7 +60,6 @@ static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
 static bool has_pci_info;
-static bool has_acpi_build = true;
 /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
  * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
  * pages in the host.
@@ -160,7 +159,7 @@ static void pc_init1(MachineState *machine)
 
     guest_info = pc_guest_info_init(below_4g_mem_size, above_4g_mem_size);
 
-    guest_info->has_acpi_build = has_acpi_build;
+    guest_info->has_acpi_build = pcmc->has_acpi_build;
 
     guest_info->has_pci_info = has_pci_info;
     guest_info->isapc_ram_fw = !pci_enabled;
@@ -311,7 +310,6 @@ static void pc_compat_1_6(MachineState *machine)
     pc_compat_1_7(machine);
     has_pci_info = false;
     rom_file_has_mr = false;
-    has_acpi_build = false;
 }
 
 static void pc_compat_1_5(MachineState *machine)
@@ -398,7 +396,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 static void pc_init_isa(MachineState *machine)
 {
     has_pci_info = false;
-    has_acpi_build = false;
     gigabyte_align = false;
     has_reserved_memory = false;
     option_rom_has_mr = true;
@@ -505,6 +502,7 @@ static const TypeInfo pc_i440fx_machine_v1_7_type_info = {
 static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_6,
         { /* end of list */ }
@@ -513,6 +511,7 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->has_acpi_build = false;
 }
 
 static const TypeInfo pc_i440fx_machine_v1_6_type_info = {
@@ -972,6 +971,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     mc->name = "isapc";
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_defaults = false;
+    pcmc->has_acpi_build = false;
 }
 
 static const TypeInfo isapc_machine_type_info = {

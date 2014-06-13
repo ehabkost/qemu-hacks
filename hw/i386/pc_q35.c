@@ -50,7 +50,6 @@
 #define MAX_SATA_PORTS     6
 
 static bool has_pci_info;
-static bool has_acpi_build = true;
 /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
  * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
  * pages in the host.
@@ -151,7 +150,7 @@ static void pc_q35_init(MachineState *machine)
     guest_info = pc_guest_info_init(below_4g_mem_size, above_4g_mem_size);
     guest_info->has_pci_info = has_pci_info;
     guest_info->isapc_ram_fw = false;
-    guest_info->has_acpi_build = has_acpi_build;
+    guest_info->has_acpi_build = pcmc->has_acpi_build;
     guest_info->has_reserved_memory = has_reserved_memory;
 
     if (pcmc->smbios_defaults) {
@@ -290,7 +289,6 @@ static void pc_compat_1_6(MachineState *machine)
     pc_compat_1_7(machine);
     has_pci_info = false;
     rom_file_has_mr = false;
-    has_acpi_build = false;
 }
 
 static void pc_compat_1_5(MachineState *machine)
@@ -415,6 +413,7 @@ static TypeInfo pc_q35_machine_v1_7_type_info = {
 static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_6,
         { /* end of list */ }
@@ -423,6 +422,7 @@ static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
     mc->init = pc_q35_init_1_6;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-1.6";
+    pcmc->has_acpi_build = false;
 }
 
 static TypeInfo pc_q35_machine_v1_6_type_info = {
