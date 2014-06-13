@@ -64,6 +64,8 @@ static bool has_reserved_memory = true;
 static void pc_q35_init(MachineState *machine)
 {
     PCMachineState *pcms = PC_MACHINE(machine);
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
+    bool pci_enabled = pcmc->pci_enabled;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
     Q35PCIHost *q35_host;
     PCIHostState *phb;
@@ -77,7 +79,6 @@ static void pc_q35_init(MachineState *machine)
     MemoryRegion *ram_memory;
     GSIState *gsi_state;
     ISABus *isa_bus;
-    int pci_enabled = 1;
     qemu_irq *cpu_irq;
     qemu_irq *gsi;
     qemu_irq *i8259;
@@ -341,8 +342,10 @@ static void pc_q35_init_1_4(MachineState *machine)
 static void pc_q35_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     mc->desc = "Standard PC (Q35 + ICH9, 2009)";
     mc->hot_add_cpu = pc_hot_add_cpu;
+    pcmc->pci_enabled = true;
 }
 
 #define TYPE_PC_Q35_MACHINE "pc-q35" TYPE_MACHINE_SUFFIX
