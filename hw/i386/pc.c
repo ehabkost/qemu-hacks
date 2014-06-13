@@ -1019,10 +1019,12 @@ void pc_hot_add_cpu(const int64_t id, Error **errp)
 
 static void pc_cpus_init(PCMachineState *pcms)
 {
+    MachineState *machine = MACHINE(pcms);
     int i;
     X86CPU *cpu = NULL;
     Error *error = NULL;
     unsigned long apic_id_limit;
+    const char *cpu_model = machine->cpu_model;
 
     /* init CPUs */
     if (cpu_model == NULL) {
@@ -1043,7 +1045,7 @@ static void pc_cpus_init(PCMachineState *pcms)
 
     for (i = 0; i < smp_cpus; i++) {
         cpu = pc_new_cpu(cpu_model, x86_cpu_apic_id_from_index(i),
-                         icc_bridge, &error);
+                         pcms->icc_bridge, &error);
         if (error) {
             error_report("%s", error_get_pretty(error));
             error_free(error);
@@ -1054,7 +1056,7 @@ static void pc_cpus_init(PCMachineState *pcms)
     /* map APIC MMIO area if CPU has APIC */
     if (cpu && cpu->apic_state) {
         /* XXX: what if the base changes? */
-        sysbus_mmio_map_overlap(SYS_BUS_DEVICE(icc_bridge), 0,
+        sysbus_mmio_map_overlap(SYS_BUS_DEVICE(pcms->icc_bridge), 0,
                                 APIC_DEFAULT_ADDRESS, 0x1000);
     }
 
@@ -1626,7 +1628,7 @@ static void pc_machine_init(MachineState *machine)
     object_property_add_child(qdev_get_machine(), "icc-bridge",
                               OBJECT(pcms->icc_bridge), NULL);
 
-    pc_cpus_init(machine->cpu_model, icc_bridge);
+    pc_cpus_init(pcms);
 
     if (pcmc->finish_init) {
         pcmc->finish_init(machine);
