@@ -1194,8 +1194,6 @@ FWCfgState *pc_memory_init(MachineState *machine,
                            MemoryRegion *system_memory,
                            ram_addr_t below_4g_mem_size,
                            ram_addr_t above_4g_mem_size,
-                           MemoryRegion *rom_memory,
-                           MemoryRegion **ram_memory,
                            PcGuestInfo *guest_info)
 {
     int linux_boot, i;
@@ -1215,7 +1213,7 @@ FWCfgState *pc_memory_init(MachineState *machine,
     ram = g_malloc(sizeof(*ram));
     memory_region_allocate_system_memory(ram, NULL, "pc.ram",
                                          machine->ram_size);
-    *ram_memory = ram;
+    pcms->ram_memory = ram;
     ram_below_4g = g_malloc(sizeof(*ram_below_4g));
     memory_region_init_alias(ram_below_4g, NULL, "ram-below-4g", ram,
                              0, below_4g_mem_size);
@@ -1269,12 +1267,12 @@ FWCfgState *pc_memory_init(MachineState *machine,
     }
 
     /* Initialize PC system firmware */
-    pc_system_firmware_init(rom_memory, guest_info->isapc_ram_fw);
+    pc_system_firmware_init(pcms->rom_memory, guest_info->isapc_ram_fw);
 
     option_rom_mr = g_malloc(sizeof(*option_rom_mr));
     memory_region_init_ram(option_rom_mr, NULL, "pc.rom", PC_ROM_SIZE);
     vmstate_register_ram_global(option_rom_mr);
-    memory_region_add_subregion_overlap(rom_memory,
+    memory_region_add_subregion_overlap(pcms->rom_memory,
                                         PC_ROM_MIN_VGA,
                                         option_rom_mr,
                                         1);

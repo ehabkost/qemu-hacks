@@ -82,9 +82,6 @@ static void pc_init1(MachineState *machine)
     BusState *idebus[MAX_IDE_BUS];
     ISADevice *rtc_state;
     ISADevice *floppy;
-    MemoryRegion *ram_memory;
-    MemoryRegion *pci_memory;
-    MemoryRegion *rom_memory;
     DeviceState *icc_bridge;
     FWCfgState *fw_cfg = NULL;
     PcGuestInfo *guest_info;
@@ -125,7 +122,7 @@ static void pc_init1(MachineState *machine)
     }
 
     if (xen_enabled() && xen_hvm_init(&below_4g_mem_size, &above_4g_mem_size,
-                                      &ram_memory) != 0) {
+                                      &pcms->ram_memory) != 0) {
         fprintf(stderr, "xen hardware virtual machine initialisation failed\n");
         exit(1);
     }
@@ -141,12 +138,12 @@ static void pc_init1(MachineState *machine)
     }
 
     if (pci_enabled) {
-        pci_memory = g_new(MemoryRegion, 1);
-        memory_region_init(pci_memory, NULL, "pci", UINT64_MAX);
-        rom_memory = pci_memory;
+        pcms->pci_memory = g_new(MemoryRegion, 1);
+        memory_region_init(pcms->pci_memory, NULL, "pci", UINT64_MAX);
+        pcms->rom_memory = pcms->pci_memory;
     } else {
-        pci_memory = NULL;
-        rom_memory = system_memory;
+        pcms->pci_memory = NULL;
+        pcms->rom_memory = system_memory;
     }
 
     guest_info = pc_guest_info_init(below_4g_mem_size, above_4g_mem_size);
@@ -168,7 +165,7 @@ static void pc_init1(MachineState *machine)
     if (!xen_enabled()) {
         fw_cfg = pc_memory_init(machine, system_memory,
                                 below_4g_mem_size, above_4g_mem_size,
-                                rom_memory, &ram_memory, guest_info);
+                                guest_info);
     }
 
     gsi_state = g_malloc0(sizeof(*gsi_state));
@@ -185,7 +182,7 @@ static void pc_init1(MachineState *machine)
                               system_memory, system_io, machine->ram_size,
                               below_4g_mem_size,
                               above_4g_mem_size,
-                              pci_memory, ram_memory);
+                              pcms->pci_memory, pcms->ram_memory);
     } else {
         pci_bus = NULL;
         i440fx_state = NULL;
