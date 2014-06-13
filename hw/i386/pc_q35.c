@@ -62,9 +62,6 @@ static void pc_q35_init(MachineState *machine)
     BusState *idebus[MAX_SATA_PORTS];
     ISADevice *rtc_state;
     ISADevice *floppy;
-    MemoryRegion *pci_memory;
-    MemoryRegion *rom_memory;
-    MemoryRegion *ram_memory;
     GSIState *gsi_state;
     ISABus *isa_bus;
     qemu_irq *cpu_irq;
@@ -76,7 +73,7 @@ static void pc_q35_init(MachineState *machine)
     DeviceState *icc_bridge;
     PcGuestInfo *guest_info;
 
-    if (xen_enabled() && xen_hvm_init(&ram_memory) != 0) {
+    if (xen_enabled() && xen_hvm_init(&pcms->ram_memory) != 0) {
         fprintf(stderr, "xen hardware virtual machine initialisation failed\n");
         exit(1);
     }
@@ -110,12 +107,12 @@ static void pc_q35_init(MachineState *machine)
 
     /* pci enabled */
     if (pci_enabled) {
-        pci_memory = g_new(MemoryRegion, 1);
-        memory_region_init(pci_memory, NULL, "pci", UINT64_MAX);
-        rom_memory = pci_memory;
+        pcms->pci_memory = g_new(MemoryRegion, 1);
+        memory_region_init(pcms->pci_memory, NULL, "pci", UINT64_MAX);
+        pcms->rom_memory = pcms->pci_memory;
     } else {
-        pci_memory = NULL;
-        rom_memory = get_system_memory();
+        pcms->pci_memory = NULL;
+        pcms->rom_memory = get_system_memory();
     }
 
     guest_info = pc_guest_info_init(below_4g_mem_size, above_4g_mem_size);
@@ -137,7 +134,7 @@ static void pc_q35_init(MachineState *machine)
                        machine->kernel_filename, machine->kernel_cmdline,
                        machine->initrd_filename,
                        below_4g_mem_size, above_4g_mem_size,
-                       rom_memory, &ram_memory, guest_info);
+                       pcms->rom_memory, &pcms->ram_memory, guest_info);
     }
 
     /* irq lines */
@@ -154,8 +151,8 @@ static void pc_q35_init(MachineState *machine)
     q35_host = Q35_HOST_DEVICE(qdev_create(NULL, TYPE_Q35_HOST_DEVICE));
 
     object_property_add_child(qdev_get_machine(), "q35", OBJECT(q35_host), NULL);
-    q35_host->mch.ram_memory = ram_memory;
-    q35_host->mch.pci_address_space = pci_memory;
+    q35_host->mch.ram_memory = pcms->ram_memory;
+    q35_host->mch.pci_address_space = pcms->pci_memory;
     q35_host->mch.system_memory = get_system_memory();
     q35_host->mch.address_space_io = get_system_io();
     q35_host->mch.below_4g_mem_size = below_4g_mem_size;

@@ -31,6 +31,9 @@ struct PCMachineState {
     /* <public> */
     ram_addr_t hotplug_memory_base;
     MemoryRegion hotplug_memory;
+    MemoryRegion *ram_memory;
+    MemoryRegion *pci_memory;
+    MemoryRegion *rom_memory;
 
     HotplugHandler *acpi_dev;
 };
