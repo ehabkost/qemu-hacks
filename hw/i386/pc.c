@@ -1611,10 +1611,17 @@ static void pc_machine_initfn(Object *obj)
 
 static void pc_machine_init(MachineState *machine)
 {
+    PCMachineState *pcms = PC_MACHINE(machine);
     PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(machine);
     if (pcmc->compat_func) {
         pcmc->compat_func(machine);
     }
+
+    if (xen_enabled() && xen_hvm_init(&pcms->ram_memory) != 0) {
+        fprintf(stderr, "xen hardware virtual machine initialisation failed\n");
+        exit(1);
+    }
+
     if (pcmc->finish_init) {
         pcmc->finish_init(machine);
     }
