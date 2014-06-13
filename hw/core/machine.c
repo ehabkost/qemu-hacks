@@ -312,6 +312,7 @@ static void machine_class_base_init(ObjectClass *oc, void *data)
     MachineClass *mc = MACHINE_CLASS(oc);
     /* compat_props can't be simply memcpy()ed */
     mc->compat_props = g_list_copy(mc->compat_props);
+    mc->rom_file_has_mr = true;
 }
 
 static const TypeInfo machine_info = {
