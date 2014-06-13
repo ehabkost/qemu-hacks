@@ -61,7 +61,6 @@ static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 static bool has_pci_info;
 static bool has_acpi_build = true;
 static bool smbios_defaults = true;
-static bool smbios_legacy_mode;
 /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
  * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
  * pages in the host.
@@ -147,9 +146,10 @@ static void pc_init1(MachineState *machine)
 
     if (smbios_defaults) {
         MachineClass *mc = MACHINE_GET_CLASS(machine);
+        PCMachineClass *pcc = PC_MACHINE_GET_CLASS(mc);
         /* These values are guest ABI, do not change */
         smbios_set_defaults("QEMU", "Standard PC (i440FX + PIIX, 1996)",
-                            mc->name, smbios_legacy_mode);
+                            mc->name, pcc->smbios_legacy_mode);
     }
 
     /* allocate ram and load rom/bios */
@@ -267,7 +267,6 @@ static void pc_init_pci(MachineState *machine)
 
 static void pc_compat_2_0(MachineState *machine)
 {
-    smbios_legacy_mode = true;
 }
 
 static void pc_compat_1_7(MachineState *machine)
@@ -430,6 +429,7 @@ static TypeInfo pc_i440fx_machine_v2_1_type_info = {
 static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_2_0,
         { /* end of list */ }
@@ -440,6 +440,7 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_2_0;
     mc->name = "pc-i440fx-2.0";
     machine_class_register_compat_props_array(mc, compat_props);
+    pcc->smbios_legacy_mode = true;
 }
 
 static TypeInfo pc_i440fx_machine_v2_0_type_info = {
