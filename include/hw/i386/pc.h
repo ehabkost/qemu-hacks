@@ -440,6 +440,7 @@ typedef struct PCMachineClass {
 
     /*< public >*/
     bool pci_enabled;
+    bool kvmclock_enabled;
 } PCMachineClass;
 
 #define TYPE_PC_MACHINE "pc-machine"
