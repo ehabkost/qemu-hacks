@@ -251,29 +251,14 @@ static void pc_init1(MachineState *machine)
     }
 }
 
-static void pc_compat_2_0(MachineState *machine)
-{
-}
-
 static void pc_compat_1_7(MachineState *machine)
 {
-    pc_compat_2_0(machine);
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
-}
-
-static void pc_compat_1_6(MachineState *machine)
-{
-    pc_compat_1_7(machine);
-}
-
-static void pc_compat_1_5(MachineState *machine)
-{
-    pc_compat_1_6(machine);
 }
 
 static void pc_compat_1_4(MachineState *machine)
 {
-    pc_compat_1_5(machine);
+    pc_compat_1_7(machine);
     x86_cpu_compat_set_features("n270", FEAT_1_ECX, 0, CPUID_EXT_MOVBE);
     x86_cpu_compat_set_features("Westmere", FEAT_1_ECX, 0, CPUID_EXT_PCLMULQDQ);
 }
@@ -389,7 +374,6 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     PCMachineClass *pcc = PC_MACHINE_CLASS(oc);
-    PCI440FXMachineClass *piixc = PC_I440FX_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_2_0,
         { /* end of list */ }
@@ -400,7 +384,6 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
     mc->name = "pc-i440fx-2.0";
     machine_class_register_compat_props_array(mc, compat_props);
     pcc->smbios_legacy_mode = true;
-    piixc->compat_func = pc_compat_2_0;
 }
 
 static TypeInfo pc_i440fx_machine_v2_0_type_info = {
@@ -438,7 +421,6 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     PCMachineClass *pcc = PC_MACHINE_CLASS(oc);
-    PCI440FXMachineClass *piixc = PC_I440FX_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_6,
         { /* end of list */ }
@@ -448,7 +430,6 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
     mc->rom_file_has_mr = false;
     machine_class_register_compat_props_array(mc, compat_props);
     pcc->has_acpi_build = false;
-    piixc->compat_func = pc_compat_1_6;
 }
 
 static TypeInfo pc_i440fx_machine_v1_6_type_info = {
@@ -460,7 +441,6 @@ static TypeInfo pc_i440fx_machine_v1_6_type_info = {
 static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
-    PCI440FXMachineClass *piixc = PC_I440FX_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_5,
         { /* end of list */ }
@@ -468,7 +448,6 @@ static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
     pc_i440fx_machine_v1_6_class_init(oc, data);
     mc->name = "pc-i440fx-1.5";
     machine_class_register_compat_props_array(mc, compat_props);
-    piixc->compat_func = pc_compat_1_5;
 }
 
 static TypeInfo pc_i440fx_machine_v1_5_type_info = {
