@@ -1467,6 +1467,7 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
     pcc->kvmclock_enabled = true;
     pcc->smbios_defaults = true;
     pcc->has_acpi_build = true;
+    pcc->gigabyte_align = true;
 }
 
 static TypeInfo pc_machine_type_info = {
