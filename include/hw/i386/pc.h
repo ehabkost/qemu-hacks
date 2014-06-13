@@ -437,6 +437,9 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
 typedef struct PCMachineClass {
     /*< private >*/
     MachineClass parent_class;
+
+    /*< public >*/
+    bool pci_enabled;
 } PCMachineClass;
 
 #define TYPE_PC_MACHINE "pc-machine"
