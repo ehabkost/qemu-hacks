@@ -55,6 +55,7 @@ struct PCMachineClass {
                                            DeviceState *dev);
     bool pci_enabled;
     bool kvmclock_enabled;
+    bool smbios_legacy_mode;
 };
 
 typedef struct PCMachineState PCMachineState;
