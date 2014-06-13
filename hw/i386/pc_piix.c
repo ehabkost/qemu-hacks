@@ -71,10 +71,11 @@ static bool has_reserved_memory = true;
 
 /* PC hardware initialisation */
 static void pc_init1(MachineState *machine,
-                     int pci_enabled,
                      int kvmclock_enabled)
 {
     PCMachineState *pc_machine = PC_MACHINE(machine);
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pc_machine);
+    bool pci_enabled = pcmc->pci_enabled;
     MemoryRegion *system_memory = get_system_memory();
     MemoryRegion *system_io = get_system_io();
     int i;
@@ -273,7 +274,7 @@ static void pc_init1(MachineState *machine,
 
 static void pc_init_pci(MachineState *machine)
 {
-    pc_init1(machine, 1, 1);
+    pc_init1(machine, 1);
 }
 
 static void pc_compat_2_0(MachineState *machine)
@@ -375,7 +376,7 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
     smbios_defaults = false;
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine, 1, 0);
+    pc_init1(machine, 0);
 }
 
 static void pc_init_isa(MachineState *machine)
@@ -388,7 +389,7 @@ static void pc_init_isa(MachineState *machine)
     }
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine, 0, 1);
+    pc_init1(machine, 1);
 }
 
 #ifdef CONFIG_XEN
@@ -424,11 +425,13 @@ static TypeInfo pc_i440fx_machine_type_info = {
 static void pc_i440fx_machine_v2_1_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     mc->default_machine_opts = "firmware=bios-256k.bin";
     mc->alias = "pc";
     mc->init = pc_init_pci;
     mc->is_default = 1;
     mc->name = "pc-i440fx-2.1";
+    pcmc->pci_enabled = true;
 }
 
 static TypeInfo pc_i440fx_machine_v2_1_type_info = {
