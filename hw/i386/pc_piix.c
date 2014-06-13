@@ -72,10 +72,11 @@ static bool has_reserved_memory = true;
 static bool kvmclock_enabled = true;
 
 /* PC hardware initialisation */
-static void pc_init1(MachineState *machine,
-                     int pci_enabled)
+static void pc_init1(MachineState *machine)
 {
     PCMachineState *pcms = PC_MACHINE(machine);
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
+    bool pci_enabled = pcmc->pci_enabled;
     MemoryRegion *system_memory = get_system_memory();
     MemoryRegion *system_io = get_system_io();
     int i;
@@ -292,7 +293,7 @@ static void pc_init1(MachineState *machine,
 
 static void pc_init_pci(MachineState *machine)
 {
-    pc_init1(machine, 1);
+    pc_init1(machine);
 }
 
 static void pc_compat_2_0(MachineState *machine)
@@ -415,7 +416,7 @@ static void pc_init_isa(MachineState *machine)
     }
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine, 0);
+    pc_init1(machine);
 }
 
 #ifdef CONFIG_XEN
@@ -960,9 +961,11 @@ static const TypeInfo pc_machine_v0_10_type_info = {
 static void isapc_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         { /* end of list */ }
     };
+    pcmc->pci_enabled = false;
     mc->desc = "ISA-only PC";
     mc->init = pc_init_isa;
     mc->max_cpus = 1;

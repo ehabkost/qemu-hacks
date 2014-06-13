@@ -53,6 +53,7 @@ struct PCMachineClass {
     /*< public >*/
     HotplugHandler *(*get_hotplug_handler)(MachineState *machine,
                                            DeviceState *dev);
+    bool pci_enabled;
 };
 
 typedef struct PCMachineState PCMachineState;
