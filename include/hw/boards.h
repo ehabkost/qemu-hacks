@@ -96,6 +96,8 @@ struct MachineClass {
     const char *default_boot_order;
     GlobalPropertyList compat_props;
     const char *hw_version;
+    bool option_rom_has_mr;
+    bool rom_file_has_mr;
 
     HotplugHandler *(*get_hotplug_handler)(MachineState *machine,
                                            DeviceState *dev);

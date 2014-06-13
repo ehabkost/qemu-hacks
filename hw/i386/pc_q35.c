@@ -251,14 +251,12 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    option_rom_has_mr = true;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
 
 static void pc_compat_1_6(MachineState *machine)
 {
     pc_compat_1_7(machine);
-    rom_file_has_mr = false;
 }
 
 static void pc_compat_1_5(MachineState *machine)
@@ -370,6 +368,7 @@ static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
     pc_q35_machine_v2_0_class_init(oc, data);
     mc->default_machine_opts = NULL;
     mc->init = pc_q35_init_1_7;
+    mc->option_rom_has_mr = true;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-1.7";
     pcmc->smbios_defaults = false;
@@ -392,6 +391,7 @@ static void pc_q35_machine_v1_6_class_init(ObjectClass *oc, void *data)
     };
     pc_q35_machine_v1_7_class_init(oc, data);
     mc->init = pc_q35_init_1_6;
+    mc->rom_file_has_mr = false;
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-1.6";
     pcmc->has_acpi_build = false;
