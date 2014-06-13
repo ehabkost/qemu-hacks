@@ -82,15 +82,14 @@ static void pc_init1(MachineState *machine)
     BusState *idebus[MAX_IDE_BUS];
     ISADevice *rtc_state;
     ISADevice *floppy;
-    DeviceState *icc_bridge;
     FWCfgState *fw_cfg = NULL;
     PcGuestInfo *guest_info;
 
-    icc_bridge = qdev_create(NULL, TYPE_ICC_BRIDGE);
+    pcms->icc_bridge = qdev_create(NULL, TYPE_ICC_BRIDGE);
     object_property_add_child(qdev_get_machine(), "icc-bridge",
-                              OBJECT(icc_bridge), NULL);
+                              OBJECT(pcms->icc_bridge), NULL);
 
-    pc_cpus_init(machine->cpu_model, icc_bridge);
+    pc_cpus_init(machine->cpu_model, pcms->icc_bridge);
 
     if (kvm_enabled() && kvmclock_enabled) {
         kvmclock_create();
@@ -183,7 +182,7 @@ static void pc_init1(MachineState *machine)
     if (pci_enabled) {
         ioapic_init_gsi(gsi_state, "i440fx");
     }
-    qdev_init_nofail(icc_bridge);
+    qdev_init_nofail(pcms->icc_bridge);
 
     pc_register_ferr_irq(gsi[13]);
 

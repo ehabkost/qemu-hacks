@@ -34,6 +34,7 @@ struct PCMachineState {
     MemoryRegion *ram_memory;
     MemoryRegion *pci_memory;
     MemoryRegion *rom_memory;
+    DeviceState *icc_bridge;
 
     HotplugHandler *acpi_dev;
 };

@@ -70,14 +70,13 @@ static void pc_q35_init(MachineState *machine)
     int i;
     ICH9LPCState *ich9_lpc;
     PCIDevice *ahci;
-    DeviceState *icc_bridge;
     PcGuestInfo *guest_info;
 
-    icc_bridge = qdev_create(NULL, TYPE_ICC_BRIDGE);
+    pcms->icc_bridge = qdev_create(NULL, TYPE_ICC_BRIDGE);
     object_property_add_child(qdev_get_machine(), "icc-bridge",
-                              OBJECT(icc_bridge), NULL);
+                              OBJECT(pcms->icc_bridge), NULL);
 
-    pc_cpus_init(machine->cpu_model, icc_bridge);
+    pc_cpus_init(machine->cpu_model, pcms->icc_bridge);
     pc_acpi_init("q35-acpi-dsdt.aml");
 
     kvmclock_create();
@@ -196,7 +195,7 @@ static void pc_q35_init(MachineState *machine)
     if (pci_enabled) {
         ioapic_init_gsi(gsi_state, NULL);
     }
-    qdev_init_nofail(icc_bridge);
+    qdev_init_nofail(pcms->icc_bridge);
 
     pc_register_ferr_irq(gsi[13]);
 
