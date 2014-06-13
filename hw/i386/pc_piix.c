@@ -269,19 +269,16 @@ static void pc_compat_1_3(MachineState *machine)
     enable_compat_apic_id_mode();
 }
 
-/* PC compat function for pc-0.14 to pc-1.2 */
 static void pc_compat_1_2(MachineState *machine)
 {
     pc_compat_1_3(machine);
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
 }
 
-/* PC init function for pc-0.10 to pc-0.13, and reused by xenfv */
-static void pc_init_pci_no_kvmclock(MachineState *machine)
+static void pc_compat_0_13(MachineState *machine)
 {
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine);
 }
 
 static void pc_init_isa(MachineState *machine)
@@ -727,6 +724,7 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     PCMachineClass *pcc = PC_MACHINE_CLASS(oc);
+    PCI440FXMachineClass *piixc = PC_I440FX_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_0_13,
         /*FIXME: why the heck is the following outside PC_COMPAT_0_13? */
@@ -746,12 +744,12 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_machine_v0_14_class_init(oc, data);
-    mc->init = pc_init_pci_no_kvmclock;
     mc->hw_version = "0.13";
     mc->name = "pc-0.13";
     machine_class_register_compat_props_array(mc, compat_props);
     pcc->kvmclock_enabled = false;
     pcc->has_acpi_build = false;
+    piixc->compat_func = pc_compat_0_13;
 }
 
 static TypeInfo pc_machine_v0_13_type_info = {
