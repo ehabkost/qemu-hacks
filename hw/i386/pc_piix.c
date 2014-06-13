@@ -59,11 +59,6 @@ static const int ide_iobase[MAX_IDE_BUS] = { 0x1f0, 0x170 };
 static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
-/* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
- * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
- * pages in the host.
- */
-static bool gigabyte_align = true;
 static bool has_reserved_memory = true;
 
 /* PC hardware initialisation */
@@ -105,7 +100,7 @@ static void pc_init1(MachineState *machine)
      * breaking migration.
      */
     if (machine->ram_size >= 0xe0000000) {
-        lowmem = gigabyte_align ? 0xc0000000 : 0xe0000000;
+        lowmem = pcmc->gigabyte_align ? 0xc0000000 : 0xe0000000;
     } else {
         lowmem = 0xe0000000;
     }
@@ -299,7 +294,6 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    gigabyte_align = false;
     option_rom_has_mr = true;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
@@ -393,7 +387,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 
 static void pc_init_isa(MachineState *machine)
 {
-    gigabyte_align = false;
     has_reserved_memory = false;
     option_rom_has_mr = true;
     rom_file_has_mr = false;
@@ -488,6 +481,7 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     mc->name = "pc-i440fx-1.7";
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_defaults = false;
+    pcmc->gigabyte_align = false;
 }
 
 static const TypeInfo pc_i440fx_machine_v1_7_type_info = {
@@ -970,6 +964,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->smbios_defaults = false;
     pcmc->has_acpi_build = false;
     pcmc->has_pci_info = false;
+    pcmc->gigabyte_align = false;
 }
 
 static const TypeInfo isapc_machine_type_info = {

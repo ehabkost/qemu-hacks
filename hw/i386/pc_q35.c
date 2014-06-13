@@ -49,11 +49,6 @@
 /* ICH9 AHCI has 6 ports */
 #define MAX_SATA_PORTS     6
 
-/* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
- * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
- * pages in the host.
- */
-static bool gigabyte_align = true;
 static bool has_reserved_memory = true;
 
 /* PC hardware initialisation */
@@ -95,7 +90,7 @@ static void pc_q35_init(MachineState *machine)
      * breaking migration.
      */
     if (machine->ram_size >= 0xb0000000) {
-        lowmem = gigabyte_align ? 0x80000000 : 0xb0000000;
+        lowmem = pcmc->gigabyte_align ? 0x80000000 : 0xb0000000;
     } else {
         lowmem = 0xb0000000;
     }
@@ -278,7 +273,6 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    gigabyte_align = false;
     option_rom_has_mr = true;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
@@ -400,6 +394,7 @@ static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-1.7";
     pcmc->smbios_defaults = false;
+    pcmc->gigabyte_align = false;
 }
 
 static TypeInfo pc_q35_machine_v1_7_type_info = {
