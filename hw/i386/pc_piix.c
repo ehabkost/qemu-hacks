@@ -757,6 +757,14 @@ static QEMUMachine pc_machine_v0_12 = {
             .driver   = TYPE_PCI_DEVICE,\
             .property = "rombar",\
             .value    = stringify(0),\
+        },{\
+            .driver   = "ide-drive",\
+            .property = "ver",\
+            .value    = "0.11",\
+        },{\
+            .driver   = "scsi-disk",\
+            .property = "ver",\
+            .value    = "0.11",\
         }
 
 static QEMUMachine pc_machine_v0_11 = {
@@ -764,15 +772,6 @@ static QEMUMachine pc_machine_v0_11 = {
     .name = "pc-0.11",
     .compat_props = (GlobalProperty[]) {
         PC_COMPAT_0_11,
-        {
-            .driver   = "ide-drive",
-            .property = "ver",
-            .value    = "0.11",
-        },{
-            .driver   = "scsi-disk",
-            .property = "ver",
-            .value    = "0.11",
-        },
         { /* end of list */ }
     },
     .hw_version = "0.11",
