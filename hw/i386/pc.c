@@ -1017,7 +1017,7 @@ void pc_hot_add_cpu(const int64_t id, Error **errp)
     pc_new_cpu(current_cpu_model, apic_id, icc_bridge, errp);
 }
 
-void pc_cpus_init(const char *cpu_model, DeviceState *icc_bridge)
+static void pc_cpus_init(PCMachineState *pcms)
 {
     int i;
     X86CPU *cpu = NULL;
