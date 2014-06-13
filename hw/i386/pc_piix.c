@@ -59,8 +59,6 @@ static const int ide_iobase[MAX_IDE_BUS] = { 0x1f0, 0x170 };
 static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
-static bool has_reserved_memory = true;
-
 /* PC hardware initialisation */
 static void pc_init1(MachineState *machine)
 {
@@ -157,7 +155,7 @@ static void pc_init1(MachineState *machine)
 
     guest_info->has_pci_info = pcmc->has_pci_info;
     guest_info->isapc_ram_fw = !pci_enabled;
-    guest_info->has_reserved_memory = has_reserved_memory;
+    guest_info->has_reserved_memory = pcmc->has_reserved_memory;
 
     if (pcmc->smbios_defaults) {
         MachineClass *mc = MACHINE_GET_CLASS(machine);
@@ -288,7 +286,6 @@ static void pc_init_pci(MachineState *machine)
 
 static void pc_compat_2_0(MachineState *machine)
 {
-    has_reserved_memory = false;
 }
 
 static void pc_compat_1_7(MachineState *machine)
@@ -387,7 +384,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 
 static void pc_init_isa(MachineState *machine)
 {
-    has_reserved_memory = false;
     option_rom_has_mr = true;
     rom_file_has_mr = false;
     if (!machine->cpu_model) {
@@ -459,6 +455,7 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
     mc->name = "pc-i440fx-2.0";
     machine_class_add_compat_props(mc, compat_props);
     pcmc->smbios_legacy_mode = true;
+    pcmc->has_reserved_memory = false;
 }
 
 static const TypeInfo pc_i440fx_machine_v2_0_type_info = {
@@ -965,6 +962,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->has_acpi_build = false;
     pcmc->has_pci_info = false;
     pcmc->gigabyte_align = false;
+    pcmc->has_reserved_memory = false;
 }
 
 static const TypeInfo isapc_machine_type_info = {

@@ -49,8 +49,6 @@
 /* ICH9 AHCI has 6 ports */
 #define MAX_SATA_PORTS     6
 
-static bool has_reserved_memory = true;
-
 /* PC hardware initialisation */
 static void pc_q35_init(MachineState *machine)
 {
@@ -145,7 +143,7 @@ static void pc_q35_init(MachineState *machine)
     guest_info->has_pci_info = pcmc->has_pci_info;
     guest_info->isapc_ram_fw = false;
     guest_info->has_acpi_build = pcmc->has_acpi_build;
-    guest_info->has_reserved_memory = has_reserved_memory;
+    guest_info->has_reserved_memory = pcmc->has_reserved_memory;
 
     if (pcmc->smbios_defaults) {
         MachineClass *mc = MACHINE_GET_CLASS(machine);
@@ -267,7 +265,6 @@ static void pc_q35_init(MachineState *machine)
 
 static void pc_compat_2_0(MachineState *machine)
 {
-    has_reserved_memory = false;
 }
 
 static void pc_compat_1_7(MachineState *machine)
@@ -372,6 +369,7 @@ static void pc_q35_machine_v2_0_class_init(ObjectClass *oc, void *data)
     machine_class_add_compat_props(mc, compat_props);
     mc->name = "pc-q35-2.0";
     pcmc->smbios_legacy_mode = true;
+    pcmc->has_reserved_memory = false;
 }
 
 static TypeInfo pc_q35_machine_v2_0_type_info = {
