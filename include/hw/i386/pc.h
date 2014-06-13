@@ -443,6 +443,7 @@ typedef struct PCMachineClass {
     bool kvmclock_enabled;
     bool smbios_legacy_mode;
     bool smbios_defaults;
+    bool has_acpi_build;
 } PCMachineClass;
 
 #define TYPE_PC_MACHINE "pc-machine"
