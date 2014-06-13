@@ -69,7 +69,6 @@ static bool smbios_legacy_mode;
  */
 static bool gigabyte_align = true;
 static bool has_reserved_memory = true;
-static bool kvmclock_enabled = true;
 
 /* PC hardware initialisation */
 static void pc_init1(MachineState *machine)
@@ -148,7 +147,7 @@ static void pc_init1(MachineState *machine)
 
     pc_cpus_init(machine->cpu_model, icc_bridge);
 
-    if (kvm_enabled() && kvmclock_enabled) {
+    if (kvm_enabled() && pcmc->kvmclock_enabled) {
         kvmclock_create();
     }
 
@@ -348,7 +347,6 @@ static void pc_compat_1_2(MachineState *machine)
 static void pc_compat_0_13(MachineState *machine)
 {
     pc_compat_1_2(machine);
-    kvmclock_enabled = false;
 }
 
 static void pc_init_pci_2_0(MachineState *machine)
@@ -822,6 +820,7 @@ static const TypeInfo pc_machine_v0_14_type_info = {
 static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_0_13,
         { /* end of list */ }
@@ -831,6 +830,7 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
     mc->hw_version = "0.13";
     mc->name = "pc-0.13";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->kvmclock_enabled = false;
 }
 
 static const TypeInfo pc_machine_v0_13_type_info = {

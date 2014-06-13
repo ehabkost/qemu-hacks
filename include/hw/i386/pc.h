@@ -54,6 +54,7 @@ struct PCMachineClass {
     HotplugHandler *(*get_hotplug_handler)(MachineState *machine,
                                            DeviceState *dev);
     bool pci_enabled;
+    bool kvmclock_enabled;
 };
 
 typedef struct PCMachineState PCMachineState;
