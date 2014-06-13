@@ -60,7 +60,6 @@ static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
 static bool has_pci_info;
 static bool has_acpi_build = true;
-static bool smbios_defaults = true;
 /* Make sure that guest addresses aligned at 1Gbyte boundaries get mapped to
  * host addresses aligned at 1Gbyte boundaries.  This way we can use 1GByte
  * pages in the host.
@@ -147,9 +146,8 @@ static void pc_init1(MachineState *machine)
     guest_info->isapc_ram_fw = !pci_enabled;
     guest_info->has_reserved_memory = has_reserved_memory;
 
-    if (smbios_defaults) {
+    if (pcmc->smbios_defaults) {
         MachineClass *mc = MACHINE_GET_CLASS(machine);
-        PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(mc);
         /* These values are guest ABI, do not change */
         smbios_set_defaults("QEMU", "Standard PC (i440FX + PIIX, 1996)",
                             mc->name, pcmc->smbios_legacy_mode);
@@ -285,7 +283,6 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    smbios_defaults = false;
     gigabyte_align = false;
     option_rom_has_mr = true;
     x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
@@ -372,7 +369,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 {
     has_pci_info = false;
     has_acpi_build = false;
-    smbios_defaults = false;
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
     pc_init1(machine);
@@ -382,7 +378,6 @@ static void pc_init_isa(MachineState *machine)
 {
     has_pci_info = false;
     has_acpi_build = false;
-    smbios_defaults = false;
     if (!machine->cpu_model) {
         machine->cpu_model = "486";
     }
@@ -465,6 +460,7 @@ static TypeInfo pc_i440fx_machine_v2_0_type_info = {
 static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_7,
         { /* end of list */ }
@@ -474,6 +470,7 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->smbios_defaults = false;
 }
 
 static TypeInfo pc_i440fx_machine_v1_7_type_info = {
@@ -939,6 +936,8 @@ static TypeInfo pc_machine_v0_10_type_info = {
 static void isapc_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
+
     static GlobalProperty compat_props[] = {
         { /* end of list */ }
     };
@@ -948,6 +947,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     mc->hot_add_cpu = NULL;
     mc->name = "isapc";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->smbios_defaults = false;
 }
 
 static TypeInfo isapc_machine_type_info = {
