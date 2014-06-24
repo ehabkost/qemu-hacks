@@ -354,6 +354,22 @@ static QEMUMachine pc_q35_machine_v2_1 = {
     .init = pc_q35_init,
 };
 
+#define PC_Q35_COMPAT_2_0 \
+        PC_COMPAT_2_0, \
+        {\
+            .driver   = "ICH9-LPC",\
+            .property = "memory-hotplug-support",\
+            .value    = "off",\
+        },{\
+            .driver   = "xio3130-downstream",\
+            .property = COMPAT_PROP_PCP,\
+            .value    = "off",\
+        },{\
+            .driver   = "ioh3420",\
+            .property = COMPAT_PROP_PCP,\
+            .value    = "off",\
+        }
+
 #define PC_Q35_2_0_MACHINE_OPTIONS PC_Q35_2_1_MACHINE_OPTIONS
 
 static QEMUMachine pc_q35_machine_v2_0 = {
@@ -365,6 +381,15 @@ static QEMUMachine pc_q35_machine_v2_0 = {
         { /* end of list */ }
     },
 };
+
+#define PC_Q35_COMPAT_1_7 \
+        PC_COMPAT_1_7, \
+        PC_Q35_COMPAT_2_0, \
+        {\
+            .driver   = "hpet",\
+            .property = HPET_INTCAP,\
+            .value    = stringify(4),\
+        }
 
 #define PC_Q35_1_7_MACHINE_OPTIONS PC_Q35_MACHINE_OPTIONS
 
@@ -378,6 +403,10 @@ static QEMUMachine pc_q35_machine_v1_7 = {
     },
 };
 
+#define PC_Q35_COMPAT_1_6 \
+        PC_COMPAT_1_6, \
+        PC_Q35_COMPAT_1_7
+
 #define PC_Q35_1_6_MACHINE_OPTIONS PC_Q35_MACHINE_OPTIONS
 
 static QEMUMachine pc_q35_machine_v1_6 = {
@@ -390,6 +419,10 @@ static QEMUMachine pc_q35_machine_v1_6 = {
     },
 };
 
+#define PC_Q35_COMPAT_1_5 \
+        PC_COMPAT_1_5, \
+        PC_Q35_COMPAT_1_6
+
 static QEMUMachine pc_q35_machine_v1_5 = {
     PC_Q35_1_6_MACHINE_OPTIONS,
     .name = "pc-q35-1.5",
@@ -399,6 +432,10 @@ static QEMUMachine pc_q35_machine_v1_5 = {
         { /* end of list */ }
     },
 };
+
+#define PC_Q35_COMPAT_1_4 \
+        PC_COMPAT_1_4, \
+        PC_Q35_COMPAT_1_5
 
 #define PC_Q35_1_4_MACHINE_OPTIONS \
     PC_Q35_1_6_MACHINE_OPTIONS, \
