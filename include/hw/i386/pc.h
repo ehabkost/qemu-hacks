@@ -336,7 +336,6 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
         }
 
 #define PC_COMPAT_1_7 \
-        PC_COMPAT_2_0, \
         {\
             .driver   = TYPE_USB_DEVICE,\
             .property = "msos-desc",\
@@ -349,7 +348,6 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
         }
 
 #define PC_COMPAT_1_6 \
-        PC_COMPAT_1_7, \
         {\
             .driver   = "e1000",\
             .property = "mitigation",\
@@ -373,7 +371,6 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
         }
 
 #define PC_COMPAT_1_5 \
-        PC_COMPAT_1_6, \
         {\
             .driver   = "Conroe-" TYPE_X86_CPU,\
             .property = "model",\
@@ -417,7 +414,6 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
         }
 
 #define PC_COMPAT_1_4 \
-        PC_COMPAT_1_5, \
         {\
             .driver   = "scsi-hd",\
             .property = "discard_granularity",\

@@ -383,8 +383,8 @@ static QEMUMachine pc_q35_machine_v2_0 = {
 };
 
 #define PC_Q35_COMPAT_1_7 \
-        PC_COMPAT_1_7, \
         PC_Q35_COMPAT_2_0, \
+        PC_COMPAT_1_7, \
         {\
             .driver   = "hpet",\
             .property = HPET_INTCAP,\
@@ -404,8 +404,8 @@ static QEMUMachine pc_q35_machine_v1_7 = {
 };
 
 #define PC_Q35_COMPAT_1_6 \
-        PC_COMPAT_1_6, \
-        PC_Q35_COMPAT_1_7
+        PC_Q35_COMPAT_1_7, \
+        PC_COMPAT_1_6
 
 #define PC_Q35_1_6_MACHINE_OPTIONS PC_Q35_MACHINE_OPTIONS
 
@@ -420,8 +420,8 @@ static QEMUMachine pc_q35_machine_v1_6 = {
 };
 
 #define PC_Q35_COMPAT_1_5 \
-        PC_COMPAT_1_5, \
-        PC_Q35_COMPAT_1_6
+        PC_Q35_COMPAT_1_6, \
+        PC_COMPAT_1_5
 
 static QEMUMachine pc_q35_machine_v1_5 = {
     PC_Q35_1_6_MACHINE_OPTIONS,
@@ -434,8 +434,8 @@ static QEMUMachine pc_q35_machine_v1_5 = {
 };
 
 #define PC_Q35_COMPAT_1_4 \
-        PC_COMPAT_1_4, \
-        PC_Q35_COMPAT_1_5
+        PC_Q35_COMPAT_1_5, \
+        PC_COMPAT_1_4
 
 #define PC_Q35_1_4_MACHINE_OPTIONS \
     PC_Q35_1_6_MACHINE_OPTIONS, \

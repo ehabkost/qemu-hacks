@@ -441,6 +441,9 @@ static QEMUMachine pc_i440fx_machine_v2_1 = {
     .is_default = 1,
 };
 
+#define PC_I440FX_COMPAT_2_0 \
+    PC_COMPAT_2_0
+
 #define PC_I440FX_2_0_MACHINE_OPTIONS PC_I440FX_2_1_MACHINE_OPTIONS
 
 static QEMUMachine pc_i440fx_machine_v2_0 = {
@@ -452,6 +455,10 @@ static QEMUMachine pc_i440fx_machine_v2_0 = {
         { /* end of list */ }
     },
 };
+
+#define PC_I440FX_COMPAT_1_7 \
+    PC_I440FX_COMPAT_2_0, \
+    PC_COMPAT_1_7
 
 #define PC_I440FX_1_7_MACHINE_OPTIONS PC_I440FX_MACHINE_OPTIONS
 
@@ -465,6 +472,10 @@ static QEMUMachine pc_i440fx_machine_v1_7 = {
     },
 };
 
+#define PC_I440FX_COMPAT_1_6 \
+    PC_I440FX_COMPAT_1_7, \
+    PC_COMPAT_1_6
+
 #define PC_I440FX_1_6_MACHINE_OPTIONS PC_I440FX_MACHINE_OPTIONS
 
 static QEMUMachine pc_i440fx_machine_v1_6 = {
@@ -477,6 +488,10 @@ static QEMUMachine pc_i440fx_machine_v1_6 = {
     },
 };
 
+#define PC_I440FX_COMPAT_1_5 \
+    PC_I440FX_COMPAT_1_6, \
+    PC_COMPAT_1_5
+
 static QEMUMachine pc_i440fx_machine_v1_5 = {
     PC_I440FX_1_6_MACHINE_OPTIONS,
     .name = "pc-i440fx-1.5",
@@ -486,6 +501,10 @@ static QEMUMachine pc_i440fx_machine_v1_5 = {
         { /* end of list */ }
     },
 };
+
+#define PC_I440FX_COMPAT_1_4 \
+    PC_I440FX_COMPAT_1_5, \
+    PC_COMPAT_1_4
 
 #define PC_I440FX_1_4_MACHINE_OPTIONS \
     PC_I440FX_1_6_MACHINE_OPTIONS, \
