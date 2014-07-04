@@ -69,11 +69,11 @@ static bool smbios_legacy_mode;
  */
 static bool gigabyte_align = true;
 static bool has_reserved_memory = true;
+static bool kvmclock_enabled = true;
 
 /* PC hardware initialisation */
 static void pc_init1(MachineState *machine,
-                     int pci_enabled,
-                     int kvmclock_enabled)
+                     int pci_enabled)
 {
     PCMachineState *pc_machine = PC_MACHINE(machine);
     MemoryRegion *system_memory = get_system_memory();
@@ -292,7 +292,7 @@ static void pc_init1(MachineState *machine,
 
 static void pc_init_pci(MachineState *machine)
 {
-    pc_init1(machine, 1, 1);
+    pc_init1(machine, 1);
 }
 
 static void pc_compat_2_0(MachineState *machine)
@@ -414,7 +414,10 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
     /* Copy from pc_compat_1_2(): */
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
 
-    pc_init1(machine, 1, 0);
+    /* Specific to pc-0.13 and older: */
+    kvmclock_enabled = false;
+
+    pc_init_pci(machine);
 }
 
 static void pc_init_isa(MachineState *machine)
@@ -432,7 +435,7 @@ static void pc_init_isa(MachineState *machine)
     }
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine, 0, 1);
+    pc_init1(machine, 0);
 }
 
 #ifdef CONFIG_XEN
