@@ -2774,6 +2774,61 @@ uint32_t x86_cpu_apic_id_from_index(unsigned int cpu_index)
     }
 }
 
+typedef struct FeatureProperty {
+    FeatureWord word;
+    uint32_t mask;
+} FeatureProperty;
+
+
+static void x86_cpu_get_feature_prop(Object *obj,
+                                     struct Visitor *v,
+                                     void *opaque,
+                                     const char *name,
+                                     Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    FeatureProperty *fp = opaque;
+    bool value = (env->features[fp->word] & fp->mask) == fp->mask;
+    visit_type_bool(v, &value, name, errp);
+}
+
+static void x86_cpu_set_feature_prop(Object *obj,
+                                     struct Visitor *v,
+                                     void *opaque,
+                                     const char *name,
+                                     Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    FeatureProperty *fp = opaque;
+    bool value;
+    visit_type_bool(v, &value, name, errp);
+    if (value) {
+        env->features[fp->word] |= fp->mask;
+    } else {
+        env->features[fp->word] &= ~fp->mask;
+    }
+}
+
+/* Register a boolean feature-bits property.
+ * If mask has multiple bits, all must be set for the property to return true.
+ */
+static void x86_cpu_register_feature_prop(X86CPU *cpu,
+                                          const char *prop_name,
+                                          FeatureWord w,
+                                          uint32_t mask)
+{
+    FeatureProperty *fp;
+    fp = g_new0(FeatureProperty, 1);
+    fp->word = w;
+    fp->mask = mask;
+    object_property_add(OBJECT(cpu), prop_name, "bool",
+                        x86_cpu_set_feature_prop,
+                        x86_cpu_get_feature_prop,
+                        NULL, fp, &error_abort);
+}
+
 static void x86_cpu_initfn(Object *obj)
 {
     CPUState *cs = CPU(obj);
@@ -2818,6 +2873,12 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add(obj, "filtered-features", "X86CPUFeatureWordInfo",
                         x86_cpu_get_feature_words,
                         NULL, NULL, (void *)cpu->filtered_features, NULL);
+
+    /* "feat-kvmclock" will affect both kvmclock feature bits */
+    x86_cpu_register_feature_prop(cpu, "feat-kvmclock", FEAT_KVM,
+                                  (1UL << KVM_FEATURE_CLOCKSOURCE) |
+                                  (1UL << KVM_FEATURE_CLOCKSOURCE2));
+
 
     cpu->hyperv_spinlock_attempts = HYPERV_SPINLOCK_NEVER_RETRY;
     env->cpuid_apic_id = x86_cpu_apic_id_from_index(cs->cpu_index);
