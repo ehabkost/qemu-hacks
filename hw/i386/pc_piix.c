@@ -343,6 +343,13 @@ static void pc_compat_1_2(MachineState *machine)
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
 }
 
+/* PC compat function for pc-0.10 to pc-0.13 */
+static void pc_compat_0_13(MachineState *machine)
+{
+    pc_compat_1_2(machine);
+    kvmclock_enabled = false;
+}
+
 static void pc_init_pci_2_0(MachineState *machine)
 {
     pc_compat_2_0(machine);
@@ -389,34 +396,7 @@ static void pc_init_pci_1_2(MachineState *machine)
 /* PC init function for pc-0.10 to pc-0.13, and reused by xenfv */
 static void pc_init_pci_no_kvmclock(MachineState *machine)
 {
-    /* Copy from pc_compat_2_0(): */
-    smbios_legacy_mode = true;
-    has_reserved_memory = false;
-
-    /* Copy from pc_compat_1_7(): */
-    smbios_defaults = false;
-    gigabyte_align = false;
-    option_rom_has_mr = true;
-    x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
-
-    /* Copy from pc_compat_1_6(): */
-    has_pci_info = false;
-    rom_file_has_mr = false;
-    has_acpi_build = false;
-
-    /* Copy from pc_compat_1_4(): */
-    x86_cpu_compat_set_features("n270", FEAT_1_ECX, 0, CPUID_EXT_MOVBE);
-    x86_cpu_compat_set_features("Westmere", FEAT_1_ECX, 0, CPUID_EXT_PCLMULQDQ);
-
-    /* Copy from pc_compat_1_3(): */
-    enable_compat_apic_id_mode();
-
-    /* Copy from pc_compat_1_2(): */
-    x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
-
-    /* Specific to pc-0.13 and older: */
-    kvmclock_enabled = false;
-
+    pc_compat_0_13(machine);
     pc_init_pci(machine);
 }
 
