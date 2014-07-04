@@ -59,6 +59,7 @@ static const int ide_iobase[MAX_IDE_BUS] = { 0x1f0, 0x170 };
 static const int ide_iobase2[MAX_IDE_BUS] = { 0x3f6, 0x376 };
 static const int ide_irq[MAX_IDE_BUS] = { 14, 15 };
 
+static bool pci_enabled = true;
 static bool has_acpi_build = true;
 static int legacy_acpi_table_size;
 static bool smbios_defaults = true;
@@ -69,11 +70,10 @@ static bool smbios_legacy_mode;
  */
 static bool gigabyte_align = true;
 static bool has_reserved_memory = true;
+static bool kvmclock_enabled = true;
 
 /* PC hardware initialisation */
-static void pc_init1(MachineState *machine,
-                     int pci_enabled,
-                     int kvmclock_enabled)
+static void pc_init1(MachineState *machine)
 {
     PCMachineState *pc_machine = PC_MACHINE(machine);
     MemoryRegion *system_memory = get_system_memory();
@@ -300,7 +300,7 @@ static void pc_init1(MachineState *machine,
 
 static void pc_init_pci(MachineState *machine)
 {
-    pc_init1(machine, 1, 1);
+    pc_init1(machine);
 }
 
 static void pc_compat_2_0(MachineState *machine)
@@ -368,6 +368,13 @@ static void pc_compat_1_2(MachineState *machine)
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
 }
 
+/* PC compat function for pc-0.10 to pc-0.13 */
+static void pc_compat_0_13(MachineState *machine)
+{
+    pc_compat_1_2(machine);
+    kvmclock_enabled = false;
+}
+
 static void pc_init_pci_2_0(MachineState *machine)
 {
     pc_compat_2_0(machine);
@@ -414,12 +421,13 @@ static void pc_init_pci_1_2(MachineState *machine)
 /* PC init function for pc-0.10 to pc-0.13 */
 static void pc_init_pci_no_kvmclock(MachineState *machine)
 {
-    pc_compat_1_2(machine);
-    pc_init1(machine, 1, 0);
+    pc_compat_0_13(machine);
+    pc_init_pci(machine);
 }
 
 static void pc_init_isa(MachineState *machine)
 {
+    pci_enabled = false;
     has_acpi_build = false;
     smbios_defaults = false;
     gigabyte_align = false;
@@ -432,7 +440,7 @@ static void pc_init_isa(MachineState *machine)
     }
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
-    pc_init1(machine, 0, 1);
+    pc_init1(machine);
 }
 
 #ifdef CONFIG_XEN
