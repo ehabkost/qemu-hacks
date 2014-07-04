@@ -1822,8 +1822,7 @@ static void x86_cpu_parse_featurestr(CPUState *cs, char *features,
             object_property_parse(OBJECT(cpu), "on", featurestr, &local_err);
         }
         if (local_err) {
-            error_propagate(errp, local_err);
-            return;
+            goto out;
         }
         featurestr = strtok(NULL, ",");
     }
@@ -1831,6 +1830,11 @@ static void x86_cpu_parse_featurestr(CPUState *cs, char *features,
     for (w = 0; w < FEATURE_WORDS; w++) {
         env->features[w] |= plus_features[w];
         env->features[w] &= ~minus_features[w];
+    }
+
+out:
+    if (local_err) {
+        error_propagate(errp, local_err);
     }
 }
 
