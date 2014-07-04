@@ -189,7 +189,7 @@ static const char *feature_name[] = {
 };
 static const char *ext_feature_name[] = {
     "pni|sse3" /* Intel,AMD sse3 */, "pclmulqdq|pclmuldq", "dtes64", "monitor",
-    "ds_cpl", "vmx", "smx", "est",
+    "ds-cpl", "vmx", "smx", "est",
     "tm2", "ssse3", "cid", NULL,
     "fma", "cx16", "xtpr", "pdcm",
     NULL, "pcid", "dca", "sse4.1|sse4_1",
@@ -209,17 +209,17 @@ static const char *ext2_feature_name[] = {
     NULL /* mtrr */, NULL /* pge */, NULL /* mca */, NULL /* cmov */,
     NULL /* pat */, NULL /* pse36 */, NULL, NULL /* Linux mp */,
     "nx|xd", NULL, "mmxext", NULL /* mmx */,
-    NULL /* fxsr */, "fxsr_opt|ffxsr", "pdpe1gb" /* AMD Page1GB */, "rdtscp",
+    NULL /* fxsr */, "fxsr-opt|ffxsr", "pdpe1gb" /* AMD Page1GB */, "rdtscp",
     NULL, "lm|i64", "3dnowext", "3dnow",
 };
 static const char *ext3_feature_name[] = {
-    "lahf_lm" /* AMD LahfSahf */, "cmp_legacy", "svm", "extapic" /* AMD ExtApicSpace */,
+    "lahf-lm" /* AMD LahfSahf */, "cmp-legacy", "svm", "extapic" /* AMD ExtApicSpace */,
     "cr8legacy" /* AMD AltMovCr8 */, "abm", "sse4a", "misalignsse",
     "3dnowprefetch", "osvw", "ibs", "xop",
     "skinit", "wdt", NULL, "lwp",
-    "fma4", "tce", NULL, "nodeid_msr",
-    NULL, "tbm", "topoext", "perfctr_core",
-    "perfctr_nb", NULL, NULL, NULL,
+    "fma4", "tce", NULL, "nodeid-msr",
+    NULL, "tbm", "topoext", "perfctr-core",
+    "perfctr-nb", NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,
 };
 
@@ -235,8 +235,8 @@ static const char *ext4_feature_name[] = {
 };
 
 static const char *kvm_feature_name[] = {
-    "kvmclock", "kvm_nopiodelay", "kvm_mmu", "kvmclock",
-    "kvm_asyncpf", "kvm_steal_time", "kvm_pv_eoi", "kvm_pv_unhalt",
+    "kvmclock", "kvm-nopiodelay", "kvm-mmu", "kvmclock",
+    "kvm-asyncpf", "kvm-steal-time", "kvm-pv-eoi", "kvm-pv-unhalt",
     NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,
@@ -246,9 +246,9 @@ static const char *kvm_feature_name[] = {
 };
 
 static const char *svm_feature_name[] = {
-    "npt", "lbrv", "svm_lock", "nrip_save",
-    "tsc_scale", "vmcb_clean",  "flushbyasid", "decodeassists",
-    NULL, NULL, "pause_filter", NULL,
+    "npt", "lbrv", "svm-lock", "nrip-save",
+    "tsc-scale", "vmcb-clean",  "flushbyasid", "decodeassists",
+    NULL, NULL, "pause-filter", NULL,
     "pfthreshold", NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL,
@@ -1760,13 +1760,13 @@ static void x86_cpu_parse_featurestr(CPUState *cs, char *features,
 
     while (featurestr) {
         char *val;
+        feat2prop(featurestr);
         if (featurestr[0] == '+') {
             add_flagname_to_bitmaps(featurestr + 1, plus_features);
         } else if (featurestr[0] == '-') {
             add_flagname_to_bitmaps(featurestr + 1, minus_features);
         } else if ((val = strchr(featurestr, '='))) {
             *val = 0; val++;
-            feat2prop(featurestr);
             if (!strcmp(featurestr, "xlevel")) {
                 char *err;
                 char num[32];
@@ -1818,7 +1818,6 @@ static void x86_cpu_parse_featurestr(CPUState *cs, char *features,
                 object_property_parse(OBJECT(cpu), val, featurestr, &local_err);
             }
         } else {
-            feat2prop(featurestr);
             object_property_parse(OBJECT(cpu), "on", featurestr, &local_err);
         }
         if (local_err) {
