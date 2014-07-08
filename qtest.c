@@ -17,6 +17,7 @@
 #include "exec/ioport.h"
 #include "exec/memory.h"
 #include "hw/irq.h"
+#include "hw/accel.h"
 #include "sysemu/sysemu.h"
 #include "sysemu/cpus.h"
 
@@ -509,7 +510,7 @@ static void qtest_event(void *opaque, int event)
     }
 }
 
-int qtest_init_accel(MachineClass *mc)
+static int qtest_init_accel(MachineClass *mc)
 {
     configure_icount("0");
 
@@ -548,3 +549,27 @@ bool qtest_driver(void)
 {
     return qtest_chr;
 }
+
+static void qtest_accel_class_init(ObjectClass *oc, void *data)
+{
+    AccelClass *ac = ACCEL_CLASS(oc);
+    ac->name = "QTest";
+    ac->available = qtest_available;
+    ac->init = qtest_init_accel;
+    ac->allowed = &qtest_allowed;
+}
+
+#define TYPE_QTEST_ACCEL "qtest-accel"
+
+static const TypeInfo qtest_accel_type = {
+    .name = TYPE_QTEST_ACCEL,
+    .parent = TYPE_ACCEL,
+    .class_init = qtest_accel_class_init,
+};
+
+static void qtest_type_init(void)
+{
+    type_register_static(&qtest_accel_type);
+}
+
+type_init(qtest_type_init);
