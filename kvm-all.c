@@ -75,8 +75,10 @@ typedef struct KVMSlot
 
 typedef struct kvm_dirty_log KVMDirtyLog;
 
-struct KVMState
+typedef struct KVMState
 {
+    AccelState parent_obj;
+
     KVMSlot *slots;
     int nr_slots;
     int fd;
@@ -109,9 +111,12 @@ struct KVMState
     QTAILQ_HEAD(msi_hashtab, KVMMSIRoute) msi_hashtab[KVM_MSI_HASHTAB_SIZE];
     bool direct_msi;
 #endif
-};
+} KVMState;
 
 #define TYPE_KVM_ACCEL "kvm-accel"
+
+#define KVM_STATE(obj) \
+    OBJECT_CHECK(KVMState, (obj), TYPE_KVM_ACCEL)
 
 KVMState *kvm_state;
 bool kvm_kernel_irqchip;
@@ -1392,7 +1397,7 @@ static int kvm_init(MachineState *ms)
     int i, type = 0;
     const char *kvm_type;
 
-    s = g_malloc0(sizeof(KVMState));
+    s = KVM_STATE(ms->accelerator);
 
     /*
      * On systems where the kernel can support different base page
@@ -1581,7 +1586,6 @@ err:
         close(s->fd);
     }
     g_free(s->slots);
-    g_free(s);
 
     return ret;
 }
@@ -2217,6 +2221,7 @@ static const TypeInfo kvm_accel_type = {
     .name = TYPE_KVM_ACCEL,
     .parent = TYPE_ACCEL,
     .class_init = kvm_accel_class_init,
+    .instance_size = sizeof(KVMState),
 };
 
 static void kvm_type_init(void)
