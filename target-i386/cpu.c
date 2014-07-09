@@ -1968,8 +1968,6 @@ static int x86_cpu_filter_features(X86CPU *cpu)
 static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
 {
     CPUX86State *env = &cpu->env;
-    const char *vendor;
-    char host_vendor[CPUID_VENDOR_SZ + 1];
     FeatureWord w;
 
     object_property_set_int(OBJECT(cpu), def->level, "level", errp);
@@ -1977,6 +1975,7 @@ static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     object_property_set_int(OBJECT(cpu), def->model, "model", errp);
     object_property_set_int(OBJECT(cpu), def->stepping, "stepping", errp);
     object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", errp);
+    object_property_set_str(OBJECT(cpu), def->vendor, "vendor", errp);
     env->cpuid_xlevel2 = def->xlevel2;
     cpu->cache_info_passthrough = def->cache_info_passthrough;
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
@@ -1985,32 +1984,46 @@ static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     }
 
     /* Special cases not set in the X86CPUDefinition structs: */
+    env->features[FEAT_1_ECX] |= CPUID_EXT_HYPERVISOR;
+}
+
+/* Accelerator-specific initialization code, to be called immediately after
+ * creation of the X86CPU object, and before x86_cpu_parse_featurestr().
+ */
+static void x86_cpu_accel_init(X86CPU *cpu, Error **errp)
+{
+    CPUX86State *env = &cpu->env;
+    static int inited;
+
     if (kvm_enabled()) {
+        char host_vendor[CPUID_VENDOR_SZ + 1];
+        uint32_t  ebx = 0, ecx = 0, edx = 0;
         FeatureWord w;
         for (w = 0; w < FEATURE_WORDS; w++) {
             env->features[w] |= kvm_default_features[w];
             env->features[w] &= ~kvm_default_unset_features[w];
         }
-    }
 
-    env->features[FEAT_1_ECX] |= CPUID_EXT_HYPERVISOR;
-
-    /* sysenter isn't supported in compatibility mode on AMD,
-     * syscall isn't supported in compatibility mode on Intel.
-     * Normally we advertise the actual CPU vendor, but you can
-     * override this using the 'vendor' property if you want to use
-     * KVM's sysenter/syscall emulation in compatibility mode and
-     * when doing cross vendor migration
-     */
-    vendor = def->vendor;
-    if (kvm_enabled()) {
-        uint32_t  ebx = 0, ecx = 0, edx = 0;
+        /* sysenter isn't supported in compatibility mode on AMD,
+         * syscall isn't supported in compatibility mode on Intel.
+         * Normally we advertise the actual CPU vendor, but you can
+         * override this using the 'vendor' property if you want to use
+         * KVM's sysenter/syscall emulation in compatibility mode and
+         * when doing cross vendor migration
+         */
         host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
         x86_cpu_vendor_words2str(host_vendor, ebx, edx, ecx);
-        vendor = host_vendor;
+        object_property_set_str(OBJECT(cpu), host_vendor, "vendor", errp);
     }
 
-    object_property_set_str(OBJECT(cpu), vendor, "vendor", errp);
+    /* init various static tables used in TCG mode */
+    if (tcg_enabled() && !inited) {
+        inited = 1;
+        optimize_flags_init();
+#ifndef CONFIG_USER_ONLY
+        cpu_set_debug_excp_handler(breakpoint_handler);
+#endif
+    }
 
 }
 
@@ -2045,6 +2058,10 @@ X86CPU *cpu_x86_create(const char *cpu_model, DeviceState *icc_bridge,
     }
 
     cpu = X86_CPU(object_new(object_class_get_name(oc)));
+    x86_cpu_accel_init(cpu, &error);
+    if (error) {
+        goto out;
+    }
 
 #ifndef CONFIG_USER_ONLY
     if (icc_bridge == NULL) {
@@ -2777,7 +2794,6 @@ static void x86_cpu_initfn(Object *obj)
     X86CPU *cpu = X86_CPU(obj);
     X86CPUClass *xcc = X86_CPU_GET_CLASS(obj);
     CPUX86State *env = &cpu->env;
-    static int inited;
 
     cs->env_ptr = env;
     cpu_exec_init(env);
@@ -2820,15 +2836,6 @@ static void x86_cpu_initfn(Object *obj)
     env->cpuid_apic_id = x86_cpu_apic_id_from_index(cs->cpu_index);
 
     x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
-
-    /* init various static tables used in TCG mode */
-    if (tcg_enabled() && !inited) {
-        inited = 1;
-        optimize_flags_init();
-#ifndef CONFIG_USER_ONLY
-        cpu_set_debug_excp_handler(breakpoint_handler);
-#endif
-    }
 }
 
 static int64_t x86_cpu_get_arch_id(CPUState *cs)
