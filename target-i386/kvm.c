@@ -28,6 +28,7 @@
 #include "exec/gdbstub.h"
 #include "qemu/host-utils.h"
 #include "qemu/config-file.h"
+#include "hw/i386/accel.h"
 #include "hw/i386/pc.h"
 #include "hw/i386/apic.h"
 #include "hw/i386/apic_internal.h"
@@ -2769,3 +2770,21 @@ int kvm_arch_fixup_msi_route(struct kvm_irq_routing_entry *route,
 {
     return 0;
 }
+
+#define TYPE_X86_KVM_ACCEL ACCEL_CLASS_NAME(TARGET_NAME "-kvm")
+
+static const TypeInfo x86_kvm_accel_type = {
+    .name = TYPE_X86_KVM_ACCEL,
+    .parent = TYPE_KVM_ACCEL,
+    .interfaces = (InterfaceInfo[]) {
+         { TYPE_X86_ACCEL },
+         { }
+    },
+};
+
+static void x86_kvm_type_init(void)
+{
+    type_register_static(&x86_kvm_accel_type);
+}
+
+type_init(x86_kvm_type_init);

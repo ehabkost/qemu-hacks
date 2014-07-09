@@ -109,8 +109,6 @@ struct KVMState
 #endif
 };
 
-#define TYPE_KVM_ACCEL ACCEL_CLASS_NAME("kvm")
-
 #define KVM_STATE(obj) \
     OBJECT_CHECK(KVMState, (obj), TYPE_KVM_ACCEL)
 

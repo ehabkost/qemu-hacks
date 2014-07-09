@@ -18,6 +18,7 @@
 #include "config-host.h"
 #include "qemu/queue.h"
 #include "qom/cpu.h"
+#include "sysemu/accel.h"
 
 #ifdef CONFIG_KVM
 #include <linux/kvm.h>
@@ -438,4 +439,7 @@ int kvm_set_one_reg(CPUState *cs, uint64_t id, void *source);
  * Returns: 0 on success, or a negative errno on failure.
  */
 int kvm_get_one_reg(CPUState *cs, uint64_t id, void *target);
+
+#define TYPE_KVM_ACCEL ACCEL_CLASS_NAME("kvm")
+
 #endif
