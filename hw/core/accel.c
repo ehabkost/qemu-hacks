@@ -76,7 +76,7 @@ static int accel_init_machine(AccelClass *acc, MachineState *ms)
     return ret;
 }
 
-int configure_accelerator(MachineState *ms)
+int init_accelerator(MachineState *ms, const char *target_name)
 {
     const char *p;
     char buf[10];
