@@ -48,6 +48,7 @@
 #include "hw/xen/xen.h"
 #include "hw/i386/apic_internal.h"
 #endif
+#include "hw/i386/accel.h"
 
 
 /* Cache topology CPUID constants: */
@@ -443,31 +444,6 @@ typedef struct model_features_t {
     uint32_t *host_feat;
     FeatureWord feat_word;
 } model_features_t;
-
-/* KVM-specific features that are automatically added to all CPU models
- * when KVM is enabled.
- */
-static uint32_t kvm_default_features[FEATURE_WORDS] = {
-    [FEAT_KVM] = (1 << KVM_FEATURE_CLOCKSOURCE) |
-        (1 << KVM_FEATURE_NOP_IO_DELAY) |
-        (1 << KVM_FEATURE_CLOCKSOURCE2) |
-        (1 << KVM_FEATURE_ASYNC_PF) |
-        (1 << KVM_FEATURE_STEAL_TIME) |
-        (1 << KVM_FEATURE_PV_EOI) |
-        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT),
-    [FEAT_1_ECX] = CPUID_EXT_X2APIC,
-};
-
-/* Features that are not added by default to any CPU model when KVM is enabled.
- */
-static uint32_t kvm_default_unset_features[FEATURE_WORDS] = {
-    [FEAT_1_ECX] = CPUID_EXT_MONITOR,
-};
-
-void x86_cpu_compat_disable_kvm_features(FeatureWord w, uint32_t features)
-{
-    kvm_default_features[w] &= ~features;
-}
 
 /*
  * Returns the set of feature flags that are supported and migratable by
@@ -1998,26 +1974,18 @@ static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
 /* Accelerator-specific initialization code, to be called immediately after
  * creation of the X86CPU object, and before x86_cpu_parse_featurestr().
  */
-static void x86_cpu_accel_init(X86CPU *cpu, Error **errp)
+static void x86_cpu_accel_init(X86CPU *cpu, AccelState *accel, Error **errp)
 {
-    CPUX86State *env = &cpu->env;
     static int inited;
+    X86Accel *xac = X86_ACCEL(object_dynamic_cast(OBJECT(accel),
+                                                  TYPE_X86_ACCEL));
+    X86AccelClass *xacc = NULL;
+    if (xac) {
+        xacc = X86_ACCEL_GET_CLASS(xac);
+    }
 
-    if (kvm_enabled()) {
-        FeatureWord w;
-        for (w = 0; w < FEATURE_WORDS; w++) {
-            env->features[w] |= kvm_default_features[w];
-            env->features[w] &= ~kvm_default_unset_features[w];
-        }
-
-        /* sysenter isn't supported in compatibility mode on AMD,
-         * syscall isn't supported in compatibility mode on Intel.
-         * Normally we advertise the actual CPU vendor, but you can
-         * override this using the 'vendor' property if you want to use
-         * KVM's sysenter/syscall emulation in compatibility mode and
-         * when doing cross vendor migration
-         */
-        object_property_set_str(OBJECT(cpu), "host", "vendor", errp);
+    if (xacc && xacc->cpu_post_init) {
+        xacc->cpu_post_init(accel, cpu, errp);
     }
 
     /* init various static tables used in TCG mode */
@@ -2062,7 +2030,7 @@ X86CPU *cpu_x86_create(const char *cpu_model, DeviceState *icc_bridge,
     }
 
     cpu = X86_CPU(object_new(object_class_get_name(oc)));
-    x86_cpu_accel_init(cpu, &error);
+    x86_cpu_accel_init(cpu, accel, &error);
     if (error) {
         goto out;
     }

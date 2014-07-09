@@ -79,4 +79,6 @@ typedef struct PcGuestInfo PcGuestInfo;
 typedef struct Range Range;
 typedef struct AdapterInfo AdapterInfo;
 
+typedef struct X86CPU X86CPU;
+
 #endif /* QEMU_TYPEDEFS_H */

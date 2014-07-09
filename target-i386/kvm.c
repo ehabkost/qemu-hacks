@@ -2593,11 +2593,62 @@ int kvm_device_msix_deassign(KVMState *s, uint32_t dev_id)
                                                 KVM_DEV_IRQ_HOST_MSIX);
 }
 
+/* KVM-specific features that are automatically added to all CPU models
+ * when KVM is enabled.
+ */
+static uint32_t kvm_default_features[FEATURE_WORDS] = {
+    [FEAT_KVM] = (1 << KVM_FEATURE_CLOCKSOURCE) |
+        (1 << KVM_FEATURE_NOP_IO_DELAY) |
+        (1 << KVM_FEATURE_CLOCKSOURCE2) |
+        (1 << KVM_FEATURE_ASYNC_PF) |
+        (1 << KVM_FEATURE_STEAL_TIME) |
+        (1 << KVM_FEATURE_PV_EOI) |
+        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT),
+    [FEAT_1_ECX] = CPUID_EXT_X2APIC,
+};
+
+/* Features that are not added by default to any CPU model when KVM is enabled.
+ */
+static uint32_t kvm_default_unset_features[FEATURE_WORDS] = {
+    [FEAT_1_ECX] = CPUID_EXT_MONITOR,
+};
+
+void x86_cpu_compat_disable_kvm_features(FeatureWord w, uint32_t features)
+{
+    kvm_default_features[w] &= ~features;
+}
+
+static void x86_kvm_cpu_post_init(AccelState *accel, X86CPU *cpu, Error **errp)
+{
+    CPUX86State *env = &cpu->env;
+    FeatureWord w;
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        env->features[w] |= kvm_default_features[w];
+        env->features[w] &= ~kvm_default_unset_features[w];
+    }
+
+    /* sysenter isn't supported in compatibility mode on AMD,
+     * syscall isn't supported in compatibility mode on Intel.
+     * Normally we advertise the actual CPU vendor, but you can
+     * override this using the 'vendor' property if you want to use
+     * KVM's sysenter/syscall emulation in compatibility mode and
+     * when doing cross vendor migration
+     */
+    object_property_set_str(OBJECT(cpu), "host", "vendor", errp);
+}
+
+static void x86_kvm_accel_class_init(ObjectClass *oc, void *data)
+{
+    X86AccelClass *xacc = X86_ACCEL_CLASS(oc);
+    xacc->cpu_post_init = x86_kvm_cpu_post_init;
+}
+
 #define TYPE_X86_KVM_ACCEL TARGET_NAME "-kvm-accel"
 
 static const TypeInfo x86_kvm_accel_type = {
     .name = TYPE_X86_KVM_ACCEL,
     .parent = TYPE_KVM_ACCEL,
+    .class_init = x86_kvm_accel_class_init,
     .interfaces = (InterfaceInfo[]) {
          { TYPE_X86_ACCEL },
          { }
