@@ -964,7 +964,7 @@ typedef struct CPUX86State {
 
 X86CPU *cpu_x86_init(const char *cpu_model);
 X86CPU *cpu_x86_create(const char *cpu_model, DeviceState *icc_bridge,
-                       Error **errp);
+                       AccelState *accel, Error **errp);
 int cpu_x86_exec(CPUX86State *s);
 void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 void x86_cpudef_setup(void);

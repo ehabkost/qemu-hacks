@@ -960,7 +960,8 @@ static X86CPU *pc_new_cpu(const char *cpu_model, int64_t apic_id,
     X86CPU *cpu;
     Error *local_err = NULL;
 
-    cpu = cpu_x86_create(cpu_model, icc_bridge, &local_err);
+    cpu = cpu_x86_create(cpu_model, icc_bridge, current_machine->accelerator,
+                         &local_err);
     if (local_err != NULL) {
         error_propagate(errp, local_err);
         return NULL;

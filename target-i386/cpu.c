@@ -2015,7 +2015,7 @@ static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
 }
 
 X86CPU *cpu_x86_create(const char *cpu_model, DeviceState *icc_bridge,
-                       Error **errp)
+                       AccelState *accel, Error **errp)
 {
     X86CPU *cpu = NULL;
     X86CPUClass *xcc;
@@ -2077,7 +2077,7 @@ X86CPU *cpu_x86_init(const char *cpu_model)
     Error *error = NULL;
     X86CPU *cpu;
 
-    cpu = cpu_x86_create(cpu_model, NULL, &error);
+    cpu = cpu_x86_create(cpu_model, NULL, NULL, &error);
     if (error) {
         goto out;
     }
