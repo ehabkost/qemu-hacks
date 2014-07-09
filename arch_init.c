@@ -53,6 +53,7 @@
 #include "hw/acpi/acpi.h"
 #include "qemu/host-utils.h"
 #include "qemu/rcu_queue.h"
+#include "sysemu/accel.h"
 
 #ifdef DEBUG_ARCH_INIT
 #define DPRINTF(fmt, ...) \
@@ -156,6 +157,11 @@ int qemu_read_default_config_files(bool userconfig)
     }
 
     return 0;
+}
+
+int configure_accelerator(MachineState *ms)
+{
+    return init_accelerator(ms, TARGET_NAME);
 }
 
 static inline bool is_zero_range(uint8_t *p, uint64_t size)
