@@ -30,6 +30,8 @@ typedef struct MemoryListener MemoryListener;
 
 typedef struct MemoryMappingList MemoryMappingList;
 
+typedef struct AccelState AccelState;
+
 typedef struct QEMUMachine QEMUMachine;
 typedef struct MachineClass MachineClass;
 typedef struct MachineState MachineState;
