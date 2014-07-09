@@ -61,11 +61,25 @@ static const TypeInfo accel_type = {
 };
 
 /* Lookup AccelClass from opt_name. Returns NULL if not found */
-static AccelClass *accel_find(const char *opt_name)
+static AccelClass *accel_find(const char *opt_name, const char *target_name)
 {
     char *class_name = g_strdup_printf(ACCEL_CLASS_NAME("%s"), opt_name);
-    AccelClass *ac = ACCEL_CLASS(object_class_by_name(class_name));
+    char *target_class_name = g_strdup_printf(ACCEL_CLASS_NAME("%s-%s"),
+                                              target_name, opt_name);
+    ObjectClass *oc;
+    AccelClass *ac;
+    oc = object_class_by_name(target_class_name);
+    if (!oc) {
+        oc = object_class_by_name(class_name);
+    }
+    /* Must be a TYPE_ACCEL subclass, and not abstract */
+    oc = object_class_dynamic_cast(oc, TYPE_ACCEL);
+    if (oc && object_class_is_abstract(oc)) {
+        oc = NULL;
+    }
+    ac = ACCEL_CLASS(oc);
     g_free(class_name);
+    g_free(target_class_name);
     return ac;
 }
 
@@ -117,7 +131,7 @@ int init_accelerator(MachineState *ms, const char *target_name)
             p++;
         }
         p = get_opt_name(buf, sizeof(buf), p, ':');
-        acc = accel_find(buf);
+        acc = accel_find(buf, target_name);
         if (!acc) {
             fprintf(stderr, "\"%s\" accelerator not found.\n", buf);
             continue;
