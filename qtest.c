@@ -510,7 +510,7 @@ static void qtest_event(void *opaque, int event)
     }
 }
 
-static int qtest_init_accel(MachineClass *mc)
+static int qtest_init_accel(MachineState *ms)
 {
     configure_icount("0");
 
