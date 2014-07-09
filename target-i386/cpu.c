@@ -1528,7 +1528,15 @@ static void x86_cpuid_set_vendor(Object *obj, const char *value,
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
+    char host_vendor[CPUID_VENDOR_SZ + 1];
     int i;
+
+    if (!strcmp(value, "host")) {
+        uint32_t  ebx = 0, ecx = 0, edx = 0;
+        host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
+        x86_cpu_vendor_words2str(host_vendor, ebx, edx, ecx);
+        value = host_vendor;
+    }
 
     if (strlen(value) != CPUID_VENDOR_SZ) {
         error_set(errp, QERR_PROPERTY_VALUE_BAD, "",
@@ -1996,8 +2004,6 @@ static void x86_cpu_accel_init(X86CPU *cpu, Error **errp)
     static int inited;
 
     if (kvm_enabled()) {
-        char host_vendor[CPUID_VENDOR_SZ + 1];
-        uint32_t  ebx = 0, ecx = 0, edx = 0;
         FeatureWord w;
         for (w = 0; w < FEATURE_WORDS; w++) {
             env->features[w] |= kvm_default_features[w];
@@ -2011,9 +2017,7 @@ static void x86_cpu_accel_init(X86CPU *cpu, Error **errp)
          * KVM's sysenter/syscall emulation in compatibility mode and
          * when doing cross vendor migration
          */
-        host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
-        x86_cpu_vendor_words2str(host_vendor, ebx, edx, ecx);
-        object_property_set_str(OBJECT(cpu), host_vendor, "vendor", errp);
+        object_property_set_str(OBJECT(cpu), "host", "vendor", errp);
     }
 
     /* init various static tables used in TCG mode */
