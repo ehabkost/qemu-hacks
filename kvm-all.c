@@ -113,8 +113,6 @@ typedef struct KVMState
 #endif
 } KVMState;
 
-#define TYPE_KVM_ACCEL "kvm-accel"
-
 #define KVM_STATE(obj) \
     OBJECT_CHECK(KVMState, (obj), TYPE_KVM_ACCEL)
 
