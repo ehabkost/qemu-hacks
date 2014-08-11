@@ -1022,13 +1022,6 @@ void pc_cpus_init(PCMachineState *pcms, DeviceState *icc_bridge)
     MachineState *machine = MACHINE(pcms);
 
     /* init CPUs */
-    if (machine->cpu_model == NULL) {
-#ifdef TARGET_X86_64
-        machine->cpu_model = "qemu64";
-#else
-        machine->cpu_model = "qemu32";
-#endif
-    }
     current_cpu_model = machine->cpu_model;
 
     apic_id_limit = pc_apic_id_limit(max_cpus);
@@ -1692,6 +1685,11 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
     mc->default_boot_order = "cad";
     mc->hot_add_cpu = pc_hot_add_cpu;
     mc->max_cpus = 255;
+#ifdef TARGET_X86_64
+    mc->default_cpu_model = "qemu64";
+#else
+    mc->default_cpu_model = "qemu32";
+#endif
     hc->plug = pc_machine_device_plug_cb;
 }
 

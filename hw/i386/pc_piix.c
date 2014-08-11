@@ -430,9 +430,6 @@ static void pc_init_isa(MachineState *machine)
     has_reserved_memory = false;
     option_rom_has_mr = true;
     rom_file_has_mr = false;
-    if (!machine->cpu_model) {
-        machine->cpu_model = "486";
-    }
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     enable_compat_apic_id_mode();
     pc_init1(machine);
@@ -988,6 +985,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     mc->max_cpus = 1;
     mc->hot_add_cpu = NULL;
     mc->name = "isapc";
+    mc->default_cpu_model = "486";
     machine_class_add_compat_props(mc, compat_props);
 }
 

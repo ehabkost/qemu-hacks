@@ -66,6 +66,8 @@ extern MachineState *current_machine;
 /**
  * MachineClass:
  * @qemu_machine: #QEMUMachine
+ * @default_cpu_model: CPU model to be used if no CPU model is provided
+ *    by the user.
  * @get_hotplug_handler: this function is called during bus-less
  *    device hotplug. If defined it returns pointer to an instance
  *    of HotplugHandler object, which handles hotplug operation
@@ -100,6 +102,7 @@ struct MachineClass {
     const char *default_boot_order;
     GList *compat_props;
     const char *hw_version;
+    const char *default_cpu_model;
 
     HotplugHandler *(*get_hotplug_handler)(MachineState *machine,
                                            DeviceState *dev);

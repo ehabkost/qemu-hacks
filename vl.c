@@ -4418,7 +4418,8 @@ int main(int argc, char **argv, char **envp)
     current_machine->maxram_size = maxram_size;
     current_machine->ram_slots = ram_slots;
     current_machine->boot_order = boot_order;
-    current_machine->cpu_model = cpu_model;
+    current_machine->cpu_model =
+        cpu_model ? cpu_model : machine_class->default_cpu_model;
 
     machine_class->init(current_machine);
 
