@@ -65,6 +65,7 @@ struct PCMachineClass {
     bool gigabyte_align;
     bool has_reserved_memory;
     bool kvmclock_enabled;
+    bool compat_apic_id_mode;
 };
 
 typedef struct PCMachineState PCMachineState;

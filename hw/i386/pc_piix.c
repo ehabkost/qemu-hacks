@@ -90,6 +90,10 @@ static void pc_init1(MachineState *machine)
     PcGuestInfo *guest_info;
     ram_addr_t lowmem;
 
+    if (pcmc->compat_apic_id_mode) {
+        enable_compat_apic_id_mode();
+    }
+
     /* Check whether RAM fits below 4G (leaving 1/2 GByte for IO memory).
      * If it doesn't, we need to split it in chunks below and above 4G.
      * In any case, try to make sure that guest addresses aligned at
@@ -317,7 +321,6 @@ static void pc_compat_1_4(MachineState *machine)
 static void pc_compat_1_3(MachineState *machine)
 {
     pc_compat_1_4(machine);
-    enable_compat_apic_id_mode();
 }
 
 /* PC compat function for pc-0.14 to pc-1.2 */
@@ -386,7 +389,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 static void pc_init_isa(MachineState *machine)
 {
     x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
-    enable_compat_apic_id_mode();
     pc_init1(machine);
 }
 
@@ -585,6 +587,7 @@ static const TypeInfo pc_i440fx_machine_v1_4_type_info = {
 static void pc_machine_v1_3_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_3,
         { /* end of list */ }
@@ -593,6 +596,7 @@ static void pc_machine_v1_3_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_1_3;
     mc->name = "pc-1.3";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->compat_apic_id_mode = true;
 }
 
 static const TypeInfo pc_machine_v1_3_type_info = {
@@ -981,6 +985,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->gigabyte_align = false;
     pcmc->smbios_legacy_mode = true;
     pcmc->has_reserved_memory = false;
+    pcmc->compat_apic_id_mode = true;
 }
 
 static const TypeInfo isapc_machine_type_info = {
