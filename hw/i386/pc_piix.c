@@ -298,11 +298,6 @@ static void pc_init1(MachineState *machine)
     }
 }
 
-static void pc_init_pci(MachineState *machine)
-{
-    pc_init1(machine);
-}
-
 static void pc_compat_2_0(MachineState *machine)
 {
     /* This value depends on the actual DSDT and SSDT compiled into
@@ -378,51 +373,51 @@ static void pc_compat_0_13(MachineState *machine)
 static void pc_init_pci_2_0(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 static void pc_init_pci_1_7(MachineState *machine)
 {
     pc_compat_1_7(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 static void pc_init_pci_1_6(MachineState *machine)
 {
     pc_compat_1_6(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 static void pc_init_pci_1_5(MachineState *machine)
 {
     pc_compat_1_5(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 static void pc_init_pci_1_4(MachineState *machine)
 {
     pc_compat_1_4(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 static void pc_init_pci_1_3(MachineState *machine)
 {
     pc_compat_1_3(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 /* PC machine init function for pc-0.14 to pc-1.2 */
 static void pc_init_pci_1_2(MachineState *machine)
 {
     pc_compat_1_2(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 /* PC init function for pc-0.10 to pc-0.13 */
 static void pc_init_pci_no_kvmclock(MachineState *machine)
 {
     pc_compat_0_13(machine);
-    pc_init_pci(machine);
+    pc_init1(machine);
 }
 
 static void pc_init_isa(MachineState *machine)
@@ -448,7 +443,7 @@ static void pc_xen_hvm_init(MachineState *machine)
 {
     PCIBus *bus;
 
-    pc_init_pci(machine);
+    pc_init1(machine);
 
     bus = pci_find_primary_bus();
     if (bus != NULL) {
@@ -470,7 +465,7 @@ static QEMUMachine pc_i440fx_machine_v2_1 = {
     PC_I440FX_2_1_MACHINE_OPTIONS,
     .name = "pc-i440fx-2.1",
     .alias = "pc",
-    .init = pc_init_pci,
+    .init = pc_init1,
     .is_default = 1,
 };
 
