@@ -133,7 +133,7 @@ static void pc_q35_init(MachineState *machine)
     object_property_add_child(qdev_get_machine(), "icc-bridge",
                               OBJECT(icc_bridge), NULL);
 
-    pc_cpus_init(machine->cpu_model, icc_bridge);
+    pc_cpus_init(pcms, icc_bridge);
     pc_acpi_init("q35-acpi-dsdt.aml");
 
     kvmclock_create();
