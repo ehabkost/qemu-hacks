@@ -291,102 +291,6 @@ static void pc_init1(MachineState *machine)
     }
 }
 
-static void pc_compat_2_0(MachineState *machine)
-{
-}
-
-static void pc_compat_1_7(MachineState *machine)
-{
-    pc_compat_2_0(machine);
-}
-
-static void pc_compat_1_6(MachineState *machine)
-{
-    pc_compat_1_7(machine);
-}
-
-static void pc_compat_1_5(MachineState *machine)
-{
-    pc_compat_1_6(machine);
-}
-
-static void pc_compat_1_4(MachineState *machine)
-{
-    pc_compat_1_5(machine);
-}
-
-static void pc_compat_1_3(MachineState *machine)
-{
-    pc_compat_1_4(machine);
-}
-
-/* PC compat function for pc-0.14 to pc-1.2 */
-static void pc_compat_1_2(MachineState *machine)
-{
-    pc_compat_1_3(machine);
-}
-
-/* PC compat function for pc-0.10 to pc-0.13 */
-static void pc_compat_0_13(MachineState *machine)
-{
-    pc_compat_1_2(machine);
-}
-
-static void pc_init_pci_2_0(MachineState *machine)
-{
-    pc_compat_2_0(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_7(MachineState *machine)
-{
-    pc_compat_1_7(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_6(MachineState *machine)
-{
-    pc_compat_1_6(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_5(MachineState *machine)
-{
-    pc_compat_1_5(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_4(MachineState *machine)
-{
-    pc_compat_1_4(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_pci_1_3(MachineState *machine)
-{
-    pc_compat_1_3(machine);
-    pc_init1(machine);
-}
-
-/* PC machine init function for pc-0.14 to pc-1.2 */
-static void pc_init_pci_1_2(MachineState *machine)
-{
-    pc_compat_1_2(machine);
-    pc_init1(machine);
-}
-
-/* PC init function for pc-0.10 to pc-0.13 */
-static void pc_init_pci_no_kvmclock(MachineState *machine)
-{
-    pc_compat_0_13(machine);
-    pc_init1(machine);
-}
-
-static void pc_init_isa(MachineState *machine)
-{
-    pc_init1(machine);
-}
-
 #ifdef CONFIG_XEN
 static void pc_xen_hvm_init(MachineState *machine)
 {
@@ -406,6 +310,7 @@ static void pc_i440fx_machine_class_init(ObjectClass *oc, void *data)
     MachineClass *mc = MACHINE_CLASS(oc);
     mc->desc = "Standard PC (i440FX + PIIX, 1996)";
     mc->hot_add_cpu = pc_hot_add_cpu;
+    mc->init = pc_init1;
 }
 
 #define TYPE_PC_I440FX_MACHINE "pc-i440fx" TYPE_MACHINE_SUFFIX
@@ -422,7 +327,6 @@ static void pc_i440fx_machine_v2_1_class_init(ObjectClass *oc, void *data)
     MachineClass *mc = MACHINE_CLASS(oc);
     mc->default_machine_opts = "firmware=bios-256k.bin";
     mc->alias = "pc";
-    mc->init = pc_init1;
     mc->is_default = 1;
     mc->name = "pc-i440fx-2.1";
 }
@@ -444,7 +348,6 @@ static void pc_i440fx_machine_v2_0_class_init(ObjectClass *oc, void *data)
     pc_i440fx_machine_v2_1_class_init(oc, data);
     mc->alias = NULL;
     mc->is_default = false;
-    mc->init = pc_init_pci_2_0;
     mc->name = "pc-i440fx-2.0";
     machine_class_add_compat_props(mc, compat_props);
     /* This value depends on the actual DSDT and SSDT compiled into
@@ -484,7 +387,6 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     };
     pc_i440fx_machine_v2_0_class_init(oc, data);
     mc->default_machine_opts = NULL;
-    mc->init = pc_init_pci_1_7;
     mc->name = "pc-i440fx-1.7";
     mc->option_rom_has_mr = true;
     machine_class_add_compat_props(mc, compat_props);
@@ -509,7 +411,6 @@ static void pc_i440fx_machine_v1_6_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_i440fx_machine_v1_7_class_init(oc, data);
-    mc->init = pc_init_pci_1_6;
     mc->name = "pc-i440fx-1.6";
     mc->rom_file_has_mr = false;
     machine_class_add_compat_props(mc, compat_props);
@@ -530,7 +431,6 @@ static void pc_i440fx_machine_v1_5_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_i440fx_machine_v1_6_class_init(oc, data);
-    mc->init = pc_init_pci_1_5;
     mc->name = "pc-i440fx-1.5";
     machine_class_add_compat_props(mc, compat_props);
 }
@@ -550,7 +450,6 @@ static void pc_i440fx_machine_v1_4_class_init(ObjectClass *oc, void *data)
     };
     pc_i440fx_machine_v1_5_class_init(oc, data);
     mc->hot_add_cpu = NULL;
-    mc->init = pc_init_pci_1_4;
     mc->name = "pc-i440fx-1.4";
     machine_class_add_compat_props(mc, compat_props);
 }
@@ -589,7 +488,6 @@ static void pc_machine_v1_3_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_i440fx_machine_v1_4_class_init(oc, data);
-    mc->init = pc_init_pci_1_3;
     mc->name = "pc-1.3";
     machine_class_add_compat_props(mc, compat_props);
     pcmc->compat_apic_id_mode = true;
@@ -637,7 +535,6 @@ static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_machine_v1_3_class_init(oc, data);
-    mc->init = pc_init_pci_1_2;
     mc->name = "pc-1.2";
     machine_class_add_compat_props(mc, compat_props);
     pcmc->kvm_default_features[FEAT_KVM] &= ~KVM_FEATURE_PV_EOI;
@@ -829,7 +726,6 @@ static void pc_machine_v0_13_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     pc_machine_v0_14_class_init(oc, data);
-    mc->init = pc_init_pci_no_kvmclock;
     mc->hw_version = "0.13";
     mc->name = "pc-0.13";
     machine_class_add_compat_props(mc, compat_props);
@@ -969,7 +865,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
         { /* end of list */ }
     };
     mc->desc = "ISA-only PC";
-    mc->init = pc_init_isa;
+    mc->init = pc_init1;
     mc->max_cpus = 1;
     mc->hot_add_cpu = NULL;
     mc->name = "isapc";
