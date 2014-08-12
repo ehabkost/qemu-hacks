@@ -446,27 +446,26 @@ typedef struct model_features_t {
 
 /* KVM-specific features that are automatically added to all CPU models
  * when KVM is enabled.
+ *
+ * The default is to enable all KVM features, but machine-types may override it
+ * to keep a stable ABI. See x86_cpu_set_kvm_defaults().
  */
 static uint32_t kvm_default_features[FEATURE_WORDS] = {
-    [FEAT_KVM] = (1 << KVM_FEATURE_CLOCKSOURCE) |
-        (1 << KVM_FEATURE_NOP_IO_DELAY) |
-        (1 << KVM_FEATURE_CLOCKSOURCE2) |
-        (1 << KVM_FEATURE_ASYNC_PF) |
-        (1 << KVM_FEATURE_STEAL_TIME) |
-        (1 << KVM_FEATURE_PV_EOI) |
-        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT),
-    [FEAT_1_ECX] = CPUID_EXT_X2APIC,
+    [FEAT_KVM] = ~0,
 };
 
 /* Features that are not added by default to any CPU model when KVM is enabled.
  */
-static uint32_t kvm_default_unset_features[FEATURE_WORDS] = {
-    [FEAT_1_ECX] = CPUID_EXT_MONITOR,
-};
+static uint32_t kvm_default_unset_features[FEATURE_WORDS];
 
-void x86_cpu_compat_disable_kvm_features(FeatureWord w, uint32_t features)
+/* Override default-enabled and default-disabled KVM features. Used by
+ * machine-type code to ensure a stable ABI.
+ */
+void x86_cpu_set_kvm_defaults(uint32_t *default_set, uint32_t *default_unset)
 {
-    kvm_default_features[w] &= ~features;
+    memcpy(kvm_default_features, default_set, sizeof(kvm_default_features));
+    memcpy(kvm_default_unset_features, default_unset,
+           sizeof(kvm_default_unset_features));
 }
 
 /*

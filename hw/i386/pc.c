@@ -24,6 +24,7 @@
 #include "hw/hw.h"
 #include "hw/i386/pc.h"
 #include "hw/char/serial.h"
+#include "hw/i386/cpu.h"
 #include "hw/i386/apic.h"
 #include "hw/block/fdc.h"
 #include "hw/ide.h"
@@ -1020,6 +1021,10 @@ void pc_cpus_init(PCMachineState *pcms, DeviceState *icc_bridge)
     Error *error = NULL;
     unsigned long apic_id_limit;
     MachineState *machine = MACHINE(pcms);
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
+
+    x86_cpu_set_kvm_defaults(pcmc->kvm_default_features,
+                             pcmc->kvm_default_unset_features);
 
     /* init CPUs */
     current_cpu_model = machine->cpu_model;
@@ -1687,6 +1692,16 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->gigabyte_align = true;
     pcmc->has_reserved_memory = true;
     pcmc->kvmclock_enabled = true;
+    pcmc->kvm_default_features[FEAT_KVM] =
+        (1 << KVM_FEATURE_CLOCKSOURCE) |
+        (1 << KVM_FEATURE_NOP_IO_DELAY) |
+        (1 << KVM_FEATURE_CLOCKSOURCE2) |
+        (1 << KVM_FEATURE_ASYNC_PF) |
+        (1 << KVM_FEATURE_STEAL_TIME) |
+        (1 << KVM_FEATURE_PV_EOI) |
+        (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT),
+    pcmc->kvm_default_features[FEAT_1_ECX] = CPUID_EXT_X2APIC,
+    pcmc->kvm_default_unset_features[FEAT_1_ECX] = CPUID_EXT_MONITOR,
 
     mc->get_hotplug_handler = pc_get_hotpug_handler;
     mc->default_boot_order = "cad";

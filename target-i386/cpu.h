@@ -741,7 +741,7 @@ void do_smm_enter(X86CPU *cpu);
 
 void cpu_report_tpr_access(CPUX86State *env, TPRAccess access);
 
-void x86_cpu_compat_disable_kvm_features(FeatureWord w, uint32_t features);
+void x86_cpu_set_kvm_defaults(uint32_t *default_set, uint32_t *default_unset);
 
 
 /* Return name of 32-bit register, from a R_* constant */

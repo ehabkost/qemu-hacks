@@ -271,7 +271,6 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
 
 static void pc_compat_1_6(MachineState *machine)
@@ -389,6 +388,7 @@ static void pc_q35_machine_v1_7_class_init(ObjectClass *oc, void *data)
     mc->name = "pc-q35-1.7";
     pcmc->smbios_defaults = false;
     pcmc->gigabyte_align = false;
+    pcmc->kvm_default_features[FEAT_1_ECX] &= ~CPUID_EXT_X2APIC;
 }
 
 static TypeInfo pc_q35_machine_v1_7_type_info = {

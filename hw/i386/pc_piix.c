@@ -298,7 +298,6 @@ static void pc_compat_2_0(MachineState *machine)
 static void pc_compat_1_7(MachineState *machine)
 {
     pc_compat_2_0(machine);
-    x86_cpu_compat_disable_kvm_features(FEAT_1_ECX, CPUID_EXT_X2APIC);
 }
 
 static void pc_compat_1_6(MachineState *machine)
@@ -325,7 +324,6 @@ static void pc_compat_1_3(MachineState *machine)
 static void pc_compat_1_2(MachineState *machine)
 {
     pc_compat_1_3(machine);
-    x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
 }
 
 /* PC compat function for pc-0.10 to pc-0.13 */
@@ -386,7 +384,6 @@ static void pc_init_pci_no_kvmclock(MachineState *machine)
 
 static void pc_init_isa(MachineState *machine)
 {
-    x86_cpu_compat_disable_kvm_features(FEAT_KVM, KVM_FEATURE_PV_EOI);
     pc_init1(machine);
 }
 
@@ -494,6 +491,7 @@ static void pc_i440fx_machine_v1_7_class_init(ObjectClass *oc, void *data)
     pcmc->smbios_defaults = false;
     pcmc->gigabyte_align = false;
     pcmc->legacy_acpi_table_size = 6414;
+    pcmc->kvm_default_features[FEAT_1_ECX] &= ~CPUID_EXT_X2APIC;
 }
 
 static const TypeInfo pc_i440fx_machine_v1_7_type_info = {
@@ -633,6 +631,7 @@ static const TypeInfo pc_machine_v1_3_type_info = {
 static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(oc);
     static GlobalProperty compat_props[] = {
         PC_COMPAT_1_2,
         { /* end of list */ }
@@ -641,6 +640,7 @@ static void pc_machine_v1_2_class_init(ObjectClass *oc, void *data)
     mc->init = pc_init_pci_1_2;
     mc->name = "pc-1.2";
     machine_class_add_compat_props(mc, compat_props);
+    pcmc->kvm_default_features[FEAT_KVM] &= ~KVM_FEATURE_PV_EOI;
 }
 
 static const TypeInfo pc_machine_v1_2_type_info = {
@@ -984,6 +984,7 @@ static void isapc_machine_class_init(ObjectClass *oc, void *data)
     pcmc->smbios_legacy_mode = true;
     pcmc->has_reserved_memory = false;
     pcmc->compat_apic_id_mode = true;
+    pcmc->kvm_default_features[FEAT_KVM] &= ~KVM_FEATURE_PV_EOI;
 }
 
 static const TypeInfo isapc_machine_type_info = {

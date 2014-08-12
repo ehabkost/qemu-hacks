@@ -8,6 +8,7 @@
 #include "hw/block/fdc.h"
 #include "net/net.h"
 #include "hw/i386/ioapic.h"
+#include "hw/i386/cpu.h"
 #include "hw/boards.h"
 
 #include "qemu/range.h"
@@ -66,6 +67,8 @@ struct PCMachineClass {
     bool has_reserved_memory;
     bool kvmclock_enabled;
     bool compat_apic_id_mode;
+    uint32_t kvm_default_features[FEATURE_WORDS];
+    uint32_t kvm_default_unset_features[FEATURE_WORDS];
 };
 
 typedef struct PCMachineState PCMachineState;
