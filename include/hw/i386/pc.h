@@ -513,6 +513,14 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
             .driver   = "486-" TYPE_X86_CPU,\
             .property = "model",\
             .value    = stringify(0),\
+        },{\
+            .driver   = "n270-" TYPE_X86_CPU,\
+            .property = "feat-movbe",\
+            .value    = "off",\
+        },{\
+            .driver   = "Westmere-" TYPE_X86_CPU,\
+            .property = "feat-pclmulqdq",\
+            .value    = "off",\
         }
 
 #endif

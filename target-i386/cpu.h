@@ -1297,9 +1297,6 @@ void do_smm_enter(X86CPU *cpu);
 
 void cpu_report_tpr_access(CPUX86State *env, TPRAccess access);
 
-void x86_cpu_compat_set_features(const char *cpu_model, FeatureWord w,
-                                 uint32_t feat_add, uint32_t feat_remove);
-
 void x86_cpu_compat_disable_kvm_features(FeatureWord w, uint32_t features);
 
 

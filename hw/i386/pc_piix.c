@@ -314,8 +314,6 @@ static void pc_compat_1_5(MachineState *machine)
 static void pc_compat_1_4(MachineState *machine)
 {
     pc_compat_1_5(machine);
-    x86_cpu_compat_set_features("n270", FEAT_1_ECX, 0, CPUID_EXT_MOVBE);
-    x86_cpu_compat_set_features("Westmere", FEAT_1_ECX, 0, CPUID_EXT_PCLMULQDQ);
 }
 
 static void pc_compat_1_3(MachineState *machine)
