@@ -291,20 +291,6 @@ static void pc_init1(MachineState *machine)
     }
 }
 
-#ifdef CONFIG_XEN
-static void pc_xen_hvm_init(MachineState *machine)
-{
-    PCIBus *bus;
-
-    pc_init1(machine);
-
-    bus = pci_find_primary_bus();
-    if (bus != NULL) {
-        pci_create_simple(bus, -1, "xen-platform");
-    }
-}
-#endif
-
 static void pc_i440fx_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -890,6 +876,18 @@ static const TypeInfo isapc_machine_type_info = {
 };
 
 #ifdef CONFIG_XEN
+static void pc_xen_hvm_init(MachineState *machine)
+{
+    PCIBus *bus;
+
+    pc_init1(machine);
+
+    bus = pci_find_primary_bus();
+    if (bus != NULL) {
+        pci_create_simple(bus, -1, "xen-platform");
+    }
+}
+
 static void xenfv_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
