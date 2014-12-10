@@ -173,7 +173,7 @@ static void kvm_s390_enable_cmma(KVMState *s)
     trace_kvm_enable_cmma(rc);
 }
 
-int kvm_arch_init(KVMState *s)
+void kvm_arch_init(KVMState *s, Error **errp)
 {
     cap_sync_regs = kvm_check_extension(s, KVM_CAP_SYNC_REGS);
     cap_async_pf = kvm_check_extension(s, KVM_CAP_ASYNC_PF);
@@ -186,7 +186,6 @@ int kvm_arch_init(KVMState *s)
         || !kvm_check_extension(s, KVM_CAP_S390_COW)) {
         phys_mem_set_alloc(legacy_s390_alloc);
     }
-    return 0;
 }
 
 unsigned long kvm_arch_vcpu_id(CPUState *cpu)

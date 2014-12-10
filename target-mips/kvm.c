@@ -40,13 +40,12 @@ unsigned long kvm_arch_vcpu_id(CPUState *cs)
     return cs->cpu_index;
 }
 
-int kvm_arch_init(KVMState *s)
+void kvm_arch_init(KVMState *s, Error **errp)
 {
     /* MIPS has 128 signals */
     kvm_set_sigmask_len(s, 16);
 
     DPRINTF("%s\n", __func__);
-    return 0;
 }
 
 int kvm_arch_init_vcpu(CPUState *cs)

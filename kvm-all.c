@@ -1431,6 +1431,7 @@ static void kvm_init(MachineState *ms, Error **errp)
     int ret = 0;
     int i, type = 0;
     const char *kvm_type;
+    Error *err = NULL;
 
     s = KVM_STATE(ms->accelerator);
 
@@ -1593,9 +1594,9 @@ static void kvm_init(MachineState *ms, Error **errp)
     kvm_resamplefds_allowed =
         (kvm_check_extension(s, KVM_CAP_IRQFD_RESAMPLE) > 0);
 
-    ret = kvm_arch_init(s);
-    if (ret < 0) {
-        error_setg_errno(errp, -ret, "kvm_arch_init failed");
+    kvm_arch_init(s, &err);
+    if (err) {
+        error_propagate(errp, err);
         goto err;
     }
 

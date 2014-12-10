@@ -95,7 +95,7 @@ static void kvm_kick_cpu(void *opaque)
 
 static int kvm_ppc_register_host_cpu_type(void);
 
-int kvm_arch_init(KVMState *s)
+void kvm_arch_init(KVMState *s, Error **errp)
 {
     cap_interrupt_unset = kvm_check_extension(s, KVM_CAP_PPC_UNSET_IRQ);
     cap_interrupt_level = kvm_check_extension(s, KVM_CAP_PPC_IRQ_LEVEL);
@@ -121,8 +121,6 @@ int kvm_arch_init(KVMState *s)
     }
 
     kvm_ppc_register_host_cpu_type();
-
-    return 0;
 }
 
 static int kvm_arch_sync_sregs(PowerPCCPU *cpu)

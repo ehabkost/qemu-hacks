@@ -840,7 +840,7 @@ static int kvm_get_supported_msrs(KVMState *s)
     return ret;
 }
 
-int kvm_arch_init(KVMState *s)
+void kvm_arch_init(KVMState *s, Error **errp)
 {
     uint64_t identity_base = 0xfffbc000;
     uint64_t shadow_mem;
@@ -849,7 +849,8 @@ int kvm_arch_init(KVMState *s)
 
     ret = kvm_get_supported_msrs(s);
     if (ret < 0) {
-        return ret;
+        error_setg_errno(errp, -ret, "kvm_get_supported_msrs failed");
+        return;
     }
 
     uname(&utsname);
@@ -872,21 +873,24 @@ int kvm_arch_init(KVMState *s)
 
         ret = kvm_vm_ioctl(s, KVM_SET_IDENTITY_MAP_ADDR, &identity_base);
         if (ret < 0) {
-            return ret;
+            error_setg_errno(errp, -ret, "KVM_SET_IDENTITY_MAP_ADDR failed");
+            return;
         }
     }
 
     /* Set TSS base one page after EPT identity map. */
     ret = kvm_vm_ioctl(s, KVM_SET_TSS_ADDR, identity_base + 0x1000);
     if (ret < 0) {
-        return ret;
+        error_setg_errno(errp, -ret, "KVM_SET_TSS_ADDR failed");
+        return;
     }
 
     /* Tell fw_cfg to notify the BIOS to reserve the range. */
     ret = e820_add_entry(identity_base, 0x4000, E820_RESERVED);
     if (ret < 0) {
         fprintf(stderr, "e820_add_entry() table is full\n");
-        return ret;
+        error_setg_errno(errp, -ret, "e820_add_entry failed");
+        return;
     }
     qemu_register_reset(kvm_unpoison_all, NULL);
 
@@ -896,10 +900,10 @@ int kvm_arch_init(KVMState *s)
         shadow_mem /= 4096;
         ret = kvm_vm_ioctl(s, KVM_SET_NR_MMU_PAGES, shadow_mem);
         if (ret < 0) {
-            return ret;
+            error_setg_errno(errp, -ret, "KVM_SET_NR_MMU_PAGES failed");
+            return;
         }
     }
-    return 0;
 }
 
 static void set_v8086_seg(struct kvm_segment *lhs, const SegmentCache *rhs)

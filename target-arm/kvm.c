@@ -150,7 +150,7 @@ static const TypeInfo host_arm_cpu_type_info = {
     .class_size = sizeof(ARMHostCPUClass),
 };
 
-int kvm_arch_init(KVMState *s)
+void kvm_arch_init(KVMState *s, Error **errp)
 {
     /* For ARM interrupt delivery is always asynchronous,
      * whether we are using an in-kernel VGIC or not.
@@ -158,8 +158,6 @@ int kvm_arch_init(KVMState *s)
     kvm_async_interrupts_allowed = true;
 
     type_register_static(&host_arm_cpu_type_info);
-
-    return 0;
 }
 
 unsigned long kvm_arch_vcpu_id(CPUState *cpu)
