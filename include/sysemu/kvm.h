@@ -414,11 +414,10 @@ void kvm_init_irq_routing(KVMState *s);
  *
  * Allow architectures to create an in-kernel irq chip themselves.
  *
- * Returns: < 0: error
- *            0: irq chip was not created
+ * Returns:   0: irq chip was not created
  *          > 0: irq chip was created
  */
-int kvm_arch_irqchip_create(KVMState *s);
+int kvm_arch_irqchip_create(KVMState *s, Error **errp);
 
 /**
  * kvm_set_one_reg - set a register value in KVM via KVM_SET_ONE_REG ioctl

@@ -531,7 +531,7 @@ void kvm_arch_init_irq_routing(KVMState *s)
 {
 }
 
-int kvm_arch_irqchip_create(KVMState *s)
+int kvm_arch_irqchip_create(KVMState *s, Error **errp)
 {
     int ret;
 

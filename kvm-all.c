@@ -1362,6 +1362,7 @@ int kvm_irqchip_remove_irqfd_notifier(KVMState *s, EventNotifier *n, int virq)
 
 static void kvm_irqchip_create(KVMState *s, Error **errp)
 {
+    Error *err = NULL;
     int ret;
 
     if (!qemu_opt_get_bool(qemu_get_machine_opts(), "kernel_irqchip", true) ||
@@ -1372,9 +1373,9 @@ static void kvm_irqchip_create(KVMState *s, Error **errp)
 
     /* First probe and see if there's a arch-specific hook to create the
      * in-kernel irqchip for us */
-    ret = kvm_arch_irqchip_create(s);
-    if (ret < 0) {
-        error_setg_errno(errp, -ret, "kvm_arch_irqchip_create failed");
+    ret = kvm_arch_irqchip_create(s, &err);
+    if (err) {
+        error_propagate(errp, err);
         return;
     } else if (ret == 0) {
         ret = kvm_vm_ioctl(s, KVM_CREATE_IRQCHIP);
