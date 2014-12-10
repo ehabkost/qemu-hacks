@@ -1411,6 +1411,44 @@ static int kvm_max_vcpus(KVMState *s)
     return (ret) ? ret : kvm_recommended_vcpus(s);
 }
 
+static void kvm_close(Object *obj, Error **errp)
+{
+    KVMState *s = KVM_STATE(obj);
+
+    if (s->fd != -1) {
+        close(s->fd);
+        s->fd = -1;
+    }
+}
+
+static void kvm_open(Object *obj, Error **errp)
+{
+    KVMState *s = KVM_STATE(obj);
+    int ret;
+
+    s->fd = qemu_open("/dev/kvm", O_RDWR);
+    if (s->fd == -1) {
+        error_setg_errno(errp, errno, "Could not access KVM kernel module");
+        goto err;
+    }
+
+    ret = kvm_ioctl(s, KVM_GET_API_VERSION, 0);
+    if (ret < KVM_API_VERSION) {
+        error_setg(errp, "kvm version too old");
+        goto err;
+    }
+
+    if (ret > KVM_API_VERSION) {
+        error_setg(errp, "kvm version not supported");
+        goto err;
+    }
+
+    return;
+
+err:
+    kvm_close(obj, &error_abort);
+}
+
 static void kvm_init(MachineState *ms, Error **errp)
 {
     MachineClass *mc = MACHINE_GET_CLASS(ms);
@@ -1449,22 +1487,6 @@ static void kvm_init(MachineState *ms, Error **errp)
     QTAILQ_INIT(&s->kvm_sw_breakpoints);
 #endif
     s->vmfd = -1;
-    s->fd = qemu_open("/dev/kvm", O_RDWR);
-    if (s->fd == -1) {
-        error_setg_errno(errp, errno, "Could not access KVM kernel module");
-        goto err;
-    }
-
-    ret = kvm_ioctl(s, KVM_GET_API_VERSION, 0);
-    if (ret < KVM_API_VERSION) {
-        error_setg(errp, "kvm version too old");
-        goto err;
-    }
-
-    if (ret > KVM_API_VERSION) {
-        error_setg(errp, "kvm version not supported");
-        goto err;
-    }
 
     s->nr_slots = kvm_check_extension(s, KVM_CAP_NR_MEMSLOTS);
 
@@ -1618,9 +1640,6 @@ static void kvm_init(MachineState *ms, Error **errp)
 err:
     if (s->vmfd >= 0) {
         close(s->vmfd);
-    }
-    if (s->fd != -1) {
-        close(s->fd);
     }
     g_free(s->slots);
 }
@@ -1863,6 +1882,8 @@ int kvm_ioctl(KVMState *s, int type, ...)
     int ret;
     void *arg;
     va_list ap;
+
+    assert(s->fd >= 0);
 
     va_start(ap, type);
     arg = va_arg(ap, void *);
@@ -2260,6 +2281,8 @@ static void kvm_accel_class_init(ObjectClass *oc, void *data)
 {
     AccelClass *ac = ACCEL_CLASS(oc);
     ac->name = "KVM";
+    ac->open = kvm_open;
+    ac->close = kvm_close;
     ac->init_machine = kvm_init;
     ac->allowed = &kvm_allowed;
 }
