@@ -29,6 +29,8 @@
 typedef struct AccelState {
     /*< private >*/
     Object parent_obj;
+
+    bool opened;
 } AccelState;
 
 typedef struct AccelClass {
@@ -40,6 +42,8 @@ typedef struct AccelClass {
     const char *name;
     int (*available)(void);
     void (*init_machine)(MachineState *ms, Error **errp);
+    void (*open)(Object *obj, Error **errp);
+    void (*close)(Object *obj, Error **errp);
     bool *allowed;
 } AccelClass;
 

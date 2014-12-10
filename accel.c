@@ -32,7 +32,9 @@
 #include "sysemu/qtest.h"
 #include "hw/xen/xen.h"
 #include "qom/object.h"
+#include "qom/helpers.h"
 #include "hw/boards.h"
+#include "qapi-visit.h"
 
 int tcg_tb_size;
 static bool tcg_allowed = true;
@@ -42,11 +44,20 @@ static void tcg_init(MachineState *ms, Error **errp)
     tcg_exec_init(tcg_tb_size * 1024 * 1024);
 }
 
+static void accel_initfn(Object *obj)
+{
+    AccelState *accel = ACCEL(obj);
+    AccelClass *acc = ACCEL_GET_CLASS(accel);
+    object_add_flip_property(obj, "opened", &accel->opened,
+                             acc->open, acc->close, &error_abort);
+}
+
 static const TypeInfo accel_type = {
     .name = TYPE_ACCEL,
     .parent = TYPE_OBJECT,
     .class_size = sizeof(AccelClass),
     .instance_size = sizeof(AccelState),
+    .instance_init = accel_initfn,
 };
 
 /* Lookup AccelClass from opt_name. Returns NULL if not found */
@@ -64,15 +75,26 @@ static void accel_init_machine(AccelClass *acc, MachineState *ms, Error **errp)
     ObjectClass *oc = OBJECT_CLASS(acc);
     const char *cname = object_class_get_name(oc);
     AccelState *accel = ACCEL(object_new(cname));
+
+    object_property_set_bool(OBJECT(accel), true, "opened", &err);
+    if (err) {
+        goto err;
+    }
+
     ms->accelerator = accel;
     *(acc->allowed) = true;
     acc->init_machine(ms, &err);
     if (err) {
-        error_propagate(errp, err);
-        ms->accelerator = NULL;
-        *(acc->allowed) = false;
-        object_unref(OBJECT(accel));
+        goto err;
     }
+
+    return;
+
+err:
+    error_propagate(errp, err);
+    ms->accelerator = NULL;
+    *(acc->allowed) = false;
+    object_unref(OBJECT(accel));
 }
 
 int configure_accelerator(MachineState *ms)
