@@ -1451,23 +1451,18 @@ static void kvm_init(MachineState *ms, Error **errp)
     s->vmfd = -1;
     s->fd = qemu_open("/dev/kvm", O_RDWR);
     if (s->fd == -1) {
-        fprintf(stderr, "Could not access KVM kernel module: %m\n");
-        ret = -errno;
+        error_setg_errno(errp, errno, "Could not access KVM kernel module");
         goto err;
     }
 
     ret = kvm_ioctl(s, KVM_GET_API_VERSION, 0);
     if (ret < KVM_API_VERSION) {
-        if (ret >= 0) {
-            ret = -EINVAL;
-        }
-        fprintf(stderr, "kvm version too old\n");
+        error_setg(errp, "kvm version too old");
         goto err;
     }
 
     if (ret > KVM_API_VERSION) {
-        ret = -EINVAL;
-        fprintf(stderr, "kvm version not supported\n");
+        error_setg(errp, "kvm version not supported");
         goto err;
     }
 
@@ -1509,8 +1504,7 @@ static void kvm_init(MachineState *ms, Error **errp)
     if (mc->kvm_type) {
         type = mc->kvm_type(kvm_type);
     } else if (kvm_type) {
-        ret = -EINVAL;
-        fprintf(stderr, "Invalid argument kvm-type=%s\n", kvm_type);
+        error_setg(errp, "Invalid argument kvm-type=%s\n", kvm_type);
         goto err;
     }
 
@@ -1526,6 +1520,7 @@ static void kvm_init(MachineState *ms, Error **errp)
         fprintf(stderr, "Please add the 'switch_amode' kernel parameter to "
                         "your host kernel command line\n");
 #endif
+        error_setg_errno(errp, -ret, "ioctl(KVM_CREATE_VM) failed");
         goto err;
     }
 
@@ -1536,9 +1531,9 @@ static void kvm_init(MachineState *ms, Error **errp)
             kvm_check_extension_list(s, kvm_arch_required_capabilities);
     }
     if (missing_cap) {
-        ret = -EINVAL;
         fprintf(stderr, "kvm does not support %s\n%s",
                 missing_cap->name, upgrade_note);
+        error_setg(errp, "kvm does not support %s", missing_cap->name);
         goto err;
     }
 
@@ -1600,11 +1595,13 @@ static void kvm_init(MachineState *ms, Error **errp)
 
     ret = kvm_arch_init(s);
     if (ret < 0) {
+        error_setg_errno(errp, -ret, "kvm_arch_init failed");
         goto err;
     }
 
     ret = kvm_irqchip_create(s);
     if (ret < 0) {
+        error_setg_errno(errp, -ret, "kvm_irqchip_create");
         goto err;
     }
 
@@ -1619,8 +1616,6 @@ static void kvm_init(MachineState *ms, Error **errp)
     return;
 
 err:
-    assert(ret < 0);
-    error_setg(errp, "%s", strerror(-ret));
     if (s->vmfd >= 0) {
         close(s->vmfd);
     }
