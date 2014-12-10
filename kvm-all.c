@@ -1360,26 +1360,27 @@ int kvm_irqchip_remove_irqfd_notifier(KVMState *s, EventNotifier *n, int virq)
            false);
 }
 
-static int kvm_irqchip_create(KVMState *s)
+static void kvm_irqchip_create(KVMState *s, Error **errp)
 {
     int ret;
 
     if (!qemu_opt_get_bool(qemu_get_machine_opts(), "kernel_irqchip", true) ||
         (!kvm_check_extension(s, KVM_CAP_IRQCHIP) &&
          (kvm_vm_enable_cap(s, KVM_CAP_S390_IRQCHIP, 0) < 0))) {
-        return 0;
+        return;
     }
 
     /* First probe and see if there's a arch-specific hook to create the
      * in-kernel irqchip for us */
     ret = kvm_arch_irqchip_create(s);
     if (ret < 0) {
-        return ret;
+        error_setg_errno(errp, -ret, "kvm_arch_irqchip_create failed");
+        return;
     } else if (ret == 0) {
         ret = kvm_vm_ioctl(s, KVM_CREATE_IRQCHIP);
         if (ret < 0) {
-            fprintf(stderr, "Create kernel irqchip failed\n");
-            return ret;
+            error_setg_errno(errp, -ret, "KVM_CREATE_IRQCHIP failed");
+            return;
         }
     }
 
@@ -1391,8 +1392,6 @@ static int kvm_irqchip_create(KVMState *s)
     kvm_halt_in_kernel_allowed = true;
 
     kvm_init_irq_routing(s);
-
-    return 0;
 }
 
 /* Find number of supported CPUs using the recommended
@@ -1600,9 +1599,9 @@ static void kvm_init(MachineState *ms, Error **errp)
         goto err;
     }
 
-    ret = kvm_irqchip_create(s);
-    if (ret < 0) {
-        error_setg_errno(errp, -ret, "kvm_irqchip_create");
+    kvm_irqchip_create(s, &err);
+    if (err) {
+        error_propagate(errp, err);
         goto err;
     }
 
