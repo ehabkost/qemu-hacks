@@ -72,6 +72,8 @@ check-unit-y += tests/test-qemu-opts$(EXESUF)
 gcov-files-test-qemu-opts-y = qom/test-qemu-opts.c
 check-unit-y += tests/test-write-threshold$(EXESUF)
 gcov-files-test-write-threshold-y = block/write-threshold.c
+check-unit-y += tests/test-qom-helpers$(EXESUF)
+gcov-files-test-qom-helpers-y += qom/helpers.c
 
 check-block-$(CONFIG_POSIX) += tests/qemu-iotests-quick.sh
 
@@ -367,6 +369,9 @@ tests/vhost-user-test$(EXESUF): tests/vhost-user-test.o qemu-char.o qemu-timer.o
 tests/qemu-iotests/socket_scm_helper$(EXESUF): tests/qemu-iotests/socket_scm_helper.o
 tests/test-qemu-opts$(EXESUF): tests/test-qemu-opts.o libqemuutil.a libqemustub.a
 tests/test-write-threshold$(EXESUF): tests/test-write-threshold.o $(block-obj-y) libqemuutil.a libqemustub.a
+tests/test-qom-helpers$(EXESUF): tests/test-qom-helpers.o \
+	$(qom-core-obj) qom/helpers.o \
+	libqemuutil.a libqemustub.a
 
 ifeq ($(CONFIG_POSIX),y)
 LIBS += -lutil

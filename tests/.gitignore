@@ -35,5 +35,10 @@ test-visitor-serialization
 test-vmstate
 test-x86-cpuid
 test-xbzrle
+<<<<<<< HEAD
+=======
+test-x86-cpu
+test-qom-helpers
+>>>>>>> fa3c8e4... qom: Add helper for open/close boolean properties
 *-test
 qapi-schema/*.test.*
