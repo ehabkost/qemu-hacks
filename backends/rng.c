@@ -13,6 +13,7 @@
 #include "sysemu/rng.h"
 #include "qapi/qmp/qerror.h"
 #include "qom/object_interfaces.h"
+#include "qom/helpers.h"
 
 void rng_backend_request_entropy(RngBackend *s, size_t size,
                                  EntropyReceiveFunc *receive_entropy,
@@ -34,50 +35,19 @@ void rng_backend_cancel_requests(RngBackend *s)
     }
 }
 
-static bool rng_backend_prop_get_opened(Object *obj, Error **errp)
-{
-    RngBackend *s = RNG_BACKEND(obj);
-
-    return s->opened;
-}
-
 static void rng_backend_complete(UserCreatable *uc, Error **errp)
 {
     object_property_set_bool(OBJECT(uc), true, "opened", errp);
 }
 
-static void rng_backend_prop_set_opened(Object *obj, bool value, Error **errp)
+static void rng_backend_init(Object *obj)
 {
     RngBackend *s = RNG_BACKEND(obj);
     RngBackendClass *k = RNG_BACKEND_GET_CLASS(s);
-    Error *local_err = NULL;
-
-    if (value == s->opened) {
-        return;
-    }
-
-    if (!value && s->opened) {
-        error_set(errp, QERR_PERMISSION_DENIED);
-        return;
-    }
-
-    if (k->opened) {
-        k->opened(s, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
-            return;
-        }
-    }
-
-    s->opened = true;
-}
-
-static void rng_backend_init(Object *obj)
-{
-    object_property_add_bool(obj, "opened",
-                             rng_backend_prop_get_opened,
-                             rng_backend_prop_set_opened,
-                             NULL);
+    object_add_flip_property(obj, "opened", &s->opened,
+                             k->opened,
+                             NULL,
+                             &error_abort);
 }
 
 static void rng_backend_class_init(ObjectClass *oc, void *data)

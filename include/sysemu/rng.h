@@ -40,7 +40,7 @@ struct RngBackendClass
                             EntropyReceiveFunc *receive_entropy, void *opaque);
     void (*cancel_requests)(RngBackend *s);
 
-    void (*opened)(RngBackend *s, Error **errp);
+    void (*opened)(Object *obj, Error **errp);
 };
 
 struct RngBackend

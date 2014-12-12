@@ -69,9 +69,9 @@ static void rng_random_request_entropy(RngBackend *b, size_t size,
     qemu_set_fd_handler(s->fd, entropy_available, NULL, s);
 }
 
-static void rng_random_opened(RngBackend *b, Error **errp)
+static void rng_random_opened(Object *obj, Error **errp)
 {
-    RndRandom *s = RNG_RANDOM(b);
+    RndRandom *s = RNG_RANDOM(obj);
 
     if (s->filename == NULL) {
         error_set(errp, QERR_INVALID_PARAMETER_VALUE,

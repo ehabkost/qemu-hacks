@@ -135,9 +135,9 @@ static void rng_egd_cancel_requests(RngBackend *b)
     rng_egd_free_requests(s);
 }
 
-static void rng_egd_opened(RngBackend *b, Error **errp)
+static void rng_egd_opened(Object *obj, Error **errp)
 {
-    RngEgd *s = RNG_EGD(b);
+    RngEgd *s = RNG_EGD(obj);
 
     if (s->chr_name == NULL) {
         error_set(errp, QERR_INVALID_PARAMETER_VALUE,
