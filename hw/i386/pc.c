@@ -995,11 +995,15 @@ static X86CPU *pc_new_cpu(const char *cpu_model, int64_t apic_id,
     X86CPU *cpu;
     Error *local_err = NULL;
 
-    cpu = cpu_x86_create(cpu_model, icc_bridge, &local_err);
+    cpu = cpu_x86_create(cpu_model, &local_err);
     if (local_err != NULL) {
         error_propagate(errp, local_err);
         return NULL;
     }
+
+    assert(icc_bridge);
+    qdev_set_parent_bus(DEVICE(cpu), qdev_get_child_bus(icc_bridge, "icc"));
+    object_unref(OBJECT(cpu));
 
     object_property_set_int(OBJECT(cpu), apic_id, "apic-id", &local_err);
     object_property_set_bool(OBJECT(cpu), true, "realized", &local_err);
