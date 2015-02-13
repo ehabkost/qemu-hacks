@@ -2781,6 +2781,8 @@ static void x86_cpu_realizefn(DeviceState *dev, Error **errp)
     static bool ht_warned;
     static bool tcg_initialized;
 
+    cpu_exec_init(env);
+
     if (tcg_enabled() && !tcg_initialized) {
         tcg_initialized = 1;
         tcg_x86_init();
@@ -2891,7 +2893,6 @@ static void x86_cpu_initfn(Object *obj)
     CPUX86State *env = &cpu->env;
 
     cs->env_ptr = env;
-    cpu_exec_init(env);
 
     object_property_add(obj, "family", "int",
                         x86_cpuid_version_get_family,
