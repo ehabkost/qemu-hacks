@@ -2779,6 +2779,12 @@ static void x86_cpu_realizefn(DeviceState *dev, Error **errp)
     CPUX86State *env = &cpu->env;
     Error *local_err = NULL;
     static bool ht_warned;
+    static bool tcg_initialized;
+
+    if (tcg_enabled() && !tcg_initialized) {
+        tcg_initialized = 1;
+        tcg_x86_init();
+    }
 
     if (env->features[FEAT_7_0_EBX] && env->cpuid_level < 7) {
         env->cpuid_level = 7;
@@ -2883,7 +2889,6 @@ static void x86_cpu_initfn(Object *obj)
     X86CPU *cpu = X86_CPU(obj);
     X86CPUClass *xcc = X86_CPU_GET_CLASS(obj);
     CPUX86State *env = &cpu->env;
-    static int inited;
 
     cs->env_ptr = env;
     cpu_exec_init(env);
@@ -2926,12 +2931,6 @@ static void x86_cpu_initfn(Object *obj)
     env->cpuid_apic_id = x86_cpu_apic_id_from_index(cs->cpu_index);
 
     x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
-
-    /* init various static tables used in TCG mode */
-    if (tcg_enabled() && !inited) {
-        inited = 1;
-        tcg_x86_init();
-    }
 }
 
 static int64_t x86_cpu_get_arch_id(CPUState *cs)
