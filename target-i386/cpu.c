@@ -2757,6 +2757,10 @@ static void x86_cpu_realizefn(DeviceState *dev, Error **errp)
     Error *local_err = NULL;
     static bool ht_warned;
 
+    if (tcg_enabled()) {
+        tcg_x86_init();
+    }
+
     if (cpu->apic_id < 0) {
         error_setg(errp, "apic-id property was not initialized properly");
         return;
@@ -2878,11 +2882,6 @@ static void x86_cpu_initfn(Object *obj)
 #endif
 
     x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
-
-    /* init various static tables used in TCG mode */
-    if (tcg_enabled()) {
-        tcg_x86_init();
-    }
 }
 
 static int64_t x86_cpu_get_arch_id(CPUState *cs)
