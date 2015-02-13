@@ -534,6 +534,11 @@ void cpu_exec_init(CPUArchState *env)
     CPUState *some_cpu;
     int cpu_index;
 
+#ifndef CONFIG_USER_ONLY
+    cpu->as = &address_space_memory;
+    cpu->thread_id = qemu_get_thread_id();
+#endif
+
 #if defined(CONFIG_USER_ONLY)
     cpu_list_lock();
 #endif
@@ -542,10 +547,6 @@ void cpu_exec_init(CPUArchState *env)
         cpu_index++;
     }
     cpu->cpu_index = cpu_index;
-#ifndef CONFIG_USER_ONLY
-    cpu->as = &address_space_memory;
-    cpu->thread_id = qemu_get_thread_id();
-#endif
     QTAILQ_INSERT_TAIL(&cpus, cpu, node);
 #if defined(CONFIG_USER_ONLY)
     cpu_list_unlock();
