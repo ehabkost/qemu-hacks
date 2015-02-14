@@ -97,9 +97,11 @@ static void accel_init_machine(AccelClass *acc, MachineState *ms, Error **errp)
 
     ms->accelerator = accel;
     *(acc->allowed) = true;
-    acc->init_machine(ms, &err);
-    if (err) {
-        goto err;
+    if (acc->init_machine) {
+        acc->init_machine(ms, &err);
+        if (err) {
+            goto err;
+        }
     }
 
     return;
