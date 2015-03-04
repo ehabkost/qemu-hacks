@@ -12,3 +12,13 @@
 
 /* Needed for qtest_allowed() */
 bool qtest_allowed;
+
+void qtest_init(const char *qtest_chrdev, const char *qtest_log, Error **errp)
+{
+    error_setg(errp, "qtest support not compiled in");
+}
+
+bool qtest_driver(void)
+{
+    return false;
+}
