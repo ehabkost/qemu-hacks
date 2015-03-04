@@ -40,7 +40,6 @@ typedef struct AccelClass {
 
     const char *opt_name;
     const char *name;
-    int (*available)(void);
     void (*init_machine)(MachineState *ms, Error **errp);
     void (*open)(Object *obj, Error **errp);
     void (*close)(Object *obj, Error **errp);

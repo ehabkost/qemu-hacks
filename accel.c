@@ -138,11 +138,6 @@ int init_accelerator(MachineState *ms, const char *target_name)
             fprintf(stderr, "\"%s\" accelerator not found.\n", buf);
             continue;
         }
-        if (acc->available && !acc->available()) {
-            printf("%s not supported for this target\n",
-                   acc->name);
-            continue;
-        }
         accel_init_machine(acc, ms, &err);
         if (err) {
             init_failed = true;
