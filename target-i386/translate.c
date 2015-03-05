@@ -7884,6 +7884,12 @@ void tcg_x86_init(void)
 #endif
     };
     int i;
+    static bool initialized = false;
+
+    if (initialized) {
+        return;
+    }
+    initialized = true;
 
     cpu_env = tcg_global_reg_new_ptr(TCG_AREG0, "env");
     cpu_cc_op = tcg_global_mem_new_i32(TCG_AREG0,
