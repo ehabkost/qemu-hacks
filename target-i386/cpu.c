@@ -2848,12 +2848,124 @@ out:
     }
 }
 
+typedef struct FeatureProperty {
+    FeatureWord word;
+    uint32_t mask;
+} FeatureProperty;
+
+
+static void x86_cpu_get_feature_prop(Object *obj,
+                                     struct Visitor *v,
+                                     void *opaque,
+                                     const char *name,
+                                     Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    CPUX86State *env = &cpu->env;
+    FeatureProperty *fp = opaque;
+    bool value = (env->features[fp->word] & fp->mask) == fp->mask;
+    visit_type_bool(v, &value, name, errp);
+}
+
+static void x86_cpu_set_feature_prop(Object *obj,
+                                     struct Visitor *v,
+                                     void *opaque,
+                                     const char *name,
+                                     Error **errp)
+{
+    X86CPU *cpu = X86_CPU(obj);
+    DeviceState *dev = DEVICE(obj);
+    CPUX86State *env = &cpu->env;
+    FeatureProperty *fp = opaque;
+    bool value;
+
+    if (dev->realized) {
+        qdev_prop_set_after_realize(dev, name, errp);
+        return;
+    }
+
+    visit_type_bool(v, &value, name, errp);
+    if (value) {
+        env->features[fp->word] |= fp->mask;
+    } else {
+        env->features[fp->word] &= ~fp->mask;
+    }
+}
+
+static void x86_cpu_release_feature_prop(Object *obj, const char *name,
+                                         void *opaque)
+{
+    FeatureProperty *prop = opaque;
+    g_free(prop);
+}
+
+/* Register a boolean feature-bits property.
+ * If mask has multiple bits, all must be set for the property to return true.
+ * The same property name can be registered multiple times to make it affect
+ * multiple bits in the same FeatureWord.
+ */
+static void x86_cpu_register_feature_prop(X86CPU *cpu,
+                                          const char *prop_name,
+                                          FeatureWord w,
+                                          uint32_t mask)
+{
+    FeatureProperty *fp;
+    ObjectProperty *op;
+    op = object_property_find(OBJECT(cpu), prop_name, NULL);
+    if (op) {
+        fp = op->opaque;
+        assert(fp->word == w);
+        fp->mask |= mask;
+    } else {
+        fp = g_new0(FeatureProperty, 1);
+        fp->word = w;
+        fp->mask = mask;
+        object_property_add(OBJECT(cpu), prop_name, "bool",
+                            x86_cpu_get_feature_prop,
+                            x86_cpu_set_feature_prop,
+                            x86_cpu_release_feature_prop, fp, &error_abort);
+    }
+}
+
+static void x86_cpu_register_feature_bit_props(X86CPU *cpu,
+                                               FeatureWord w,
+                                               int bit)
+{
+    Object *obj = OBJECT(cpu);
+    int i;
+    char **names, *name0;
+    FeatureWordInfo *fi = &feature_word_info[w];
+
+    if (!fi->feat_names) {
+        return;
+    }
+    if (!fi->feat_names[bit]) {
+        return;
+    }
+
+    names = g_strsplit(fi->feat_names[bit], "|", 0);
+
+    name0 = g_strdup_printf("cpuid-%s", names[0]);
+    feat2prop(name0);
+    x86_cpu_register_feature_prop(cpu, name0, w, (1UL << bit));
+
+    for (i = 1; names[i]; i++) {
+        char *prop_name = g_strdup_printf("cpuid-%s", names[i]);
+        feat2prop(prop_name);
+        object_property_add_alias(obj, prop_name, obj, name0, &error_abort);
+        g_free(prop_name);
+    }
+
+    g_strfreev(names);
+}
+
 static void x86_cpu_initfn(Object *obj)
 {
     CPUState *cs = CPU(obj);
     X86CPU *cpu = X86_CPU(obj);
     X86CPUClass *xcc = X86_CPU_GET_CLASS(obj);
     CPUX86State *env = &cpu->env;
+    FeatureWord w;
     static int inited;
 
     cs->env_ptr = env;
@@ -2893,6 +3005,13 @@ static void x86_cpu_initfn(Object *obj)
     /* Any code creating new X86CPU objects have to set apic-id explicitly */
     cpu->apic_id = -1;
 #endif
+
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        int bit;
+        for (bit = 0; bit < 32; bit++) {
+            x86_cpu_register_feature_bit_props(cpu, w, bit);
+        }
+    }
 
     x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
 
