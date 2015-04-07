@@ -1,0 +1,322 @@
+#!/usr/bin/env python2.7
+#
+# Script to dump CPU model information as a QEMU config file that can be loaded
+# using -readconfig
+#
+# Author: Eduardo Habkost <ehabkost@redhat.com>
+#
+# Copyright (c) 2015 Red Hat Inc.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+
+import sys, os, signal, tempfile, re, argparse, StringIO
+import xml.etree.ElementTree
+
+# Allow us to load the qmp/qmp.py module:
+sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), 'qmp'))
+import qmp
+
+import logging
+logger = logging.getLogger('x86-cpu-model-dump')
+
+CPU_PATH = '/machine/icc-bridge/icc/child[0]'
+PROPS = set(['level',
+             'xlevel',
+             'xlevel2',
+             'vendor',
+             'family',
+             'model',
+             'stepping',
+             'model-id',
+            ])
+CPU_MAP = '/usr/share/libvirt/cpu_map.xml'
+
+# features that may not be on cpu_map.xml:
+KNOWN_FEAT_NAMES = [
+    # CPU feature aliases don't have properties, add some special feature
+    # names telling the script to ignore them:
+    (0x80000001, 0, 'edx', [
+        "fpu-ALIAS", "vme-ALIAS", "de-ALIAS", "pse-ALIAS",
+        "tsc-ALIAS", "msr-ALIAS", "pae-ALIAS", "mce-ALIAS",
+        "cx8-ALIAS", "apic-ALIAS", None, None,
+        "mtrr-ALIAS", "pge-ALIAS", "mca-ALIAS", "cmov-ALIAS",
+        "pat-ALIAS", "pse36-ALIAS", None, None,
+        None, None, None, "mmx-ALIAS",
+        "fxsr-ALIAS", None, None, None,
+        None, None, None, None,
+    ]),
+    # cpu_map.xml does not contain KVM feature flags:
+    (0x40000001, 0, 'eax', [
+        "kvmclock", "kvm-nopiodelay", "kvm-mmu", "kvmclock-ALIAS",
+        "kvm-asyncpf", "kvm-steal-time", "kvm-pv-eoi", "kvm-pv-unhalt",
+        None, None, None, None,
+        None, None, None, None,
+        None, None, None, None,
+        None, None, None, None,
+        "kvmclock-stable-bit", None, None, None,
+        None, None, None, None,
+    ]),
+    # cpu_map.xml does not have XSAVE flags:
+    (0xd, 1, 'eax', [
+        "xsaveopt", "xsavec", "xgetbv1", "xsaves",
+    ]),
+    # cpu_map.xml does not contain SVM flags:
+    (0x8000000a, 0, 'edx', [
+        "npt", "lbrv", "svm_lock", "nrip_save",
+        "tsc_scale", "vmcb_clean",  "flushbyasid", "decodeassists",
+        None, None, "pause_filter", None,
+        "pfthreshold", None, None, None,
+        None, None, None, None,
+        None, None, None, None,
+        None, None, None, None,
+        None, None, None, None,
+    ]),
+]
+
+def dbg(msg, *args):
+    logger.debug(msg, *args)
+    pass
+
+def value_to_string(v):
+    """Convert property value to string parseable by -global"""
+    t = type(v)
+    if t == bool:
+        return v and "on" or "off"
+    elif t == str or t == unicode:
+        return v
+    elif t == int:
+        return str(v)
+    else:
+        raise Exception("Unsupported property type: %r", t)
+
+def propname(feat):
+    return feat.replace('_', '-')
+
+def load_feat_names(cpu_map):
+    """Load feature names from libvirt cpu_map.xml"""
+    cpumap = xml.etree.ElementTree.parse(cpu_map)
+    feat_names = {}
+
+    for func, idx, reg, names in KNOWN_FEAT_NAMES:
+        for bitnr, name in enumerate(names):
+            if name:
+                feat_names[(func, idx, reg, bitnr)] = name
+
+    for f in cpumap.getroot().findall("./arch[@name='x86']/feature"):
+        fname = f.attrib['name']
+        for cpuid in f.findall('cpuid'):
+            func = int(cpuid.attrib['function'], 0)
+            idx = 0
+            for reg in 'abcd':
+                regname = 'e%sx' % (reg)
+                if regname in cpuid.attrib:
+                    v = int(cpuid.attrib[regname], 0)
+                    for bitnr in range(32):
+                        bitval = (1 << bitnr)
+                        if v & bitval:
+                            feat_names[(func, idx, regname, bitnr)] = fname
+
+    return feat_names
+
+def get_all_props(qmp, path):
+    r = {}
+    props = qmp.command('qom-list', path=path)
+    for p in props:
+        value = qmp.command('qom-get', path=path, property=p['name'])
+        r[p['name']] = value
+    return r
+
+def dump_cpu_data(output, qmp, cpu_path, feat_names):
+    def get_prop(pname):
+        return qmp.command('qom-get', path=cpu_path, property=pname)
+
+    def pname_for_feature_bit(fw, bitnr):
+        func = fw['cpuid-input-eax']
+        idx = fw.get('cpuid-input-ecx', 0)
+        regname = fw['cpuid-register'].lower()
+        key = (func, idx, regname, bitnr)
+        keystr = "0x%x,0x%x,%s,%d" % (func, idx, regname, bitnr)
+        pname = feat_names.get(key)
+        if pname:
+            pname = propname(pname)
+        return pname
+
+    def enumerate_feature_props(fw_list):
+        for fw in fw_list:
+            value = fw['features']
+            for bitnr in range(32):
+                is_set = (value & (1 << bitnr)) != 0
+                pname = pname_for_feature_bit(fw, bitnr)
+
+                # special case for alias bits: ignore them
+                if pname and pname.endswith('-ALIAS'):
+                    continue
+
+                if pname is None:
+                    pname = 'no-property-for-%r-%d' % (fw, bitnr)
+
+                yield is_set, pname
+
+    props = qmp.command('qom-list', path=cpu_path)
+    props = set([prop['name'] for prop in props])
+
+    known_props = PROPS.copy()
+    feat_props = set([propname(feat) for feat in feat_names.values()])
+    known_props.update(feat_props)
+    known_props.intersection_update(props)
+
+    propdict = {}
+    for pname in known_props:
+        propdict[pname] = get_prop(pname)
+
+    # sanity-check feature-words:
+    for is_set, pname in enumerate_feature_props(get_prop('feature-words')):
+        # feature-word bits must match property:
+        assert propdict.get(pname, False) == is_set, \
+            "property (%s) is not %r" % (pname, is_set)
+
+    # bits set on filtered-features need property fixup:
+    for is_set, pname in enumerate_feature_props(get_prop('filtered-features')):
+        if is_set:
+            assert propdict.get(pname, False) == False, \
+                "filtered-feature %r is not off" % (pname)
+            propdict[pname] = True
+
+    for pname in sorted(propdict.keys()):
+        pvalue = propdict.get(pname)
+        output.write('[global]\n')
+        output.write('driver = "cpu"\n')
+        output.write('property = "%s"\n' % (pname))
+        output.write('value = "%s"\n' % (value_to_string(pvalue)))
+        output.write('\n')
+
+def run_qemu(qemu_bin, args):
+    sockdir = tempfile.mkdtemp()
+    sockpath = os.path.join(sockdir, 'monitor.sock')
+    pidfile = os.path.join(sockdir, 'pidfile')
+
+    try:
+        qemu_cmd = [qemu_bin]
+        qemu_cmd.extend(args)
+        qemu_cmd.append('-chardev')
+        qemu_cmd.append('socket,id=qmp0,path=%s,server,nowait' % (sockpath))
+        qemu_cmd.append('-qmp')
+        qemu_cmd.append('chardev:qmp0')
+        qemu_cmd.append('-daemonize')
+        qemu_cmd.append('-pidfile')
+        qemu_cmd.append(pidfile)
+
+        dbg("Running QEMU: %r" % (qemu_cmd))
+
+        ret = os.spawnvp(os.P_WAIT, qemu_bin, qemu_cmd)
+        if ret != 0:
+            raise Exception("Failed to start QEMU")
+
+        srv = qmp.QEMUMonitorProtocol(sockpath)
+        srv.connect()
+
+        yield srv
+    finally:
+        try:
+            pid = int(open(pidfile, 'r').read())
+            dbg('Killing QEMU, pid: %d' % (pid))
+            os.kill(pid, signal.SIGTERM)
+            os.waitpid(pid, 0)
+        except:
+            pass
+        try:
+            os.unlink(pidfile)
+        except:
+            pass
+        try:
+            os.unlink(sockpath)
+        except:
+            pass
+        os.rmdir(sockdir)
+
+def self_test(args, feat_names):
+    args1 = args.qemu_args + ['-cpu', args.selftest]
+    o1 = tempfile.NamedTemporaryFile()
+    q1 = run_qemu(args.qemu_bin, args1)
+    srv = q1.next()
+    dump_cpu_data(o1, srv, CPU_PATH, feat_names)
+    o1.flush()
+    props1 = get_all_props(srv, CPU_PATH)
+    q1.close()
+
+    args2 = args.qemu_args + ['-cpu', 'custom', '-readconfig', o1.name]
+
+    o2 = tempfile.NamedTemporaryFile()
+    q2 = run_qemu(args.qemu_bin, args2)
+    srv = q2.next()
+    dump_cpu_data(o2, srv, CPU_PATH, feat_names)
+    o2.flush()
+    props2 = get_all_props(srv, CPU_PATH)
+    q2.close()
+
+    v1 = open(o1.name, 'r').read()
+    v2 = open(o2.name, 'r').read()
+    assert v1 == v2
+
+    r = 0
+    props_to_check = set(props1.keys() + props2.keys())
+    # The 'type' property is the only one we expect to change:
+    props_to_check.difference_update(set(['type']))
+
+    for k in props_to_check:
+        p1 = props1[k]
+        p2 = props2[k]
+        if p1 != p2:
+            print >>sys.stderr, "Property %r mismatch:" % (k)
+            print >>sys.stderr, repr(p1)
+            print >>sys.stderr, repr(p2)
+            print >>sys.stderr, ''
+            r = 1
+    return r
+
+def main(argv):
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('qemu_bin', metavar='QEMU', type=str,
+                        help='Path to QEMU binary')
+    parser.add_argument('--self-test', '--selftest', metavar='CPU_MODEL',
+                        dest='selftest',
+                        help='Self-test script using -cpu CPU_MODEL')
+    parser.add_argument('-d', dest='debug', action='store_true',
+                        help='Enable debug messages')
+
+    # parse_known_args() won't stop because of QEMU command-line arguments
+    args, qemu_args = parser.parse_known_args(argv[1:])
+    args.qemu_args = qemu_args
+
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
+
+    feat_names = load_feat_names(CPU_MAP)
+
+    if args.selftest:
+        return self_test(args, feat_names)
+    else:
+        qemu = run_qemu(args.qemu_bin, args.qemu_args)
+        srv = qemu.next()
+        dump_cpu_data(sys.stdout, srv, CPU_PATH, feat_names)
+        qemu.close()
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
