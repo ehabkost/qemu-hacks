@@ -3052,7 +3052,9 @@ static void x86_cpu_initfn(Object *obj)
         }
     }
 
-    x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
+    if (xcc->cpu_def) {
+        x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
+    }
 
     /* init various static tables used in TCG mode */
     if (tcg_enabled() && !inited) {
@@ -3182,6 +3184,11 @@ static const TypeInfo x86_cpu_type_info = {
     .class_init = x86_cpu_common_class_init,
 };
 
+static const TypeInfo custom_x86_cpu_type_info = {
+    .name = X86_CPU_TYPE_NAME("custom"),
+    .parent = TYPE_X86_CPU,
+};
+
 static void x86_cpu_register_types(void)
 {
     int i;
@@ -3190,6 +3197,7 @@ static void x86_cpu_register_types(void)
     for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); i++) {
         x86_register_cpudef_type(&builtin_x86_defs[i]);
     }
+    type_register_static(&custom_x86_cpu_type_info);
 #ifdef CONFIG_KVM
     type_register_static(&host_x86_cpu_type_info);
 #endif
