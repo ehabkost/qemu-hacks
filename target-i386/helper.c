@@ -25,9 +25,9 @@
 #include "monitor/monitor.h"
 #endif
 
-static void cpu_x86_version(CPUX86State *env, int *family, int *model)
+static void cpu_x86_version(X86CPU *cpu, int *family, int *model)
 {
-    int cpuver = env->cpuid_version;
+    int cpuver = cpu->env.cpuid_version;
 
     if (family == NULL || model == NULL) {
         return;
@@ -43,7 +43,7 @@ int cpu_x86_support_mca_broadcast(X86CPU *cpu)
     int family = 0;
     int model = 0;
 
-    cpu_x86_version(&cpu->env, &family, &model);
+    cpu_x86_version(cpu, &family, &model);
     if ((family == 6 && model >= 14) || family > 6) {
         return 1;
     }
