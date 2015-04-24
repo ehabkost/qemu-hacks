@@ -1640,7 +1640,7 @@ static void x86_cpuid_set_vendor(Object *obj, const char *value,
     env->cpuid_vendor2 = 0;
     env->cpuid_vendor3 = 0;
     for (i = 0; i < 4; i++) {
-        env->cpuid_vendor1 |= ((uint8_t)value[i    ]) << (8 * i);
+        env->cpuid_vendor1 |= ((uint8_t)value[i + 0]) << (8 * i);
         env->cpuid_vendor2 |= ((uint8_t)value[i + 4]) << (8 * i);
         env->cpuid_vendor3 |= ((uint8_t)value[i + 8]) << (8 * i);
     }
