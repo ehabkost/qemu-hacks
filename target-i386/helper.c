@@ -38,12 +38,12 @@ static void cpu_x86_version(CPUX86State *env, int *family, int *model)
 }
 
 /* Broadcast MCA signal for processor version 06H_EH and above */
-int cpu_x86_support_mca_broadcast(CPUX86State *env)
+int cpu_x86_support_mca_broadcast(X86CPU *cpu)
 {
     int family = 0;
     int model = 0;
 
-    cpu_x86_version(env, &family, &model);
+    cpu_x86_version(&cpu->env, &family, &model);
     if ((family == 6 && model >= 14) || family > 6) {
         return 1;
     }
@@ -1148,7 +1148,7 @@ void cpu_x86_inject_mce(Monitor *mon, X86CPU *cpu, int bank,
         return;
     }
     if ((flags & MCE_INJECT_BROADCAST)
-        && !cpu_x86_support_mca_broadcast(cenv)) {
+        && !cpu_x86_support_mca_broadcast(cpu)) {
         monitor_printf(mon, "Guest CPU does not support MCA broadcast\n");
         return;
     }
