@@ -4402,9 +4402,10 @@ static void gen_sse(CPUX86State *env, DisasContext *s, int b,
 
 /* convert one instruction. s->is_jmp is set if the translation must
    be stopped. Return the next pc value */
-static target_ulong disas_insn(CPUX86State *env, DisasContext *s,
+static target_ulong disas_insn(X86CPU *cpu, DisasContext *s,
                                target_ulong pc_start)
 {
+    CPUX86State *env = &cpu->env;
     int b, prefixes;
     int shift;
     TCGMemOp ot, aflag, dflag;
@@ -8025,7 +8026,7 @@ static inline void gen_intermediate_code_internal(X86CPU *cpu,
         if (num_insns + 1 == max_insns && (tb->cflags & CF_LAST_IO))
             gen_io_start();
 
-        pc_ptr = disas_insn(env, dc, pc_ptr);
+        pc_ptr = disas_insn(cpu, dc, pc_ptr);
         num_insns++;
         /* stop translation if indicated */
         if (dc->is_jmp)
