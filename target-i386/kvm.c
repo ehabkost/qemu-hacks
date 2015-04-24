@@ -553,7 +553,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
         has_msr_kvm_steal_time = c->eax & (1 << KVM_FEATURE_STEAL_TIME);
     }
 
-    cpu_x86_cpuid(env, 0, 0, &limit, &unused, &unused, &unused);
+    cpu_x86_cpuid(cpu, 0, 0, &limit, &unused, &unused, &unused);
 
     for (i = 0; i <= limit; i++) {
         if (cpuid_i == KVM_MAX_CPUID_ENTRIES) {
@@ -570,7 +570,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
             c->function = i;
             c->flags = KVM_CPUID_FLAG_STATEFUL_FUNC |
                        KVM_CPUID_FLAG_STATE_READ_NEXT;
-            cpu_x86_cpuid(env, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
+            cpu_x86_cpuid(cpu, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
             times = c->eax & 0xff;
 
             for (j = 1; j < times; ++j) {
@@ -582,7 +582,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
                 c = &cpuid_data.entries[cpuid_i++];
                 c->function = i;
                 c->flags = KVM_CPUID_FLAG_STATEFUL_FUNC;
-                cpu_x86_cpuid(env, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
+                cpu_x86_cpuid(cpu, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
             }
             break;
         }
@@ -596,7 +596,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
                 c->function = i;
                 c->flags = KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
                 c->index = j;
-                cpu_x86_cpuid(env, i, j, &c->eax, &c->ebx, &c->ecx, &c->edx);
+                cpu_x86_cpuid(cpu, i, j, &c->eax, &c->ebx, &c->ecx, &c->edx);
 
                 if (i == 4 && c->eax == 0) {
                     break;
@@ -618,7 +618,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
         default:
             c->function = i;
             c->flags = 0;
-            cpu_x86_cpuid(env, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
+            cpu_x86_cpuid(cpu, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
             break;
         }
     }
@@ -626,7 +626,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
     if (limit >= 0x0a) {
         uint32_t ver;
 
-        cpu_x86_cpuid(env, 0x0a, 0, &ver, &unused, &unused, &unused);
+        cpu_x86_cpuid(cpu, 0x0a, 0, &ver, &unused, &unused, &unused);
         if ((ver & 0xff) > 0) {
             has_msr_architectural_pmu = true;
             num_architectural_pmu_counters = (ver & 0xff00) >> 8;
@@ -641,7 +641,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
         }
     }
 
-    cpu_x86_cpuid(env, 0x80000000, 0, &limit, &unused, &unused, &unused);
+    cpu_x86_cpuid(cpu, 0x80000000, 0, &limit, &unused, &unused, &unused);
 
     for (i = 0x80000000; i <= limit; i++) {
         if (cpuid_i == KVM_MAX_CPUID_ENTRIES) {
@@ -652,12 +652,12 @@ int kvm_arch_init_vcpu(CPUState *cs)
 
         c->function = i;
         c->flags = 0;
-        cpu_x86_cpuid(env, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
+        cpu_x86_cpuid(cpu, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
     }
 
     /* Call Centaur's CPUID instructions they are supported. */
     if (env->cpuid_xlevel2 > 0) {
-        cpu_x86_cpuid(env, 0xC0000000, 0, &limit, &unused, &unused, &unused);
+        cpu_x86_cpuid(cpu, 0xC0000000, 0, &limit, &unused, &unused, &unused);
 
         for (i = 0xC0000000; i <= limit; i++) {
             if (cpuid_i == KVM_MAX_CPUID_ENTRIES) {
@@ -668,7 +668,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
 
             c->function = i;
             c->flags = 0;
-            cpu_x86_cpuid(env, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
+            cpu_x86_cpuid(cpu, i, 0, &c->eax, &c->ebx, &c->ecx, &c->edx);
         }
     }
 

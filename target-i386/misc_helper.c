@@ -77,7 +77,8 @@ void helper_cpuid(CPUX86State *env)
 
     cpu_svm_check_intercept_param(env, SVM_EXIT_CPUID, 0);
 
-    cpu_x86_cpuid(env, (uint32_t)env->regs[R_EAX], (uint32_t)env->regs[R_ECX],
+    cpu_x86_cpuid(x86_env_get_cpu(env),
+                  (uint32_t)env->regs[R_EAX], (uint32_t)env->regs[R_ECX],
                   &eax, &ebx, &ecx, &edx);
     env->regs[R_EAX] = eax;
     env->regs[R_EBX] = ebx;

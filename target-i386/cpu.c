@@ -2233,11 +2233,11 @@ void x86_cpudef_setup(void)
     }
 }
 
-void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
+void cpu_x86_cpuid(X86CPU *cpu, uint32_t index, uint32_t count,
                    uint32_t *eax, uint32_t *ebx,
                    uint32_t *ecx, uint32_t *edx)
 {
-    X86CPU *cpu = x86_env_get_cpu(env);
+    CPUX86State *env = &cpu->env;
     CPUState *cs = CPU(cpu);
 
     /* test if maximum index reached */
