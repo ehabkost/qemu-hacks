@@ -95,6 +95,17 @@ typedef struct X86CPU {
     bool host_features;
     int64_t apic_id;
 
+    /* processor features (e.g. for CPUID insn) */
+    uint32_t cpuid_level;
+    uint32_t cpuid_xlevel;
+    uint32_t cpuid_xlevel2;
+    uint32_t cpuid_vendor1;
+    uint32_t cpuid_vendor2;
+    uint32_t cpuid_vendor3;
+    uint32_t cpuid_version;
+    FeatureWordArray features;
+    uint32_t cpuid_model[12];
+
     /* if true the CPUID code directly forward host cache leaves to the guest */
     bool cache_info_passthrough;
 

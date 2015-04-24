@@ -933,17 +933,6 @@ typedef struct CPUX86State {
     /* Fields from here on are preserved across CPU reset. */
     struct {} end_reset_fields;
 
-    /* processor features (e.g. for CPUID insn) */
-    uint32_t cpuid_level;
-    uint32_t cpuid_xlevel;
-    uint32_t cpuid_xlevel2;
-    uint32_t cpuid_vendor1;
-    uint32_t cpuid_vendor2;
-    uint32_t cpuid_vendor3;
-    uint32_t cpuid_version;
-    FeatureWordArray features;
-    uint32_t cpuid_model[12];
-
     /* MTRRs */
     uint64_t mtrr_fixed[11];
     uint64_t mtrr_deftype;

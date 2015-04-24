@@ -195,8 +195,8 @@ void kvmclock_create(void)
     X86CPU *cpu = X86_CPU(first_cpu);
 
     if (kvm_enabled() &&
-        cpu->env.features[FEAT_KVM] & ((1ULL << KVM_FEATURE_CLOCKSOURCE) |
-                                       (1ULL << KVM_FEATURE_CLOCKSOURCE2))) {
+        cpu->features[FEAT_KVM] & ((1ULL << KVM_FEATURE_CLOCKSOURCE) |
+                                   (1ULL << KVM_FEATURE_CLOCKSOURCE2))) {
         sysbus_create_simple(TYPE_KVM_CLOCK, -1, NULL);
     }
 }

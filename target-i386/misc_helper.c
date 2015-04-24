@@ -226,6 +226,7 @@ void helper_rdmsr(CPUX86State *env)
 #else
 void helper_wrmsr(CPUX86State *env)
 {
+    X86CPU *cpu = x86_env_get_cpu(env);
     uint64_t val;
 
     cpu_svm_check_intercept_param(env, SVM_EXIT_MSR, 1);
@@ -251,22 +252,22 @@ void helper_wrmsr(CPUX86State *env)
             uint64_t update_mask;
 
             update_mask = 0;
-            if (env->features[FEAT_8000_0001_EDX] & CPUID_EXT2_SYSCALL) {
+            if (cpu->features[FEAT_8000_0001_EDX] & CPUID_EXT2_SYSCALL) {
                 update_mask |= MSR_EFER_SCE;
             }
-            if (env->features[FEAT_8000_0001_EDX] & CPUID_EXT2_LM) {
+            if (cpu->features[FEAT_8000_0001_EDX] & CPUID_EXT2_LM) {
                 update_mask |= MSR_EFER_LME;
             }
-            if (env->features[FEAT_8000_0001_EDX] & CPUID_EXT2_FFXSR) {
+            if (cpu->features[FEAT_8000_0001_EDX] & CPUID_EXT2_FFXSR) {
                 update_mask |= MSR_EFER_FFXSR;
             }
-            if (env->features[FEAT_8000_0001_EDX] & CPUID_EXT2_NX) {
+            if (cpu->features[FEAT_8000_0001_EDX] & CPUID_EXT2_NX) {
                 update_mask |= MSR_EFER_NXE;
             }
-            if (env->features[FEAT_8000_0001_ECX] & CPUID_EXT3_SVM) {
+            if (cpu->features[FEAT_8000_0001_ECX] & CPUID_EXT3_SVM) {
                 update_mask |= MSR_EFER_SVME;
             }
-            if (env->features[FEAT_8000_0001_EDX] & CPUID_EXT2_FFXSR) {
+            if (cpu->features[FEAT_8000_0001_EDX] & CPUID_EXT2_FFXSR) {
                 update_mask |= MSR_EFER_FFXSR;
             }
             cpu_load_efer(env, (env->efer & ~update_mask) |
@@ -380,6 +381,7 @@ void helper_wrmsr(CPUX86State *env)
 
 void helper_rdmsr(CPUX86State *env)
 {
+    X86CPU *cpu = x86_env_get_cpu(env);
     uint64_t val;
 
     cpu_svm_check_intercept_param(env, SVM_EXIT_MSR, 0);
@@ -483,7 +485,7 @@ void helper_rdmsr(CPUX86State *env)
         val = env->mtrr_deftype;
         break;
     case MSR_MTRRcap:
-        if (env->features[FEAT_1_EDX] & CPUID_MTRR) {
+        if (cpu->features[FEAT_1_EDX] & CPUID_MTRR) {
             val = MSR_MTRRcap_VCNT | MSR_MTRRcap_FIXRANGE_SUPPORT |
                 MSR_MTRRcap_WC_SUPPORTED;
         } else {

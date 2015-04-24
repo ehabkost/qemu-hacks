@@ -140,7 +140,7 @@ static uint32_t get_elf_hwcap(void)
 {
     X86CPU *cpu = X86_CPU(thread_cpu);
 
-    return cpu->env.features[FEAT_1_EDX];
+    return cpu->features[FEAT_1_EDX];
 }
 
 #ifdef TARGET_X86_64

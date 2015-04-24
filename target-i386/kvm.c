@@ -544,7 +544,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
 
         c = &cpuid_data.entries[cpuid_i++];
         c->function = KVM_CPUID_FEATURES | kvm_base;
-        c->eax = env->features[FEAT_KVM];
+        c->eax = cpu->features[FEAT_KVM];
 
         has_msr_async_pf_en = c->eax & (1 << KVM_FEATURE_ASYNC_PF);
 
@@ -656,7 +656,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
     }
 
     /* Call Centaur's CPUID instructions they are supported. */
-    if (env->cpuid_xlevel2 > 0) {
+    if (cpu->cpuid_xlevel2 > 0) {
         cpu_x86_cpuid(cpu, 0xC0000000, 0, &limit, &unused, &unused, &unused);
 
         for (i = 0xC0000000; i <= limit; i++) {
@@ -674,8 +674,8 @@ int kvm_arch_init_vcpu(CPUState *cs)
 
     cpuid_data.cpuid.nent = cpuid_i;
 
-    if (((env->cpuid_version >> 8)&0xF) >= 6
-        && (env->features[FEAT_1_EDX] & (CPUID_MCE | CPUID_MCA)) ==
+    if (((cpu->cpuid_version >> 8)&0xF) >= 6
+        && (cpu->features[FEAT_1_EDX] & (CPUID_MCE | CPUID_MCA)) ==
            (CPUID_MCE | CPUID_MCA)
         && kvm_check_extension(cs->kvm_state, KVM_CAP_MCE) > 0) {
         uint64_t mcg_cap;
@@ -740,7 +740,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
         env->kvm_xsave_buf = qemu_memalign(4096, sizeof(struct kvm_xsave));
     }
 
-    if (env->features[FEAT_1_EDX] & CPUID_MTRR) {
+    if (cpu->features[FEAT_1_EDX] & CPUID_MTRR) {
         has_msr_mtrr = true;
     }
 

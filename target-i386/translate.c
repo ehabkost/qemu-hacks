@@ -7090,7 +7090,7 @@ static target_ulong disas_insn(X86CPU *cpu, DisasContext *s,
         break;
     case 0x134: /* sysenter */
         /* For Intel SYSENTER is valid on 64-bit */
-        if (CODE64(s) && env->cpuid_vendor1 != CPUID_VENDOR_INTEL_1)
+        if (CODE64(s) && cpu->cpuid_vendor1 != CPUID_VENDOR_INTEL_1)
             goto illegal_op;
         if (!s->pe) {
             gen_exception(s, EXCP0D_GPF, pc_start - s->cs_base);
@@ -7103,7 +7103,7 @@ static target_ulong disas_insn(X86CPU *cpu, DisasContext *s,
         break;
     case 0x135: /* sysexit */
         /* For Intel SYSEXIT is valid on 64-bit */
-        if (CODE64(s) && env->cpuid_vendor1 != CPUID_VENDOR_INTEL_1)
+        if (CODE64(s) && cpu->cpuid_vendor1 != CPUID_VENDOR_INTEL_1)
             goto illegal_op;
         if (!s->pe) {
             gen_exception(s, EXCP0D_GPF, pc_start - s->cs_base);
@@ -7946,11 +7946,11 @@ static inline void gen_intermediate_code_internal(X86CPU *cpu,
     if (flags & HF_SOFTMMU_MASK) {
         dc->mem_index = cpu_mmu_index(env);
     }
-    dc->cpuid_features = env->features[FEAT_1_EDX];
-    dc->cpuid_ext_features = env->features[FEAT_1_ECX];
-    dc->cpuid_ext2_features = env->features[FEAT_8000_0001_EDX];
-    dc->cpuid_ext3_features = env->features[FEAT_8000_0001_ECX];
-    dc->cpuid_7_0_ebx_features = env->features[FEAT_7_0_EBX];
+    dc->cpuid_features = cpu->features[FEAT_1_EDX];
+    dc->cpuid_ext_features = cpu->features[FEAT_1_ECX];
+    dc->cpuid_ext2_features = cpu->features[FEAT_8000_0001_EDX];
+    dc->cpuid_ext3_features = cpu->features[FEAT_8000_0001_ECX];
+    dc->cpuid_7_0_ebx_features = cpu->features[FEAT_7_0_EBX];
 #ifdef TARGET_X86_64
     dc->lma = (flags >> HF_LMA_SHIFT) & 1;
     dc->code64 = (flags >> HF_CS64_SHIFT) & 1;

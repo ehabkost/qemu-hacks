@@ -27,7 +27,7 @@
 
 static void cpu_x86_version(X86CPU *cpu, int *family, int *model)
 {
-    int cpuver = cpu->env.cpuid_version;
+    int cpuver = cpu->cpuid_version;
 
     if (family == NULL || model == NULL) {
         return;
@@ -465,7 +465,7 @@ void cpu_x86_update_cr4(CPUX86State *env, uint32_t new_cr4)
         tlb_flush(CPU(cpu), 1);
     }
     /* SSE handling */
-    if (!(env->features[FEAT_1_EDX] & CPUID_SSE)) {
+    if (!(cpu->features[FEAT_1_EDX] & CPUID_SSE)) {
         new_cr4 &= ~CR4_OSFXSR_MASK;
     }
     env->hflags &= ~HF_OSFXSR_MASK;
@@ -473,7 +473,7 @@ void cpu_x86_update_cr4(CPUX86State *env, uint32_t new_cr4)
         env->hflags |= HF_OSFXSR_MASK;
     }
 
-    if (!(env->features[FEAT_7_0_EBX] & CPUID_7_0_EBX_SMAP)) {
+    if (!(cpu->features[FEAT_7_0_EBX] & CPUID_7_0_EBX_SMAP)) {
         new_cr4 &= ~CR4_SMAP_MASK;
     }
     env->hflags &= ~HF_SMAP_MASK;

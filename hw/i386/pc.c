@@ -1096,7 +1096,7 @@ void pc_cpus_init(const char *cpu_model, DeviceState *icc_bridge)
     }
 
     /* tell smbios about cpuid version and features */
-    smbios_set_cpuid(cpu->env.cpuid_version, cpu->env.features[FEAT_1_EDX]);
+    smbios_set_cpuid(cpu->cpuid_version, cpu->features[FEAT_1_EDX]);
 }
 
 /* pci-info ROM file. Little endian format */
