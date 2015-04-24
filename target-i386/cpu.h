@@ -986,7 +986,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 void x86_cpudef_setup(void);
 int cpu_x86_support_mca_broadcast(X86CPU *cpu);
 
-int cpu_get_pic_interrupt(CPUX86State *s);
+int cpu_get_pic_interrupt(X86CPU *cpu);
 /* MSDOS compatibility mode FPU exception support */
 void cpu_set_ferr(CPUX86State *s);
 

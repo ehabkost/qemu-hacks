@@ -185,9 +185,8 @@ void cpu_smm_update(CPUX86State *env)
 
 
 /* IRQ handling */
-int cpu_get_pic_interrupt(CPUX86State *env)
+int cpu_get_pic_interrupt(X86CPU *cpu)
 {
-    X86CPU *cpu = x86_env_get_cpu(env);
     int intno;
 
     intno = apic_get_interrupt(cpu->apic_state);

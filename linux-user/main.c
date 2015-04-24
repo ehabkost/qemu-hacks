@@ -85,7 +85,7 @@ void gemu_log(const char *fmt, ...)
 }
 
 #if defined(TARGET_I386)
-int cpu_get_pic_interrupt(CPUX86State *env)
+int cpu_get_pic_interrupt(X86CPU *cpu)
 {
     return -1;
 }

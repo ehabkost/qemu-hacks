@@ -2215,7 +2215,7 @@ void kvm_arch_pre_run(CPUState *cpu, struct kvm_run *run)
             int irq;
 
             cpu->interrupt_request &= ~CPU_INTERRUPT_HARD;
-            irq = cpu_get_pic_interrupt(env);
+            irq = cpu_get_pic_interrupt(x86_cpu);
             if (irq >= 0) {
                 struct kvm_interrupt intr;
 

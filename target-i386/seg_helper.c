@@ -1325,7 +1325,7 @@ bool x86_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
             cpu_svm_check_intercept_param(env, SVM_EXIT_INTR, 0);
             cs->interrupt_request &= ~(CPU_INTERRUPT_HARD |
                                        CPU_INTERRUPT_VIRQ);
-            intno = cpu_get_pic_interrupt(env);
+            intno = cpu_get_pic_interrupt(cpu);
             qemu_log_mask(CPU_LOG_TB_IN_ASM,
                           "Servicing hardware INT=0x%02x\n", intno);
             do_interrupt_x86_hardirq(env, intno, 1);
