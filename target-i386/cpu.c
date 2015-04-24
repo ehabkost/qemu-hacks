@@ -2202,9 +2202,9 @@ static void x86_register_cpudef_type(X86CPUDefinition *def)
 
 #if !defined(CONFIG_USER_ONLY)
 
-void cpu_clear_apic_feature(CPUX86State *env)
+void cpu_clear_apic_feature(X86CPU *cpu)
 {
-    env->features[FEAT_1_EDX] &= ~CPUID_APIC;
+    cpu->env.features[FEAT_1_EDX] &= ~CPUID_APIC;
 }
 
 #endif /* !CONFIG_USER_ONLY */
