@@ -368,11 +368,13 @@ static void ref405ep_init(MachineState *machine)
 #endif
 }
 
-static QEMUMachine ref405ep_machine = {
-    .name = "ref405ep",
-    .desc = "ref405ep",
-    .init = ref405ep_init,
-};
+static void ref405ep_machine_init(MachineClass *mc)
+{
+    mc->desc = "ref405ep";
+    mc->init = ref405ep_init;
+}
+
+DEFINE_MACHINE("ref405ep", ref405ep_machine_init);
 
 /*****************************************************************************/
 /* AMCC Taihu evaluation board */
@@ -664,16 +666,11 @@ static void taihu_405ep_init(MachineState *machine)
 #endif
 }
 
-static QEMUMachine taihu_machine = {
-    .name = "taihu",
-    .desc = "taihu",
-    .init = taihu_405ep_init,
-};
-
-static void ppc405_machine_init(void)
+static void taihu_machine_init(MachineClass *mc)
 {
-    qemu_register_machine(&ref405ep_machine);
-    qemu_register_machine(&taihu_machine);
+    mc->desc = "taihu";
+    mc->init = taihu_405ep_init;
 }
 
-machine_init(ppc405_machine_init);
+DEFINE_MACHINE("taihu", taihu_machine_init);
+
