@@ -466,9 +466,7 @@ static void pc_i440fx_machine_options(MachineClass *m)
 
 static void pc_i440fx_2_5_machine_options(MachineClass *m)
 {
-    PCMachineClass *pcmc = PC_MACHINE_CLASS(m);
     pc_i440fx_machine_options(m);
-    pcmc->broken_reserved_end = true;
     m->alias = "pc";
     m->is_default = 1;
 }
@@ -479,9 +477,11 @@ DEFINE_I440FX_MACHINE(v2_5, "pc-i440fx-2.5", NULL,
 
 static void pc_i440fx_2_4_machine_options(MachineClass *m)
 {
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(m);
     pc_i440fx_2_5_machine_options(m);
     m->alias = NULL;
     m->is_default = 0;
+    pcmc->broken_reserved_end = true;
     SET_MACHINE_COMPAT(m, PC_COMPAT_2_4);
 }
 
