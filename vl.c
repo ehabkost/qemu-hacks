@@ -1432,7 +1432,6 @@ static void qemu_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
     QEMUMachine *qm = data;
-    mc->name = qm->name;
     mc->desc = qm->desc;
     mc->init = qm->init;
     mc->kvm_type = qm->kvm_type;

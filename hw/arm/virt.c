@@ -960,7 +960,6 @@ static void virt_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
 
-    mc->name = VIRT_MACHINE_NAME;
     mc->desc = "ARM Virtual Machine",
     mc->init = machvirt_init;
     mc->max_cpus = 8;

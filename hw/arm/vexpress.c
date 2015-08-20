@@ -758,7 +758,6 @@ static void vexpress_a9_class_init(ObjectClass *oc, void *data)
     MachineClass *mc = MACHINE_CLASS(oc);
     VexpressMachineClass *vmc = VEXPRESS_MACHINE_CLASS(oc);
 
-    mc->name = TYPE_VEXPRESS_A9_MACHINE;
     mc->desc = "ARM Versatile Express for Cortex-A9";
 
     vmc->daughterboard = &a9_daughterboard;;
@@ -769,7 +768,6 @@ static void vexpress_a15_class_init(ObjectClass *oc, void *data)
     MachineClass *mc = MACHINE_CLASS(oc);
     VexpressMachineClass *vmc = VEXPRESS_MACHINE_CLASS(oc);
 
-    mc->name = TYPE_VEXPRESS_A15_MACHINE;
     mc->desc = "ARM Versatile Express for Cortex-A15";
 
     vmc->daughterboard = &a15_daughterboard;
