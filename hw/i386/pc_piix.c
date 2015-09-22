@@ -467,6 +467,7 @@ static void pc_i440fx_machine_options(MachineClass *m)
 static void pc_i440fx_2_5_machine_options(MachineClass *m)
 {
     pc_i440fx_machine_options(m);
+    m->hw_version = QEMU_VERSION;
     m->alias = "pc";
     m->is_default = 1;
 }
@@ -479,6 +480,7 @@ static void pc_i440fx_2_4_machine_options(MachineClass *m)
 {
     PCMachineClass *pcmc = PC_MACHINE_CLASS(m);
     pc_i440fx_2_5_machine_options(m);
+    m->hw_version = "2.4.0";
     m->alias = NULL;
     m->is_default = 0;
     pcmc->broken_reserved_end = true;
@@ -492,6 +494,7 @@ DEFINE_I440FX_MACHINE(v2_4, "pc-i440fx-2.4", NULL,
 static void pc_i440fx_2_3_machine_options(MachineClass *m)
 {
     pc_i440fx_2_4_machine_options(m);
+    m->hw_version = "2.3.0";
     m->alias = NULL;
     m->is_default = 0;
     SET_MACHINE_COMPAT(m, PC_COMPAT_2_3);
@@ -504,6 +507,7 @@ DEFINE_I440FX_MACHINE(v2_3, "pc-i440fx-2.3", pc_compat_2_3,
 static void pc_i440fx_2_2_machine_options(MachineClass *m)
 {
     pc_i440fx_2_3_machine_options(m);
+    m->hw_version = "2.2.0";
     SET_MACHINE_COMPAT(m, PC_COMPAT_2_2);
 }
 
@@ -514,6 +518,7 @@ DEFINE_I440FX_MACHINE(v2_2, "pc-i440fx-2.2", pc_compat_2_2,
 static void pc_i440fx_2_1_machine_options(MachineClass *m)
 {
     pc_i440fx_2_2_machine_options(m);
+    m->hw_version = "2.1.0";
     m->default_display = NULL;
     SET_MACHINE_COMPAT(m, PC_COMPAT_2_1);
 }
@@ -526,6 +531,7 @@ DEFINE_I440FX_MACHINE(v2_1, "pc-i440fx-2.1", pc_compat_2_1,
 static void pc_i440fx_2_0_machine_options(MachineClass *m)
 {
     pc_i440fx_2_1_machine_options(m);
+    m->hw_version = "2.0.0";
     SET_MACHINE_COMPAT(m, PC_COMPAT_2_0);
 }
 
@@ -536,6 +542,7 @@ DEFINE_I440FX_MACHINE(v2_0, "pc-i440fx-2.0", pc_compat_2_0,
 static void pc_i440fx_1_7_machine_options(MachineClass *m)
 {
     pc_i440fx_2_0_machine_options(m);
+    m->hw_version = "1.7.0";
     m->default_machine_opts = NULL;
     SET_MACHINE_COMPAT(m, PC_COMPAT_1_7);
 }
@@ -547,6 +554,7 @@ DEFINE_I440FX_MACHINE(v1_7, "pc-i440fx-1.7", pc_compat_1_7,
 static void pc_i440fx_1_6_machine_options(MachineClass *m)
 {
     pc_i440fx_1_7_machine_options(m);
+    m->hw_version = "1.6.0";
     SET_MACHINE_COMPAT(m, PC_COMPAT_1_6);
 }
 
@@ -557,6 +565,7 @@ DEFINE_I440FX_MACHINE(v1_6, "pc-i440fx-1.6", pc_compat_1_6,
 static void pc_i440fx_1_5_machine_options(MachineClass *m)
 {
     pc_i440fx_1_6_machine_options(m);
+    m->hw_version = "1.5.0";
     SET_MACHINE_COMPAT(m, PC_COMPAT_1_5);
 }
 
@@ -567,6 +576,7 @@ DEFINE_I440FX_MACHINE(v1_5, "pc-i440fx-1.5", pc_compat_1_5,
 static void pc_i440fx_1_4_machine_options(MachineClass *m)
 {
     pc_i440fx_1_5_machine_options(m);
+    m->hw_version = "1.4.0";
     m->hot_add_cpu = NULL;
     SET_MACHINE_COMPAT(m, PC_COMPAT_1_4);
 }
@@ -599,6 +609,7 @@ DEFINE_I440FX_MACHINE(v1_4, "pc-i440fx-1.4", pc_compat_1_4,
 static void pc_i440fx_1_3_machine_options(MachineClass *m)
 {
     pc_i440fx_1_4_machine_options(m);
+    m->hw_version = "1.3.0";
     SET_MACHINE_COMPAT(m, PC_COMPAT_1_3);
 }
 
@@ -637,6 +648,7 @@ DEFINE_I440FX_MACHINE(v1_3, "pc-1.3", pc_compat_1_3,
 static void pc_i440fx_1_2_machine_options(MachineClass *m)
 {
     pc_i440fx_1_3_machine_options(m);
+    m->hw_version = "1.2.0";
     SET_MACHINE_COMPAT(m, PC_COMPAT_1_2);
 }
 
@@ -679,6 +691,7 @@ DEFINE_I440FX_MACHINE(v1_2, "pc-1.2", pc_compat_1_2,
 static void pc_i440fx_1_1_machine_options(MachineClass *m)
 {
     pc_i440fx_1_2_machine_options(m);
+    m->hw_version = "1.1.0";
     SET_MACHINE_COMPAT(m, PC_COMPAT_1_1);
 }
 
