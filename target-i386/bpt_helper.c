@@ -113,6 +113,8 @@ void cpu_x86_update_dr7(CPUX86State *env, uint32_t new_dr7)
             hw_breakpoint_insert(env, i);
         }
     }
+
+    env->dr[7] |= DR7_FIXED_1;
 }
 #endif
 
