@@ -670,8 +670,8 @@ struct X86CPUDefinition {
     bool versioned_model_id;
 };
 
-static X86CPUDefinition qemu64_def = {
-    .name = "qemu64",
+static X86CPUDefinition tcg64_def = {
+    .name = "tcg64",
     .level = 0xd,
     .vendor = CPUID_VENDOR_AMD,
     .family = 6,
@@ -721,8 +721,8 @@ static X86CPUDefinition kvm64_def = {
     .model_id = "Common KVM processor"
 };
 
-static X86CPUDefinition qemu32_def = {
-    .name = "qemu32",
+static X86CPUDefinition tcg32_def = {
+    .name = "tcg32",
     .level = 4,
     .vendor = CPUID_VENDOR_INTEL,
     .family = 6,
@@ -3115,13 +3115,97 @@ static void x86_cpu_initfn(Object *obj)
         }
     }
 
-    x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
+    if (xcc->cpu_def) {
+        x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
+    }
 
     /* init various static tables used in TCG mode */
     if (tcg_enabled() && !inited) {
         inited = 1;
         optimize_flags_init();
     }
+}
+
+typedef struct X86AccelAliasInfo {
+    const char *kvm_model;
+    const char *tcg_model;
+} X86AccelAliasInfo;
+
+typedef struct X86AccelAliasClass {
+    X86CPUClass parent_class;
+    X86AccelAliasInfo *alias_info;
+} X86AccelAliasClass;
+
+#define TYPE_X86_ACCEL_ALIAS_CLASS X86_CPU_TYPE_NAME("accel-alias")
+
+#define X86_CPU_ACCEL_ALIAS_CLASS(oc) \
+    OBJECT_CLASS_CHECK(X86AccelAliasClass, (oc), TYPE_X86_ACCEL_ALIAS_CLASS)
+
+static const TypeInfo x86_accel_alias_type_info = {
+    .name = TYPE_X86_ACCEL_ALIAS_CLASS,
+    .parent = TYPE_X86_CPU,
+    .class_size = sizeof(X86AccelAliasClass),
+    .abstract = true,
+};
+
+static void x86_cpu_accel_alias_initfn(Object *obj)
+{
+    const char *target_model;
+    char *class_name;
+    X86CPU *cpu = X86_CPU(obj);
+    ObjectClass *oc = object_get_class(obj);
+    X86AccelAliasClass *ac = X86_CPU_ACCEL_ALIAS_CLASS(oc);
+    X86CPUClass *targetc;
+
+    if (kvm_enabled()) {
+        target_model = ac->alias_info->kvm_model;
+    } else {
+        target_model = ac->alias_info->tcg_model;
+    }
+    class_name = x86_cpu_type_name(target_model);
+    targetc =  X86_CPU_CLASS(object_class_by_name(class_name));
+    g_free(class_name);
+
+    /* This function runs after x86_cpu_initfn() already ran,
+     * so we just need to load the CPU definition from the target
+     * class, and apply compat properties manually
+     */
+    x86_cpu_load_def(cpu, targetc->cpu_def, &error_abort);
+    qdev_prop_set_globals_for_type(DEVICE(cpu), typename, &error);
+
+}
+
+static void x86_cpu_accel_alias_class_init(ObjectClass *oc, void *data)
+{
+    X86CPUClass *xcc = X86_CPU_CLASS(oc);
+    X86AccelAliasClass *ac = X86_CPU_ACCEL_ALIAS_CLASS(oc);
+    X86AccelAliasInfo *ai = data;
+
+    ac->alias_info = ai;
+    xcc->model_description =
+        g_strdup_printf("accelerator-specific alias to %s/%s",
+                        ai->kvm_model, ai->tcg_model);
+}
+
+static void x86_cpu_register_accel_alias(const char *alias_name,
+                                         const char *kvm_name,
+                                         const char *tcg_name)
+{
+    X86AccelAliasInfo *ai = g_new0(X86AccelAliasInfo, 1);
+    char *tname = x86_cpu_type_name(alias_name);
+    TypeInfo ti = {
+        .name = tname,
+        .parent = TYPE_X86_ACCEL_ALIAS_CLASS,
+        .class_init = x86_cpu_accel_alias_class_init,
+        .class_data = ai,
+        .instance_init = x86_cpu_accel_alias_initfn,
+    };
+
+    ai->kvm_model = kvm_name;
+    ai->tcg_model = tcg_name;
+
+    type_register(&ti);
+    g_free(tname);
 }
 
 static int64_t x86_cpu_get_arch_id(CPUState *cs)
@@ -3257,9 +3341,9 @@ static void x86_cpu_register_types(void)
 
     type_register_static(&x86_cpu_type_info);
 
-    x86_register_cpudef_type(&qemu64_def);
+    x86_register_cpudef_type(&tcg64_def);
     x86_register_cpudef_type(&kvm64_def);
-    x86_register_cpudef_type(&qemu32_def);
+    x86_register_cpudef_type(&tcg32_def);
     x86_register_cpudef_type(&kvm32_def);
     for (def = builtin_x86_defs; def->name; def++) {
         x86_register_cpudef_type(def);
@@ -3267,6 +3351,10 @@ static void x86_cpu_register_types(void)
 #ifdef CONFIG_KVM
     type_register_static(&host_x86_cpu_type_info);
 #endif
+
+    type_register_static(&x86_accel_alias_type_info);
+    x86_cpu_register_accel_alias("qemu64", "kvm64", "tcg64");
+    x86_cpu_register_accel_alias("qemu32", "kvm32", "tcg32");
 }
 
 type_init(x86_cpu_register_types)
