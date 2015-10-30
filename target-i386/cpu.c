@@ -1685,25 +1685,8 @@ static void x86_cpuid_set_vendor(Object *obj, const char *value,
     }
 }
 
-static char *x86_cpuid_get_model_id(Object *obj, Error **errp)
+static void x86_cpu_init_cpuid_model(X86CPU *cpu, const char *model_id)
 {
-    X86CPU *cpu = X86_CPU(obj);
-    CPUX86State *env = &cpu->env;
-    char *value;
-    int i;
-
-    value = g_malloc(48 + 1);
-    for (i = 0; i < 48; i++) {
-        value[i] = env->cpuid_model[i >> 2] >> (8 * (i & 3));
-    }
-    value[48] = '\0';
-    return value;
-}
-
-static void x86_cpuid_set_model_id(Object *obj, const char *model_id,
-                                   Error **errp)
-{
-    X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
     int c, len, i;
 
@@ -2162,6 +2145,9 @@ static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
     object_property_set_int(OBJECT(cpu), def->xlevel, "xlevel", errp);
     object_property_set_int(OBJECT(cpu), def->xlevel2, "xlevel2", errp);
     object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
+    object_property_set_bool(OBJECT(cpu), def->versioned_model_id,
+                            "versioned-model-id", errp);
+
     for (w = 0; w < FEATURE_WORDS; w++) {
         env->features[w] = def->features[w];
     }
@@ -2298,16 +2284,6 @@ void cpu_clear_apic_feature(CPUX86State *env)
  */
 void x86_cpudef_setup(void)
 {
-    X86CPUDefinition *def;
-
-    for (def = builtin_x86_defs; def->name; def++) {
-        if (def->versioned_model_id) {
-            pstrcat(def->model_id, sizeof(def->model_id),
-                    " version ");
-            pstrcat(def->model_id, sizeof(def->model_id),
-                    qemu_get_version());
-        }
-    }
 }
 
 void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
@@ -2873,6 +2849,7 @@ static void x86_cpu_realizefn(DeviceState *dev, Error **errp)
     CPUX86State *env = &cpu->env;
     Error *local_err = NULL;
     static bool ht_warned;
+    const char *cpuid_model = cpu->model_id;
 
     if (cpu->apic_id < 0) {
         error_setg(errp, "apic-id property was not initialized properly");
@@ -2900,6 +2877,12 @@ static void x86_cpu_realizefn(DeviceState *dev, Error **errp)
                        "TCG doesn't support requested features");
         goto out;
     }
+
+    if (cpu->versioned_model_id) {
+        cpuid_model = g_strdup_printf("%s version %s", cpu->model_id,
+                                           qemu_get_version());
+    }
+    x86_cpu_init_cpuid_model(cpu, cpuid_model);
 
 #ifndef CONFIG_USER_ONLY
     qemu_register_reset(x86_cpu_machine_reset_cb, cpu);
@@ -3107,9 +3090,6 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add_str(obj, "vendor",
                             x86_cpuid_get_vendor,
                             x86_cpuid_set_vendor, NULL);
-    object_property_add_str(obj, "model-id",
-                            x86_cpuid_get_model_id,
-                            x86_cpuid_set_model_id, NULL);
     object_property_add(obj, "tsc-frequency", "int",
                         x86_cpuid_get_tsc_freq,
                         x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
@@ -3208,6 +3188,8 @@ static Property x86_cpu_properties[] = {
     DEFINE_PROP_UINT32("xlevel", X86CPU, env.cpuid_xlevel, 0),
     DEFINE_PROP_UINT32("xlevel2", X86CPU, env.cpuid_xlevel2, 0),
     DEFINE_PROP_STRING("hv-vendor-id", X86CPU, hyperv_vendor_id),
+    DEFINE_PROP_STRING("model-id", X86CPU, model_id),
+    DEFINE_PROP_BOOL("versioned-model-id", X86CPU, versioned_model_id, true),
     DEFINE_PROP_END_OF_LIST()
 };
 

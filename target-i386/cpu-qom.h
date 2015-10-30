@@ -118,6 +118,14 @@ typedef struct X86CPU {
      */
     bool enable_pmu;
 
+    /* model-id property, used to initalize cpuid_model */
+    char *model_id;
+
+    /* If set, the model-id string will have
+     * " version <qemu hw version>" appended to it when setting cpuid_model
+     */
+    bool versioned_model_id;
+
     /* in order to simplify APIC support, we leave this pointer to the
        user */
     struct DeviceState *apic_state;
