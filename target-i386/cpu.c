@@ -1366,6 +1366,7 @@ static X86CPUDefinition builtin_x86_defs[] = {
         .xlevel = 0x8000001A,
         .model_id = "AMD Opteron 63xx class CPU",
     },
+    { /* end of list */ },
 };
 
 typedef struct PropValue {
@@ -1983,8 +1984,7 @@ void x86_cpu_list(FILE *f, fprintf_function cpu_fprintf)
     char buf[256];
     int i;
 
-    for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); i++) {
-        def = &builtin_x86_defs[i];
+    for (def = builtin_x86_defs; def->name; def++) {
         snprintf(buf, sizeof(buf), "%s", def->name);
         (*cpu_fprintf)(f, "x86 %16s  %-48s\n", buf, def->model_id);
     }
@@ -2008,13 +2008,11 @@ CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
 {
     CpuDefinitionInfoList *cpu_list = NULL;
     X86CPUDefinition *def;
-    int i;
 
-    for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); i++) {
+    for (def = builtin_x86_defs; def->name; def++) {
         CpuDefinitionInfoList *entry;
         CpuDefinitionInfo *info;
 
-        def = &builtin_x86_defs[i];
         info = g_malloc0(sizeof(*info));
         info->name = g_strdup(def->name);
 
@@ -2240,11 +2238,9 @@ void cpu_clear_apic_feature(CPUX86State *env)
  */
 void x86_cpudef_setup(void)
 {
-    int i;
+    X86CPUDefinition *def;
 
-    for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
-        X86CPUDefinition *def = &builtin_x86_defs[i];
-
+    for (def = builtin_x86_defs; def->name; def++) {
         if (def->versioned_model_id) {
             pstrcat(def->model_id, sizeof(def->model_id),
                     " version ");
@@ -3218,11 +3214,11 @@ static const TypeInfo x86_cpu_type_info = {
 
 static void x86_cpu_register_types(void)
 {
-    int i;
+    X86CPUDefinition *def;
 
     type_register_static(&x86_cpu_type_info);
-    for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); i++) {
-        x86_register_cpudef_type(&builtin_x86_defs[i]);
+    for (def = builtin_x86_defs; def->name; def++) {
+        x86_register_cpudef_type(def);
     }
 #ifdef CONFIG_KVM
     type_register_static(&host_x86_cpu_type_info);
