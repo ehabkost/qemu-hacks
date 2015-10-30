@@ -322,7 +322,18 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
             .driver   = "host" "-" TYPE_X86_CPU,\
             .property = "host-cache-info",\
             .value    = "on",\
+        },\
+        {\
+            .driver   = "kvm64" "-" TYPE_X86_CPU,\
+            .property = "versioned-model-id",\
+            .value    = "off",\
+        },\
+        {\
+            .driver   = "kvm64" "-" TYPE_X86_CPU,\
+            .property = "model-id",\
+            .value    = "Common KVM processor",\
         },
+
 
 #define PC_COMPAT_2_3 \
         PC_COMPAT_2_4 \
