@@ -670,29 +670,92 @@ struct X86CPUDefinition {
     bool versioned_model_id;
 };
 
+static X86CPUDefinition qemu64_def = {
+    .name = "qemu64",
+    .level = 0xd,
+    .vendor = CPUID_VENDOR_AMD,
+    .family = 6,
+    .model = 6,
+    .stepping = 3,
+    .features[FEAT_1_EDX] =
+        PPRO_FEATURES |
+        CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
+        CPUID_PSE36,
+    .features[FEAT_1_ECX] =
+        CPUID_EXT_SSE3 | CPUID_EXT_CX16 | CPUID_EXT_POPCNT,
+    .features[FEAT_8000_0001_EDX] =
+        CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
+    .features[FEAT_8000_0001_ECX] =
+        CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
+        CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
+    .xlevel = 0x8000000A,
+    .model_id = "QEMU Virtual CPU",
+    .versioned_model_id = true,
+};
+
+static X86CPUDefinition kvm64_def = {
+    .name = "kvm64",
+    .level = 0xd,
+    .vendor = CPUID_VENDOR_INTEL,
+    .family = 15,
+    .model = 6,
+    .stepping = 1,
+    /* Missing: CPUID_HT */
+    .features[FEAT_1_EDX] =
+        PPRO_FEATURES | CPUID_VME |
+        CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
+        CPUID_PSE36,
+    /* Missing: CPUID_EXT_POPCNT, CPUID_EXT_MONITOR */
+    .features[FEAT_1_ECX] =
+        CPUID_EXT_SSE3 | CPUID_EXT_CX16,
+    /* Missing: CPUID_EXT2_PDPE1GB, CPUID_EXT2_RDTSCP */
+    .features[FEAT_8000_0001_EDX] =
+        CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
+    /* Missing: CPUID_EXT3_LAHF_LM, CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC,
+                CPUID_EXT3_CR8LEG, CPUID_EXT3_ABM, CPUID_EXT3_SSE4A,
+                CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH,
+                CPUID_EXT3_OSVW, CPUID_EXT3_IBS, CPUID_EXT3_SVM */
+    .features[FEAT_8000_0001_ECX] =
+        0,
+    .xlevel = 0x80000008,
+    .model_id = "Common KVM processor"
+};
+
+static X86CPUDefinition qemu32_def = {
+    .name = "qemu32",
+    .level = 4,
+    .vendor = CPUID_VENDOR_INTEL,
+    .family = 6,
+    .model = 6,
+    .stepping = 3,
+    .features[FEAT_1_EDX] =
+        PPRO_FEATURES,
+    .features[FEAT_1_ECX] =
+        CPUID_EXT_SSE3 | CPUID_EXT_POPCNT,
+    .xlevel = 0x80000004,
+    .model_id = "QEMU Virtual CPU",
+    .versioned_model_id = true,
+};
+
+static X86CPUDefinition kvm32_def = {
+    .name = "kvm32",
+    .level = 5,
+    .vendor = CPUID_VENDOR_INTEL,
+    .family = 15,
+    .model = 6,
+    .stepping = 1,
+    .features[FEAT_1_EDX] =
+        PPRO_FEATURES | CPUID_VME |
+        CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_PSE36,
+    .features[FEAT_1_ECX] =
+        CPUID_EXT_SSE3,
+    .features[FEAT_8000_0001_ECX] =
+        0,
+    .xlevel = 0x80000008,
+    .model_id = "Common 32-bit KVM processor"
+};
+
 static X86CPUDefinition builtin_x86_defs[] = {
-    {
-        .name = "qemu64",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 6,
-        .model = 6,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_CX16 | CPUID_EXT_POPCNT,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
-            CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
-        .xlevel = 0x8000000A,
-        .model_id = "QEMU Virtual CPU",
-        .versioned_model_id = true,
-    },
     {
         .name = "phenom",
         .level = 5,
@@ -748,65 +811,6 @@ static X86CPUDefinition builtin_x86_defs[] = {
             CPUID_EXT3_LAHF_LM,
         .xlevel = 0x80000008,
         .model_id = "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz",
-    },
-    {
-        .name = "kvm64",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        /* Missing: CPUID_HT */
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES | CPUID_VME |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36,
-        /* Missing: CPUID_EXT_POPCNT, CPUID_EXT_MONITOR */
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_CX16,
-        /* Missing: CPUID_EXT2_PDPE1GB, CPUID_EXT2_RDTSCP */
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        /* Missing: CPUID_EXT3_LAHF_LM, CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC,
-                    CPUID_EXT3_CR8LEG, CPUID_EXT3_ABM, CPUID_EXT3_SSE4A,
-                    CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH,
-                    CPUID_EXT3_OSVW, CPUID_EXT3_IBS, CPUID_EXT3_SVM */
-        .features[FEAT_8000_0001_ECX] =
-            0,
-        .xlevel = 0x80000008,
-        .model_id = "Common KVM processor"
-    },
-    {
-        .name = "qemu32",
-        .level = 4,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 6,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_POPCNT,
-        .xlevel = 0x80000004,
-        .model_id = "QEMU Virtual CPU",
-        .versioned_model_id = true,
-    },
-    {
-        .name = "kvm32",
-        .level = 5,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES | CPUID_VME |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_PSE36,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_ECX] =
-            0,
-        .xlevel = 0x80000008,
-        .model_id = "Common 32-bit KVM processor"
     },
     {
         .name = "coreduo",
@@ -3252,6 +3256,11 @@ static void x86_cpu_register_types(void)
     X86CPUDefinition *def;
 
     type_register_static(&x86_cpu_type_info);
+
+    x86_register_cpudef_type(&qemu64_def);
+    x86_register_cpudef_type(&kvm64_def);
+    x86_register_cpudef_type(&qemu32_def);
+    x86_register_cpudef_type(&kvm32_def);
     for (def = builtin_x86_defs; def->name; def++) {
         x86_register_cpudef_type(def);
     }
