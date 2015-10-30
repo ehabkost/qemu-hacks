@@ -759,9 +759,9 @@ static X86CPUDefinition builtin_x86_defs[] = {
         .name = "kvm64",
         .level = 0xd,
         .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
+        .family = 6,
         .model = 6,
-        .stepping = 1,
+        .stepping = 3,
         /* Missing: CPUID_HT */
         .features[FEAT_1_EDX] =
             PPRO_FEATURES | CPUID_VME |
