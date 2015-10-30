@@ -656,6 +656,10 @@ struct X86CPUDefinition {
     int stepping;
     FeatureWordArray features;
     char model_id[48];
+    /* If set, the model_id string will have
+     * " version <qemu hw version>" appended to it.
+     */
+    bool versioned_model_id;
 };
 
 static X86CPUDefinition builtin_x86_defs[] = {
@@ -678,6 +682,8 @@ static X86CPUDefinition builtin_x86_defs[] = {
             CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
             CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
         .xlevel = 0x8000000A,
+        .model_id = "QEMU Virtual CPU",
+        .versioned_model_id = true,
     },
     {
         .name = "phenom",
@@ -774,6 +780,8 @@ static X86CPUDefinition builtin_x86_defs[] = {
         .features[FEAT_1_ECX] =
             CPUID_EXT_SSE3 | CPUID_EXT_POPCNT,
         .xlevel = 0x80000004,
+        .model_id = "QEMU Virtual CPU",
+        .versioned_model_id = true,
     },
     {
         .name = "kvm32",
@@ -870,6 +878,8 @@ static X86CPUDefinition builtin_x86_defs[] = {
         .features[FEAT_8000_0001_EDX] =
             CPUID_EXT2_MMXEXT | CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT,
         .xlevel = 0x80000008,
+        .model_id = "QEMU Virtual CPU",
+        .versioned_model_id = true,
     },
     {
         .name = "n270",
@@ -2230,22 +2240,16 @@ void cpu_clear_apic_feature(CPUX86State *env)
  */
 void x86_cpudef_setup(void)
 {
-    int i, j;
-    static const char *model_with_versions[] = { "qemu32", "qemu64", "athlon" };
+    int i;
 
     for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); ++i) {
         X86CPUDefinition *def = &builtin_x86_defs[i];
 
-        /* Look for specific "cpudef" models that */
-        /* have the QEMU version in .model_id */
-        for (j = 0; j < ARRAY_SIZE(model_with_versions); j++) {
-            if (strcmp(model_with_versions[j], def->name) == 0) {
-                pstrcpy(def->model_id, sizeof(def->model_id),
-                        "QEMU Virtual CPU version ");
-                pstrcat(def->model_id, sizeof(def->model_id),
-                        qemu_get_version());
-                break;
-            }
+        if (def->versioned_model_id) {
+            pstrcat(def->model_id, sizeof(def->model_id),
+                    " version ");
+            pstrcat(def->model_id, sizeof(def->model_id),
+                    qemu_get_version());
         }
     }
 }
