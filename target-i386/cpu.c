@@ -750,6 +750,12 @@ static X86CPUDefinition builtin_x86_defs[] = {
         .model_id = "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz",
     },
     {
+        /* This CPU model will be a copy of qemu64 first, so "qemu64"
+         * can be made an alias to "kvm64" when in KVM mode. and an alias
+         * to "tcg64" when in TCG mode.
+         * After that, "kvm64" and "tcg64" CPU definitions can safely diverge,
+         * while keeping compatibility in older machine-types.
+         */
         .name = "kvm64",
         .level = 0xd,
         .vendor = CPUID_VENDOR_INTEL,
