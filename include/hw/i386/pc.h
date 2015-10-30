@@ -332,16 +332,6 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
             .driver   = "kvm64" "-" TYPE_X86_CPU,\
             .property = "model-id",\
             .value    = "Common KVM processor",\
-        },\
-        {\
-            .driver   = "kvm64" "-" TYPE_X86_CPU,\
-            .property = "family",\
-            .value    = stringify(15),\
-        },\
-        {\
-            .driver   = "kvm64" "-" TYPE_X86_CPU,\
-            .property = "stepping",\
-            .value    = stringify(1),\
         },
 
 
