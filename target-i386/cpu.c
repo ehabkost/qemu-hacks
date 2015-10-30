@@ -780,8 +780,7 @@ static X86CPUDefinition builtin_x86_defs[] = {
         .features[FEAT_8000_0001_ECX] =
             0,
         .xlevel = 0x80000008,
-        .model_id = "QEMU Virtual CPU",
-        .versioned_model_id = true,
+        .model_id = "Common KVM processor"
     },
     {
         .name = "qemu32",
