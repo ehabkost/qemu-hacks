@@ -45,6 +45,7 @@
 #include "hw/usb.h"
 #include "qemu/error-report.h"
 #include "migration/migration.h"
+#include "hw/i386/q35-acpi-dsdt.hex"
 
 /* ICH9 AHCI has 6 ports */
 #define MAX_SATA_PORTS     6
@@ -328,6 +329,7 @@ static void pc_compat_1_4(MachineState *machine)
 
 static void pc_q35_machine_options(MachineClass *m)
 {
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(m);
     m->family = "pc_q35";
     m->desc = "Standard PC (Q35 + ICH9, 2009)";
     m->hot_add_cpu = pc_hot_add_cpu;
@@ -336,6 +338,8 @@ static void pc_q35_machine_options(MachineClass *m)
     m->default_display = "std";
     m->no_floppy = 1;
     m->no_tco = 0;
+    pcmc->dsdt_code = Q35AcpiDsdtAmlCode;
+    pcmc->dsdt_size = sizeof Q35AcpiDsdtAmlCode;
 }
 
 static void pc_q35_2_5_machine_options(MachineClass *m)

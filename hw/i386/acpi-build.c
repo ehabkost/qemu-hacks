@@ -51,9 +51,6 @@
 #include "hw/pci-host/q35.h"
 #include "hw/i386/intel_iommu.h"
 
-#include "hw/i386/q35-acpi-dsdt.hex"
-#include "hw/i386/acpi-dsdt.hex"
-
 #include "hw/acpi/aml-build.h"
 
 #include "qapi/qmp/qint.h"
@@ -108,8 +105,6 @@ typedef struct AcpiPmInfo {
 typedef struct AcpiMiscInfo {
     bool has_hpet;
     TPMVersion tpm_version;
-    const unsigned char *dsdt_code;
-    unsigned dsdt_size;
     uint16_t pvpanic_port;
     uint16_t applesmc_io_base;
 } AcpiMiscInfo;
@@ -120,22 +115,6 @@ typedef struct AcpiBuildPciBusHotplugState {
     struct AcpiBuildPciBusHotplugState *parent;
     bool pcihp_bridge_en;
 } AcpiBuildPciBusHotplugState;
-
-static void acpi_get_dsdt(AcpiMiscInfo *info)
-{
-    Object *piix = piix4_pm_find();
-    Object *lpc = ich9_lpc_find();
-    assert(!!piix != !!lpc);
-
-    if (piix) {
-        info->dsdt_code = AcpiDsdtAmlCode;
-        info->dsdt_size = sizeof AcpiDsdtAmlCode;
-    }
-    if (lpc) {
-        info->dsdt_code = Q35AcpiDsdtAmlCode;
-        info->dsdt_size = sizeof Q35AcpiDsdtAmlCode;
-    }
-}
 
 static
 int acpi_add_cpu_info(Object *o, void *opaque)
@@ -1570,18 +1549,19 @@ build_dmar_q35(GArray *table_data, GArray *linker)
 }
 
 static void
-build_dsdt(GArray *table_data, GArray *linker, AcpiMiscInfo *misc)
+build_dsdt(GArray *table_data, GArray *linker, PCMachineState *pcms)
 {
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
     AcpiTableHeader *dsdt;
 
-    assert(misc->dsdt_code && misc->dsdt_size);
+    assert(pcmc->dsdt_code && pcmc->dsdt_size);
 
-    dsdt = acpi_data_push(table_data, misc->dsdt_size);
-    memcpy(dsdt, misc->dsdt_code, misc->dsdt_size);
+    dsdt = acpi_data_push(table_data, pcmc->dsdt_size);
+    memcpy(dsdt, pcmc->dsdt_code, pcmc->dsdt_size);
 
     memset(dsdt, 0, sizeof *dsdt);
     build_header(linker, table_data, dsdt, "DSDT",
-                 misc->dsdt_size, 1);
+                 pcmc->dsdt_size, 1);
 }
 
 static GArray *
@@ -1668,7 +1648,6 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
 
     acpi_get_cpu_info(&cpu);
     acpi_get_pm_info(&pm);
-    acpi_get_dsdt(&misc);
     acpi_get_misc_info(&misc);
     acpi_get_pci_info(&pci, pcms);
 
@@ -1690,7 +1669,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
 
     /* DSDT is pointed to by FADT */
     dsdt = tables_blob->len;
-    build_dsdt(tables_blob, tables->linker, &misc);
+    build_dsdt(tables_blob, tables->linker, pcms);
 
     /* Count the size of the DSDT and SSDT, we will need it for legacy
      * sizing of ACPI tables.

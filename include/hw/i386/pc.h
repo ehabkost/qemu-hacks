@@ -89,6 +89,8 @@ struct PCMachineClass {
      */
     unsigned acpi_data_size;
     bool enforce_aligned_dimm;
+    const unsigned char *dsdt_code;
+    unsigned dsdt_size;
 };
 
 #define TYPE_PC_MACHINE "generic-pc-machine"

@@ -53,6 +53,7 @@
 #include "hw/xen/xen_pt.h"
 #endif
 #include "migration/migration.h"
+#include "hw/i386/acpi-dsdt.hex"
 
 #define MAX_IDE_BUS 2
 
@@ -402,11 +403,14 @@ static void pc_xen_hvm_init(MachineState *machine)
 
 static void pc_i440fx_machine_options(MachineClass *m)
 {
+    PCMachineClass *pcmc = PC_MACHINE_CLASS(m);
     m->family = "pc_piix";
     m->desc = "Standard PC (i440FX + PIIX, 1996)";
     m->hot_add_cpu = pc_hot_add_cpu;
     m->default_machine_opts = "firmware=bios-256k.bin";
     m->default_display = "std";
+    pcmc->dsdt_code = AcpiDsdtAmlCode;
+    pcmc->dsdt_size = sizeof AcpiDsdtAmlCode;
 }
 
 static void pc_i440fx_2_5_machine_options(MachineClass *m)
