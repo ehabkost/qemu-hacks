@@ -20,6 +20,22 @@
 
 #define HPET_INTCAP "hpet-intcap"
 
+/* Machine info for ACPI build: */
+struct PcGuestInfo {
+    bool isapc_ram_fw;
+    hwaddr ram_size, ram_size_below_4g;
+    unsigned apic_id_limit;
+    bool apic_xrupt_override;
+    uint64_t numa_nodes;
+    uint64_t *node_mem;
+    uint64_t *node_cpu;
+    FWCfgState *fw_cfg;
+    int legacy_acpi_table_size;
+    bool has_acpi_build;
+    bool has_reserved_memory;
+    bool rsdp_in_ram;
+};
+
 /**
  * PCMachineState:
  * @acpi_dev: link to ACPI PM device that performs ACPI hotplug handling
@@ -108,21 +124,6 @@ typedef struct PcPciInfo {
 #define ACPI_PM_PROP_GPE0_BLK "gpe0_blk"
 #define ACPI_PM_PROP_GPE0_BLK_LEN "gpe0_blk_len"
 #define ACPI_PM_PROP_TCO_ENABLED "enable_tco"
-
-struct PcGuestInfo {
-    bool isapc_ram_fw;
-    hwaddr ram_size, ram_size_below_4g;
-    unsigned apic_id_limit;
-    bool apic_xrupt_override;
-    uint64_t numa_nodes;
-    uint64_t *node_mem;
-    uint64_t *node_cpu;
-    FWCfgState *fw_cfg;
-    int legacy_acpi_table_size;
-    bool has_acpi_build;
-    bool has_reserved_memory;
-    bool rsdp_in_ram;
-};
 
 /* parallel.c */
 
