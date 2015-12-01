@@ -73,4 +73,7 @@ void acpi_cpu_hotplug_init(MemoryRegion *parent, Object *owner,
     memory_region_init_io(&gpe_cpu->io, owner, &AcpiCpuHotplug_ops,
                           gpe_cpu, "acpi-cpu-hotplug", ACPI_GPE_PROC_LEN);
     memory_region_add_subregion(parent, base, &gpe_cpu->io);
+    gpe_cpu->base = base;
+    object_property_add_uint16_ptr(owner, ACPI_CPUHP_IO_BASE_PROP,
+                                   &gpe_cpu->base, &error_abort);
 }

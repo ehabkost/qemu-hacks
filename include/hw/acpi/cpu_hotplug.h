@@ -16,6 +16,7 @@
 #include "hw/acpi/pc-hotplug.h"
 
 typedef struct AcpiCpuHotplug {
+    uint16_t base;
     MemoryRegion io;
     uint8_t sts[ACPI_GPE_PROC_LEN];
 } AcpiCpuHotplug;

@@ -46,6 +46,8 @@
 # define PIIX4_DPRINTF(format, ...)     do { } while (0)
 #endif
 
+#define PIIX4_CPU_HOTPLUG_IO_BASE 0xaf00
+
 #define GPE_BASE 0xafe0
 #define GPE_LEN 4
 

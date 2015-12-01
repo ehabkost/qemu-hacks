@@ -25,8 +25,8 @@
 /* 256 CPU IDs, 8 bits per entry: */
 #define ACPI_GPE_PROC_LEN 32
 
-#define ICH9_CPU_HOTPLUG_IO_BASE 0x0CD8
-#define PIIX4_CPU_HOTPLUG_IO_BASE 0xaf00
+#define ACPI_CPUHP_IO_BASE_PROP "acpi-cpuhp-io-base"
+
 #define CPU_HOTPLUG_RESOURCE_DEVICE PRES
 
 #define ACPI_MEMORY_HOTPLUG_IO_LEN 24
