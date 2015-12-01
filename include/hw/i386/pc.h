@@ -28,7 +28,6 @@ struct PcGuestInfo {
     uint64_t numa_nodes;
     uint64_t *node_mem;
     uint64_t *node_cpu;
-    FWCfgState *fw_cfg;
     int legacy_acpi_table_size;
     bool has_acpi_build;
     bool has_reserved_memory;
@@ -56,6 +55,7 @@ struct PCMachineState {
     PCIBus *bus;
     PcGuestInfo acpi_guest_info;
     Notifier machine_done;
+    FWCfgState *fw_cfg;
 };
 
 #define PC_MACHINE_ACPI_DEVICE_PROP "acpi-device"
