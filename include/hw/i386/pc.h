@@ -23,8 +23,6 @@
 /**
  * PCMachineState:
  * @acpi_dev: link to ACPI PM device that performs ACPI hotplug handling
- * @enforce_aligned_dimm: check that DIMM's address/size is aligned by
- *                        backend's alignment value if provided
  */
 struct PCMachineState {
     /*< private >*/
@@ -39,7 +37,6 @@ struct PCMachineState {
     uint64_t max_ram_below_4g;
     OnOffAuto vmport;
     OnOffAuto smm;
-    bool enforce_aligned_dimm;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
 };
 
@@ -53,6 +50,8 @@ struct PCMachineState {
 /**
  * PCMachineClass:
  * @get_hotplug_handler: pointer to parent class callback @get_hotplug_handler
+ * @enforce_aligned_dimm: check that DIMM's address/size is aligned by
+ *                        backend's alignment value if provided
  */
 struct PCMachineClass {
     /*< private >*/
@@ -81,6 +80,7 @@ struct PCMachineClass {
      * and other BIOS datastructures.
      */
     unsigned acpi_data_size;
+    bool enforce_aligned_dimm;
 };
 
 #define TYPE_PC_MACHINE "generic-pc-machine"
