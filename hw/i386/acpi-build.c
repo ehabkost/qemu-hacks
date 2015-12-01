@@ -1644,7 +1644,7 @@ struct AcpiBuildState {
     MemoryRegion *table_mr;
     /* Is table patched? */
     uint8_t patched;
-    PcGuestInfo *guest_info;
+    PCMachineState *pcms;
     void *rsdp;
     MemoryRegion *rsdp_mr;
     MemoryRegion *linker_mr;
@@ -1855,7 +1855,7 @@ static void acpi_build_update(void *build_opaque, uint32_t offset)
 
     acpi_build_tables_init(&tables);
 
-    acpi_build(build_state->guest_info, &tables);
+    acpi_build(&build_state->pcms->acpi_guest_info, &tables);
 
     acpi_ram_update(build_state->table_mr, tables.table_data);
 
@@ -1916,12 +1916,12 @@ void acpi_setup(PCMachineState *pcms)
 
     build_state = g_malloc0(sizeof *build_state);
 
-    build_state->guest_info = guest_info;
+    build_state->pcms = pcms;
 
     acpi_set_pci_info();
 
     acpi_build_tables_init(&tables);
-    acpi_build(build_state->guest_info, &tables);
+    acpi_build(&build_state->pcms->acpi_guest_info, &tables);
 
     /* Now expose it all to Guest */
     build_state->table_mr = acpi_add_rom_blob(build_state, tables.table_data,
