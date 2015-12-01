@@ -1188,7 +1188,7 @@ PcGuestInfo *pc_guest_info_init(PCMachineState *pcms)
     int i, j;
 
     guest_info->apic_id_limit = pc_apic_id_limit(max_cpus);
-    guest_info->apic_xrupt_override = kvm_allows_irq0_override();
+    pcms->apic_xrupt_override = kvm_allows_irq0_override();
     guest_info->numa_nodes = nb_numa_nodes;
     guest_info->node_mem = g_malloc0(guest_info->numa_nodes *
                                     sizeof *guest_info->node_mem);

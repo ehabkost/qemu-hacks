@@ -366,8 +366,9 @@ build_fadt(GArray *table_data, GArray *linker, AcpiPmInfo *pm,
 
 static void
 build_madt(GArray *table_data, GArray *linker, AcpiCpuInfo *cpu,
-           PcGuestInfo *guest_info)
+           PCMachineState *pcms)
 {
+    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
     int madt_start = table_data->len;
 
     AcpiMultipleApicTable *madt;
@@ -400,7 +401,7 @@ build_madt(GArray *table_data, GArray *linker, AcpiCpuInfo *cpu,
     io_apic->address = cpu_to_le32(IO_APIC_DEFAULT_ADDRESS);
     io_apic->interrupt = cpu_to_le32(0);
 
-    if (guest_info->apic_xrupt_override) {
+    if (pcms->apic_xrupt_override) {
         intsrcovr = acpi_data_push(table_data, sizeof *intsrcovr);
         intsrcovr->type   = ACPI_APIC_XRUPT_OVERRIDE;
         intsrcovr->length = sizeof(*intsrcovr);
@@ -1740,7 +1741,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
     aml_len += tables_blob->len - ssdt;
 
     acpi_add_table(table_offsets, tables_blob);
-    build_madt(tables_blob, tables->linker, &cpu, guest_info);
+    build_madt(tables_blob, tables->linker, &cpu, pcms);
 
     if (misc.has_hpet) {
         acpi_add_table(table_offsets, tables_blob);
