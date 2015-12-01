@@ -145,7 +145,6 @@ static void pc_init1(MachineState *machine,
     guest_info->has_acpi_build = pcmc->has_acpi_build;
     guest_info->legacy_acpi_table_size = pcmc->legacy_acpi_table_size;
 
-    guest_info->isapc_ram_fw = !pcmc->pci_enabled;
     guest_info->has_reserved_memory = pcmc->has_reserved_memory;
     guest_info->rsdp_in_ram = pcmc->rsdp_in_ram;
 
