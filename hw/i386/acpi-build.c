@@ -146,7 +146,6 @@ static void acpi_get_pm_info(AcpiPmInfo *pm)
     Object *piix = piix4_pm_find();
     Object *lpc = ich9_lpc_find();
     Object *obj = NULL;
-    QObject *o;
 
     pm->cpu_hp_io_base = 0;
     pm->pcihp_io_base = 0;
@@ -169,28 +168,15 @@ static void acpi_get_pm_info(AcpiPmInfo *pm)
     pm->mem_hp_io_base = ACPI_MEMORY_HOTPLUG_BASE;
     pm->mem_hp_io_len = ACPI_MEMORY_HOTPLUG_IO_LEN;
 
-    /* Fill in optional s3/s4 related properties */
-    o = object_property_get_qobject(obj, ACPI_PM_PROP_S3_DISABLED, NULL);
-    if (o) {
-        pm->s3_disabled = qint_get_int(qobject_to_qint(o));
-    } else {
-        pm->s3_disabled = false;
-    }
-    qobject_decref(o);
-    o = object_property_get_qobject(obj, ACPI_PM_PROP_S4_DISABLED, NULL);
-    if (o) {
-        pm->s4_disabled = qint_get_int(qobject_to_qint(o));
-    } else {
-        pm->s4_disabled = false;
-    }
-    qobject_decref(o);
-    o = object_property_get_qobject(obj, ACPI_PM_PROP_S4_VAL, NULL);
-    if (o) {
-        pm->s4_val = qint_get_int(qobject_to_qint(o));
-    } else {
-        pm->s4_val = false;
-    }
-    qobject_decref(o);
+    /* Fill in optional s3/s4 related properties
+     * (default to false if property is not present)
+     */
+    pm->s3_disabled =
+        object_property_get_bool(obj, ACPI_PM_PROP_S3_DISABLED, NULL);
+    pm->s4_disabled =
+        object_property_get_bool(obj, ACPI_PM_PROP_S4_DISABLED, NULL);
+    pm->s4_val =
+        object_property_get_bool(obj, ACPI_PM_PROP_S4_VAL, NULL);
 
     /* Fill in mandatory properties */
     pm->sci_int = object_property_get_int(obj, ACPI_PM_PROP_SCI_INT, NULL);
