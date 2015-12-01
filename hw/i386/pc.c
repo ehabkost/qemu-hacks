@@ -1279,9 +1279,9 @@ FWCfgState *xen_load_linux(PCMachineState *pcms,
 FWCfgState *pc_memory_init(PCMachineState *pcms,
                            MemoryRegion *system_memory,
                            MemoryRegion *rom_memory,
-                           MemoryRegion **ram_memory,
-                           PcGuestInfo *guest_info)
+                           MemoryRegion **ram_memory)
 {
+    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
     int linux_boot, i;
     MemoryRegion *ram, *option_rom_mr;
     MemoryRegion *ram_below_4g, *ram_above_4g;
