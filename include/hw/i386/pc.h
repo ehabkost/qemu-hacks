@@ -23,7 +23,6 @@
 /* Machine info for ACPI build: */
 struct PcGuestInfo {
     unsigned apic_id_limit;
-    bool apic_xrupt_override;
     uint64_t numa_nodes;
     uint64_t *node_mem;
     uint64_t *node_cpu;
@@ -51,6 +50,7 @@ struct PCMachineState {
     PcGuestInfo acpi_guest_info;
     Notifier machine_done;
     FWCfgState *fw_cfg;
+    bool apic_xrupt_override;
 };
 
 #define PC_MACHINE_ACPI_DEVICE_PROP "acpi-device"
