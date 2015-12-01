@@ -295,7 +295,7 @@ static void acpi_align_size(GArray *blob, unsigned align)
 
 /* FACS */
 static void
-build_facs(GArray *table_data, GArray *linker, PcGuestInfo *guest_info)
+build_facs(GArray *table_data, GArray *linker)
 {
     AcpiFacsDescriptorRev1 *facs = acpi_data_push(table_data, sizeof *facs);
     memcpy(&facs->signature, "FACS", 4);
@@ -1716,7 +1716,7 @@ void acpi_build(PcGuestInfo *guest_info, AcpiBuildTables *tables)
      * requirements.
      */
     facs = tables_blob->len;
-    build_facs(tables_blob, tables->linker, guest_info);
+    build_facs(tables_blob, tables->linker);
 
     /* DSDT is pointed to by FADT */
     dsdt = tables_blob->len;
