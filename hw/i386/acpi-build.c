@@ -1453,8 +1453,9 @@ acpi_build_srat_memory(AcpiSratMemoryAffinity *numamem, uint64_t base,
 }
 
 static void
-build_srat(GArray *table_data, GArray *linker, PcGuestInfo *guest_info)
+build_srat(GArray *table_data, GArray *linker, PCMachineState *pcms)
 {
+    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
     AcpiSystemResourceAffinityTable *srat;
     AcpiSratProcessorAffinity *core;
     AcpiSratMemoryAffinity *numamem;
@@ -1463,7 +1464,6 @@ build_srat(GArray *table_data, GArray *linker, PcGuestInfo *guest_info)
     uint64_t curnode;
     int srat_start, numa_start, slots;
     uint64_t mem_len, mem_base, next_base;
-    PCMachineState *pcms = PC_MACHINE(qdev_get_machine());
     ram_addr_t hotplugabble_address_space_size =
         object_property_get_int(OBJECT(pcms), PC_MACHINE_MEMHP_REGION_SIZE,
                                 NULL);
@@ -1756,7 +1756,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
     }
     if (guest_info->numa_nodes) {
         acpi_add_table(table_offsets, tables_blob);
-        build_srat(tables_blob, tables->linker, guest_info);
+        build_srat(tables_blob, tables->linker, pcms);
     }
     if (acpi_get_mcfg(&mcfg)) {
         acpi_add_table(table_offsets, tables_blob);
