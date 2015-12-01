@@ -55,6 +55,8 @@ struct PCMachineState {
     OnOffAuto smm;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
     PCIBus *bus;
+    PcGuestInfo acpi_guest_info;
+    Notifier machine_done;
 };
 
 #define PC_MACHINE_ACPI_DEVICE_PROP "acpi-device"
