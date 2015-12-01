@@ -38,6 +38,7 @@ struct PCMachineState {
     OnOffAuto vmport;
     OnOffAuto smm;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
+    PCIHostState *pci_host;
     PCIBus *bus;
     Notifier machine_done;
     FWCfgState *fw_cfg;

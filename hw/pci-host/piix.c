@@ -335,6 +335,7 @@ PCIBus *i440fx_init(const char *host_type, const char *pci_type,
                     address_space_io, 0, TYPE_PCI_BUS);
     s->bus = b;
     object_property_add_child(qdev_get_machine(), "i440fx", OBJECT(dev), NULL);
+    PC_MACHINE(qdev_get_machine())->pci_host = s;
     qdev_init_nofail(dev);
 
     d = pci_create_simple(b, 0, pci_type);
