@@ -1179,7 +1179,7 @@ void pc_machine_done(Notifier *notifier, void *data)
         }
     }
 
-    acpi_setup(&pcms->acpi_guest_info);
+    acpi_setup(pcms);
 }
 
 PcGuestInfo *pc_guest_info_init(PCMachineState *pcms)

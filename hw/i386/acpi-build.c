@@ -1893,8 +1893,9 @@ static const VMStateDescription vmstate_acpi_build = {
     },
 };
 
-void acpi_setup(PcGuestInfo *guest_info)
+void acpi_setup(PCMachineState *pcms)
 {
+    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
     AcpiBuildTables tables;
     AcpiBuildState *build_state;
 
