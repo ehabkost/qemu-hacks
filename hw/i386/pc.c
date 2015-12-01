@@ -1253,8 +1253,7 @@ void pc_acpi_init(const char *default_dsdt)
     }
 }
 
-FWCfgState *xen_load_linux(PCMachineState *pcms,
-                           PcGuestInfo *guest_info)
+void xen_load_linux(PCMachineState *pcms)
 {
     int i;
     FWCfgState *fw_cfg;
@@ -1271,7 +1270,6 @@ FWCfgState *xen_load_linux(PCMachineState *pcms,
         rom_add_option(option_rom[i].name, option_rom[i].bootindex);
     }
     pcms->fw_cfg = fw_cfg;
-    return fw_cfg;
 }
 
 FWCfgState *pc_memory_init(PCMachineState *pcms,
@@ -1401,7 +1399,6 @@ FWCfgState *pc_memory_init(PCMachineState *pcms,
         rom_add_option(option_rom[i].name, option_rom[i].bootindex);
     }
     pcms->fw_cfg = fw_cfg;
-    return fw_cfg;
 }
 
 qemu_irq pc_allocate_cpu_irq(void)
