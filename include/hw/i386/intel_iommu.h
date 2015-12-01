@@ -21,6 +21,7 @@
 
 #ifndef INTEL_IOMMU_H
 #define INTEL_IOMMU_H
+#include "hw/sysbus.h"
 #include "hw/qdev.h"
 #include "sysemu/dma.h"
 
