@@ -146,21 +146,13 @@ static bool acpi_pci_hotplug_enabled(Object *acpi_dev)
     return object_property_find(acpi_dev, ACPI_PCIHP_IO_BASE_PROP, NULL);
 }
 
-static void acpi_get_pm_info(AcpiPmInfo *pm)
+static void acpi_get_pm_info(AcpiPmInfo *pm, PCMachineState *pcms)
 {
-    Object *piix = piix4_pm_find();
-    Object *lpc = ich9_lpc_find();
-    Object *obj = NULL;
+    Object *obj = OBJECT(pcms->acpi_dev);
 
+    assert(obj);
     pm->pcihp_io_base = 0;
     pm->pcihp_io_len = 0;
-    if (piix) {
-        obj = piix;
-    }
-    if (lpc) {
-        obj = lpc;
-    }
-    assert(obj);
 
     if (acpi_pci_hotplug_enabled(obj)) {
         pm->pcihp_io_base =
@@ -1642,7 +1634,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
     GArray *tables_blob = tables->table_data;
 
     acpi_get_cpu_info(&cpu);
-    acpi_get_pm_info(&pm);
+    acpi_get_pm_info(&pm, pcms);
     acpi_get_misc_info(&misc);
     acpi_get_pci_info(&pci, pcms);
 
