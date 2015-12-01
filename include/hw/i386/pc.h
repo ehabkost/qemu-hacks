@@ -27,10 +27,6 @@ struct PcGuestInfo {
     uint64_t numa_nodes;
     uint64_t *node_mem;
     uint64_t *node_cpu;
-    int legacy_acpi_table_size;
-    bool has_acpi_build;
-    bool has_reserved_memory;
-    bool rsdp_in_ram;
 };
 
 /**

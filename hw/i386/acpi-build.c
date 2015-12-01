@@ -1686,6 +1686,7 @@ static
 void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
 {
     PcGuestInfo *guest_info = &pcms->acpi_guest_info;
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
     GArray *table_offsets;
     unsigned facs, ssdt, dsdt, rsdt;
     AcpiCpuInfo cpu;
@@ -1799,12 +1800,12 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
      *
      * All this is for PIIX4, since QEMU 2.0 didn't support Q35 migration.
      */
-    if (guest_info->legacy_acpi_table_size) {
+    if (pcmc->legacy_acpi_table_size) {
         /* Subtracting aml_len gives the size of fixed tables.  Then add the
          * size of the PIIX4 DSDT/SSDT in QEMU 2.0.
          */
         int legacy_aml_len =
-            guest_info->legacy_acpi_table_size +
+            pcmc->legacy_acpi_table_size +
             ACPI_BUILD_LEGACY_CPU_AML_SIZE * max_cpus;
         int legacy_table_size =
             ROUND_UP(tables_blob->len - aml_len + legacy_aml_len,
@@ -1896,7 +1897,7 @@ static const VMStateDescription vmstate_acpi_build = {
 
 void acpi_setup(PCMachineState *pcms)
 {
-    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
+    PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
     AcpiBuildTables tables;
     AcpiBuildState *build_state;
 
@@ -1905,7 +1906,7 @@ void acpi_setup(PCMachineState *pcms)
         return;
     }
 
-    if (!guest_info->has_acpi_build) {
+    if (!pcmc->has_acpi_build) {
         ACPI_BUILD_DPRINTF("ACPI build disabled. Bailing out.\n");
         return;
     }
@@ -1936,7 +1937,7 @@ void acpi_setup(PCMachineState *pcms)
     fw_cfg_add_file(pcms->fw_cfg, ACPI_BUILD_TPMLOG_FILE,
                     tables.tcpalog->data, acpi_data_len(tables.tcpalog));
 
-    if (!guest_info->rsdp_in_ram) {
+    if (!pcmc->rsdp_in_ram) {
         /*
          * Keep for compatibility with old machine types.
          * Though RSDP is small, its contents isn't immutable, so

@@ -1313,7 +1313,7 @@ FWCfgState *pc_memory_init(PCMachineState *pcms,
         e820_add_entry(0x100000000ULL, pcms->above_4g_mem_size, E820_RAM);
     }
 
-    if (!guest_info->has_reserved_memory &&
+    if (!pcmc->has_reserved_memory &&
         (machine->ram_slots ||
          (machine->maxram_size > machine->ram_size))) {
         MachineClass *mc = MACHINE_GET_CLASS(machine);
@@ -1324,7 +1324,7 @@ FWCfgState *pc_memory_init(PCMachineState *pcms,
     }
 
     /* initialize hotplug memory address space */
-    if (guest_info->has_reserved_memory &&
+    if (pcmc->has_reserved_memory &&
         (machine->ram_size < machine->maxram_size)) {
         ram_addr_t hotplug_mem_size =
             machine->maxram_size - machine->ram_size;
@@ -1379,7 +1379,7 @@ FWCfgState *pc_memory_init(PCMachineState *pcms,
 
     rom_set_fw(fw_cfg);
 
-    if (guest_info->has_reserved_memory && pcms->hotplug_memory.base) {
+    if (pcmc->has_reserved_memory && pcms->hotplug_memory.base) {
         uint64_t *val = g_malloc(sizeof(*val));
         PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
         uint64_t res_mem_end = pcms->hotplug_memory.base;
