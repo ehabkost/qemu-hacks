@@ -20,14 +20,6 @@
 
 #define HPET_INTCAP "hpet-intcap"
 
-/* Machine info for ACPI build: */
-struct PcGuestInfo {
-    unsigned apic_id_limit;
-    uint64_t numa_nodes;
-    uint64_t *node_mem;
-    uint64_t *node_cpu;
-};
-
 /**
  * PCMachineState:
  * @acpi_dev: link to ACPI PM device that performs ACPI hotplug handling
@@ -47,10 +39,13 @@ struct PCMachineState {
     OnOffAuto smm;
     ram_addr_t below_4g_mem_size, above_4g_mem_size;
     PCIBus *bus;
-    PcGuestInfo acpi_guest_info;
     Notifier machine_done;
     FWCfgState *fw_cfg;
     bool apic_xrupt_override;
+    unsigned apic_id_limit;
+    uint64_t numa_nodes;
+    uint64_t *node_mem;
+    uint64_t *node_cpu;
 };
 
 #define PC_MACHINE_ACPI_DEVICE_PROP "acpi-device"
@@ -187,7 +182,7 @@ void pc_cpus_init(PCMachineState *pcms);
 void pc_hot_add_cpu(const int64_t id, Error **errp);
 void pc_acpi_init(const char *default_dsdt);
 
-PcGuestInfo *pc_guest_info_init(PCMachineState *pcms);
+void pc_guest_info_init(PCMachineState *pcms);
 
 #define PCI_HOST_PROP_PCI_HOLE_START   "pci-hole-start"
 #define PCI_HOST_PROP_PCI_HOLE_END     "pci-hole-end"
