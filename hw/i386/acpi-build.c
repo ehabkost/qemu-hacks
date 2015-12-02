@@ -141,9 +141,10 @@ static void acpi_get_cpu_info(AcpiCpuInfo *cpu)
     object_child_foreach(root, acpi_add_cpu_info, cpu);
 }
 
-static bool acpi_pci_hotplug_enabled(Object *acpi_dev)
+static bool acpi_pci_hotplug_enabled(PCMachineState *pcms)
 {
-    return object_property_find(acpi_dev, ACPI_PCIHP_IO_BASE_PROP, NULL);
+    return object_property_find(OBJECT(pcms->acpi_dev),
+                                ACPI_PCIHP_IO_BASE_PROP, NULL);
 }
 
 static void acpi_get_pm_info(AcpiPmInfo *pm, PCMachineState *pcms)
@@ -154,7 +155,7 @@ static void acpi_get_pm_info(AcpiPmInfo *pm, PCMachineState *pcms)
     pm->pcihp_io_base = 0;
     pm->pcihp_io_len = 0;
 
-    if (acpi_pci_hotplug_enabled(obj)) {
+    if (acpi_pci_hotplug_enabled(pcms)) {
         pm->pcihp_io_base =
             object_property_get_int(obj, ACPI_PCIHP_IO_BASE_PROP,
                                     &error_abort);
