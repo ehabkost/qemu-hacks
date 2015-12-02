@@ -241,32 +241,9 @@ static void acpi_get_misc_info(AcpiMiscInfo *info)
     info->applesmc_io_base = applesmc_port();
 }
 
-/*
- * Because of the PXB hosts we cannot simply query TYPE_PCI_HOST_BRIDGE.
- * On i386 arch we only have two pci hosts, so we can look only for them.
- */
-static Object *acpi_get_i386_pci_host(void)
+static void acpi_get_pci_info(PcPciInfo *info, PCMachineState *pcms)
 {
-    PCIHostState *host;
-
-    host = OBJECT_CHECK(PCIHostState,
-                        object_resolve_path("/machine/i440fx", NULL),
-                        TYPE_PCI_HOST_BRIDGE);
-    if (!host) {
-        host = OBJECT_CHECK(PCIHostState,
-                            object_resolve_path("/machine/q35", NULL),
-                            TYPE_PCI_HOST_BRIDGE);
-    }
-
-    return OBJECT(host);
-}
-
-static void acpi_get_pci_info(PcPciInfo *info)
-{
-    Object *pci_host;
-
-
-    pci_host = acpi_get_i386_pci_host();
+    Object *pci_host = OBJECT(pcms->pci_host);
     g_assert(pci_host);
 
     info->w32.begin = object_property_get_int(pci_host,
@@ -1338,7 +1315,7 @@ build_ssdt(GArray *table_data, GArray *linker,
         aml_append(sb_scope, method);
 
         {
-            PCIBus *bus = PCI_HOST_BRIDGE(acpi_get_i386_pci_host())->bus;
+            PCIBus *bus = pcms->pci_host->bus;
 
             if (bus) {
                 Aml *scope = aml_scope("PCI0");
@@ -1643,12 +1620,11 @@ struct AcpiBuildState {
     MemoryRegion *linker_mr;
 } AcpiBuildState;
 
-static bool acpi_get_mcfg(AcpiMcfgInfo *mcfg)
+static bool acpi_get_mcfg(AcpiMcfgInfo *mcfg, PCMachineState *pcms)
 {
-    Object *pci_host;
+    Object *pci_host = OBJECT(pcms->pci_host);
     QObject *o;
 
-    pci_host = acpi_get_i386_pci_host();
     g_assert(pci_host);
 
     o = object_property_get_qobject(pci_host, PCIE_HOST_MCFG_BASE, NULL);
@@ -1694,7 +1670,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
     acpi_get_pm_info(&pm);
     acpi_get_dsdt(&misc);
     acpi_get_misc_info(&misc);
-    acpi_get_pci_info(&pci);
+    acpi_get_pci_info(&pci, pcms);
 
     table_offsets = g_array_new(false, true /* clear */,
                                         sizeof(uint32_t));
@@ -1751,7 +1727,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
         acpi_add_table(table_offsets, tables_blob);
         build_srat(tables_blob, tables->linker, pcms);
     }
-    if (acpi_get_mcfg(&mcfg)) {
+    if (acpi_get_mcfg(&mcfg, pcms)) {
         acpi_add_table(table_offsets, tables_blob);
         build_mcfg_q35(tables_blob, tables->linker, &mcfg);
     }
