@@ -397,12 +397,12 @@ static void *acpi_set_bsel(PCIBus *bus, void *opaque)
     return bsel_alloc;
 }
 
-static void acpi_set_pci_info(void)
+static void acpi_set_pci_info(PCMachineState *pcms)
 {
-    PCIBus *bus = find_i440fx(); /* TODO: Q35 support */
+    PCIBus *bus = pcms->bus;
     unsigned bsel_alloc = 0;
 
-    if (bus) {
+    if (acpi_pci_hotplug_enabled(pcms) && bus) {
         /* Scan all PCI buses. Set property to enable acpi based hotplug. */
         pci_for_each_bus_depth_first(bus, acpi_set_bsel, NULL, &bsel_alloc);
     }
@@ -1855,7 +1855,7 @@ void acpi_setup(PCMachineState *pcms)
 
     build_state->pcms = pcms;
 
-    acpi_set_pci_info();
+    acpi_set_pci_info(pcms);
 
     acpi_build_tables_init(&tables);
     acpi_build(build_state->pcms, &tables);
