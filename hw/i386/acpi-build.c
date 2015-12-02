@@ -28,6 +28,9 @@
 #include "qemu/osdep.h"
 #include "qemu/error-report.h"
 #include "hw/pci/pci.h"
+#include "hw/pci/pci_bridge.h"
+#include "hw/pci/pci_host.h"
+#include "hw/pci/pcie_host.h"
 #include "qom/cpu.h"
 #include "hw/i386/pc.h"
 #include "target-i386/cpu.h"
@@ -43,12 +46,9 @@
 #include "hw/acpi/tpm.h"
 #include "sysemu/tpm_backend.h"
 
-/* Supported chipsets: */
-#include "hw/acpi/piix4.h"
+#include "hw/acpi/pc-hotplug.h"
 #include "hw/acpi/pcihp.h"
-#include "hw/i386/ich9.h"
 #include "hw/pci/pci_bus.h"
-#include "hw/pci-host/q35.h"
 #include "hw/i386/intel_iommu.h"
 
 #include "hw/acpi/aml-build.h"
