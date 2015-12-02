@@ -1338,13 +1338,7 @@ build_ssdt(GArray *table_data, GArray *linker,
         aml_append(sb_scope, method);
 
         {
-            Object *pci_host;
-            PCIBus *bus = NULL;
-
-            pci_host = acpi_get_i386_pci_host();
-            if (pci_host) {
-                bus = PCI_HOST_BRIDGE(pci_host)->bus;
-            }
+            PCIBus *bus = PCI_HOST_BRIDGE(acpi_get_i386_pci_host())->bus;
 
             if (bus) {
                 Aml *scope = aml_scope("PCI0");
