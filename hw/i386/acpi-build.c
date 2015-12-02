@@ -368,7 +368,6 @@ static void
 build_madt(GArray *table_data, GArray *linker, AcpiCpuInfo *cpu,
            PCMachineState *pcms)
 {
-    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
     int madt_start = table_data->len;
 
     AcpiMultipleApicTable *madt;
@@ -381,7 +380,7 @@ build_madt(GArray *table_data, GArray *linker, AcpiCpuInfo *cpu,
     madt->local_apic_address = cpu_to_le32(APIC_DEFAULT_ADDRESS);
     madt->flags = cpu_to_le32(1);
 
-    for (i = 0; i < guest_info->apic_id_limit; i++) {
+    for (i = 0; i < pcms->apic_id_limit; i++) {
         AcpiMadtProcessorApic *apic = acpi_data_push(table_data, sizeof *apic);
         apic->type = ACPI_APIC_PROCESSOR;
         apic->length = sizeof(*apic);
@@ -929,11 +928,11 @@ static Aml *build_crs(PCIHostState *host,
 static void
 build_ssdt(GArray *table_data, GArray *linker,
            AcpiCpuInfo *cpu, AcpiPmInfo *pm, AcpiMiscInfo *misc,
-           PcPciInfo *pci, PcGuestInfo *guest_info)
+           PcPciInfo *pci, PCMachineState *pcms)
 {
-    MachineState *machine = MACHINE(qdev_get_machine());
+    MachineState *machine = MACHINE(pcms);
     uint32_t nr_mem = machine->ram_slots;
-    unsigned acpi_cpus = guest_info->apic_id_limit;
+    unsigned acpi_cpus = pcms->apic_id_limit;
     Aml *ssdt, *sb_scope, *scope, *pkg, *dev, *method, *crs, *field, *ifctx;
     PCIBus *bus = NULL;
     GPtrArray *io_ranges = g_ptr_array_new_with_free_func(crs_range_free);
@@ -1456,7 +1455,6 @@ acpi_build_srat_memory(AcpiSratMemoryAffinity *numamem, uint64_t base,
 static void
 build_srat(GArray *table_data, GArray *linker, PCMachineState *pcms)
 {
-    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
     AcpiSystemResourceAffinityTable *srat;
     AcpiSratProcessorAffinity *core;
     AcpiSratMemoryAffinity *numamem;
@@ -1475,12 +1473,12 @@ build_srat(GArray *table_data, GArray *linker, PCMachineState *pcms)
     srat->reserved1 = cpu_to_le32(1);
     core = (void *)(srat + 1);
 
-    for (i = 0; i < guest_info->apic_id_limit; ++i) {
+    for (i = 0; i < pcms->apic_id_limit; ++i) {
         core = acpi_data_push(table_data, sizeof *core);
         core->type = ACPI_SRAT_PROCESSOR;
         core->length = sizeof(*core);
         core->local_apic_id = i;
-        curnode = guest_info->node_cpu[i];
+        curnode = pcms->node_cpu[i];
         core->proximity_lo = curnode;
         memset(core->proximity_hi, 0, 3);
         core->local_sapic_eid = 0;
@@ -1497,9 +1495,9 @@ build_srat(GArray *table_data, GArray *linker, PCMachineState *pcms)
     numamem = acpi_data_push(table_data, sizeof *numamem);
     acpi_build_srat_memory(numamem, 0, 640*1024, 0, MEM_AFFINITY_ENABLED);
     next_base = 1024 * 1024;
-    for (i = 1; i < guest_info->numa_nodes + 1; ++i) {
+    for (i = 1; i < pcms->numa_nodes + 1; ++i) {
         mem_base = next_base;
-        mem_len = guest_info->node_mem[i - 1];
+        mem_len = pcms->node_mem[i - 1];
         if (i == 1) {
             mem_len -= 1024 * 1024;
         }
@@ -1523,7 +1521,7 @@ build_srat(GArray *table_data, GArray *linker, PCMachineState *pcms)
                                MEM_AFFINITY_ENABLED);
     }
     slots = (table_data->len - numa_start) / sizeof *numamem;
-    for (; slots < guest_info->numa_nodes + 2; slots++) {
+    for (; slots < pcms->numa_nodes + 2; slots++) {
         numamem = acpi_data_push(table_data, sizeof *numamem);
         acpi_build_srat_memory(numamem, 0, 0, 0, MEM_AFFINITY_NOFLAGS);
     }
@@ -1686,7 +1684,6 @@ static bool acpi_has_iommu(void)
 static
 void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
 {
-    PcGuestInfo *guest_info = &pcms->acpi_guest_info;
     PCMachineClass *pcmc = PC_MACHINE_GET_CLASS(pcms);
     GArray *table_offsets;
     unsigned facs, ssdt, dsdt, rsdt;
@@ -1737,7 +1734,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
     ssdt = tables_blob->len;
     acpi_add_table(table_offsets, tables_blob);
     build_ssdt(tables_blob, tables->linker, &cpu, &pm, &misc, &pci,
-               guest_info);
+               pcms);
     aml_len += tables_blob->len - ssdt;
 
     acpi_add_table(table_offsets, tables_blob);
@@ -1756,7 +1753,7 @@ void acpi_build(PCMachineState *pcms, AcpiBuildTables *tables)
             build_tpm2(tables_blob, tables->linker);
         }
     }
-    if (guest_info->numa_nodes) {
+    if (pcms->numa_nodes) {
         acpi_add_table(table_offsets, tables_blob);
         build_srat(tables_blob, tables->linker, pcms);
     }
