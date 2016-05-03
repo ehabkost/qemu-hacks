@@ -2059,6 +2059,45 @@ static void x86_cpu_report_filtered_features(X86CPU *cpu)
     }
 }
 
+/* Check for missing features that may prevent the CPU class from
+ * running using the current machine and accelerator.
+ */
+static void x86_cpu_class_check_missing_features(X86CPUClass *xcc,
+                                                 strList **missing_feats)
+{
+    X86CPU *xc;
+    FeatureWord w;
+
+    if (xcc->kvm_required && !kvm_enabled()) {
+        strList *new = g_new0(strList, 1);
+        new->value = g_strdup("kvm");;
+        *missing_feats = new;
+        return;
+    }
+
+    xc = X86_CPU(object_new(object_class_get_name(OBJECT_CLASS(xcc))));
+    if (x86_cpu_filter_features(xc)) {
+        for (w = 0; w < FEATURE_WORDS; w++) {
+            FeatureWordInfo *fi = &feature_word_info[w];
+            uint32_t filtered = xc->filtered_features[w];
+            int i;
+            for (i = 0; i < 32; i++) {
+                if (filtered & (1UL << i)) {
+                    char **parts = g_strsplit(fi->feat_names[i], "|", 2);
+                    strList *new = g_new0(strList, 1);
+                    new->value = g_strdup(parts[0]);
+                    feat2prop(new->value);
+                    new->next = *missing_feats;
+                    *missing_feats = new;
+                    g_strfreev(parts);
+                }
+            }
+        }
+    }
+
+    object_unref(OBJECT(xc));
+}
+
 /* Print all cpuid feature names in featureset
  */
 static void listflags(FILE *f, fprintf_function print, const char **featureset)
@@ -2151,6 +2190,8 @@ static void x86_cpu_definition_entry(gpointer data, gpointer user_data)
 
     info = g_malloc0(sizeof(*info));
     info->name = x86_cpu_class_get_model_name(cc);
+    x86_cpu_class_check_missing_features(cc, &info->unavailable_features);
+    info->has_unavailable_features = true;
 
     entry = g_malloc0(sizeof(*entry));
     entry->value = info;
