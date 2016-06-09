@@ -294,14 +294,12 @@ typedef struct CreateCo {
 
 static void coroutine_fn bdrv_create_co_entry(void *opaque)
 {
-    Error *local_err = NULL;
     int ret;
 
     CreateCo *cco = opaque;
     assert(cco->drv);
 
-    ret = cco->drv->bdrv_create(cco->filename, cco->opts, &local_err);
-    error_propagate(&cco->err, local_err);
+    ret = cco->drv->bdrv_create(cco->filename, cco->opts, &cco->err);
     cco->ret = ret;
 }
 
@@ -353,7 +351,6 @@ out:
 int bdrv_create_file(const char *filename, QemuOpts *opts, Error **errp)
 {
     BlockDriver *drv;
-    Error *local_err = NULL;
     int ret;
 
     drv = bdrv_find_protocol(filename, true, errp);
@@ -361,8 +358,7 @@ int bdrv_create_file(const char *filename, QemuOpts *opts, Error **errp)
         return -ENOENT;
     }
 
-    ret = bdrv_create(drv, filename, opts, &local_err);
-    error_propagate(errp, local_err);
+    ret = bdrv_create(drv, filename, opts, errp);
     return ret;
 }
 

@@ -3654,7 +3654,6 @@ void qmp_blockdev_mirror(const char *device, const char *target,
     BlockBackend *blk;
     BlockDriverState *target_bs;
     AioContext *aio_context;
-    Error *local_err = NULL;
 
     blk = blk_by_name(device);
     if (!blk) {
@@ -3678,16 +3677,11 @@ void qmp_blockdev_mirror(const char *device, const char *target,
 
     bdrv_set_aio_context(target_bs, aio_context);
 
-    blockdev_mirror_common(bs, target_bs,
-                           has_replaces, replaces, sync,
-                           has_speed, speed,
-                           has_granularity, granularity,
-                           has_buf_size, buf_size,
-                           has_on_source_error, on_source_error,
-                           has_on_target_error, on_target_error,
-                           true, true,
-                           &local_err);
-    error_propagate(errp, local_err);
+    blockdev_mirror_common(bs, target_bs, has_replaces, replaces, sync,
+                           has_speed, speed, has_granularity, granularity,
+                           has_buf_size, buf_size, has_on_source_error,
+                           on_source_error, has_on_target_error,
+                           on_target_error, true, true, errp);
 
     aio_context_release(aio_context);
 }
