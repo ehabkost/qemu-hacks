@@ -587,9 +587,7 @@ static int raw_open(BlockDriverState *bs, QDict *options, int flags,
 
     s->type = FTYPE_FILE;
     ret = raw_open_common(bs, options, flags, 0, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
-    }
+    error_propagate(errp, local_err);
     return ret;
 }
 
@@ -2239,9 +2237,7 @@ hdev_open_Mac_error:
 
     ret = raw_open_common(bs, options, flags, 0, &local_err);
     if (ret < 0) {
-        if (local_err) {
-            error_propagate(errp, local_err);
-        }
+        error_propagate(errp, local_err);
 #if defined(__APPLE__) && defined(__MACH__)
         if (*bsd_path) {
             filename = bsd_path;
@@ -2453,9 +2449,7 @@ static int cdrom_open(BlockDriverState *bs, QDict *options, int flags,
 
     /* open will not fail even if no CD is inserted, so add O_NONBLOCK */
     ret = raw_open_common(bs, options, flags, O_NONBLOCK, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
-    }
+    error_propagate(errp, local_err);
     return ret;
 }
 
@@ -2573,9 +2567,7 @@ static int cdrom_open(BlockDriverState *bs, QDict *options, int flags,
 
     ret = raw_open_common(bs, options, flags, 0, &local_err);
     if (ret) {
-        if (local_err) {
-            error_propagate(errp, local_err);
-        }
+        error_propagate(errp, local_err);
         return ret;
     }
 
