@@ -351,15 +351,13 @@ out:
 int bdrv_create_file(const char *filename, QemuOpts *opts, Error **errp)
 {
     BlockDriver *drv;
-    int ret;
 
     drv = bdrv_find_protocol(filename, true, errp);
     if (drv == NULL) {
         return -ENOENT;
     }
 
-    ret = bdrv_create(drv, filename, opts, errp);
-    return ret;
+    return bdrv_create(drv, filename, opts, errp);
 }
 
 /**

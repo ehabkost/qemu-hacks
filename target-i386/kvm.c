@@ -1342,7 +1342,7 @@ static int kvm_put_xsave(X86CPU *cpu)
     CPUX86State *env = &cpu->env;
     X86XSaveArea *xsave = env->kvm_xsave_buf;
     uint16_t cwd, swd, twd;
-    int i, r;
+    int i;
 
     if (!has_xsave) {
         return kvm_put_fpu(cpu);
@@ -1391,8 +1391,7 @@ static int kvm_put_xsave(X86CPU *cpu)
             16 * sizeof env->xmm_regs[16]);
     memcpy(&xsave->pkru_state, &env->pkru, sizeof env->pkru);
 #endif
-    r = kvm_vcpu_ioctl(CPU(cpu), KVM_SET_XSAVE, xsave);
-    return r;
+    return kvm_vcpu_ioctl(CPU(cpu), KVM_SET_XSAVE, xsave);
 }
 
 static int kvm_put_xcrs(X86CPU *cpu)
