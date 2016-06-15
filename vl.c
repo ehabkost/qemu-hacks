@@ -2946,7 +2946,6 @@ static int global_init_func(void *opaque, QemuOpts *opts, Error **errp)
     g->driver   = driver;
     g->property = prop;
     g->value    = qemu_opt_get(opts, "value");
-    g->user_provided = true;
     qdev_prop_register_global(g);
     return 0;
 }
