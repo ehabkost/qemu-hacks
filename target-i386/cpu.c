@@ -518,6 +518,14 @@ typedef struct ExtSaveArea {
 } ExtSaveArea;
 
 static const ExtSaveArea x86_ext_save_areas[] = {
+    [XSTATE_FP_BIT] =
+          { .feature = FEAT_1_EDX, .bits = CPUID_FP87,
+            /* offset/size ignored,
+             * FP87 state is on the legacy XSAVE region */ },
+    [XSTATE_SSE_BIT] =
+          {. feature = FEAT_1_EDX, .bits = CPUID_SSE,
+            /* offset/size ignored,
+             * SSE state is on the legacy XSAVE region */ },
     [XSTATE_YMM_BIT] =
           { .feature = FEAT_1_ECX, .bits = CPUID_EXT_AVX,
             .offset = offsetof(X86XSaveArea, avx_state),
@@ -2516,8 +2524,8 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
             break;
         }
 
-        ena_mask = (XSTATE_FP_MASK | XSTATE_SSE_MASK);
-        for (i = 2; i < ARRAY_SIZE(x86_ext_save_areas); i++) {
+        ena_mask = 0;
+        for (i = 0; i < ARRAY_SIZE(x86_ext_save_areas); i++) {
             const ExtSaveArea *esa = &x86_ext_save_areas[i];
             if ((env->features[esa->feature] & esa->bits)) {
                 ena_mask |= (1ULL << i);
