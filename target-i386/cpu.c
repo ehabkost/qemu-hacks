@@ -2490,7 +2490,6 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
         *ebx &= 0xffff; /* The count doesn't need to be reliable. */
         break;
     case 0xD: {
-        KVMState *s = cs->kvm_state;
         uint64_t ena_mask;
         int i;
 
@@ -2503,6 +2502,7 @@ void cpu_x86_cpuid(CPUX86State *env, uint32_t index, uint32_t count,
             break;
         }
         if (kvm_enabled()) {
+            KVMState *s = cs->kvm_state;
             ena_mask = kvm_arch_get_supported_cpuid(s, 0xd, 0, R_EDX);
             ena_mask <<= 32;
             ena_mask |= kvm_arch_get_supported_cpuid(s, 0xd, 0, R_EAX);
