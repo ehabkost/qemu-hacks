@@ -911,6 +911,7 @@ void device_class_set_props(DeviceClass *dc, Property *props)
     Property *prop;
     ObjectClass *oc = OBJECT_CLASS(dc);
 
+    assert(!dc->props);
     dc->props = props;
     for (prop = dc->props; prop && prop->name; prop++) {
         qdev_class_property_add_legacy(oc, prop, &error_abort);
