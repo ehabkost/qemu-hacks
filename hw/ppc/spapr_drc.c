@@ -368,7 +368,7 @@ static void attach(sPAPRDRConnector *drc, DeviceState *d, void *fdt,
     object_property_add_link(OBJECT(drc), "device",
                              object_get_typename(OBJECT(drc->dev)),
                              (Object **)(&drc->dev),
-                             NULL, 0, NULL);
+                             NULL, 0, &error_abort);
 }
 
 static void detach(sPAPRDRConnector *drc, DeviceState *d,
@@ -598,17 +598,17 @@ static void spapr_dr_connector_instance_init(Object *obj)
     sPAPRDRConnector *drc = SPAPR_DR_CONNECTOR(obj);
 
     object_property_add_uint32_ptr(obj, "isolation-state",
-                                   &drc->isolation_state, NULL);
+                                   &drc->isolation_state, &error_abort);
     object_property_add_uint32_ptr(obj, "indicator-state",
-                                   &drc->indicator_state, NULL);
+                                   &drc->indicator_state, &error_abort);
     object_property_add_uint32_ptr(obj, "allocation-state",
-                                   &drc->allocation_state, NULL);
-    object_property_add_uint32_ptr(obj, "id", &drc->id, NULL);
+                                   &drc->allocation_state, &error_abort);
+    object_property_add_uint32_ptr(obj, "id", &drc->id, &error_abort);
     object_property_add(obj, "index", "uint32", prop_get_index,
                         NULL, NULL, NULL, NULL);
     object_property_add(obj, "connector_type", "uint32", prop_get_type,
                         NULL, NULL, NULL, NULL);
-    object_property_add_str(obj, "name", prop_get_name, NULL, NULL);
+    object_property_add_str(obj, "name", prop_get_name, NULL, &error_abort);
     object_property_add(obj, "entity-sense", "uint32", prop_get_entity_sense,
                         NULL, NULL, NULL, NULL);
     object_property_add(obj, "fdt", "struct", prop_get_fdt,

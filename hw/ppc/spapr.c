@@ -1213,7 +1213,7 @@ static void spapr_rtc_create(sPAPRMachineState *spapr)
     spapr->rtc = dev;
 
     object_property_add_alias(qdev_get_machine(), "rtc-time",
-                              OBJECT(spapr->rtc), "date", NULL);
+                              OBJECT(spapr->rtc), "date", &error_abort);
 }
 
 /* Returns whether we want to use VGA or not */
@@ -2135,7 +2135,8 @@ static void spapr_machine_initfn(Object *obj)
 
     spapr->htab_fd = -1;
     object_property_add_str(obj, "kvm-type",
-                            spapr_get_kvm_type, spapr_set_kvm_type, NULL);
+                            spapr_get_kvm_type, spapr_set_kvm_type,
+                            &error_abort);
     object_property_set_description(obj, "kvm-type",
                                     "Specifies the KVM virtualization mode (HV, PR)",
                                     NULL);

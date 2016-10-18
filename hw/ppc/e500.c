@@ -866,7 +866,7 @@ void ppce500_init(MachineState *machine, PPCE500Params *params)
 
     dev = qdev_create(NULL, "e500-ccsr");
     object_property_add_child(qdev_get_machine(), "e500-ccsr",
-                              OBJECT(dev), NULL);
+                              OBJECT(dev), &error_abort);
     qdev_init_nofail(dev);
     ccsr = CCSR(dev);
     ccsr_addr_space = &ccsr->ccsr_space;

@@ -585,7 +585,8 @@ static void ppc_prep_init(MachineState *machine)
     qdev_prop_set_string(dev, "bios-name", bios_name);
     qdev_prop_set_uint32(dev, "elf-machine", PPC_ELF_MACHINE);
     pcihost = PCI_HOST_BRIDGE(dev);
-    object_property_add_child(qdev_get_machine(), "raven", OBJECT(dev), NULL);
+    object_property_add_child(qdev_get_machine(), "raven", OBJECT(dev),
+                              &error_abort);
     qdev_init_nofail(dev);
     pci_bus = (PCIBus *)qdev_get_child_bus(dev, "pci.0");
     if (pci_bus == NULL) {
