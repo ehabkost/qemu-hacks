@@ -155,7 +155,7 @@ static void tpm_backend_instance_init(Object *obj)
     object_property_add_bool(obj, "opened",
                              tpm_backend_prop_get_opened,
                              tpm_backend_prop_set_opened,
-                             NULL);
+                             &error_abort);
 }
 
 void tpm_backend_thread_deliver_request(TPMBackendThread *tbt)
