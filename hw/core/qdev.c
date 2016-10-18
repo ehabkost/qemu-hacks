@@ -97,7 +97,7 @@ static void bus_add_child(BusState *bus, DeviceState *child)
                              (Object **)&kid->child,
                              NULL, /* read-only property */
                              0, /* return ownership on prop deletion */
-                             NULL);
+                             &error_abort);
 }
 
 void qdev_set_parent_bus(DeviceState *dev, BusState *bus)
@@ -490,7 +490,8 @@ void qdev_connect_gpio_out_named(DeviceState *dev, const char *name, int n,
          */
         object_property_add_child(container_get(qdev_get_machine(),
                                                 "/unattached"),
-                                  "non-qdev-gpio[*]", OBJECT(pin), NULL);
+                                  "non-qdev-gpio[*]", OBJECT(pin),
+                                  &error_abort);
     }
     object_property_set_link(OBJECT(dev), OBJECT(pin), propname, &error_abort);
     g_free(propname);
@@ -1035,9 +1036,10 @@ static void device_initfn(Object *obj)
     dev->realized = false;
 
     object_property_add_bool(obj, "realized",
-                             device_get_realized, device_set_realized, NULL);
+                             device_get_realized, device_set_realized,
+                             &error_abort);
     object_property_add_bool(obj, "hotpluggable",
-                             device_get_hotpluggable, NULL, NULL);
+                             device_get_hotpluggable, NULL, &error_abort);
     object_property_add_bool(obj, "hotplugged",
                              device_get_hotplugged, device_set_hotplugged,
                              &error_abort);

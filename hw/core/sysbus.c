@@ -350,7 +350,7 @@ static void main_system_bus_create(void)
     OBJECT(main_system_bus)->free = g_free;
     object_property_add_child(container_get(qdev_get_machine(),
                                             "/unattached"),
-                              "sysbus", OBJECT(main_system_bus), NULL);
+                              "sysbus", OBJECT(main_system_bus), &error_abort);
 }
 
 BusState *sysbus_get_default(void)
