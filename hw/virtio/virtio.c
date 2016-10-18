@@ -1884,7 +1884,8 @@ void virtio_instance_init_common(Object *proxy_obj, void *data,
     DeviceState *vdev = data;
 
     object_initialize(vdev, vdev_size, vdev_name);
-    object_property_add_child(proxy_obj, "virtio-backend", OBJECT(vdev), NULL);
+    object_property_add_child(proxy_obj, "virtio-backend", OBJECT(vdev),
+                              &error_abort);
     object_unref(OBJECT(vdev));
     qdev_alias_all_properties(vdev, proxy_obj);
 }

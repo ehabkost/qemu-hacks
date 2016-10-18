@@ -175,7 +175,7 @@ static void virtio_rng_device_realize(DeviceState *dev, Error **errp)
         object_property_add_child(OBJECT(dev),
                                   "default-backend",
                                   OBJECT(vrng->conf.default_backend),
-                                  NULL);
+                                  &error_abort);
 
         /* The child property took a reference, we can safely drop ours now */
         object_unref(OBJECT(vrng->conf.default_backend));
@@ -252,7 +252,7 @@ static void virtio_rng_initfn(Object *obj)
     object_property_add_link(obj, "rng", TYPE_RNG_BACKEND,
                              (Object **)&vrng->conf.rng,
                              qdev_prop_allow_set_link_before_realize,
-                             OBJ_PROP_LINK_UNREF_ON_RELEASE, NULL);
+                             OBJ_PROP_LINK_UNREF_ON_RELEASE, &error_abort);
 }
 
 static const TypeInfo virtio_rng_info = {
