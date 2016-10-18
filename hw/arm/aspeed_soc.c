@@ -92,19 +92,20 @@ static void aspeed_soc_init(Object *obj)
     s->cpu = cpu_arm_init(sc->info->cpu_model);
 
     object_initialize(&s->vic, sizeof(s->vic), TYPE_ASPEED_VIC);
-    object_property_add_child(obj, "vic", OBJECT(&s->vic), NULL);
+    object_property_add_child(obj, "vic", OBJECT(&s->vic), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->vic), sysbus_get_default());
 
     object_initialize(&s->timerctrl, sizeof(s->timerctrl), TYPE_ASPEED_TIMER);
-    object_property_add_child(obj, "timerctrl", OBJECT(&s->timerctrl), NULL);
+    object_property_add_child(obj, "timerctrl", OBJECT(&s->timerctrl),
+                              &error_abort);
     qdev_set_parent_bus(DEVICE(&s->timerctrl), sysbus_get_default());
 
     object_initialize(&s->i2c, sizeof(s->i2c), TYPE_ASPEED_I2C);
-    object_property_add_child(obj, "i2c", OBJECT(&s->i2c), NULL);
+    object_property_add_child(obj, "i2c", OBJECT(&s->i2c), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->i2c), sysbus_get_default());
 
     object_initialize(&s->scu, sizeof(s->scu), TYPE_ASPEED_SCU);
-    object_property_add_child(obj, "scu", OBJECT(&s->scu), NULL);
+    object_property_add_child(obj, "scu", OBJECT(&s->scu), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->scu), sysbus_get_default());
     qdev_prop_set_uint32(DEVICE(&s->scu), "silicon-rev",
                          sc->info->silicon_rev);
@@ -114,18 +115,19 @@ static void aspeed_soc_init(Object *obj)
                               "hw-strap2", &error_abort);
 
     object_initialize(&s->fmc, sizeof(s->fmc), sc->info->fmc_typename);
-    object_property_add_child(obj, "fmc", OBJECT(&s->fmc), NULL);
+    object_property_add_child(obj, "fmc", OBJECT(&s->fmc), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->fmc), sysbus_get_default());
 
     for (i = 0; i < sc->info->spis_num; i++) {
         object_initialize(&s->spi[i], sizeof(s->spi[i]),
                           sc->info->spi_typename[i]);
-        object_property_add_child(obj, "spi", OBJECT(&s->spi[i]), NULL);
+        object_property_add_child(obj, "spi", OBJECT(&s->spi[i]),
+                                  &error_abort);
         qdev_set_parent_bus(DEVICE(&s->spi[i]), sysbus_get_default());
     }
 
     object_initialize(&s->sdmc, sizeof(s->sdmc), TYPE_ASPEED_SDMC);
-    object_property_add_child(obj, "sdmc", OBJECT(&s->sdmc), NULL);
+    object_property_add_child(obj, "sdmc", OBJECT(&s->sdmc), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->sdmc), sysbus_get_default());
     qdev_prop_set_uint32(DEVICE(&s->sdmc), "silicon-rev",
                          sc->info->silicon_rev);

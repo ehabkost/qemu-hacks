@@ -36,7 +36,8 @@ static void bcm2836_init(Object *obj)
     }
 
     object_initialize(&s->control, sizeof(s->control), TYPE_BCM2836_CONTROL);
-    object_property_add_child(obj, "control", OBJECT(&s->control), NULL);
+    object_property_add_child(obj, "control", OBJECT(&s->control),
+                              &error_abort);
     qdev_set_parent_bus(DEVICE(&s->control), sysbus_get_default());
 
     object_initialize(&s->peripherals, sizeof(s->peripherals),

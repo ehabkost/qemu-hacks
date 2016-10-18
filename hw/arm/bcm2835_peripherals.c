@@ -28,12 +28,14 @@ static void bcm2835_peripherals_init(Object *obj)
 
     /* Memory region for peripheral devices, which we export to our parent */
     memory_region_init(&s->peri_mr, obj,"bcm2835-peripherals", 0x1000000);
-    object_property_add_child(obj, "peripheral-io", OBJECT(&s->peri_mr), NULL);
+    object_property_add_child(obj, "peripheral-io", OBJECT(&s->peri_mr),
+                              &error_abort);
     sysbus_init_mmio(SYS_BUS_DEVICE(s), &s->peri_mr);
 
     /* Internal memory region for peripheral bus addresses (not exported) */
     memory_region_init(&s->gpu_bus_mr, obj, "bcm2835-gpu", (uint64_t)1 << 32);
-    object_property_add_child(obj, "gpu-bus", OBJECT(&s->gpu_bus_mr), NULL);
+    object_property_add_child(obj, "gpu-bus", OBJECT(&s->gpu_bus_mr),
+                              &error_abort);
 
     /* Internal memory region for request/response communication with
      * mailbox-addressable peripherals (not exported)
@@ -43,22 +45,22 @@ static void bcm2835_peripherals_init(Object *obj)
 
     /* Interrupt Controller */
     object_initialize(&s->ic, sizeof(s->ic), TYPE_BCM2835_IC);
-    object_property_add_child(obj, "ic", OBJECT(&s->ic), NULL);
+    object_property_add_child(obj, "ic", OBJECT(&s->ic), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->ic), sysbus_get_default());
 
     /* UART0 */
     s->uart0 = SYS_BUS_DEVICE(object_new("pl011"));
-    object_property_add_child(obj, "uart0", OBJECT(s->uart0), NULL);
+    object_property_add_child(obj, "uart0", OBJECT(s->uart0), &error_abort);
     qdev_set_parent_bus(DEVICE(s->uart0), sysbus_get_default());
 
     /* AUX / UART1 */
     object_initialize(&s->aux, sizeof(s->aux), TYPE_BCM2835_AUX);
-    object_property_add_child(obj, "aux", OBJECT(&s->aux), NULL);
+    object_property_add_child(obj, "aux", OBJECT(&s->aux), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->aux), sysbus_get_default());
 
     /* Mailboxes */
     object_initialize(&s->mboxes, sizeof(s->mboxes), TYPE_BCM2835_MBOX);
-    object_property_add_child(obj, "mbox", OBJECT(&s->mboxes), NULL);
+    object_property_add_child(obj, "mbox", OBJECT(&s->mboxes), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->mboxes), sysbus_get_default());
 
     object_property_add_const_link(OBJECT(&s->mboxes), "mbox-mr",
@@ -66,7 +68,7 @@ static void bcm2835_peripherals_init(Object *obj)
 
     /* Framebuffer */
     object_initialize(&s->fb, sizeof(s->fb), TYPE_BCM2835_FB);
-    object_property_add_child(obj, "fb", OBJECT(&s->fb), NULL);
+    object_property_add_child(obj, "fb", OBJECT(&s->fb), &error_abort);
     object_property_add_alias(obj, "vcram-size", OBJECT(&s->fb), "vcram-size",
                               &error_abort);
     qdev_set_parent_bus(DEVICE(&s->fb), sysbus_get_default());
@@ -76,7 +78,8 @@ static void bcm2835_peripherals_init(Object *obj)
 
     /* Property channel */
     object_initialize(&s->property, sizeof(s->property), TYPE_BCM2835_PROPERTY);
-    object_property_add_child(obj, "property", OBJECT(&s->property), NULL);
+    object_property_add_child(obj, "property", OBJECT(&s->property),
+                              &error_abort);
     object_property_add_alias(obj, "board-rev", OBJECT(&s->property),
                               "board-rev", &error_abort);
     qdev_set_parent_bus(DEVICE(&s->property), sysbus_get_default());
@@ -88,12 +91,12 @@ static void bcm2835_peripherals_init(Object *obj)
 
     /* Extended Mass Media Controller */
     object_initialize(&s->sdhci, sizeof(s->sdhci), TYPE_SYSBUS_SDHCI);
-    object_property_add_child(obj, "sdhci", OBJECT(&s->sdhci), NULL);
+    object_property_add_child(obj, "sdhci", OBJECT(&s->sdhci), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->sdhci), sysbus_get_default());
 
     /* DMA Channels */
     object_initialize(&s->dma, sizeof(s->dma), TYPE_BCM2835_DMA);
-    object_property_add_child(obj, "dma", OBJECT(&s->dma), NULL);
+    object_property_add_child(obj, "dma", OBJECT(&s->dma), &error_abort);
     qdev_set_parent_bus(DEVICE(&s->dma), sysbus_get_default());
 
     object_property_add_const_link(OBJECT(&s->dma), "dma-mr",

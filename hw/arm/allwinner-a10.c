@@ -28,7 +28,7 @@ static void aw_a10_init(Object *obj)
     AwA10State *s = AW_A10(obj);
 
     object_initialize(&s->cpu, sizeof(s->cpu), "cortex-a8-" TYPE_ARM_CPU);
-    object_property_add_child(obj, "cpu", OBJECT(&s->cpu), NULL);
+    object_property_add_child(obj, "cpu", OBJECT(&s->cpu), &error_abort);
 
     object_initialize(&s->intc, sizeof(s->intc), TYPE_AW_A10_PIC);
     qdev_set_parent_bus(DEVICE(&s->intc), sysbus_get_default());

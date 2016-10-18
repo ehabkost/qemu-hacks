@@ -1526,7 +1526,7 @@ static void virt_2_8_instance_init(Object *obj)
      */
     vms->secure = false;
     object_property_add_bool(obj, "secure", virt_get_secure,
-                             virt_set_secure, NULL);
+                             virt_set_secure, &error_abort);
     object_property_set_description(obj, "secure",
                                     "Set on/off to enable/disable the ARM "
                                     "Security Extensions (TrustZone)",
@@ -1535,7 +1535,7 @@ static void virt_2_8_instance_init(Object *obj)
     /* High memory is enabled by default */
     vms->highmem = true;
     object_property_add_bool(obj, "highmem", virt_get_highmem,
-                             virt_set_highmem, NULL);
+                             virt_set_highmem, &error_abort);
     object_property_set_description(obj, "highmem",
                                     "Set on/off to enable/disable using "
                                     "physical address space above 32 bits",
@@ -1543,7 +1543,7 @@ static void virt_2_8_instance_init(Object *obj)
     /* Default GIC type is v2 */
     vms->gic_version = 2;
     object_property_add_str(obj, "gic-version", virt_get_gic_version,
-                        virt_set_gic_version, NULL);
+                        virt_set_gic_version, &error_abort);
     object_property_set_description(obj, "gic-version",
                                     "Set GIC version. "
                                     "Valid values are 2, 3 and host", NULL);

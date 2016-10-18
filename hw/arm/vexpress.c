@@ -738,7 +738,7 @@ static void vexpress_instance_init(Object *obj)
     /* EL3 is enabled by default on vexpress */
     vms->secure = true;
     object_property_add_bool(obj, "secure", vexpress_get_secure,
-                             vexpress_set_secure, NULL);
+                             vexpress_set_secure, &error_abort);
     object_property_set_description(obj, "secure",
                                     "Set on/off to enable/disable the ARM "
                                     "Security Extensions (TrustZone)",

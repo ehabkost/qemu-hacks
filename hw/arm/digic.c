@@ -36,7 +36,7 @@ static void digic_init(Object *obj)
     int i;
 
     object_initialize(&s->cpu, sizeof(s->cpu), "arm946-" TYPE_ARM_CPU);
-    object_property_add_child(obj, "cpu", OBJECT(&s->cpu), NULL);
+    object_property_add_child(obj, "cpu", OBJECT(&s->cpu), &error_abort);
 
     for (i = 0; i < DIGIC4_NB_TIMERS; i++) {
 #define DIGIC_TIMER_NAME_MLEN    11
@@ -46,13 +46,14 @@ static void digic_init(Object *obj)
         dev = DEVICE(&s->timer[i]);
         qdev_set_parent_bus(dev, sysbus_get_default());
         snprintf(name, DIGIC_TIMER_NAME_MLEN, "timer[%d]", i);
-        object_property_add_child(obj, name, OBJECT(&s->timer[i]), NULL);
+        object_property_add_child(obj, name, OBJECT(&s->timer[i]),
+                                  &error_abort);
     }
 
     object_initialize(&s->uart, sizeof(s->uart), TYPE_DIGIC_UART);
     dev = DEVICE(&s->uart);
     qdev_set_parent_bus(dev, sysbus_get_default());
-    object_property_add_child(obj, "uart", OBJECT(&s->uart), NULL);
+    object_property_add_child(obj, "uart", OBJECT(&s->uart), &error_abort);
 }
 
 static void digic_realize(DeviceState *dev, Error **errp)
