@@ -2295,7 +2295,7 @@ void object_class_property_set_description(ObjectClass *klass,
 
 static void object_instance_init(Object *obj)
 {
-    object_property_add_str(obj, "type", qdev_get_type, NULL, NULL);
+    object_property_add_str(obj, "type", qdev_get_type, NULL, &error_abort);
 }
 
 static void register_types(void)
