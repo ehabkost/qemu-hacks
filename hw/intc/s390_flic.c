@@ -36,7 +36,7 @@ void s390_flic_init(void)
     if (!dev) {
         dev = qdev_create(NULL, TYPE_QEMU_S390_FLIC);
         object_property_add_child(qdev_get_machine(), TYPE_QEMU_S390_FLIC,
-                                  OBJECT(dev), NULL);
+                                  OBJECT(dev), &error_abort);
     }
     qdev_init_nofail(dev);
 }
