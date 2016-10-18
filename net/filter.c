@@ -177,14 +177,14 @@ static void netfilter_init(Object *obj)
 
     object_property_add_str(obj, "netdev",
                             netfilter_get_netdev_id, netfilter_set_netdev_id,
-                            NULL);
+                            &error_abort);
     object_property_add_enum(obj, "queue", "NetFilterDirection",
                              NetFilterDirection_lookup,
                              netfilter_get_direction, netfilter_set_direction,
-                             NULL);
+                             &error_abort);
     object_property_add_str(obj, "status",
                             netfilter_get_status, netfilter_set_status,
-                            NULL);
+                            &error_abort);
 }
 
 static void netfilter_complete(UserCreatable *uc, Error **errp)
