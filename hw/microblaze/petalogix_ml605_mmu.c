@@ -145,9 +145,9 @@ petalogix_ml605_init(MachineState *machine)
 
     /* FIXME: attach to the sysbus instead */
     object_property_add_child(qdev_get_machine(), "xilinx-eth", OBJECT(eth0),
-                              NULL);
+                              &error_abort);
     object_property_add_child(qdev_get_machine(), "xilinx-dma", OBJECT(dma),
-                              NULL);
+                              &error_abort);
 
     ds = object_property_get_link(OBJECT(dma),
                                   "axistream-connected-target", NULL);
