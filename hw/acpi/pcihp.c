@@ -309,7 +309,7 @@ void acpi_pcihp_init(Object *owner, AcpiPciHpState *s, PCIBus *root_bus,
 
         *bus_bsel = ACPI_PCIHP_BSEL_DEFAULT;
         object_property_add_uint32_ptr(OBJECT(root_bus), ACPI_PCIHP_PROP_BSEL,
-                                       bus_bsel, NULL);
+                                       bus_bsel, &error_abort);
     }
 
     memory_region_init_io(&s->io, owner, &acpi_pcihp_io_ops, s,

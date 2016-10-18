@@ -460,11 +460,11 @@ void ich9_pm_add_properties(Object *obj, ICH9LPCPMRegs *pm, Error **errp)
     object_property_add_bool(obj, "memory-hotplug-support",
                              ich9_pm_get_memory_hotplug_support,
                              ich9_pm_set_memory_hotplug_support,
-                             NULL);
+                             &error_abort);
     object_property_add_bool(obj, "cpu-hotplug-legacy",
                              ich9_pm_get_cpu_hotplug_legacy,
                              ich9_pm_set_cpu_hotplug_legacy,
-                             NULL);
+                             &error_abort);
     object_property_add(obj, ACPI_PM_PROP_S3_DISABLED, "uint8",
                         ich9_pm_get_disable_s3,
                         ich9_pm_set_disable_s3,
@@ -480,7 +480,7 @@ void ich9_pm_add_properties(Object *obj, ICH9LPCPMRegs *pm, Error **errp)
     object_property_add_bool(obj, ACPI_PM_PROP_TCO_ENABLED,
                              ich9_pm_get_enable_tco,
                              ich9_pm_set_enable_tco,
-                             NULL);
+                             &error_abort);
 }
 
 void ich9_pm_device_plug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
