@@ -3484,10 +3484,10 @@ static void x86_cpu_initfn(Object *obj)
                         x86_cpuid_version_set_stepping, NULL, NULL, NULL);
     object_property_add_str(obj, "vendor",
                             x86_cpuid_get_vendor,
-                            x86_cpuid_set_vendor, NULL);
+                            x86_cpuid_set_vendor, &error_abort);
     object_property_add_str(obj, "model-id",
                             x86_cpuid_get_model_id,
-                            x86_cpuid_set_model_id, NULL);
+                            x86_cpuid_set_model_id, &error_abort);
     object_property_add(obj, "tsc-frequency", "int",
                         x86_cpuid_get_tsc_freq,
                         x86_cpuid_set_tsc_freq, NULL, NULL, NULL);
