@@ -489,7 +489,7 @@ static void xics_kvm_initfn(Object *obj)
     ICSState *ics;
 
     ics = ICS_SIMPLE(object_new(TYPE_ICS_KVM));
-    object_property_add_child(obj, "ics", OBJECT(ics), NULL);
+    object_property_add_child(obj, "ics", OBJECT(ics), &error_abort);
     ics->xics = xics;
     QLIST_INSERT_HEAD(&xics->ics, ics, list);
 }
