@@ -598,12 +598,12 @@ DeviceState *qdev_device_add(QemuOpts *opts, Error **errp)
 
     if (dev->id) {
         object_property_add_child(qdev_get_peripheral(), dev->id,
-                                  OBJECT(dev), NULL);
+                                  OBJECT(dev), &error_abort);
     } else {
         static int anon_count;
         gchar *name = g_strdup_printf("device[%d]", anon_count++);
         object_property_add_child(qdev_get_peripheral_anon(), name,
-                                  OBJECT(dev), NULL);
+                                  OBJECT(dev), &error_abort);
         g_free(name);
     }
 
