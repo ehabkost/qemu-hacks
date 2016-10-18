@@ -439,7 +439,7 @@ static void *acpi_set_bsel(PCIBus *bus, void *opaque)
 
         *bus_bsel = (*bsel_alloc)++;
         object_property_add_uint32_ptr(OBJECT(bus), ACPI_PCIHP_PROP_BSEL,
-                                       bus_bsel, NULL);
+                                       bus_bsel, &error_abort);
     }
 
     return bsel_alloc;

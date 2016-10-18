@@ -1662,7 +1662,7 @@ void ioapic_init_gsi(GSIState *gsi_state, const char *parent_name)
     }
     if (parent_name) {
         object_property_add_child(object_resolve_path(parent_name, NULL),
-                                  "ioapic", OBJECT(dev), NULL);
+                                  "ioapic", OBJECT(dev), &error_abort);
     }
     qdev_init_nofail(dev);
     d = SYS_BUS_DEVICE(dev);

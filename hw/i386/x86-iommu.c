@@ -113,7 +113,7 @@ static void x86_iommu_instance_init(Object *o)
     /* By default, do not support IR */
     s->intr_supported = false;
     object_property_add_bool(o, "intremap", x86_iommu_intremap_prop_get,
-                             x86_iommu_intremap_prop_set, NULL);
+                             x86_iommu_intremap_prop_set, &error_abort);
 }
 
 static const TypeInfo x86_iommu_info = {
