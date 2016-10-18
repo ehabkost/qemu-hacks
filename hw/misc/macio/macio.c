@@ -214,7 +214,7 @@ static void macio_init_ide(MacIOState *s, MACIOIDEState *ide, size_t ide_size,
     memory_region_add_subregion(&s->bar, 0x1f000 + ((index + 1) * 0x1000),
                                 &ide->mem);
     name = g_strdup_printf("ide[%i]", index);
-    object_property_add_child(OBJECT(s), name, OBJECT(ide), NULL);
+    object_property_add_child(OBJECT(s), name, OBJECT(ide), &error_abort);
     g_free(name);
 }
 
@@ -333,7 +333,7 @@ static void macio_instance_init(Object *obj)
 
     object_initialize(&s->cuda, sizeof(s->cuda), TYPE_CUDA);
     qdev_set_parent_bus(DEVICE(&s->cuda), sysbus_get_default());
-    object_property_add_child(obj, "cuda", OBJECT(&s->cuda), NULL);
+    object_property_add_child(obj, "cuda", OBJECT(&s->cuda), &error_abort);
 }
 
 static const VMStateDescription vmstate_macio_oldworld = {
