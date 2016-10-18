@@ -267,7 +267,8 @@ static void pci_std_vga_init(Object *obj)
 {
     /* Expose framebuffer byteorder via QOM */
     object_property_add_bool(obj, "big-endian-framebuffer",
-                             vga_get_big_endian_fb, vga_set_big_endian_fb, NULL);
+                             vga_get_big_endian_fb, vga_set_big_endian_fb,
+                             &error_abort);
 }
 
 static void pci_secondary_vga_realize(PCIDevice *dev, Error **errp)
@@ -297,7 +298,8 @@ static void pci_secondary_vga_init(Object *obj)
 {
     /* Expose framebuffer byteorder via QOM */
     object_property_add_bool(obj, "big-endian-framebuffer",
-                             vga_get_big_endian_fb, vga_set_big_endian_fb, NULL);
+                             vga_get_big_endian_fb, vga_set_big_endian_fb,
+                             &error_abort);
 }
 
 static void pci_secondary_vga_reset(DeviceState *dev)
