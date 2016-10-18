@@ -910,10 +910,10 @@ static void rtc_realizefn(DeviceState *dev, Error **errp)
     qdev_set_legacy_instance_id(dev, base, 3);
     qemu_register_reset(rtc_reset, s);
 
-    object_property_add_tm(OBJECT(s), "date", rtc_get_date, NULL);
+    object_property_add_tm(OBJECT(s), "date", rtc_get_date, &error_abort);
 
     object_property_add_alias(qdev_get_machine(), "rtc-time",
-                              OBJECT(s), "date", NULL);
+                              OBJECT(s), "date", &error_abort);
 
     qdev_init_gpio_out(dev, &s->irq, 1);
 }
