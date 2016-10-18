@@ -12,6 +12,7 @@
 
 #include "qemu/osdep.h"
 #include "qom/object.h"
+#include "qapi/error.h"
 #include "qemu/module.h"
 
 static const TypeInfo container_info = {
@@ -39,7 +40,7 @@ Object *container_get(Object *root, const char *path)
         child = object_resolve_path_component(obj, parts[i]);
         if (!child) {
             child = object_new("container");
-            object_property_add_child(obj, parts[i], child, NULL);
+            object_property_add_child(obj, parts[i], child, &error_abort);
         }
     }
 
