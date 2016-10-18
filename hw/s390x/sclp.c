@@ -469,7 +469,7 @@ void s390_sclp_init(void)
     Object *new = object_new(TYPE_SCLP);
 
     object_property_add_child(qdev_get_machine(), TYPE_SCLP, new,
-                              NULL);
+                              &error_abort);
     object_unref(OBJECT(new));
     qdev_init_nofail(DEVICE(new));
 }
@@ -560,7 +560,8 @@ static void sclp_init(Object *obj)
     Object *new;
 
     new = object_new(TYPE_SCLP_EVENT_FACILITY);
-    object_property_add_child(obj, TYPE_SCLP_EVENT_FACILITY, new, NULL);
+    object_property_add_child(obj, TYPE_SCLP_EVENT_FACILITY, new,
+                              &error_abort);
     object_unref(new);
     sclp->event_facility = EVENT_FACILITY(new);
 
@@ -603,7 +604,7 @@ sclpMemoryHotplugDev *init_sclp_memory_hotplug_dev(void)
     dev = qdev_create(NULL, TYPE_SCLP_MEMORY_HOTPLUG_DEV);
     object_property_add_child(qdev_get_machine(),
                               TYPE_SCLP_MEMORY_HOTPLUG_DEV,
-                              OBJECT(dev), NULL);
+                              OBJECT(dev), &error_abort);
     qdev_init_nofail(dev);
     return SCLP_MEMORY_HOTPLUG_DEV(object_resolve_path(
                                    TYPE_SCLP_MEMORY_HOTPLUG_DEV, NULL));

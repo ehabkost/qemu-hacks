@@ -121,7 +121,7 @@ static void ccw_init(MachineState *machine)
 
     dev = qdev_create(NULL, TYPE_S390_PCI_HOST_BRIDGE);
     object_property_add_child(qdev_get_machine(), TYPE_S390_PCI_HOST_BRIDGE,
-                              OBJECT(dev), NULL);
+                              OBJECT(dev), &error_abort);
     qdev_init_nofail(dev);
 
     /* register hypercalls */
@@ -276,7 +276,7 @@ static inline void s390_machine_initfn(Object *obj)
 {
     object_property_add_bool(obj, "aes-key-wrap",
                              machine_get_aes_key_wrap,
-                             machine_set_aes_key_wrap, NULL);
+                             machine_set_aes_key_wrap, &error_abort);
     object_property_set_description(obj, "aes-key-wrap",
             "enable/disable AES key wrapping using the CPACF wrapping key",
             NULL);
@@ -284,7 +284,7 @@ static inline void s390_machine_initfn(Object *obj)
 
     object_property_add_bool(obj, "dea-key-wrap",
                              machine_get_dea_key_wrap,
-                             machine_set_dea_key_wrap, NULL);
+                             machine_set_dea_key_wrap, &error_abort);
     object_property_set_description(obj, "dea-key-wrap",
             "enable/disable DEA key wrapping using the CPACF wrapping key",
             NULL);
