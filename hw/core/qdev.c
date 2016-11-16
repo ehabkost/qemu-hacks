@@ -1080,6 +1080,11 @@ static void device_finalize(Object *obj)
     }
 }
 
+void device_class_set_bus_type(DeviceClass *dc, const char *bus_type)
+{
+    dc->bus_type = bus_type;
+}
+
 static void device_class_base_init(ObjectClass *class, void *data)
 {
     DeviceClass *klass = DEVICE_CLASS(class);
