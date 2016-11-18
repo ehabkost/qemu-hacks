@@ -11,6 +11,9 @@ logger = logging.getLogger('qemu.tests.machineinfo')
 # machines that we can't easily test because they can't run on all hosts:
 BLACKLIST = ['xenpv', 'xenfv']
 
+# architectures where machines are expected to report all available buses:
+STRICT_ARCHES = set(['x86_64', 'i386', 's390x'])
+
 class QueryMachinesTest(qtest.QEMUQtestTestCase):
     def walkQOMTree(self, vm, path):
         """Walk QOM tree recusrively, starting at path"""
@@ -60,6 +63,8 @@ class QueryMachinesTest(qtest.QEMUQtestTestCase):
             if missing_types:
                 logger.info("extra device types present on machine %s: %s",
                             machine['name'], ' '.join(missing_types))
+                if self.testArch() in STRICT_ARCHES:
+                    self.fail("extra device types: %s" (' '.join(missing_types)))
         finally:
             vm.shutdown()
 
