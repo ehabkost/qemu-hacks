@@ -119,6 +119,12 @@ class QEMUQtestMachine(qemu.QEMUMachine):
 
 class QEMUQtestTestCase(unittest.TestCase):
     @staticmethod
+    def testArch():
+        binary = os.path.basename(os.getenv('QTEST_QEMU_BINARY'))
+        assert binary.startswith('qemu-system-')
+        return binary.replace('qemu-system-', '')
+
+    @staticmethod
     def get_machine(extra_args, **kwargs):
         binary = os.getenv('QTEST_QEMU_BINARY')
         return QEMUQtestMachine(binary=binary, args=extra_args, **kwargs)
