@@ -118,6 +118,7 @@ class QEMUQtestMachine(qemu.QEMUMachine):
         return self._qtest.cmd(cmd)
 
 class QEMUQtestTestCase(unittest.TestCase):
-    def get_machine(self, extra_args, **kwargs):
+    @staticmethod
+    def get_machine(extra_args, **kwargs):
         binary = os.getenv('QTEST_QEMU_BINARY')
         return QEMUQtestMachine(binary=binary, args=extra_args, **kwargs)
