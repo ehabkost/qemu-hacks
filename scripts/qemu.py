@@ -18,7 +18,9 @@ import os
 import sys
 import subprocess
 import qmp.qmp
+import logging
 
+logger = logging.getLogger('qemu')
 
 class QEMUMachine(object):
     '''A QEMU VM'''
@@ -124,6 +126,7 @@ class QEMUMachine(object):
         try:
             self._pre_launch()
             args = self._wrapper + [self._binary] + self._base_args() + self._args
+            logger.debug('Launching QEMU with args: %r', args)
             self._popen = subprocess.Popen(args, stdin=devnull, stdout=qemulog,
                                            stderr=subprocess.STDOUT, shell=False)
             self._post_launch()
