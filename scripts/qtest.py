@@ -18,6 +18,7 @@ import os
 import subprocess
 import qmp.qmp
 import qemu
+import unittest
 
 class QEMUQtestProtocol(object):
     def __init__(self, address, server=False):
@@ -108,3 +109,8 @@ class QEMUQtestMachine(qemu.QEMUMachine):
     def qtest(self, cmd):
         '''Send a qtest command to guest'''
         return self._qtest.cmd(cmd)
+
+class QEMUQtestTestCase(unittest.TestCase):
+    def get_machine(self, extra_args, **kwargs):
+        binary = os.getenv('QTEST_QEMU_BINARY')
+        return QEMUQtestMachine(binary=binary, args=extra_args, **kwargs)
