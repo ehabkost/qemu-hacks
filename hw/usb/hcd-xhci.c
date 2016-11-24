@@ -3672,6 +3672,7 @@ static const TypeInfo xhci_info = {
     .abstract      = true,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
+        { INTERFACE_LEGACY_PCI_DEVICE },
         { }
     },
 };

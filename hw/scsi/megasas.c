@@ -2516,6 +2516,10 @@ static const TypeInfo megasas_info = {
     .instance_size = sizeof(MegasasState),
     .class_size = sizeof(MegasasBaseClass),
     .abstract = true,
+    .interfaces = (InterfaceInfo[]) {
+        { INTERFACE_LEGACY_PCI_DEVICE },
+        { },
+    },
 };
 
 static void megasas_register_types(void)

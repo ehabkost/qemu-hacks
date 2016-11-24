@@ -1225,6 +1225,10 @@ static const TypeInfo amdviPCI = {
     .name = "AMDVI-PCI",
     .parent = TYPE_PCI_DEVICE,
     .instance_size = sizeof(AMDVIPCIState),
+    .interfaces = (InterfaceInfo[]) {
+        { INTERFACE_LEGACY_PCI_DEVICE },
+        { },
+    },
 };
 
 static void amdviPCI_register_types(void)

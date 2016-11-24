@@ -1291,6 +1291,7 @@ static const TypeInfo pvscsi_info = {
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { INTERFACE_PCIE_DEVICE },
+        { INTERFACE_LEGACY_PCI_DEVICE },
         { }
     }
 };

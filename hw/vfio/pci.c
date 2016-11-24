@@ -3022,6 +3022,7 @@ static const TypeInfo vfio_pci_dev_info = {
     .instance_finalize = vfio_instance_finalize,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
+        { INTERFACE_LEGACY_PCI_DEVICE },
         { }
     },
 };
