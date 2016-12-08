@@ -112,10 +112,10 @@ class QueryMachinesTest(unittest.TestCase):
             if strict_mode:
                 self.fail("missing buses: %s" % (' '.join(missing_buses)))
 
-    def machineTestDefaultBuses(self, machine):
+    def xmachineTestDefaultBuses(self, machine):
         self.checkBuses(machine, [], False)
 
-    def machineTestNodefaultsBuses(self, machine):
+    def xmachineTestNodefaultsBuses(self, machine):
         if machine['name'] in NODEFAULTS_BLACKLIST:
             self.skipTest("machine %s on NODEFAULTS_BLACKLIST" % (machine['name']))
 
