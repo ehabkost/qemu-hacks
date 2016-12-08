@@ -121,6 +121,104 @@ class QueryMachinesTest(unittest.TestCase):
 
         self.checkBuses(machine, ['-nodefaults'], True)
 
+    def getSubtypes(self, implements):
+        """Get full list of typenames of subtypes of @implements"""
+        types = self.vm.command('qom-list-types', implements=implements)
+        return [st['name'] for st in types]
+
+    def typeImplements(self, t, i):
+        """Returns True if type @t implements type @i"""
+        stypes = self.getSubtypes(i)
+        return t in stypes
+
+    def validateBus(self, bus, slots):
+        """Check if the bus identified by the slot matches the information returned
+        for the slot.
+
+        TODO: check if it is really a bus
+        TODO: check if accepted-device-types matches accepted-device-types
+              property in the bus
+        """
+
+        ##we could do this:
+        #bustype = self.vm.command('qom-get', path=bus, property='type')
+        #self.assertTrue(self.typeImplements(bustype, 'bus'))
+        ## but the bus _name_ (accepted by qbus_find()) does not necessarily matches the bus _path_
+
+        pass
+
+    def checkSlotProps(self, slots):
+        """check if all properties on "props" are valid properties
+        that appear on device-list-properties for all accepted device types
+        """
+        types_to_check = {}
+        buses_to_check = {}
+        for slot in slots:
+            if slot['props'].has_key('bus'):
+                bus = slot['props']['bus']
+                buses_to_check.setdefault(bus, []).append(slot)
+
+            for t in slot['accepted-device-types']:
+                types_to_check.setdefault(t, set()).update(slot['props'].keys())
+
+        for bus,slots in buses_to_check.items():
+            self.validateBus(bus, slots)
+
+        for t, props in types_to_check.items():
+            props.discard('bus') # 'bus' is handled by device_add directly
+            for st in self.vm.command('qom-list-types', implements=t, abstract=False):
+                dprops = self.vm.command('device-list-properties', typename=st['name'])
+                dpropnames = set([p['name'] for p in dprops])
+                for p in props:
+                    self.assertIn(p, dpropnames)
+
+    #def checkSlotDevices(self, slots):
+    #    """Check if all plugged devices are on the QOM tree and are of the right type"""
+    #    for slot in slots:
+    #        for d in slot['devices']:
+    #            dtype = self.vm.command('qom-get', path=d, property='type')
+    #            self.assertTrue(any(self.typeImplements(dtype, t) for t in slot['accepted-device-types']))
+
+    def checkAvailableField(self, slots):
+        for slot in slots:
+            if slot.has_key('max-devices') and len(slot['devices']) >= slot['max-devices']:
+                self.assertFalse(slot['available'])
+
+    def checkSlotInfo(self, args):
+        #TODO:
+        # * check if -device works with at least one device type
+        # * check if query-hotpluggable-cpus matches what's in query-device-slots
+        # * check if accepted-device-types match the property on the bus
+        # * check if available=false if len(devices) >= max-devices
+        # * check if all plugged devices are really in the QOM tree
+        self.vm = qtest.QEMUQtestMachine(args=args, logging=False)
+        self.vm.launch()
+
+        slots = self.vm.command('query-device-slots')
+        self.checkSlotProps(slots)
+        #self.checkSlotDevices(slots)
+        self.checkAvailableField(slots)
+
+    def machineTestSlotInfo(self, machine):
+        #TODO:
+        # * check if -device works with at least one device type
+        # * check if query-hotpluggable-cpus matches what's in query-device-slots
+        # * check if accepted-device-types match the property on the bus
+        # * check if available=false if len(devices) >= max-devices
+        # * check if all plugged devices are really in the QOM tree
+        if machine['name'] in BLACKLIST:
+            self.skipTest("machine %s on BLACKLIST" % (machine['name']))
+
+        args = ['-S', '-machine', machine['name']]
+        self.checkSlotInfo(args)
+
+        # run an additional test run with q35-chipset.cfg, when testing
+        # q35. It will create extra buses and slots
+        if machine['name'] == 'q35':
+            cfg = os.path.join(MY_DIR, '..', 'docs', 'q35-chipset.cfg')
+            args.extend(['-readconfig', cfg])
+            self.checkSlotInfo(args)
+
     @classmethod
     def addMachineTest(klass, method_name, machine):
         """Dynamically add a testMachine_<arch>_<name>_<machine> method to the class"""
