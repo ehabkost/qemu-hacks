@@ -41,6 +41,8 @@
 #include "hw/hotplug.h"
 #include "hw/boards.h"
 #include "qemu/cutils.h"
+#include "qapi/clone-visitor.h"
+#include "qapi/qmp/qstring.h"
 
 //#define DEBUG_PCI
 #ifdef DEBUG_PCI
@@ -143,6 +145,8 @@ static uint16_t pcibus_numa_node(PCIBus *bus)
     return NUMA_NODE_UNASSIGNED;
 }
 
+static DeviceSlotInfoList *pci_bus_enumerate_slots(BusState *bus, Error **errp);
+
 static void pci_bus_class_init(ObjectClass *klass, void *data)
 {
     BusClass *k = BUS_CLASS(klass);
@@ -158,6 +162,7 @@ static void pci_bus_class_init(ObjectClass *klass, void *data)
      * but overrides BusClass::device_type to INTERFACE_PCIE_DEVICE
      */
     k->device_type = INTERFACE_LEGACY_PCI_DEVICE;
+    k->enumerate_slots = pci_bus_enumerate_slots;
 
     pbc->is_root = pcibus_is_root;
     pbc->bus_num = pcibus_num;
@@ -976,6 +981,274 @@ static PCIReqIDCache pci_req_id_cache_get(PCIDevice *dev)
 uint16_t pci_requester_id(PCIDevice *dev)
 {
     return pci_req_id_cache_extract(&dev->requester_id_cache);
+}
+
+static bool pci_bus_has_pcie_upstream_port(PCIBus *bus)
+{
+    PCIDevice *parent_dev = pci_bridge_get_device(bus);
+
+    /* Device associated with an upstream port.
+     * As there are several types of these, it's easier to check the
+     * parent device: upstream ports are always connected to
+     * root or downstream ports.
+     */
+    return parent_dev &&
+        pci_is_express(parent_dev) &&
+        parent_dev->exp.exp_cap &&
+        (pcie_cap_get_type(parent_dev) == PCI_EXP_TYPE_ROOT_PORT ||
+         pcie_cap_get_type(parent_dev) == PCI_EXP_TYPE_DOWNSTREAM);
+}
+
+static PCIDevice *pci_bus_get_function_0(PCIBus *bus, int devfn)
+{
+    if(pci_bus_has_pcie_upstream_port(bus)) {
+        /* With an upstream PCIe port, we only support 1 device at slot 0 */
+        return bus->devices[0];
+    } else {
+        /* Other bus types might support multiple devices at slots 0-31 */
+        return bus->devices[PCI_DEVFN(PCI_SLOT(devfn), 0)];
+    }
+}
+
+PCIDevice *pci_get_function_0(PCIDevice *pci_dev)
+{
+    return pci_bus_get_function_0(pci_dev->bus, pci_dev->devfn);
+}
+
+static bool int_set_empty(IntegerSet *set)
+{
+    return !set->ranges;
+}
+
+static int int_range_size(IntegerRange *range)
+{
+    return range->max - range->min + 1;
+}
+
+static int int_set_size(IntegerSet *set)
+{
+    int r = 0;
+    IntegerRangeList *rl;
+    for (rl = set->ranges; rl; rl = rl->next) {
+        r += int_range_size(rl->value);
+    }
+    return r;
+}
+
+static void int_set_add(IntegerSet *set, int min, int max)
+{
+    IntegerRangeList *rl;
+    IntegerRangeList **pnext = &set->ranges;
+    IntegerRangeList *prev = NULL;
+
+    for (rl = set->ranges; rl; rl = rl->next) {
+        IntegerRange *r = rl->value;
+        if (max < r->min - 1) {
+            goto insert;
+        } else if (max <= r->max) {
+            r->min = min;
+            goto try_merge_back;
+        } else if (min == r->max + 1) {
+            r->max = max;
+            goto try_merge_front;
+        } else {
+            pnext = &rl->next;
+            prev = rl;
+        }
+    }
+
+insert:
+    rl = g_new0(IntegerRangeList, 1);
+    rl->value = g_new0(IntegerRange, 1);
+    rl->value->min = min;
+    rl->value->max = max;
+    rl->next = *pnext;
+    *pnext = rl;
+
+try_merge_back:
+    /*TODO: can't merge more than 1 range */
+    if (prev && prev->value->max == rl->value->min - 1) {
+        prev->value->max = rl->value->max;
+        prev->next = rl->next;
+        g_free(rl);
+    }
+
+try_merge_front:
+    while (rl->next && rl->value->max + 1 == rl->next->value->min) {
+        IntegerRangeList *old = rl->next;
+        rl->next = old->next;
+        g_free(old);
+    }
+}
+
+static ValueSet *new_slot_prop(DeviceSlotInfo *slot, const char *option, ValueSetKind type)
+{
+    SlotOptionList *l =  g_new0(SlotOptionList, 1);
+    SlotOption *opt = g_new0(SlotOption, 1);
+    ValueSet *vs = g_new0(ValueSet, 1);
+
+    vs->type = type;
+    opt->option = g_strdup(option);
+    opt->values = vs;
+    l->value = opt;
+    l->next = slot->props;
+    slot->props = l;
+    return vs;
+}
+
+static void value_set_list_append(ValueSet *vs, QObject *value)
+{
+    anyList *new = g_new0(anyList, 1);
+
+    assert(vs->type == VALUE_SET_KIND_LIST);
+    new->value = value;
+    new->next = vs->u.list.data;
+    vs->u.list.data = new;
+}
+
+static DeviceSlotInfoList *pci_bus_enumerate_slots(BusState *bus, Error **errp)
+{
+    PCIBus *pb = PCI_BUS(bus);
+    int devnr, devnrs;
+    DeviceSlotInfoList *r = NULL;
+    DeviceSlotInfoList **next = &r;
+    IntegerSet *empty_slots = g_new0(IntegerSet, 1);
+
+    if (pci_bus_has_pcie_upstream_port(pb)) {
+        devnrs = 1;
+    } else {
+        devnrs = PCI_SLOT_MAX;
+    }
+
+    /* Each PCI devfn (device number + function) is a separate slot,
+     * because we implement multi-function PCI devices as separate
+     * device objects.
+     *
+     * As an experiment, return a slot set for each device number.
+     */
+    for(devnr = PCI_SLOT(pb->devfn_min); devnr < devnrs; devnr++) {
+        IntegerSet *empty_funcs = g_new0(IntegerSet, 1);
+
+        int func;
+        for (func = 0; func < PCI_FUNC_MAX; func++) {
+            if (pb->devices[PCI_DEVFN(devnr, func)]) {
+                break;
+            }
+        }
+        if (func == PCI_FUNC_MAX) {
+            /* All functions are empty, we can return the whole slot in the "empty" slot set */
+            int_set_add(empty_slots, devnr, devnr);
+            continue;
+        }
+
+        /* Not all functions are empty, so return one entry for each function */
+        for (func = 0; func < PCI_FUNC_MAX; func++) {
+            /* Empty functions will be reported as a single slot set later: */
+            if (!pb->devices[PCI_DEVFN(devnr, func)]) {
+                int_set_add(empty_funcs, func, func);
+                continue;
+            }
+
+            DeviceSlotInfoList *i = g_new0(DeviceSlotInfoList, 1);
+            i->value = g_new0(DeviceSlotInfo, 1);
+            /*TODO: add info about accepting only bridges on extra PCI root buses */
+            i->value->accepted_device_types = QAPI_CLONE(strList, bus->accepted_device_types);
+
+            i->value->hotpluggable = qbus_is_hotpluggable(bus);
+
+            /* Conditions that make a devnr unavailable:
+             * - function already occupied
+             * - function 0 already occupied by a device
+             * - Hotplug when the bus is not hotpluggable
+             */
+            i->value->available =
+                !((pb->devices[PCI_DEVFN(devnr, func)]) ||
+                  (pb->devices[PCI_DEVFN(devnr, 0)]) ||
+                  (0 && qdev_hotplug && !qbus_is_hotpluggable(bus)));
+
+            ValueSet *bus_values = new_slot_prop(i->value, "bus", VALUE_SET_KIND_LIST);
+            value_set_list_append(bus_values, QOBJECT(qstring_from_str(bus->name)));
+
+            ValueSet *dev_values = new_slot_prop(i->value, "device-number", VALUE_SET_KIND_INT_SET);
+            dev_values->u.int_set.data = g_new0(IntegerSet, 1);
+            int_set_add(dev_values->u.int_set.data, devnr, devnr);
+
+            ValueSet *func_values = new_slot_prop(i->value, "function", VALUE_SET_KIND_INT_SET);
+            func_values->u.int_set.data = g_new0(IntegerSet, 1);
+            int_set_add(func_values->u.int_set.data, func, func);
+
+            i->value->has_count = true;
+            i->value->count = 1;
+
+            *next = i;
+            next = &i->next;
+        }
+
+        if (!int_set_empty(empty_funcs)) {
+            DeviceSlotInfoList *i = g_new0(DeviceSlotInfoList, 1);
+            i->value = g_new0(DeviceSlotInfo, 1);
+            /*TODO: add info about accepting only bridges on extra PCI root buses */
+            i->value->accepted_device_types = QAPI_CLONE(strList, bus->accepted_device_types);
+
+            i->value->hotpluggable = qbus_is_hotpluggable(bus);
+
+            i->value->available =
+                !(0 && qdev_hotplug && !qbus_is_hotpluggable(bus));
+
+            ValueSet *bus_values = new_slot_prop(i->value, "bus", VALUE_SET_KIND_LIST);
+            value_set_list_append(bus_values, QOBJECT(qstring_from_str(bus->name)));
+
+            ValueSet *dev_values = new_slot_prop(i->value, "device-number", VALUE_SET_KIND_INT_SET);
+            dev_values->u.int_set.data = g_new0(IntegerSet, 1);
+            int_set_add(dev_values->u.int_set.data, devnr, devnr);
+
+            ValueSet *func_values = new_slot_prop(i->value, "function", VALUE_SET_KIND_INT_SET);
+            func_values->u.int_set.data = empty_funcs;
+
+            i->value->has_count = true;
+            i->value->count = int_set_size(empty_funcs);
+
+            *next = i;
+            next = &i->next;
+        } else {
+            qapi_free_IntegerSet(empty_slots);
+        }
+    }
+
+    /* Return a single slot set for the empty slots */
+    if (!int_set_empty(empty_slots)) {
+        DeviceSlotInfoList *i = g_new0(DeviceSlotInfoList, 1);
+        i->value = g_new0(DeviceSlotInfo, 1);
+        /*TODO: add info about accepting only bridges on extra PCI root buses */
+        i->value->accepted_device_types = QAPI_CLONE(strList, bus->accepted_device_types);
+
+        i->value->hotpluggable = qbus_is_hotpluggable(bus);
+
+        /* Conditions that make a devnr unavailable:
+         * - function 0 already occupied by a device
+         * - Hotplug when the bus is not hotpluggable
+         */
+        i->value->available = !(0 && qdev_hotplug && !qbus_is_hotpluggable(bus));
+
+        ValueSet *bus_values = new_slot_prop(i->value, "bus", VALUE_SET_KIND_LIST);
+        value_set_list_append(bus_values, QOBJECT(qstring_from_str(bus->name)));
+
+        ValueSet *dev_values = new_slot_prop(i->value, "device-number", VALUE_SET_KIND_INT_SET);
+        dev_values->u.int_set.data = empty_slots;
+
+        ValueSet *func_values = new_slot_prop(i->value, "function", VALUE_SET_KIND_INT_SET);
+        func_values->u.int_set.data = g_new0(IntegerSet, 1);
+        int_set_add(func_values->u.int_set.data, 0, PCI_FUNC_MAX - 1);
+
+        i->value->has_count = true;
+        i->value->count = PCI_FUNC_MAX * int_set_size(empty_slots);
+
+        *next = i;
+        next = &i->next;
+    } else {
+        qapi_free_IntegerSet(empty_slots);
+    }
+    return r;
 }
 
 /* -1 for devfn means auto assign */
@@ -2531,6 +2804,56 @@ MemoryRegion *pci_address_space_io(PCIDevice *dev)
     return dev->bus->address_space_io;
 }
 
+static void pci_device_get_devnr(Object *obj, Visitor *v, const char *name,
+                                void *opaque, Error **errp)
+{
+    PCIDevice *dev = PCI_DEVICE(obj);
+    uint32_t devnr = PCI_SLOT(dev->devfn);
+
+    visit_type_uint32(v, "device-number", &devnr, errp);
+}
+
+static void pci_device_set_devnr(Object *obj, Visitor *v, const char *name,
+                                void *opaque, Error **errp)
+{
+    PCIDevice *dev = PCI_DEVICE(obj);
+    uint32_t devnr;
+    Error *local_err = NULL;
+
+    visit_type_uint32(v, "device-number", &devnr, &local_err);
+    if (local_err) {
+        goto out;
+    }
+    dev->devfn = PCI_DEVFN(devnr, PCI_FUNC(dev->devfn));
+out:
+    error_propagate(errp, local_err);
+}
+
+static void pci_device_get_function(Object *obj, Visitor *v, const char *name,
+                                void *opaque, Error **errp)
+{
+    PCIDevice *dev = PCI_DEVICE(obj);
+    uint32_t function = PCI_FUNC(dev->devfn);
+
+    visit_type_uint32(v, "function", &function, errp);
+}
+
+static void pci_device_set_function(Object *obj, Visitor *v, const char *name,
+                                void *opaque, Error **errp)
+{
+    PCIDevice *dev = PCI_DEVICE(obj);
+    uint32_t function;
+    Error *local_err = NULL;
+
+    visit_type_uint32(v, "function", &function, &local_err);
+    if (local_err) {
+        goto out;
+    }
+    dev->devfn = PCI_DEVFN(PCI_SLOT(dev->devfn), function);
+out:
+    error_propagate(errp, local_err);
+}
+
 static void pci_device_class_init(ObjectClass *klass, void *data)
 {
     DeviceClass *k = DEVICE_CLASS(klass);
@@ -2541,6 +2864,19 @@ static void pci_device_class_init(ObjectClass *klass, void *data)
     k->bus_type = TYPE_PCI_BUS;
     k->props = pci_props;
     pc->realize = pci_default_realize;
+
+    /* Internally, bits 3:8 of devfn are called "slots", but:
+     * - they can be confused with physical slot numbers;
+     * - TYPE_PCIE_SLOT objects already have a "slot" property.
+     * So we use the terminology used in the PCI specifiction:
+     * "device number".
+     */
+    object_class_property_add(klass, "device-number", "uint32",
+                              pci_device_get_devnr, pci_device_set_devnr,
+                              NULL, NULL, &error_abort);
+    object_class_property_add(klass, "function", "uint32",
+                              pci_device_get_function, pci_device_set_function,
+                              NULL, NULL, &error_abort);
 }
 
 static void pci_device_class_base_init(ObjectClass *klass, void *data)
@@ -2627,33 +2963,6 @@ void pci_bus_get_w64_range(PCIBus *bus, Range *range)
 {
     range_make_empty(range);
     pci_for_each_device_under_bus(bus, pci_dev_get_w64, range);
-}
-
-static bool pcie_has_upstream_port(PCIDevice *dev)
-{
-    PCIDevice *parent_dev = pci_bridge_get_device(dev->bus);
-
-    /* Device associated with an upstream port.
-     * As there are several types of these, it's easier to check the
-     * parent device: upstream ports are always connected to
-     * root or downstream ports.
-     */
-    return parent_dev &&
-        pci_is_express(parent_dev) &&
-        parent_dev->exp.exp_cap &&
-        (pcie_cap_get_type(parent_dev) == PCI_EXP_TYPE_ROOT_PORT ||
-         pcie_cap_get_type(parent_dev) == PCI_EXP_TYPE_DOWNSTREAM);
-}
-
-PCIDevice *pci_get_function_0(PCIDevice *pci_dev)
-{
-    if(pcie_has_upstream_port(pci_dev)) {
-        /* With an upstream PCIe port, we only support 1 device at slot 0 */
-        return pci_dev->bus->devices[0];
-    } else {
-        /* Other bus types might support multiple devices at slots 0-31 */
-        return pci_dev->bus->devices[PCI_DEVFN(PCI_SLOT(pci_dev->devfn), 0)];
-    }
 }
 
 MSIMessage pci_get_msi_message(PCIDevice *dev, int vector)

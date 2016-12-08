@@ -30,6 +30,9 @@
 #include "qemu/help_option.h"
 #include "sysemu/block-backend.h"
 #include "migration/misc.h"
+#include "qapi/clone-visitor.h"
+#include "qapi/qobject-output-visitor.h"
+#include "hw/boards.h"
 
 /*
  * Aliases were a bad idea from the start.  Let's keep them
@@ -401,12 +404,6 @@ static DeviceState *qbus_find_dev(BusState *bus, char *elem)
     return NULL;
 }
 
-static inline bool qbus_is_full(BusState *bus)
-{
-    BusClass *bus_class = BUS_GET_CLASS(bus);
-    return bus_class->max_dev && bus->max_index >= bus_class->max_dev;
-}
-
 /*
  * Search the tree rooted at @bus for a bus.
  * If @name, search for a bus with that name.  Note that bus names
@@ -636,6 +633,129 @@ DeviceState *qdev_device_add(QemuOpts *opts, Error **errp)
         return NULL;
     }
     return dev;
+}
+
+typedef struct SlotListState {
+    MachineState *machine;
+    DeviceSlotInfoList *result;
+    DeviceSlotInfoList **next;
+    Error *err;
+} SlotListState;
+
+static int walk_bus(Object *obj, void *opaque)
+{
+    SlotListState *s = opaque;
+
+    /* sysbus is special: never return it unless the machine
+     * supports dynamic sysbus devices.
+     */
+    if (object_dynamic_cast(obj, TYPE_BUS) &&
+        (!object_dynamic_cast(obj, TYPE_SYSTEM_BUS) ||
+         MACHINE_GET_CLASS(s->machine)->has_dynamic_sysbus)) {
+        BusState *bus = BUS(obj);
+        BusClass *bc = BUS_GET_CLASS(bus);
+        DeviceSlotInfoList *l = bc->enumerate_slots(bus, &s->err);
+        *s->next = l;
+        for (; l; l = l->next) {
+            s->next = &l->next;
+        }
+        if (s->err) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+#if 0 /*FIXME: port it to new query_hotpluggable_cpus API */
+
+static void add_option(const char *key, QObject *obj, void *opaque)
+{
+    SlotOptionList **l = opaque;
+    SlotOption *opt = g_new0(SlotOption, 1);
+    SlotOptionList *new = g_new0(SlotOptionList, 1);
+
+    opt->option = g_strdup(key);
+    opt->values = g_new0(ValueSet, 1);
+    opt->values->type = VALUE_SET_KIND_LIST;
+    opt->values->u.list.data = g_new0(anyList, 1);
+    opt->values->u.list.data->value = obj;
+    qobject_incref(obj);
+
+    new->next = *l;
+    new->value = opt;
+    *l = new;
+}
+
+/* Convert a simple QDict to a list of single-value slot properties */
+static void qdict_to_slot_props(QDict *d, SlotOptionList **l)
+{
+    qdict_iter(d, add_option, l);
+}
+
+static QObject *cpu_instance_props_to_qobj(CpuInstanceProperties *src, Error **errp)
+{
+    QObject *qobj = NULL;
+    Visitor *v = qobject_output_visitor_new(&qobj);
+
+    visit_type_CpuInstanceProperties(v, "unused", &src, &error_abort);
+    visit_complete(v, &qobj);
+    visit_free(v);
+    return qobj;
+}
+#endif
+
+DeviceSlotInfoList *qmp_query_device_slots(Error **errp)
+{
+    SlotListState s = { };
+    MachineState *ms = MACHINE(qdev_get_machine());
+    //MachineClass *mc = MACHINE_GET_CLASS(ms);
+
+    s.machine = ms;
+    s.next = &s.result;
+
+    /* We build the device slot list from two sources:
+     * 1) Calling the BusClass::enumerate_slots() method on all buses;
+     * 2) The return value of MachineClass::query_hotpluggable_cpus()
+     */
+
+
+    object_child_foreach_recursive(qdev_get_machine(), walk_bus, &s);
+    if (s.err) {
+        goto out;
+    }
+
+#if 0 /*FIXME: port it to new query_hotpluggable_cpus API */
+    if (mc->query_hotpluggable_cpus) {
+        HotpluggableCPUList *hcl = mc->query_hotpluggable_cpus(ms);
+        HotpluggableCPUList *i;
+
+        for (i = hcl; i; i = i->next) {
+            DeviceSlotInfoList *r = g_new0(DeviceSlotInfoList, 1);
+            HotpluggableCPU *hc = i->value;
+            QObject *props;
+
+            r->value = g_new0(DeviceSlotInfo, 1);
+            r->value->accepted_device_types = g_new0(strList, 1);
+            r->value->accepted_device_types->value = g_strdup(hc->type);
+            r->value->available = !hc->has_qom_path;
+            /*TODO: should it be always true? */
+            r->value->hotpluggable = true;
+            r->value->has_count = true;
+            r->value->count = 1;
+
+            props = cpu_instance_props_to_qobj(hc->props, &s.err);
+            qdict_to_slot_props(qobject_to_qdict(props), &r->value->props);
+
+            *s.next = r;
+            s.next = & r->next;
+        }
+
+        qapi_free_HotpluggableCPUList(hcl);
+    }
+#endif
+out:
+    error_propagate(errp, s.err);
+    return s.result;
 }
 
 

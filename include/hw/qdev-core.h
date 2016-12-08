@@ -203,6 +203,10 @@ struct BusClass {
      * but on some cases bus instances may override it.
      */
     const char *device_type;
+
+    /*TODO: write doc */
+    DeviceSlotInfoList *(*enumerate_slots)(BusState *bus, Error **errp);
+
 };
 
 typedef struct BusChild {
@@ -404,5 +408,7 @@ static inline bool qbus_is_hotpluggable(BusState *bus)
 
 void device_listener_register(DeviceListener *listener);
 void device_listener_unregister(DeviceListener *listener);
+
+bool qbus_is_full(BusState *bus);
 
 #endif

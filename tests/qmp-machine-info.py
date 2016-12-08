@@ -6,6 +6,8 @@ import qtest
 import unittest
 import logging
 import argparse
+import itertools
+import operator
 
 logger = logging.getLogger('qemu.tests.machineinfo')
 
@@ -34,6 +36,34 @@ NODEFAULTS_BLACKLIST = set([
     'verdex',          # "qemu: missing SecureDigital device"
     'z2',              # "qemu: missing SecureDigital device"
 ])
+
+# iterators for QAPI ValueSets:
+# all of the iterators below should support iter() and len()
+
+def int_range(d):
+    """Iterator for IntegerRange"""
+    return xrange(d['min'], d['max'] + 1)
+
+class IntegerSet:
+    """Iterator for IntegerSet"""
+    def __init__(self, d):
+        self._ranges = d['ranges']
+
+    def __iter__(self):
+        iters = [int_range(r) for r in self._ranges]
+        return itertools.chain(*iters)
+
+    def __len__(self):
+        return sum([len(int_range(r)) for r in self._ranges])
+
+def value_set(d):
+    """Iterator for ValueSet"""
+    if d['type'] == 'list':
+        return d['data']
+    elif d['type'] == 'int-set':
+        return IntegerSet(d['data'])
+    else:
+        raise NotImplementedError
 
 class QueryMachinesTest(unittest.TestCase):
     def setUp(self):
@@ -154,9 +184,12 @@ class QueryMachinesTest(unittest.TestCase):
         types_to_check = {}
         buses_to_check = {}
         for slot in slots:
-            if slot['props'].has_key('bus'):
-                bus = slot['props']['bus']
-                buses_to_check.setdefault(bus, []).append(slot)
+            for prop in slot['props']:
+                if prop['option'] == 'bus':
+                    values = value_set(bus['values'])
+                    self.assertEquals(len(values), 1)
+                    bus = values[0]
+                    buses_to_check.setdefault(v, []).append(slot)
 
             for t in slot['accepted-device-types']:
                 types_to_check.setdefault(t, set()).update(slot['props'].keys())
@@ -185,27 +218,32 @@ class QueryMachinesTest(unittest.TestCase):
                 self.assertFalse(slot['available'])
 
     def checkSlotInfo(self, args):
-        #TODO:
-        # * check if -device works with at least one device type
-        # * check if query-hotpluggable-cpus matches what's in query-device-slots
-        # * check if accepted-device-types match the property on the bus
-        # * check if available=false if len(devices) >= max-devices
-        # * check if all plugged devices are really in the QOM tree
+        #TODO: check if:
+        # * -device works with at least one device type
+        # * query-hotpluggable-cpus matches what's in query-device-slots
+        # * accepted-device-types match the property on the bus
+        # * available=false if hotpluggable=false
+        # * 'count' is always set if not incomplete
+        # * slot count is <= set of possible values for @props
         self.vm = qtest.QEMUQtestMachine(args=args, logging=False)
         self.vm.launch()
 
         slots = self.vm.command('query-device-slots')
-        self.checkSlotProps(slots)
+        #self.checkSlotProps(slots)
         #self.checkSlotDevices(slots)
-        self.checkAvailableField(slots)
+        #self.checkAvailableField(slots)
+
+        for slot in slots:
+            logging.debug('slot: %r', slot)
+            if not slot['incomplete']:
+                self.assertTrue(slot.has_key('count'))
+
+                all_counts = [len(value_set(p['values'])) for p in slot['props']]
+                total_count = reduce(operator.mul, all_counts, 1)
+                logging.debug('%d possible values', total_count)
+                self.assertEquals(total_count, slot['count'])
 
     def machineTestSlotInfo(self, machine):
-        #TODO:
-        # * check if -device works with at least one device type
-        # * check if query-hotpluggable-cpus matches what's in query-device-slots
-        # * check if accepted-device-types match the property on the bus
-        # * check if available=false if len(devices) >= max-devices
-        # * check if all plugged devices are really in the QOM tree
         if machine['name'] in BLACKLIST:
             self.skipTest("machine %s on BLACKLIST" % (machine['name']))
 

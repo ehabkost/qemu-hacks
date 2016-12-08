@@ -21,7 +21,9 @@
 #include "qemu-common.h"
 #include "hw/qdev.h"
 #include "qapi/error.h"
+#include "qapi/clone-visitor.h"
 #include "qapi-visit.h"
+#include "qapi/qmp/qstring.h"
 
 static void qbus_set_hotplug_handler_internal(BusState *bus, Object *handler,
                                               Error **errp)
@@ -225,12 +227,55 @@ static void bus_get_device_type(Object *obj, Visitor *v,
     visit_type_strList(v, NULL, &bus->accepted_device_types, errp);
 }
 
+bool qbus_is_full(BusState *bus)
+{
+    BusClass *bus_class = BUS_GET_CLASS(bus);
+    return bus_class->max_dev && bus->max_index >= bus_class->max_dev;
+}
+
+/* Generic slot enumeration function that will return a generic-slot slot type.
+ */
+static DeviceSlotInfoList *bus_generic_enumerate_slots(BusState *bus, Error **errp)
+{
+    Error *local_err = NULL;
+    DeviceSlotInfoList *r = g_new0(DeviceSlotInfoList, 1);
+
+    r->value = g_new0(DeviceSlotInfo, 1);
+    r->value->accepted_device_types = QAPI_CLONE(strList, bus->accepted_device_types);
+
+    r->value->hotpluggable = qbus_is_hotpluggable(bus);
+
+    r->value->incomplete = true;
+
+    /* Conditions that make a bus unavailable:
+     * - Bus already full
+     * - Hotplug when the bus is not hotpluggable
+     */
+    r->value->available =
+        !(qbus_is_full(bus) ||
+          (qdev_hotplug && !qbus_is_hotpluggable(bus)));
+
+
+    /* r->value->props = { 'bus': bus->name } */
+    r->value->props = g_new0(SlotOptionList, 1);
+    r->value->props->value = g_new0(SlotOption, 1);
+    r->value->props->value->option = g_strdup("bus");
+    r->value->props->value->values = g_new0(ValueSet, 1);
+    r->value->props->value->values->type = VALUE_SET_KIND_LIST;;
+    r->value->props->value->values->u.list.data = g_new0(anyList, 1);
+    r->value->props->value->values->u.list.data->value = QOBJECT(qstring_from_str(bus->name));
+
+    error_propagate(errp, local_err);
+    return r;
+}
+
 static void bus_class_init(ObjectClass *class, void *data)
 {
     BusClass *bc = BUS_CLASS(class);
 
     class->unparent = bus_unparent;
     bc->get_fw_dev_path = default_bus_get_fw_dev_path;
+    bc->enumerate_slots = bus_generic_enumerate_slots;
 
     object_class_property_add(class, "accepted-device-types", "strList",
                               bus_get_device_type, NULL, NULL, NULL,

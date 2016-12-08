@@ -251,3 +251,17 @@ Visitor *qobject_output_visitor_new(QObject **result)
 
     return &v->visitor;
 }
+
+QObject *qapi_to_qobject(const void *src,
+                         void (*visit_fn)(Visitor *, const char *,
+                                          void**, Error **))
+{
+    QObject *qobj = NULL;
+    void *obj = (void *) src;
+    Visitor *v = qobject_output_visitor_new(&qobj);
+
+    visit_fn(v, "unused", &obj, &error_abort);
+    visit_complete(v, &qobj);
+    visit_free(v);
+    return qobj;
+}

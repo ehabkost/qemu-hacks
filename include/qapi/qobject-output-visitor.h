@@ -16,6 +16,7 @@
 
 #include "qapi/visitor.h"
 #include "qapi/qmp/qobject.h"
+#include "qapi/error.h"
 
 typedef struct QObjectOutputVisitor QObjectOutputVisitor;
 
@@ -53,5 +54,13 @@ typedef struct QObjectOutputVisitor QObjectOutputVisitor;
  * visit_free().
  */
 Visitor *qobject_output_visitor_new(QObject **result);
+
+QObject *qapi_to_qobject(const void *src,
+                         void (*visit_fn)(Visitor *, const char *,
+                                          void**, Error **));
+
+#define QAPI_TO_QOBJ(type, src)                                        \
+    (qapi_to_qobject((src), (void (*)(Visitor *, const char *, void**, \
+                                      Error **))visit_type_ ## type))
 
 #endif

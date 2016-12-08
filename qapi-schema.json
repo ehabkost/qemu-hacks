@@ -4237,6 +4237,113 @@
 ##
 { 'command': 'closefd', 'data': {'fdname': 'str'} }
 
+
+##
+# @IntegerSet:
+#
+# A set of integers.
+##
+{ 'struct': 'IntegerSet',
+  'data': { 'ranges': [ 'IntegerRange' ] } }
+
+##
+# @IntegerRange:
+#
+# A contiguous range of integers.
+#
+# @min: The first value in the range
+# @max: The last value in the range
+##
+{ 'struct': 'IntegerRange',
+  'data': { 'min': 'int', 'max': 'int' } }
+
+##
+# @ValueSet:
+#
+# A set of values.
+#
+# FIXME: how to document it? list: A set of elements in a list.
+#
+# FIXME: how to document it? int-set: A set represented by an IntegerSet.
+##
+{ 'union': 'ValueSet',
+  'data': { 'list': [ 'any' ], 'int-set': 'IntegerSet' } }
+
+##
+# @SlotOption:
+#
+# A option to be used when plugging a device to a slot.
+#
+# @option: Option name.
+#
+# @values: Set of valid option values.
+##
+{ 'struct': 'SlotOption',
+  'data': { 'option': 'str', 'values': 'ValueSet' } }
+
+##
+# @DeviceSlotInfo:
+#
+# Information on a set of slots where devices can be plugged.
+#
+# @accepted-device-types: List of device types accepted by the slots.
+#                         Any device plugged to the slot should implement
+#                         one of the accepted device types.
+#
+# @available: If false, the slot is not available for plugging any device.
+#             This value can change at runtime if condition changes
+#             (e.g. if the slot becomes full, or if the machine
+#             was already initialized and the slot doesn't support
+#             hotplug).
+#
+# @hotpluggable: If true, the slot accepts hotplugged devices.
+#
+# @count: Number of slots represented by this slot set.
+#         Will always be present if @incomplete=false.
+#
+# @incomplete: Slot information is incomplete. Slot count is not
+#              available, and additional arguments are missing
+#              on @props.
+#
+# @props: Information on the arguments that should be given to
+#         @device_add if plugging a device to this slot.
+#
+# How to interpret @props
+# -----------------------
+#
+# Each key/value pair in @props represent an option that should
+# be set when using @device_add to plug a new device.
+#
+# Each value in @props represent a single value that should be
+# provided to @device_add, or a set of possible values for the option.
+#
+# Incomplete Slot Sets
+# --------------------
+#
+# Slot sets with @incomplete=true represent a bus that doesn't
+# support slot enumeration yet. Slots of this type should be replaced
+# by more detailed slot sets in future QEMU versions.
+#
+# Slots of this type may or may not support multiple devices.
+#
+# Slots in incomplete slot sets might require extra arguments to
+# be set to specify the device address.
+##
+{ 'struct': 'DeviceSlotInfo',
+  'data': { 'accepted-device-types': [ 'str' ],
+            'available': 'bool', 'hotpluggable': 'bool',
+            '*count': 'int', 'incomplete': 'bool',
+            'props': [ 'SlotOption' ] } }
+
+##
+# @query-device-slots:
+#
+# Return the list of possible slots for plugging devices using
+# @device_add.
+##
+{ 'command': 'query-device-slots',
+  'returns': [ 'DeviceSlotInfo' ] }
+
 ##
 # @MachineInfo:
 #
