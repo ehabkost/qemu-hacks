@@ -199,6 +199,10 @@ struct BusClass {
 
     /* Device type accepted by bus */
     const char *device_type;
+
+    /*TODO: write doc */
+    DeviceSlotInfoList *(*enumerate_slots)(BusState *bus);
+
 };
 
 typedef struct BusChild {
