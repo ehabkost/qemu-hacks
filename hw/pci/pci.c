@@ -27,6 +27,7 @@
 #include "hw/pci/pci_bridge.h"
 #include "hw/pci/pci_bus.h"
 #include "hw/pci/pci_host.h"
+#include "hw/pci/pcie_port.h"
 #include "monitor/monitor.h"
 #include "net/net.h"
 #include "sysemu/sysemu.h"
@@ -2886,7 +2887,9 @@ static void pci_device_class_base_init(ObjectClass *klass, void *data)
             object_class_dynamic_cast(klass, INTERFACE_LEGACY_PCI_DEVICE);
         ObjectClass *pcie =
             object_class_dynamic_cast(klass, INTERFACE_PCIE_DEVICE);
-        assert(legacy || pcie);
+        ObjectClass *pcie_port =
+            object_class_dynamic_cast(klass, TYPE_PCIE_PORT);
+        assert(legacy || pcie || pcie_port);
     }
 }
 
