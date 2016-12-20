@@ -61,6 +61,21 @@ static void xio3130_upstream_realize(PCIDevice *d, Error **errp)
     pci_bridge_initfn(d, TYPE_PCIE_BUS);
     pcie_port_init_reg(d);
 
+    PCIBridge *pb = PCI_BRIDGE(d);
+    BusState *bus = BUS(pci_bridge_get_sec_bus(pb));
+    strList *new;
+
+    /* Override accepted_device_types: */
+    qapi_free_strList(bus->accepted_device_types);
+    bus->accepted_device_types = NULL;
+
+    /* Upstream ports accept only downstream ports */
+    /*TODO: define generic INTERFACE_PCIE_DOWNSTREAM_PORT type name? */
+    new = g_new0(strList, 1);
+    new->value = g_strdup("x3130-downstream");
+    new->next = bus->accepted_device_types;
+    bus->accepted_device_types = new;
+
     rc = msi_init(d, XIO3130_MSI_OFFSET, XIO3130_MSI_NR_VECTOR,
                   XIO3130_MSI_SUPPORTED_FLAGS & PCI_MSI_FLAGS_64BIT,
                   XIO3130_MSI_SUPPORTED_FLAGS & PCI_MSI_FLAGS_MASKBIT,
