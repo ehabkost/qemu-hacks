@@ -862,6 +862,10 @@ static const TypeInfo pbm_pci_bridge_info = {
     .name          = "pbm-bridge",
     .parent        = TYPE_PCI_BRIDGE,
     .class_init    = pbm_pci_bridge_class_init,
+    .interfaces = (InterfaceInfo[]) {
+        { INTERFACE_LEGACY_PCI_DEVICE },
+        { },
+    },
 };
 
 static void pbm_register_types(void)
