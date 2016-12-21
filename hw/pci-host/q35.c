@@ -54,12 +54,34 @@ static void q35_host_realize(DeviceState *dev, Error **errp)
                            0, TYPE_PCIE_BUS);
 
     {
-    /* The root PCIe bus is different, and also accepts legacy PCI devices */
+    strList *new;
+    BusState *bus = BUS(pci->bus);
     /*FIXME: we need to find a better plance to encode this information */
-    strList *new = g_new0(strList, 1);
+    /* Things that can be plugged to the root bus: */
+
+    /* Override the default list from TYPE_PCIE_BUS: */
+    qapi_free_strList(bus->accepted_device_types);
+    bus->accepted_device_types = NULL;
+
+    /* PCIe devices */
+    new = g_new0(strList, 1);
+    new->value = g_strdup(INTERFACE_PCIE_DEVICE);
+    new->next = bus->accepted_device_types;
+    bus->accepted_device_types = new;
+
+    /* Legacy PCI devices */
+    new = g_new0(strList, 1);
     new->value = g_strdup(INTERFACE_LEGACY_PCI_DEVICE);
-    new->next = BUS(pci->bus)->accepted_device_types;
-    BUS(pci->bus)->accepted_device_types = new;
+    new->next = bus->accepted_device_types;
+    bus->accepted_device_types = new;
+
+    /* Root ports */
+    new = g_new0(strList, 1);
+    new->value = g_strdup("ioh3420");
+    new->next = bus->accepted_device_types;
+    bus->accepted_device_types = new;
+
+    /*TODO: dmi-to-pci-bridge, pcie-expander-bus */
     }
 
     PC_MACHINE(qdev_get_machine())->bus = pci->bus;
