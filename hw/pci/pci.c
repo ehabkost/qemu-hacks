@@ -1082,6 +1082,7 @@ try_merge_front:
     }
 }
 
+/*FIXME: copy&paste, should move it to common file */
 static ValueSet *new_slot_prop(DeviceSlotInfo *slot, const char *option, ValueSetKind type)
 {
     SlotOptionList *l =  g_new0(SlotOptionList, 1);
@@ -1097,6 +1098,7 @@ static ValueSet *new_slot_prop(DeviceSlotInfo *slot, const char *option, ValueSe
     return vs;
 }
 
+/*FIXME: copy&paste, should move it to common file */
 static void value_set_list_append(ValueSet *vs, QObject *value)
 {
     anyList *new = g_new0(anyList, 1);
