@@ -24,6 +24,7 @@
 #include "hw/pci/pci_ids.h"
 #include "hw/pci/msi.h"
 #include "hw/pci/pcie.h"
+#include "hw/pci/pci_bridge.h"
 #include "ioh3420.h"
 #include "qapi/error.h"
 
@@ -65,6 +66,27 @@ static int ioh3420_interrupts_init(PCIDevice *d, Error **errp)
 {
     int rc;
     Error *local_err = NULL;
+
+    PCIBridge *pb = PCI_BRIDGE(d);
+    BusState *bus = BUS(pci_bridge_get_sec_bus(pb));
+    strList *new;
+
+    /* Override accepted_device_types: */
+    qapi_free_strList(bus->accepted_device_types);
+    bus->accepted_device_types = NULL;
+
+    /* PCIe devices */
+    new = g_new0(strList, 1);
+    new->value = g_strdup(INTERFACE_PCIE_DEVICE);
+    new->next = bus->accepted_device_types;
+    bus->accepted_device_types = new;
+
+    /* Upstream ports */
+    /*TODO: define generic INTERFACE_PCIE_UPSTREAM_PORT type name? */
+    new = g_new0(strList, 1);
+    new->value = g_strdup("x3130-upstream");
+    new->next = bus->accepted_device_types;
+    bus->accepted_device_types = new;
 
     rc = msi_init(d, IOH_EP_MSI_OFFSET, IOH_EP_MSI_NR_VECTOR,
                   IOH_EP_MSI_SUPPORTED_FLAGS & PCI_MSI_FLAGS_64BIT,
