@@ -27,6 +27,10 @@
 #include "hw/block/block.h"
 #include "sysemu/sysemu.h"
 #include "qapi/visitor.h"
+#include "qapi/clone-visitor.h"
+#include "qapi/qmp/qobject.h"
+#include "qapi/qmp/qnum.h"
+#include "qapi/qmp/qstring.h"
 
 /* --------------------------------- */
 
@@ -38,6 +42,83 @@ static Property ide_props[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
+/*FIXME: copy&paste, should move it to common file */
+static ValueSet *new_slot_prop(DeviceSlotInfo *slot, const char *option, ValueSetKind type)
+{
+    SlotOptionList *l =  g_new0(SlotOptionList, 1);
+    SlotOption *opt = g_new0(SlotOption, 1);
+    ValueSet *vs = g_new0(ValueSet, 1);
+
+    vs->type = type;
+    opt->option = g_strdup(option);
+    opt->values = vs;
+    l->value = opt;
+    l->next = slot->props;
+    slot->props = l;
+    return vs;
+}
+
+static void value_set_list_append(ValueSet *vs, QObject *value)
+{
+    anyList *new = g_new0(anyList, 1);
+
+    assert(vs->type == VALUE_SET_KIND_LIST);
+    new->value = value;
+    new->next = vs->u.list.data;
+    vs->u.list.data = new;
+}
+
+static DeviceSlotInfoList *ide_bus_enumerate_slots(BusState *bus, Error **errp)
+{
+    int unit;
+    DeviceSlotInfoList *r = NULL;
+    IDEBus *ib = IDE_BUS(bus);
+    DeviceSlotInfo *previous = NULL;
+    ValueSet *previous_unit;
+    bool hotpluggable = qbus_is_hotpluggable(bus);
+
+    for (unit = 0; unit < 2; unit++) {
+        bool available = unit ? !ib->master : !ib->slave;
+
+        if (!hotpluggable && qdev_hotplug) {
+            available = false;
+        }
+
+        /* If the previous item look the same, just extend it */
+        if (previous && previous->available == available &&
+            previous->hotpluggable == hotpluggable) {
+            value_set_list_append(previous_unit, QOBJECT(qnum_from_int(unit)));
+            previous->count++;
+            continue;
+        }
+
+        DeviceSlotInfoList *i = g_new0(DeviceSlotInfoList, 1);
+        DeviceSlotInfo *s = i->value = g_new0(DeviceSlotInfo, 1);
+
+        s->accepted_device_types = QAPI_CLONE(strList, bus->accepted_device_types);
+
+        s->hotpluggable = hotpluggable;
+        s->available = available;
+
+        ValueSet *bus_values = new_slot_prop(s, "bus", VALUE_SET_KIND_LIST);
+        value_set_list_append(bus_values, QOBJECT(qstring_from_str(bus->name)));
+
+        ValueSet *unit_values = new_slot_prop(s, "unit", VALUE_SET_KIND_LIST);
+        value_set_list_append(unit_values, QOBJECT(qnum_from_int(unit)));
+
+        s->has_count = true;
+        s->count = 1;
+
+        i->next = r;
+        r = i;
+
+        previous = s;
+        previous_unit = unit_values;
+    }
+
+    return r;
+}
+
 static void ide_bus_class_init(ObjectClass *klass, void *data)
 {
     BusClass *k = BUS_CLASS(klass);
@@ -45,6 +126,7 @@ static void ide_bus_class_init(ObjectClass *klass, void *data)
     k->get_fw_dev_path = idebus_get_fw_dev_path;
     k->unrealize = idebus_unrealize;
     k->device_type = TYPE_IDE_DEVICE;
+    k->enumerate_slots = ide_bus_enumerate_slots;
 }
 
 static void idebus_unrealize(BusState *bus, Error **errp)
