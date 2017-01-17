@@ -2459,7 +2459,9 @@ static void x86_cpu_to_dict_full(X86CPU *cpu, QDict *props)
          * created using "-cpu ... -smp ..." and by CPUs created
          * on the fly by x86_cpu_from_model() for querying. Skip it.
          */
-        if (!strcmp(prop->name, "hotplugged")) {
+        /*FIXME: fix hv-spinlocks */
+        if (!strcmp(prop->name, "hv-spinlocks") ||
+            !strcmp(prop->name, "hotplugged")) {
             continue;
         }
         x86_cpu_expand_prop(cpu, props, prop->name);
