@@ -1540,7 +1540,6 @@ static void max_x86_cpu_class_init(ObjectClass *oc, void *data)
     DeviceClass *dc = DEVICE_CLASS(oc);
     X86CPUClass *xcc = X86_CPU_CLASS(oc);
 
-    xcc->kvm_required = true;
     xcc->ordering = 9;
 
     xcc->model_description =
@@ -1589,9 +1588,23 @@ static void max_x86_cpu_initfn(Object *obj)
         if (lmce_supported()) {
             object_property_set_bool(OBJECT(cpu), true, "lmce", &error_abort);
         }
+        object_property_set_bool(OBJECT(cpu), true, "pmu", &error_abort);
+    } else {
+        object_property_set_str(OBJECT(cpu), CPUID_VENDOR_AMD,
+                                "vendor", &error_abort);
+        object_property_set_int(OBJECT(cpu), 6, "family", &error_abort);
+        object_property_set_int(OBJECT(cpu), 6, "model", &error_abort);
+        object_property_set_int(OBJECT(cpu), 3, "stepping", &error_abort);
+
+        /* We can use QEMU_VERSION instead of QEMU_HW_VERSION here because
+         * the "max" CPU model is non-migratable.
+         */
+        object_property_set_str(OBJECT(cpu),
+                                "QEMU TCG CPU version " QEMU_VERSION,
+                                "model-id", &error_abort);
+
     }
 
-    object_property_set_bool(OBJECT(cpu), true, "pmu", &error_abort);
 }
 
 static const TypeInfo max_x86_cpu_type_info = {
