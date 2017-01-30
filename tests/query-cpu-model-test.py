@@ -303,19 +303,6 @@ class CPUModelTest(unittest.TestCase):
             model['runnable'] = len(m['unavailable-features']) == 0
         self.checkExpansions(model, msg)
 
-        # explicit test to check we do the right thing when
-        # unsafe features are enabled explicitly:
-        for f in self.unsafeFeatures():
-            # enabled:
-            unsafe_model = {
-                'model': {
-                    'name':  m['name'],
-                    'props': { f: True },
-                },
-                'runnable': model.get('runnable'),
-            }
-            self.checkExpansions(unsafe_model, msg + ".unsafe." + f)
-
         # Try to make CPU model migration-safe by disabling
         # all known migration-unsafe features:
         if not m['migration-safe']:
