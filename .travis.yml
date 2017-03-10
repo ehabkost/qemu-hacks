@@ -45,7 +45,7 @@ notifications:
     on_failure: always
 env:
   global:
-    - TEST_CMD="make check"
+    - TEST_CMD="make check V=1"
   matrix:
     - CONFIG=""
     - CONFIG="--enable-debug --enable-debug-tcg --enable-trace-backends=log"
