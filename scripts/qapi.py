@@ -801,6 +801,8 @@ def check_alternate(expr, info):
         raise QAPISemError(info,
                            "Alternate '%s' should have at least two branches "
                            "in 'data'" % name)
+
+    scalar_members = []
     for (key, value) in members.items():
         check_name(info, "Member of alternate '%s'" % name, key)
 
@@ -816,7 +818,34 @@ def check_alternate(expr, info):
             raise QAPISemError(info, "Alternate '%s' member '%s' can't "
                                "be distinguished from member '%s'"
                                % (name, key, types_seen[qtype]))
+
+        if qtype in ['QTYPE_QINT', 'QTYPE_QFLOAT']:
+            scalar_members.append( (r'^ *-?[0-9]+', key) )
+        elif qtype == 'QTYPE_QBOOL':
+            scalar_members.append( (r'^(true|false|on|off|yes|no)$', key) )
+
         types_seen[qtype] = key
+
+    # Representation of scalar members can't conflict with string values
+    # (enums or 'str' members)
+    if scalar_members and 'QTYPE_QSTRING' in types_seen:
+        strkey = types_seen['QTYPE_QSTRING']
+        strtype = members[strkey]
+
+        if strtype == 'str':
+            raise QAPISemError(info, "Alternate '%s' scalar member '%s' can't "
+                                     "can't be distinguished from string "
+                                     "member '%s'"
+                                     % (name, scalar_members[0][1], strkey))
+        else:
+            assert all_names.get(strtype) == 'enum'
+            for (regexp, scalarkey) in scalar_members:
+                for v in enum_types[strtype].get('data', []):
+                    if re.match(regexp, v):
+                        raise QAPISemError(info, "Alternate '%s' member '%s' "
+                                                 "can't be distinguished from "
+                                                 "enum '%s' member '%s'"
+                                                 % (name, strkey, strtype, v))
 
 
 def check_enum(expr, info):

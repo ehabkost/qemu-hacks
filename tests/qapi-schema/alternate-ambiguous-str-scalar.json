@@ -1,0 +1,2 @@
+{ 'alternate': 'StrOrNumber',
+  'data': { 's': 'str', 'n': 'number' } }

@@ -1,0 +1,5 @@
+{ 'enum': 'AmbiguousEnum',
+  'data': ['maybe', 'yes', 'no'] }
+
+{ 'alternate': 'EnumOrNumber',
+  'data': { 'e': 'AmbiguousEnum', 'b': 'bool' } }

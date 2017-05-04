@@ -49,7 +49,7 @@ static void test_clone_alternate(void)
     b_src->u.b = true;
     s_src = g_new0(AltStrBool, 1);
     s_src->type = QTYPE_QSTRING;
-    s_src->u.s = g_strdup("World");
+    s_src->u.e = ENUM_ONE_VALUE2;
 
     b_dst = QAPI_CLONE(AltStrBool, b_src);
     g_assert(b_dst);
@@ -59,7 +59,7 @@ static void test_clone_alternate(void)
     g_assert(s_dst);
     g_assert_cmpint(s_dst->type, ==, s_src->type);
     g_assert_cmpstr(s_dst->u.s, ==, s_src->u.s);
-    g_assert(s_dst->u.s != s_src->u.s);
+    g_assert_cmpint(s_dst->u.s != s_src->u.s);
 
     qapi_free_AltStrBool(b_src);
     qapi_free_AltStrBool(s_src);

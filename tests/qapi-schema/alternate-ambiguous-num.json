@@ -1,0 +1,5 @@
+{ 'enum': 'AmbiguousEnum',
+  'data': ['one', 'two', '3'] }
+
+{ 'alternate': 'EnumOrNumber',
+  'data': { 'e': 'AmbiguousEnum', 'i': 'int' } }

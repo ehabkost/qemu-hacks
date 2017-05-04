@@ -1,0 +1,1 @@
+tests/qapi-schema/alternate-ambiguous-str-scalar.json:1: Alternate 'StrOrNumber' scalar member 'n' can't can't be distinguished from string member 's'

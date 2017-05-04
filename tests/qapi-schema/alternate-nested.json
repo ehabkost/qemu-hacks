@@ -1,5 +1,7 @@
 # we reject a nested alternate branch
+{ 'enum': 'MyEnum',
+  'data': ['one', 'two', 'three']}
 { 'alternate': 'Alt1',
-  'data': { 'name': 'str', 'value': 'int' } }
+  'data': { 'e': 'MyEnum', 'value': 'int' } }
 { 'alternate': 'Alt2',
   'data': { 'nested': 'Alt1', 'b': 'bool' } }
