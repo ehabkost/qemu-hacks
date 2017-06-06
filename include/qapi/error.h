@@ -119,6 +119,9 @@
 
 #define IGNORE_ERRORS (NULL)
 
+#define ERR_IS_SET(e) (!!*(e))
+#define ERR_IS_IGNORED(e) (!(e))
+
 /*
  * Overall category of an error.
  * Based on the qapi type QapiErrorClass, but reproduced here for nicer
