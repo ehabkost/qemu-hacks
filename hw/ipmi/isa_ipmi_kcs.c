@@ -399,19 +399,21 @@ static void ipmi_isa_realize(DeviceState *dev, Error **errp)
     ISAIPMIKCSDevice *iik = ISA_IPMI_KCS(dev);
     IPMIInterface *ii = IPMI_INTERFACE(dev);
     IPMIInterfaceClass *iic = IPMI_INTERFACE_GET_CLASS(ii);
+    Error *local_err = NULL;
 
     if (!iik->kcs.bmc) {
-        error_setg(errp, "IPMI device requires a bmc attribute to be set");
-        return;
+        error_setg(&local_err, "IPMI device requires a bmc attribute to be set");
+        goto out;
     }
 
     iik->uuid = ipmi_next_uuid();
 
     iik->kcs.bmc->intf = ii;
 
-    iic->init(ii, errp);
-    if (*errp)
-        return;
+    iic->init(ii, &local_err);
+    if (local_err) {
+        goto out;
+    }
 
     if (iik->isairq > 0) {
         isa_init_irq(isadev, &iik->kcs.irq, iik->isairq);
@@ -421,6 +423,9 @@ static void ipmi_isa_realize(DeviceState *dev, Error **errp)
     qdev_set_legacy_instance_id(dev, iik->kcs.io_base, iik->kcs.io_length);
 
     isa_register_ioport(isadev, &iik->kcs.io, iik->kcs.io_base);
+
+out:
+    error_propagate(errp, local_err);
 }
 
 const VMStateDescription vmstate_ISAIPMIKCSDevice = {
