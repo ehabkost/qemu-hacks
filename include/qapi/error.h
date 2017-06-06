@@ -66,7 +66,7 @@
  *     }
  *
  * Call a function ignoring errors:
- *     foo(arg, NULL);
+ *     foo(arg, IGNORE_ERRORS);
  *
  * Call a function aborting on errors:
  *     foo(arg, &error_abort);
@@ -116,6 +116,8 @@
 #define ERROR_H
 
 #include "qapi-types.h"
+
+#define IGNORE_ERRORS (NULL)
 
 /*
  * Overall category of an error.
