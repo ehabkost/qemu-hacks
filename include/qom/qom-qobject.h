@@ -13,6 +13,7 @@
 #ifndef QEMU_QOM_QOBJECT_H
 #define QEMU_QOM_QOBJECT_H
 
+#include "qemu/typedefs.h"
 #include "qom/object.h"
 
 /*
@@ -25,7 +26,7 @@
  * an error occurs.
  */
 struct QObject *object_property_get_qobject(Object *obj, const char *name,
-                                            struct Error **errp);
+                                            Error **errp);
 
 /**
  * object_property_set_qobject:
@@ -37,6 +38,6 @@ struct QObject *object_property_get_qobject(Object *obj, const char *name,
  * Writes a property to a object.
  */
 void object_property_set_qobject(Object *obj, struct QObject *qobj,
-                                 const char *name, struct Error **errp);
+                                 const char *name, Error **errp);
 
 #endif
