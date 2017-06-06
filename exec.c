@@ -1494,9 +1494,10 @@ static void *file_ram_alloc(RAMBlock *block,
     void *area = MAP_FAILED;
     int fd = -1;
     int64_t file_size;
+    Error *local_err = NULL;
 
     if (kvm_enabled() && !kvm_has_sync_mmu()) {
-        error_setg(errp,
+        error_setg(&local_err,
                    "host lacks kvm mmu notifiers, -mem-path unsupported");
         return NULL;
     }
@@ -1537,7 +1538,7 @@ static void *file_ram_alloc(RAMBlock *block,
             g_free(filename);
         }
         if (errno != EEXIST && errno != EINTR) {
-            error_setg_errno(errp, errno,
+            error_setg_errno(&local_err, errno,
                              "can't open backing store %s for guest RAM",
                              path);
             goto error;
@@ -1559,14 +1560,14 @@ static void *file_ram_alloc(RAMBlock *block,
     file_size = get_file_size(fd);
 
     if (memory < block->page_size) {
-        error_setg(errp, "memory size 0x" RAM_ADDR_FMT " must be equal to "
-                   "or larger than page size 0x%zx",
+        error_setg(&local_err, "memory size 0x" RAM_ADDR_FMT " must be "
+                   "equal to or larger than page size 0x%zx",
                    memory, block->page_size);
         goto error;
     }
 
     if (file_size > 0 && file_size < memory) {
-        error_setg(errp, "backing store %s size 0x%" PRIx64
+        error_setg(&local_err, "backing store %s size 0x%" PRIx64
                    " does not match 'size' option 0x" RAM_ADDR_FMT,
                    path, file_size, memory);
         goto error;
@@ -1595,14 +1596,14 @@ static void *file_ram_alloc(RAMBlock *block,
     area = qemu_ram_mmap(fd, memory, block->mr->align,
                          block->flags & RAM_SHARED);
     if (area == MAP_FAILED) {
-        error_setg_errno(errp, errno,
+        error_setg_errno(&local_err, errno,
                          "unable to map backing store for guest RAM");
         goto error;
     }
 
     if (mem_prealloc) {
-        os_mem_prealloc(fd, area, memory, smp_cpus, errp);
-        if (errp && *errp) {
+        os_mem_prealloc(fd, area, memory, smp_cpus, &local_err);
+        if (local_err) {
             goto error;
         }
     }
@@ -1620,6 +1621,7 @@ error:
     if (fd != -1) {
         close(fd);
     }
+    error_propagate(errp, local_err);
     return NULL;
 }
 #endif
