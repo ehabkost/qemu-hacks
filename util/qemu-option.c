@@ -617,7 +617,7 @@ int qemu_opt_foreach(QemuOpts *opts, qemu_opt_loopfunc func, void *opaque,
         if (rc) {
             return rc;
         }
-        assert(!errp || !*errp);
+        assert(!ERR_IS_SET(errp));
     }
     return 0;
 }
@@ -945,7 +945,7 @@ static void qemu_opts_from_qdict_1(const char *key, QObject *obj, void *opaque)
     const char *value;
     int n;
 
-    if (!strcmp(key, "id") || *state->errp) {
+    if (!strcmp(key, "id") || ERR_IS_SET(state->errp)) {
         return;
     }
 
@@ -1113,7 +1113,7 @@ int qemu_opts_foreach(QemuOptsList *list, qemu_opts_loopfunc func,
         if (rc) {
             break;
         }
-        assert(!errp || !*errp);
+        assert(!ERR_IS_SET(errp));
     }
     loc_pop(&loc);
     return rc;

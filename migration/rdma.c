@@ -39,7 +39,7 @@
 #define ERROR(errp, fmt, ...) \
     do { \
         fprintf(stderr, "RDMA ERROR: " fmt "\n", ## __VA_ARGS__); \
-        if (errp && (*(errp) == NULL)) { \
+        if (!ERR_IS_IGNORED(errp) && !ERR_IS_SET(errp)) { \
             error_setg(errp, "RDMA ERROR: " fmt, ## __VA_ARGS__); \
         } \
     } while (0)

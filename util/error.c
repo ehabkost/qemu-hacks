@@ -255,7 +255,7 @@ void error_free(Error *err)
 
 void error_free_or_abort(Error **errp)
 {
-    assert(errp && *errp);
+    assert(!ERR_IS_IGNORED(errp) && ERR_IS_SET(errp));
     error_free(*errp);
     *errp = NULL;
 }
@@ -266,7 +266,7 @@ void error_propagate(Error **dst_errp, Error *local_err)
         return;
     }
     error_handle_fatal(dst_errp, local_err);
-    if (dst_errp && !*dst_errp) {
+    if (!ERR_IS_IGNORED(dst_errp) && !ERR_IS_SET(dst_errp)) {
         *dst_errp = local_err;
     } else {
         error_free(local_err);

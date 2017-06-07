@@ -139,7 +139,7 @@ static int pc_existing_dimms_capacity_internal(Object *obj, void *opaque)
                 cap->errp);
         }
 
-        if (cap->errp && *cap->errp) {
+        if (!ERR_IS_IGNORED(cap->errp) && ERR_IS_SET(cap->errp)) {
             return 1;
         }
     }
