@@ -175,7 +175,7 @@ void qmp_xen_set_replication(bool enable, bool primary,
         if (!has_failover) {
             failover = NULL;
         }
-        replication_stop_all(failover, failover ? NULL : errp);
+        replication_stop_all(failover, failover ? IGNORE_ERRORS : errp);
     }
 #else
     abort();
@@ -641,7 +641,7 @@ void *colo_process_incoming_thread(void *opaque)
         if (failover_get_state() == FAILOVER_STATUS_RELAUNCH) {
             failover_set_state(FAILOVER_STATUS_RELAUNCH,
                             FAILOVER_STATUS_NONE);
-            failover_request_active(NULL);
+            failover_request_active(IGNORE_ERRORS);
             goto out;
         }
 

@@ -2509,7 +2509,7 @@ static void *qemu_rdma_data_init(const char *host_port, Error **errp)
         rdma->current_chunk = -1;
 
         addr = g_new(InetSocketAddress, 1);
-        if (!inet_parse(addr, host_port, NULL)) {
+        if (!inet_parse(addr, host_port, IGNORE_ERRORS)) {
             rdma->port = atoi(addr->port);
             rdma->host = g_strdup(addr->host);
         } else {

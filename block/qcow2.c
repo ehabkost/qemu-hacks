@@ -2602,7 +2602,7 @@ qcow2_co_pwritev_compressed(BlockDriverState *bs, uint64_t offset,
         /* align end of file to a sector boundary to ease reading with
            sector based I/Os */
         cluster_offset = bdrv_getlength(bs->file->bs);
-        return bdrv_truncate(bs->file, cluster_offset, NULL);
+        return bdrv_truncate(bs->file, cluster_offset, IGNORE_ERRORS);
     }
 
     buf = qemu_blockalign(bs, s->cluster_size);

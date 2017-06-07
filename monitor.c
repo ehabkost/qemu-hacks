@@ -3467,7 +3467,7 @@ void netdev_del_completion(ReadLineState *rs, int nb_args, const char *str)
         if (strncmp(str, name, len)) {
             continue;
         }
-        opts = qemu_opts_find(qemu_find_opts_err("netdev", NULL), name);
+        opts = qemu_opts_find(qemu_find_opts_err("netdev", IGNORE_ERRORS), name);
         if (opts) {
             readline_add_completion(rs, name);
         }
@@ -3642,7 +3642,7 @@ static void vm_completion(ReadLineState *rs, const char *str)
 
         aio_context_acquire(ctx);
         if (bdrv_can_snapshot(bs)) {
-            ok = bdrv_query_snapshot_info_list(bs, &snapshots, NULL) == 0;
+            ok = bdrv_query_snapshot_info_list(bs, &snapshots, IGNORE_ERRORS) == 0;
         }
         aio_context_release(ctx);
         if (!ok) {

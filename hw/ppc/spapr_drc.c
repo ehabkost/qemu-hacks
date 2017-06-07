@@ -105,7 +105,7 @@ static uint32_t set_isolation_state(sPAPRDRConnector *drc,
             uint32_t drc_index = spapr_drc_index(drc);
             if (drc->configured) {
                 trace_spapr_drc_set_isolation_state_finalizing(drc_index);
-                drck->detach(drc, DEVICE(drc->dev), NULL);
+                drck->detach(drc, DEVICE(drc->dev), IGNORE_ERRORS);
             } else {
                 trace_spapr_drc_set_isolation_state_deferring(drc_index);
             }
@@ -159,7 +159,7 @@ static uint32_t set_allocation_state(sPAPRDRConnector *drc,
             drc->allocation_state == SPAPR_DR_ALLOCATION_STATE_UNUSABLE) {
             uint32_t drc_index = spapr_drc_index(drc);
             trace_spapr_drc_set_allocation_state_finalizing(drc_index);
-            drck->detach(drc, DEVICE(drc->dev), NULL);
+            drck->detach(drc, DEVICE(drc->dev), IGNORE_ERRORS);
         } else if (drc->allocation_state == SPAPR_DR_ALLOCATION_STATE_USABLE) {
             drc->awaiting_allocation = false;
         }
@@ -467,7 +467,7 @@ static void reset(DeviceState *d)
          * force removal if we are
          */
         if (drc->awaiting_release) {
-            drck->detach(drc, DEVICE(drc->dev), NULL);
+            drck->detach(drc, DEVICE(drc->dev), IGNORE_ERRORS);
         }
 
         /* non-PCI devices may be awaiting a transition to UNUSABLE */

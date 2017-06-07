@@ -659,7 +659,7 @@ static void ich9_lpc_add_properties(ICH9LPCState *lpc)
     object_property_add_uint8_ptr(OBJECT(lpc), ACPI_PM_PROP_ACPI_DISABLE_CMD,
                                   &acpi_disable_cmd, IGNORE_ERRORS);
 
-    ich9_pm_add_properties(OBJECT(lpc), &lpc->pm, NULL);
+    ich9_pm_add_properties(OBJECT(lpc), &lpc->pm, IGNORE_ERRORS);
 }
 
 static void ich9_lpc_initfn(Object *obj)

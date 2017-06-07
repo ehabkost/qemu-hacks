@@ -1248,7 +1248,7 @@ void qmp_netdev_del(const char *id, Error **errp)
         return;
     }
 
-    opts = qemu_opts_find(qemu_find_opts_err("netdev", NULL), id);
+    opts = qemu_opts_find(qemu_find_opts_err("netdev", IGNORE_ERRORS), id);
     if (!opts) {
         error_setg(errp, "Device '%s' is not a netdev", id);
         return;

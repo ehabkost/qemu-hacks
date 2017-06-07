@@ -952,9 +952,9 @@ static void device_set_realized(Object *obj, bool value, Error **errp)
         }
         dev->pending_deleted_event = false;
     } else if (!value && dev->realized) {
-        Error **local_errp = NULL;
+        Error **local_errp = IGNORE_ERRORS;
         QLIST_FOREACH(bus, &dev->child_bus, sibling) {
-            local_errp = local_err ? NULL : &local_err;
+            local_errp = local_err ? IGNORE_ERRORS : &local_err;
             object_property_set_bool(OBJECT(bus), false, "realized",
                                      local_errp);
         }
@@ -962,7 +962,7 @@ static void device_set_realized(Object *obj, bool value, Error **errp)
             vmstate_unregister(dev, qdev_get_vmsd(dev), dev);
         }
         if (dc->unrealize) {
-            local_errp = local_err ? NULL : &local_err;
+            local_errp = local_err ? IGNORE_ERRORS : &local_err;
             dc->unrealize(dev, local_errp);
         }
         dev->pending_deleted_event = true;
@@ -988,7 +988,7 @@ child_realize_fail:
 
 post_realize_fail:
     if (dc->unrealize) {
-        dc->unrealize(dev, NULL);
+        dc->unrealize(dev, IGNORE_ERRORS);
     }
 
 fail:

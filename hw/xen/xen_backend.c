@@ -143,7 +143,7 @@ static struct XenDevice *xen_be_get_xendev(const char *type, int dom, int dev,
     xendev->evtchndev = xenevtchn_open(NULL, 0);
     if (xendev->evtchndev == NULL) {
         xen_pv_printf(NULL, 0, "can't open evtchn device\n");
-        qdev_unplug(DEVICE(xendev), NULL);
+        qdev_unplug(DEVICE(xendev), IGNORE_ERRORS);
         return NULL;
     }
     qemu_set_cloexec(xenevtchn_fd(xendev->evtchndev));
@@ -153,7 +153,7 @@ static struct XenDevice *xen_be_get_xendev(const char *type, int dom, int dev,
         if (xendev->gnttabdev == NULL) {
             xen_pv_printf(NULL, 0, "can't open gnttab device\n");
             xenevtchn_close(xendev->evtchndev);
-            qdev_unplug(DEVICE(xendev), NULL);
+            qdev_unplug(DEVICE(xendev), IGNORE_ERRORS);
             return NULL;
         }
     } else {

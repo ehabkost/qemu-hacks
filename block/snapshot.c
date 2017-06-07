@@ -207,7 +207,7 @@ int bdrv_snapshot_goto(BlockDriverState *bs,
         bs->file = NULL;
 
         ret = bdrv_snapshot_goto(file, snapshot_id);
-        open_ret = drv->bdrv_open(bs, options, bs->open_flags, NULL);
+        open_ret = drv->bdrv_open(bs, options, bs->open_flags, IGNORE_ERRORS);
         QDECREF(options);
         if (open_ret < 0) {
             bdrv_unref(file);

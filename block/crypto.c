@@ -449,7 +449,7 @@ block_crypto_co_readv(BlockDriverState *bs, int64_t sector_num,
         if (qcrypto_block_decrypt(crypto->block,
                                   sector_num,
                                   cipher_data, cur_nr_sectors * 512,
-                                  NULL) < 0) {
+                                  IGNORE_ERRORS) < 0) {
             ret = -EIO;
             goto cleanup;
         }
@@ -510,7 +510,7 @@ block_crypto_co_writev(BlockDriverState *bs, int64_t sector_num,
         if (qcrypto_block_encrypt(crypto->block,
                                   sector_num,
                                   cipher_data, cur_nr_sectors * 512,
-                                  NULL) < 0) {
+                                  IGNORE_ERRORS) < 0) {
             ret = -EIO;
             goto cleanup;
         }

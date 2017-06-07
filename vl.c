@@ -1176,7 +1176,7 @@ static void default_drive(int enable, int snapshot, BlockInterfaceType type,
 
     opts = drive_add(type, index, NULL, optstr);
     if (snapshot) {
-        drive_enable_snapshot(NULL, opts, NULL);
+        drive_enable_snapshot(NULL, opts, IGNORE_ERRORS);
     }
 
     dinfo = drive_new(opts, type);
@@ -1352,12 +1352,12 @@ static inline void semihosting_arg_fallback(const char *file, const char *cmd)
     char *cmd_token;
 
     /* argv[0] */
-    add_semihosting_arg(&semihosting, "arg", file, NULL);
+    add_semihosting_arg(&semihosting, "arg", file, IGNORE_ERRORS);
 
     /* split -append and initialize argv[1..n] */
     cmd_token = strtok(g_strdup(cmd), " ");
     while (cmd_token) {
-        add_semihosting_arg(&semihosting, "arg", cmd_token, NULL);
+        add_semihosting_arg(&semihosting, "arg", cmd_token, IGNORE_ERRORS);
         cmd_token = strtok(NULL, " ");
     }
 }
@@ -3556,7 +3556,7 @@ int main(int argc, char **argv, char **envp)
                 fsdev = qemu_opts_create(qemu_find_opts("fsdev"),
                                          qemu_opts_id(opts) ?:
                                          qemu_opt_get(opts, "mount_tag"),
-                                         1, NULL);
+                                         1, IGNORE_ERRORS);
                 if (!fsdev) {
                     error_report("duplicate or invalid fsdev id: %s",
                                  qemu_opt_get(opts, "mount_tag"));
@@ -3606,7 +3606,7 @@ int main(int argc, char **argv, char **envp)
                 QemuOpts *device;
 
                 fsdev = qemu_opts_create(qemu_find_opts("fsdev"), "v_synth",
-                                         1, NULL);
+                                         1, IGNORE_ERRORS);
                 if (!fsdev) {
                     error_report("duplicate option: %s", "virtfs_synth");
                     exit(1);
@@ -3875,7 +3875,7 @@ int main(int argc, char **argv, char **envp)
                     }
                     /* Set semihosting argument count and vector */
                     qemu_opt_foreach(opts, add_semihosting_arg,
-                                     &semihosting, NULL);
+                                     &semihosting, IGNORE_ERRORS);
                 } else {
                     error_report("unsupported semihosting-config %s", optarg);
                     exit(1);
@@ -4107,23 +4107,23 @@ int main(int argc, char **argv, char **envp)
     }
 
     if (qemu_opts_foreach(qemu_find_opts("sandbox"),
-                          parse_sandbox, NULL, NULL)) {
+                          parse_sandbox, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 
     if (qemu_opts_foreach(qemu_find_opts("name"),
-                          parse_name, NULL, NULL)) {
+                          parse_name, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 
 #ifndef _WIN32
     if (qemu_opts_foreach(qemu_find_opts("add-fd"),
-                          parse_add_fd, NULL, NULL)) {
+                          parse_add_fd, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 
     if (qemu_opts_foreach(qemu_find_opts("add-fd"),
-                          cleanup_add_fd, NULL, NULL)) {
+                          cleanup_add_fd, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 #endif
@@ -4220,9 +4220,9 @@ int main(int argc, char **argv, char **envp)
     }
 
     qemu_opts_foreach(qemu_find_opts("device"),
-                      default_driver_check, NULL, NULL);
+                      default_driver_check, NULL, IGNORE_ERRORS);
     qemu_opts_foreach(qemu_find_opts("global"),
-                      default_driver_check, NULL, NULL);
+                      default_driver_check, NULL, IGNORE_ERRORS);
 
     if (!vga_model && !default_vga) {
         vga_interface_type = VGA_DEVICE;
@@ -4364,30 +4364,30 @@ int main(int argc, char **argv, char **envp)
 
     if (qemu_opts_foreach(qemu_find_opts("object"),
                           user_creatable_add_opts_foreach,
-                          object_create_initial, NULL)) {
+                          object_create_initial, IGNORE_ERRORS)) {
         exit(1);
     }
 
     if (qemu_opts_foreach(qemu_find_opts("chardev"),
-                          chardev_init_func, NULL, NULL)) {
+                          chardev_init_func, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 
 #ifdef CONFIG_VIRTFS
     if (qemu_opts_foreach(qemu_find_opts("fsdev"),
-                          fsdev_init_func, NULL, NULL)) {
+                          fsdev_init_func, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 #endif
 
     if (qemu_opts_foreach(qemu_find_opts("device"),
-                          device_help_func, NULL, NULL)) {
+                          device_help_func, NULL, IGNORE_ERRORS)) {
         exit(0);
     }
 
     machine_opts = qemu_get_machine_opts();
     if (qemu_opt_foreach(machine_opts, machine_set_property, current_machine,
-                         NULL)) {
+                         IGNORE_ERRORS)) {
         object_unref(OBJECT(current_machine));
         exit(1);
     }
@@ -4479,7 +4479,7 @@ int main(int argc, char **argv, char **envp)
 
     if (qemu_opts_foreach(qemu_find_opts("object"),
                           user_creatable_add_opts_foreach,
-                          object_create_delayed, NULL)) {
+                          object_create_delayed, IGNORE_ERRORS)) {
         exit(1);
     }
 
@@ -4524,10 +4524,10 @@ int main(int argc, char **argv, char **envp)
     }
     if (snapshot || replay_mode != REPLAY_MODE_NONE) {
         qemu_opts_foreach(qemu_find_opts("drive"), drive_enable_snapshot,
-                          NULL, NULL);
+                          NULL, IGNORE_ERRORS);
     }
     if (qemu_opts_foreach(qemu_find_opts("drive"), drive_init_func,
-                          &machine_class->block_default_type, NULL)) {
+                          &machine_class->block_default_type, IGNORE_ERRORS)) {
         exit(1);
     }
 
@@ -4539,7 +4539,7 @@ int main(int argc, char **argv, char **envp)
     parse_numa_opts(current_machine);
 
     if (qemu_opts_foreach(qemu_find_opts("mon"),
-                          mon_init_func, NULL, NULL)) {
+                          mon_init_func, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 
@@ -4578,7 +4578,7 @@ int main(int argc, char **argv, char **envp)
     machine_register_compat_props(current_machine);
 
     qemu_opts_foreach(qemu_find_opts("global"),
-                      global_init_func, NULL, NULL);
+                      global_init_func, NULL, IGNORE_ERRORS);
 
     /* This checkpoint is required by replay to separate prior clock
        reading from the other reads, because timer polling functions query
@@ -4603,7 +4603,7 @@ int main(int argc, char **argv, char **envp)
     }
 
     if (qemu_opts_foreach(qemu_find_opts("fw_cfg"),
-                          parse_fw_cfg, fw_cfg_find(), NULL) != 0) {
+                          parse_fw_cfg, fw_cfg_find(), IGNORE_ERRORS) != 0) {
         exit(1);
     }
 
@@ -4619,7 +4619,7 @@ int main(int argc, char **argv, char **envp)
     /* init generic devices */
     rom_set_order_override(FW_CFG_ORDER_OVERRIDE_DEVICE);
     if (qemu_opts_foreach(qemu_find_opts("device"),
-                          device_init_func, NULL, NULL)) {
+                          device_init_func, NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 
@@ -4683,7 +4683,7 @@ int main(int argc, char **argv, char **envp)
     /* init remote displays */
 #ifdef CONFIG_VNC
     qemu_opts_foreach(qemu_find_opts("vnc"),
-                      vnc_init_func, NULL, NULL);
+                      vnc_init_func, NULL, IGNORE_ERRORS);
 #endif
 
     if (using_spice) {

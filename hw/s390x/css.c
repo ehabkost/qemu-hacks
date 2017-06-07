@@ -2070,7 +2070,7 @@ SubchDev *css_create_sch(CssDevId bus_id, bool is_virtual, bool squash_mcss,
 
             if   (css_find_free_subch_and_devno(bus_id.cssid, &bus_id.ssid,
                                                 &bus_id.devid, &schid,
-                                                NULL)) {
+                                                IGNORE_ERRORS)) {
                 break;
             }
             if (bus_id.cssid == MAX_CSSID) {

@@ -370,7 +370,7 @@ out_device_err:
     vfio_put_group(group);
 out_group_err:
     if (cdc->unrealize) {
-        cdc->unrealize(cdev, NULL);
+        cdc->unrealize(cdev, IGNORE_ERRORS);
     }
 out_err_propagate:
     error_propagate(errp, err);

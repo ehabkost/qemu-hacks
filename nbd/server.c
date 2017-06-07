@@ -388,7 +388,7 @@ static QIOChannel *nbd_negotiate_handle_starttls(NBDClient *client,
     tioc = qio_channel_tls_new_server(ioc,
                                       client->tlscreds,
                                       client->tlsaclname,
-                                      NULL);
+                                      IGNORE_ERRORS);
     if (!tioc) {
         return NULL;
     }

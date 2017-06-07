@@ -516,7 +516,7 @@ opts_optional(Visitor *v, const char *name, bool *present)
 
     /* we only support a single mandatory scalar field in a list node */
     assert(ov->list_mode == LM_NONE);
-    *present = (lookup_distinct(ov, name, NULL) != NULL);
+    *present = (lookup_distinct(ov, name, IGNORE_ERRORS) != NULL);
 }
 
 

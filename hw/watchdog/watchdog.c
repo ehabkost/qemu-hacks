@@ -144,7 +144,7 @@ void watchdog_perform_action(void)
     case WDT_NMI:
         qapi_event_send_watchdog(WATCHDOG_EXPIRATION_ACTION_INJECT_NMI,
                                  &error_abort);
-        nmi_monitor_handle(0, NULL);
+        nmi_monitor_handle(0, IGNORE_ERRORS);
         break;
     }
 }
