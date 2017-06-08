@@ -129,7 +129,7 @@ check-unit-y += tests/test-uuid$(EXESUF)
 check-unit-y += tests/ptimer-test$(EXESUF)
 gcov-files-ptimer-test-y = hw/core/ptimer.c
 check-unit-y += tests/test-qapi-util$(EXESUF)
-gcov-files-test-qapi-util-y = qapi/qapi-util.c
+gcov-files-test-qapi-util-y = qapi/qapi-util.c qapi/error.c
 
 check-block-$(CONFIG_POSIX) += tests/qemu-iotests-quick.sh
 

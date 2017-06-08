@@ -75,11 +75,110 @@ static void test_parse_qapi_name(void)
     g_assert(ret == -1);
 }
 
+static void successfn(Error **errp)
+{
+    g_assert(!errp || !*errp);
+}
+
+static void fail1(Error **errp)
+{
+    g_assert(!errp || !*errp);
+
+    error_setg(errp, "error1");
+
+    g_assert(!errp || *errp);
+}
+
+static void fail2(Error **errp)
+{
+    g_assert(!errp || !*errp);
+
+    error_setg(errp, "error2");
+
+    g_assert(!errp || *errp);
+}
+
+static void multifn(Error **errp)
+{
+    Error *err1 = NULL, *err2 = NULL;
+    successfn(&err1);
+    g_assert(!err1);
+
+    fail1(&err1);
+    g_assert(err1);
+    g_assert_cmpstr(error_get_pretty(err1), ==, "error1");
+
+    fail2(&err2);
+    g_assert(err2);
+    g_assert_cmpstr(error_get_pretty(err2), ==, "error2");
+
+    error_propagate(&err1, err2);
+    g_assert(err1);
+    g_assert_cmpstr(error_get_pretty(err1), ==, "error1");
+
+    error_propagate(errp, err1);
+}
+
+static void test_propagate(void (*fn)(Error **), Error **errp)
+{
+    bool failed;
+    Error *local_err = NULL;
+
+    g_assert(!errp || !*errp);
+
+    fn(&local_err);
+    failed = !!local_err;
+    error_propagate(errp, local_err);
+
+    g_assert(!errp || (failed == !!*errp));
+}
+
+static void test_error_api(void)
+{
+    Error *err = NULL;
+
+    successfn(NULL);
+    test_propagate(successfn, NULL);
+
+    fail1(NULL);
+    test_propagate(fail1, NULL);
+
+    multifn(NULL);
+    test_propagate(multifn, NULL);
+
+    successfn(&err);
+    g_assert(!err);
+
+    test_propagate(successfn, &err);
+    g_assert(!err);
+
+    fail1(&err);
+    g_assert(err);
+    g_assert_cmpstr(error_get_pretty(err), ==, "error1");
+    error_free_or_abort(&err);
+
+    test_propagate(fail1, &err);
+    g_assert(err);
+    g_assert_cmpstr(error_get_pretty(err), ==, "error1");
+    error_free_or_abort(&err);
+
+    multifn(&err);
+    g_assert(err);
+    g_assert_cmpstr(error_get_pretty(err), ==, "error1");
+    error_free_or_abort(&err);
+
+    test_propagate(multifn, &err);
+    g_assert(err);
+    g_assert_cmpstr(error_get_pretty(err), ==, "error1");
+    error_free_or_abort(&err);
+}
+
 int main(int argc, char *argv[])
 {
     g_test_init(&argc, &argv, NULL);
     g_test_add_func("/qapi/util/qapi_enum_parse", test_qapi_enum_parse);
     g_test_add_func("/qapi/util/parse_qapi_name", test_parse_qapi_name);
+    g_test_add_func("/qapi/util/error", test_error_api);
     g_test_run();
     return 0;
 }
