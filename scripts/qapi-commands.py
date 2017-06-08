@@ -75,7 +75,7 @@ static void qmp_marshal_output_%(c_name)s(%(c_type)s ret_in, QObject **ret_out, 
     error_propagate(errp, err);
     visit_free(v);
     v = qapi_dealloc_visitor_new();
-    visit_type_%(c_name)s(v, "unused", &ret_in, NULL);
+    visit_type_%(c_name)s(v, "unused", &ret_in, IGNORE_ERRORS);
     visit_free(v);
 }
 ''',
@@ -162,7 +162,7 @@ out:
 ''')
 
     if have_args:
-        visit_members = ('visit_type_%s_members(v, &arg, NULL);'
+        visit_members = ('visit_type_%s_members(v, &arg, IGNORE_ERRORS);'
                          % arg_type.c_name())
     else:
         visit_members = ''
@@ -173,7 +173,7 @@ out:
 
     ret += mcgen('''
     v = qapi_dealloc_visitor_new();
-    visit_start_struct(v, NULL, NULL, 0, NULL);
+    visit_start_struct(v, NULL, NULL, 0, IGNORE_ERRORS);
     %(visit_members)s
     visit_end_struct(v, NULL);
     visit_free(v);

@@ -157,7 +157,7 @@ void qapi_free_%(c_name)s(%(c_name)s *obj)
     }
 
     v = qapi_dealloc_visitor_new();
-    visit_type_%(c_name)s(v, NULL, &obj, NULL);
+    visit_type_%(c_name)s(v, NULL, &obj, IGNORE_ERRORS);
     visit_free(v);
 }
 ''',
