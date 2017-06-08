@@ -723,7 +723,7 @@ Visitor *qobject_input_visitor_new_str(const char *str,
         obj = qobject_from_json(str, errp);
         if (!obj) {
             /* Work around qobject_from_json() lossage TODO fix that */
-            if (errp && !*errp) {
+            if (!ERR_IS_IGNORED(errp) && !ERR_IS_SET(errp)) {
                 error_setg(errp, "JSON parse error");
                 return NULL;
             }

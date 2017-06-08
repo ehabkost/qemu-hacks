@@ -51,10 +51,10 @@ static void error_setv(Error **errp,
     Error *err;
     int saved_errno = errno;
 
-    if (errp == NULL) {
+    if (ERR_IS_IGNORED(errp)) {
         return;
     }
-    assert(*errp == NULL);
+    assert(!ERR_IS_SET(errp));
 
     err = g_malloc0(sizeof(*err));
     err->msg = g_strdup_vprintf(fmt, ap);
@@ -103,7 +103,7 @@ void error_setg_errno_internal(Error **errp,
     va_list ap;
     int saved_errno = errno;
 
-    if (errp == NULL) {
+    if (ERR_IS_IGNORED(errp)) {
         return;
     }
 
@@ -127,7 +127,7 @@ void error_vprepend(Error **errp, const char *fmt, va_list ap)
 {
     GString *newmsg;
 
-    if (!errp) {
+    if (ERR_IS_IGNORED(errp)) {
         return;
     }
 
@@ -153,7 +153,7 @@ void error_append_hint(Error **errp, const char *fmt, ...)
     int saved_errno = errno;
     Error *err;
 
-    if (!errp) {
+    if (ERR_IS_IGNORED(errp)) {
         return;
     }
     err = *errp;
@@ -178,7 +178,7 @@ void error_setg_win32_internal(Error **errp,
     va_list ap;
     char *suffix = NULL;
 
-    if (errp == NULL) {
+    if (ERR_IS_IGNORED(errp)) {
         return;
     }
 

@@ -296,7 +296,7 @@ static void sclp_events_bus_realize(BusState *bus, Error **errp)
         DeviceState *dev = kid->child;
 
         object_property_set_bool(OBJECT(dev), true, "realized", errp);
-        if (*errp) {
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }

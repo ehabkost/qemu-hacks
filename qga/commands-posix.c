@@ -1025,7 +1025,7 @@ static void build_guest_fsinfo_for_virtual_device(char const *syspath,
             build_guest_fsinfo_for_device(path, fs, errp);
             g_free(path);
 
-            if (*errp) {
+            if (ERR_IS_SET(errp)) {
                 break;
             }
         }

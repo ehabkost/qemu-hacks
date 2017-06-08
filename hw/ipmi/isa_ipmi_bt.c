@@ -438,7 +438,7 @@ static void isa_ipmi_bt_realize(DeviceState *dev, Error **errp)
     iib->bt.bmc->intf = ii;
 
     iic->init(ii, errp);
-    if (*errp)
+    if (ERR_IS_SET(errp))
         return;
 
     if (iib->isairq > 0) {

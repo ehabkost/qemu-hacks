@@ -98,7 +98,7 @@ S390CPU *cpu_s390x_create(const char *cpu_model, Error **errp)
     }
     g_free(name);
 
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
     return S390_CPU(CPU(object_new(typename)));

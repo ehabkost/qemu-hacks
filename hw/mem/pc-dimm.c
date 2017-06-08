@@ -316,7 +316,7 @@ uint64_t pc_dimm_get_free_addr(uint64_t address_space_start,
         uint64_t dimm_size = object_property_get_int(OBJECT(dimm),
                                                      PC_DIMM_SIZE_PROP,
                                                      errp);
-        if (errp && *errp) {
+        if (!ERR_IS_IGNORED(errp) && ERR_IS_SET(errp)) {
             goto out;
         }
 

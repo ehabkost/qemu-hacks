@@ -2983,7 +2983,7 @@ static void spapr_machine_device_plug(HotplugHandler *hotplug_dev,
             return;
         }
         node = object_property_get_int(OBJECT(dev), PC_DIMM_NODE_PROP, errp);
-        if (*errp) {
+        if (ERR_IS_SET(errp)) {
             return;
         }
         if (node < 0 || node >= MAX_NODES) {

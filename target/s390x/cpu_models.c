@@ -348,22 +348,22 @@ static void cpu_model_from_info(S390CPUModel *model, const CpuModelInfo *info,
     if (qdict) {
         visitor = qobject_input_visitor_new(info->props);
         visit_start_struct(visitor, NULL, NULL, 0, errp);
-        if (*errp) {
+        if (ERR_IS_SET(errp)) {
             object_unref(obj);
             return;
         }
         for (e = qdict_first(qdict); e; e = qdict_next(qdict, e)) {
             object_property_set(obj, visitor, e->key, errp);
-            if (*errp) {
+            if (ERR_IS_SET(errp)) {
                 break;
             }
         }
-        if (!*errp) {
+        if (!ERR_IS_SET(errp)) {
             visit_check_struct(visitor, errp);
         }
         visit_end_struct(visitor, NULL);
         visit_free(visitor);
-        if (*errp) {
+        if (ERR_IS_SET(errp)) {
             object_unref(obj);
             return;
         }
@@ -434,7 +434,7 @@ CpuModelExpansionInfo *arch_query_cpu_model_expansion(CpuModelExpansionType type
 
     /* convert it to our internal representation */
     cpu_model_from_info(&s390_model, model, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
 
@@ -474,11 +474,11 @@ CpuModelCompareInfo *arch_query_cpu_model_comparison(CpuModelInfo *infoa,
 
     /* convert both models to our internal representation */
     cpu_model_from_info(&modela, infoa, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
     cpu_model_from_info(&modelb, infob, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
     compare_info = g_malloc0(sizeof(*compare_info));
@@ -548,12 +548,12 @@ CpuModelBaselineInfo *arch_query_cpu_model_baseline(CpuModelInfo *infoa,
 
     /* convert both models to our internal representation */
     cpu_model_from_info(&modela, infoa, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
 
     cpu_model_from_info(&modelb, infob, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
 
@@ -702,7 +702,7 @@ static S390CPUModel *get_max_cpu_model(Error **errp)
                     S390_FEAT_MAX);
         add_qemu_cpu_model_features(max_model.features);
     }
-    if (!*errp) {
+    if (!ERR_IS_SET(errp)) {
         cached = true;
         return &max_model;
     }
@@ -732,7 +732,7 @@ static inline void apply_cpu_model(const S390CPUModel *model, Error **errp)
         /* FIXME TCG - use data for stdip/stfl */
     }
 
-    if (!*errp) {
+    if (!ERR_IS_SET(errp)) {
         applied = true;
         if (model) {
             applied_model = *model;
@@ -759,7 +759,7 @@ void s390_realize_cpu_model(CPUState *cs, Error **errp)
     }
 
     max_model = get_max_cpu_model(errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         error_prepend(errp, "CPU models are not available: ");
         return;
     }
@@ -771,7 +771,7 @@ void s390_realize_cpu_model(CPUState *cs, Error **errp)
 
     check_consistency(cpu->model);
     check_compatibility(max_model, cpu->model, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -814,7 +814,7 @@ static void set_feature(Object *obj, Visitor *v, const char *name,
     }
 
     visit_type_bool(v, name, &value, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return;
     }
     if (value) {
@@ -871,7 +871,7 @@ static void set_feature_group(Object *obj, Visitor *v, const char *name,
     }
 
     visit_type_bool(v, name, &value, errp);
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return;
     }
     if (value) {

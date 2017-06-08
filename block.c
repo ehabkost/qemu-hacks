@@ -1383,7 +1383,7 @@ static QDict *parse_json_filename(const char *filename, Error **errp)
     options_obj = qobject_from_json(filename, errp);
     if (!options_obj) {
         /* Work around qobject_from_json() lossage TODO fix that */
-        if (errp && !*errp) {
+        if (!ERR_IS_IGNORED(errp) && !ERR_IS_SET(errp)) {
             error_setg(errp, "Could not parse the JSON options");
             return NULL;
         }

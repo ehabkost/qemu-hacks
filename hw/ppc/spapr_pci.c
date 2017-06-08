@@ -1364,7 +1364,7 @@ static void spapr_phb_add_pci_device(sPAPRDRConnector *drc,
     drck->attach(drc, DEVICE(pdev),
                  fdt, fdt_start_offset, !dev->hotplugged, errp);
 out:
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         g_free(fdt);
     }
 }

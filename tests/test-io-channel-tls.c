@@ -89,7 +89,7 @@ static QCryptoTLSCreds *test_tls_creds_create(QCryptoTLSCredsEndpoint endpoint,
         NULL
         );
 
-    if (*errp) {
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
     return QCRYPTO_TLS_CREDS(creds);
