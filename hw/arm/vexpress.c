@@ -218,10 +218,10 @@ static void init_cpus(const char *cpu_model, const char *privdev,
         Object *cpuobj = object_new(object_class_get_name(cpu_oc));
 
         if (!secure) {
-            object_property_set_bool(cpuobj, false, "has_el3", NULL);
+            object_property_set_bool(cpuobj, false, "has_el3", IGNORE_ERRORS);
         }
 
-        if (object_property_find(cpuobj, "reset-cbar", NULL)) {
+        if (object_property_find(cpuobj, "reset-cbar", IGNORE_ERRORS)) {
             object_property_set_int(cpuobj, periphbase,
                                     "reset-cbar", &error_abort);
         }
@@ -739,11 +739,11 @@ static void vexpress_instance_init(Object *obj)
     /* EL3 is enabled by default on vexpress */
     vms->secure = true;
     object_property_add_bool(obj, "secure", vexpress_get_secure,
-                             vexpress_set_secure, NULL);
+                             vexpress_set_secure, IGNORE_ERRORS);
     object_property_set_description(obj, "secure",
                                     "Set on/off to enable/disable the ARM "
                                     "Security Extensions (TrustZone)",
-                                    NULL);
+                                    IGNORE_ERRORS);
 }
 
 static void vexpress_class_init(ObjectClass *oc, void *data)

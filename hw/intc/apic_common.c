@@ -331,7 +331,7 @@ static void apic_common_realize(DeviceState *dev, Error **errp)
         instance_id = -1;
     }
     vmstate_register_with_alias_id(NULL, instance_id, &vmstate_apic_common,
-                                   s, -1, 0, NULL);
+                                   s, -1, 0, IGNORE_ERRORS);
 }
 
 static void apic_common_unrealize(DeviceState *dev, Error **errp)
@@ -486,7 +486,7 @@ static void apic_common_initfn(Object *obj)
     s->id = s->initial_apic_id = -1;
     object_property_add(obj, "id", "int",
                         apic_common_get_id,
-                        apic_common_set_id, NULL, NULL, NULL);
+                        apic_common_set_id, NULL, NULL, IGNORE_ERRORS);
 }
 
 static void apic_common_class_init(ObjectClass *klass, void *data)

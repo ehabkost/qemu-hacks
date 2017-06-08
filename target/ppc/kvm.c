@@ -482,7 +482,8 @@ static void kvm_fixup_page_sizes(PowerPCCPU *cpu)
 bool kvmppc_is_mem_backend_page_size_ok(char *obj_path)
 {
     Object *mem_obj = object_resolve_path(obj_path, NULL);
-    char *mempath = object_property_get_str(mem_obj, "mem-path", NULL);
+    char *mempath = object_property_get_str(mem_obj, "mem-path",
+                                            IGNORE_ERRORS);
     long pagesize;
 
     if (mempath) {

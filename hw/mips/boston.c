@@ -531,7 +531,7 @@ static void boston_mach_init(MachineState *machine)
     memory_region_add_subregion_overlap(sys_mem, 0x17fff000, lcd, 0);
 
     chr = qemu_chr_new("lcd", "vc:320x240");
-    qemu_chr_fe_init(&s->lcd_display, chr, NULL);
+    qemu_chr_fe_init(&s->lcd_display, chr, IGNORE_ERRORS);
     qemu_chr_fe_set_handlers(&s->lcd_display, NULL, NULL,
                              boston_lcd_event, s, NULL, true);
 

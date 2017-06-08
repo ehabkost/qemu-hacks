@@ -530,12 +530,12 @@ void start_auth_sasl(VncState *vs)
     VNC_DEBUG("Initialize SASL auth %p\n", vs->ioc);
 
     /* Get local & remote client addresses in form  IPADDR;PORT */
-    localAddr = vnc_socket_ip_addr_string(vs->sioc, true, NULL);
+    localAddr = vnc_socket_ip_addr_string(vs->sioc, true, IGNORE_ERRORS);
     if (!localAddr) {
         goto authabort;
     }
 
-    remoteAddr = vnc_socket_ip_addr_string(vs->sioc, false, NULL);
+    remoteAddr = vnc_socket_ip_addr_string(vs->sioc, false, IGNORE_ERRORS);
     if (!remoteAddr) {
         g_free(localAddr);
         goto authabort;

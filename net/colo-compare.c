@@ -788,13 +788,13 @@ static void colo_compare_init(Object *obj)
 {
     object_property_add_str(obj, "primary_in",
                             compare_get_pri_indev, compare_set_pri_indev,
-                            NULL);
+                            IGNORE_ERRORS);
     object_property_add_str(obj, "secondary_in",
                             compare_get_sec_indev, compare_set_sec_indev,
-                            NULL);
+                            IGNORE_ERRORS);
     object_property_add_str(obj, "outdev",
                             compare_get_outdev, compare_set_outdev,
-                            NULL);
+                            IGNORE_ERRORS);
 }
 
 static void colo_compare_finalize(Object *obj)

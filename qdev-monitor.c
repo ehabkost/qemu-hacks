@@ -549,12 +549,12 @@ void qdev_set_id(DeviceState *dev, const char *id)
 
     if (dev->id) {
         object_property_add_child(qdev_get_peripheral(), dev->id,
-                                  OBJECT(dev), NULL);
+                                  OBJECT(dev), IGNORE_ERRORS);
     } else {
         static int anon_count;
         gchar *name = g_strdup_printf("device[%d]", anon_count++);
         object_property_add_child(qdev_get_peripheral_anon(), name,
-                                  OBJECT(dev), NULL);
+                                  OBJECT(dev), IGNORE_ERRORS);
         g_free(name);
     }
 }
@@ -651,7 +651,7 @@ static void qdev_print_props(Monitor *mon, DeviceState *dev, Property *props,
         Error *err = NULL;
         char *value;
         char *legacy_name = g_strdup_printf("legacy-%s", props->name);
-        if (object_property_get_type(OBJECT(dev), legacy_name, NULL)) {
+        if (object_property_get_type(OBJECT(dev), legacy_name, IGNORE_ERRORS)) {
             value = object_property_get_str(OBJECT(dev), legacy_name, &err);
         } else {
             value = object_property_print(OBJECT(dev), props->name, true, &err);

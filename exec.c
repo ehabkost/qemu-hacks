@@ -1404,7 +1404,7 @@ static int find_max_supported_pagesize(Object *obj, void *opaque)
     long *hpsize_min = opaque;
 
     if (object_dynamic_cast(obj, TYPE_MEMORY_BACKEND)) {
-        mem_path = object_property_get_str(obj, "mem-path", NULL);
+        mem_path = object_property_get_str(obj, "mem-path", IGNORE_ERRORS);
         if (mem_path) {
             long hpsize = qemu_mempath_getpagesize(mem_path);
             if (hpsize < *hpsize_min) {

@@ -60,7 +60,7 @@ static void test_tls_handshake_done(QIOTask *task,
     struct QIOChannelTLSHandshakeData *data = opaque;
 
     data->finished = true;
-    data->failed = qio_task_propagate_error(task, NULL);
+    data->failed = qio_task_propagate_error(task, IGNORE_ERRORS);
 }
 
 
@@ -187,8 +187,10 @@ static void test_io_channel_tls(const void *opaque)
      * thread, so we need these non-blocking to avoid deadlock
      * of ourselves
      */
-    qio_channel_set_blocking(QIO_CHANNEL(clientChanSock), false, NULL);
-    qio_channel_set_blocking(QIO_CHANNEL(serverChanSock), false, NULL);
+    qio_channel_set_blocking(QIO_CHANNEL(clientChanSock), false,
+                             IGNORE_ERRORS);
+    qio_channel_set_blocking(QIO_CHANNEL(serverChanSock), false,
+                             IGNORE_ERRORS);
 
     /* Now the real part of the test, setup the sessions */
     clientChanTLS = qio_channel_tls_new_client(

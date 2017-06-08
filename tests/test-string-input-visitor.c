@@ -318,25 +318,25 @@ static void test_visitor_in_fuzz(TestInputVisitorData *data,
         }
 
         v = visitor_input_test_init(data, buf);
-        visit_type_int(v, NULL, &ires, NULL);
+        visit_type_int(v, NULL, &ires, IGNORE_ERRORS);
 
         v = visitor_input_test_init(data, buf);
-        visit_type_intList(v, NULL, &ilres, NULL);
+        visit_type_intList(v, NULL, &ilres, IGNORE_ERRORS);
         qapi_free_intList(ilres);
 
         v = visitor_input_test_init(data, buf);
-        visit_type_bool(v, NULL, &bres, NULL);
+        visit_type_bool(v, NULL, &bres, IGNORE_ERRORS);
 
         v = visitor_input_test_init(data, buf);
-        visit_type_number(v, NULL, &nres, NULL);
+        visit_type_number(v, NULL, &nres, IGNORE_ERRORS);
 
         v = visitor_input_test_init(data, buf);
         sres = NULL;
-        visit_type_str(v, NULL, &sres, NULL);
+        visit_type_str(v, NULL, &sres, IGNORE_ERRORS);
         g_free(sres);
 
         v = visitor_input_test_init(data, buf);
-        visit_type_EnumOne(v, NULL, &eres, NULL);
+        visit_type_EnumOne(v, NULL, &eres, IGNORE_ERRORS);
     }
 }
 

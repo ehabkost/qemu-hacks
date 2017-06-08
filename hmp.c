@@ -59,7 +59,7 @@ void hmp_info_name(Monitor *mon, const QDict *qdict)
 {
     NameInfo *info;
 
-    info = qmp_query_name(NULL);
+    info = qmp_query_name(IGNORE_ERRORS);
     if (info->has_name) {
         monitor_printf(mon, "%s\n", info->name);
     }
@@ -70,7 +70,7 @@ void hmp_info_version(Monitor *mon, const QDict *qdict)
 {
     VersionInfo *info;
 
-    info = qmp_query_version(NULL);
+    info = qmp_query_version(IGNORE_ERRORS);
 
     monitor_printf(mon, "%" PRId64 ".%" PRId64 ".%" PRId64 "%s\n",
                    info->qemu->major, info->qemu->minor, info->qemu->micro,
@@ -83,7 +83,7 @@ void hmp_info_kvm(Monitor *mon, const QDict *qdict)
 {
     KvmInfo *info;
 
-    info = qmp_query_kvm(NULL);
+    info = qmp_query_kvm(IGNORE_ERRORS);
     monitor_printf(mon, "kvm support: ");
     if (info->present) {
         monitor_printf(mon, "%s\n", info->enabled ? "enabled" : "disabled");
@@ -98,7 +98,7 @@ void hmp_info_status(Monitor *mon, const QDict *qdict)
 {
     StatusInfo *info;
 
-    info = qmp_query_status(NULL);
+    info = qmp_query_status(IGNORE_ERRORS);
 
     monitor_printf(mon, "VM status: %s%s",
                    info->running ? "running" : "paused",
@@ -117,7 +117,7 @@ void hmp_info_uuid(Monitor *mon, const QDict *qdict)
 {
     UuidInfo *info;
 
-    info = qmp_query_uuid(NULL);
+    info = qmp_query_uuid(IGNORE_ERRORS);
     monitor_printf(mon, "%s\n", info->UUID);
     qapi_free_UuidInfo(info);
 }
@@ -126,7 +126,7 @@ void hmp_info_chardev(Monitor *mon, const QDict *qdict)
 {
     ChardevInfoList *char_info, *info;
 
-    char_info = qmp_query_chardev(NULL);
+    char_info = qmp_query_chardev(IGNORE_ERRORS);
     for (info = char_info; info; info = info->next) {
         monitor_printf(mon, "%s: filename=%s\n", info->value->label,
                                                  info->value->filename);
@@ -139,7 +139,7 @@ void hmp_info_mice(Monitor *mon, const QDict *qdict)
 {
     MouseInfoList *mice_list, *mouse;
 
-    mice_list = qmp_query_mice(NULL);
+    mice_list = qmp_query_mice(IGNORE_ERRORS);
     if (!mice_list) {
         monitor_printf(mon, "No mouse devices connected\n");
         return;
@@ -160,8 +160,8 @@ void hmp_info_migrate(Monitor *mon, const QDict *qdict)
     MigrationInfo *info;
     MigrationCapabilityStatusList *caps, *cap;
 
-    info = qmp_query_migrate(NULL);
-    caps = qmp_query_migrate_capabilities(NULL);
+    info = qmp_query_migrate(IGNORE_ERRORS);
+    caps = qmp_query_migrate_capabilities(IGNORE_ERRORS);
 
     /* do not display parameters during setup */
     if (info->has_status && caps) {
@@ -269,7 +269,7 @@ void hmp_info_migrate_capabilities(Monitor *mon, const QDict *qdict)
 {
     MigrationCapabilityStatusList *caps, *cap;
 
-    caps = qmp_query_migrate_capabilities(NULL);
+    caps = qmp_query_migrate_capabilities(IGNORE_ERRORS);
 
     if (caps) {
         for (cap = caps; cap; cap = cap->next) {
@@ -286,7 +286,7 @@ void hmp_info_migrate_parameters(Monitor *mon, const QDict *qdict)
 {
     MigrationParameters *params;
 
-    params = qmp_query_migrate_parameters(NULL);
+    params = qmp_query_migrate_parameters(IGNORE_ERRORS);
 
     if (params) {
         assert(params->has_compress_level);
@@ -339,14 +339,14 @@ void hmp_info_migrate_parameters(Monitor *mon, const QDict *qdict)
 void hmp_info_migrate_cache_size(Monitor *mon, const QDict *qdict)
 {
     monitor_printf(mon, "xbzrel cache size: %" PRId64 " kbytes\n",
-                   qmp_query_migrate_cache_size(NULL) >> 10);
+                   qmp_query_migrate_cache_size(IGNORE_ERRORS) >> 10);
 }
 
 void hmp_info_cpus(Monitor *mon, const QDict *qdict)
 {
     CpuInfoList *cpu_list, *cpu;
 
-    cpu_list = qmp_query_cpus(NULL);
+    cpu_list = qmp_query_cpus(IGNORE_ERRORS);
 
     for (cpu = cpu_list; cpu; cpu = cpu->next) {
         int active = ' ';
@@ -513,7 +513,7 @@ void hmp_info_block(Monitor *mon, const QDict *qdict)
 
     /* Print BlockBackend information */
     if (!nodes) {
-        block_list = qmp_query_block(NULL);
+        block_list = qmp_query_block(IGNORE_ERRORS);
     } else {
         block_list = NULL;
     }
@@ -540,7 +540,7 @@ void hmp_info_block(Monitor *mon, const QDict *qdict)
     }
 
     /* Print node information */
-    blockdev_list = qmp_query_named_block_nodes(NULL);
+    blockdev_list = qmp_query_named_block_nodes(IGNORE_ERRORS);
     for (blockdev = blockdev_list; blockdev; blockdev = blockdev->next) {
         assert(blockdev->value->has_node_name);
         if (device && strcmp(device, blockdev->value->node_name)) {
@@ -560,7 +560,7 @@ void hmp_info_blockstats(Monitor *mon, const QDict *qdict)
 {
     BlockStatsList *stats_list, *stats;
 
-    stats_list = qmp_query_blockstats(false, false, NULL);
+    stats_list = qmp_query_blockstats(false, false, IGNORE_ERRORS);
 
     for (stats = stats_list; stats; stats = stats->next) {
         if (!stats->value->has_device) {
@@ -667,7 +667,7 @@ void hmp_info_spice(Monitor *mon, const QDict *qdict)
 #endif
     };
 
-    info = qmp_query_spice(NULL);
+    info = qmp_query_spice(IGNORE_ERRORS);
 
     if (!info->enabled) {
         monitor_printf(mon, "Server: disabled\n");
@@ -985,22 +985,22 @@ void hmp_info_tpm(Monitor *mon, const QDict *qdict)
 void hmp_quit(Monitor *mon, const QDict *qdict)
 {
     monitor_suspend(mon);
-    qmp_quit(NULL);
+    qmp_quit(IGNORE_ERRORS);
 }
 
 void hmp_stop(Monitor *mon, const QDict *qdict)
 {
-    qmp_stop(NULL);
+    qmp_stop(IGNORE_ERRORS);
 }
 
 void hmp_system_reset(Monitor *mon, const QDict *qdict)
 {
-    qmp_system_reset(NULL);
+    qmp_system_reset(IGNORE_ERRORS);
 }
 
 void hmp_system_powerdown(Monitor *mon, const QDict *qdict)
 {
-    qmp_system_powerdown(NULL);
+    qmp_system_powerdown(IGNORE_ERRORS);
 }
 
 void hmp_cpu(Monitor *mon, const QDict *qdict)
@@ -1087,7 +1087,7 @@ void hmp_ringbuf_read(Monitor *mon, const QDict *qdict)
 static void hmp_cont_cb(void *opaque, int err)
 {
     if (!err) {
-        qmp_cont(NULL);
+        qmp_cont(IGNORE_ERRORS);
     }
 }
 
@@ -1101,7 +1101,7 @@ void hmp_cont(Monitor *mon, const QDict *qdict)
     BlockInfoList *bdev_list, *bdev;
     Error *err = NULL;
 
-    bdev_list = qmp_query_block(NULL);
+    bdev_list = qmp_query_block(IGNORE_ERRORS);
     for (bdev = bdev_list; bdev; bdev = bdev->next) {
         if (key_is_missing(bdev->value)) {
             monitor_read_block_device_key(mon, bdev->value->device,
@@ -1119,7 +1119,7 @@ out:
 
 void hmp_system_wakeup(Monitor *mon, const QDict *qdict)
 {
-    qmp_system_wakeup(NULL);
+    qmp_system_wakeup(IGNORE_ERRORS);
 }
 
 void hmp_nmi(Monitor *mon, const QDict *qdict)
@@ -1456,7 +1456,7 @@ void hmp_info_snapshots(Monitor *mon, const QDict *qdict)
 
 void hmp_migrate_cancel(Monitor *mon, const QDict *qdict)
 {
-    qmp_migrate_cancel(NULL);
+    qmp_migrate_cancel(IGNORE_ERRORS);
 }
 
 void hmp_migrate_incoming(Monitor *mon, const QDict *qdict)
@@ -1473,7 +1473,7 @@ void hmp_migrate_incoming(Monitor *mon, const QDict *qdict)
 void hmp_migrate_set_downtime(Monitor *mon, const QDict *qdict)
 {
     double value = qdict_get_double(qdict, "value");
-    qmp_migrate_set_downtime(value, NULL);
+    qmp_migrate_set_downtime(value, IGNORE_ERRORS);
 }
 
 void hmp_migrate_set_cache_size(Monitor *mon, const QDict *qdict)
@@ -1492,7 +1492,7 @@ void hmp_migrate_set_cache_size(Monitor *mon, const QDict *qdict)
 void hmp_migrate_set_speed(Monitor *mon, const QDict *qdict)
 {
     int64_t value = qdict_get_int(qdict, "value");
-    qmp_migrate_set_speed(value, NULL);
+    qmp_migrate_set_speed(value, IGNORE_ERRORS);
 }
 
 void hmp_migrate_set_capability(Monitor *mon, const QDict *qdict)
@@ -1695,7 +1695,7 @@ void hmp_eject(Monitor *mon, const QDict *qdict)
 static void hmp_change_read_arg(void *opaque, const char *password,
                                 void *readline_opaque)
 {
-    qmp_change_vnc_password(password, NULL);
+    qmp_change_vnc_password(password, IGNORE_ERRORS);
     monitor_read_command(opaque, 1);
 }
 
@@ -1844,7 +1844,7 @@ static void hmp_migrate_status_cb(void *opaque)
     HMPMigrationStatus *status = opaque;
     MigrationInfo *info;
 
-    info = qmp_query_migrate(NULL);
+    info = qmp_query_migrate(IGNORE_ERRORS);
     if (!info->has_status || info->status == MIGRATION_STATUS_ACTIVE ||
         info->status == MIGRATION_STATUS_SETUP) {
         if (info->has_disk) {
@@ -2154,7 +2154,7 @@ void hmp_nbd_server_start(Monitor *mon, const QDict *qdict)
     /* Then try adding all block devices.  If one fails, close all and
      * exit.
      */
-    block_list = qmp_query_block(NULL);
+    block_list = qmp_query_block(IGNORE_ERRORS);
 
     for (info = block_list; info; info = info->next) {
         if (!info->value->has_inserted) {
@@ -2164,7 +2164,7 @@ void hmp_nbd_server_start(Monitor *mon, const QDict *qdict)
         qmp_nbd_server_add(info->value->device, true, writable, &local_err);
 
         if (local_err != NULL) {
-            qmp_nbd_server_stop(NULL);
+            qmp_nbd_server_stop(IGNORE_ERRORS);
             break;
         }
     }
@@ -2308,7 +2308,7 @@ void hmp_info_memdev(Monitor *mon, const QDict *qdict)
 
     while (m) {
         v = string_output_visitor_new(false, &str);
-        visit_type_uint16List(v, NULL, &m->value->host_nodes, NULL);
+        visit_type_uint16List(v, NULL, &m->value->host_nodes, IGNORE_ERRORS);
         monitor_printf(mon, "memory backend: %s\n", m->value->id);
         monitor_printf(mon, "  size:  %" PRId64 "\n", m->value->size);
         monitor_printf(mon, "  merge: %s\n",
@@ -2372,7 +2372,7 @@ void hmp_info_memory_devices(Monitor *mon, const QDict *qdict)
 
 void hmp_info_iothreads(Monitor *mon, const QDict *qdict)
 {
-    IOThreadInfoList *info_list = qmp_query_iothreads(NULL);
+    IOThreadInfoList *info_list = qmp_query_iothreads(IGNORE_ERRORS);
     IOThreadInfoList *info;
     IOThreadInfo *value;
 
@@ -2740,7 +2740,7 @@ void hmp_rocker_of_dpa_groups(Monitor *mon, const QDict *qdict)
 
 void hmp_info_dump(Monitor *mon, const QDict *qdict)
 {
-    DumpQueryResult *result = qmp_query_dump(NULL);
+    DumpQueryResult *result = qmp_query_dump(IGNORE_ERRORS);
 
     assert(result && result->status < DUMP_STATUS__MAX);
     monitor_printf(mon, "Status: %s\n", DumpStatus_lookup[result->status]);

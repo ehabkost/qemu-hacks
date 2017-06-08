@@ -31,7 +31,7 @@ static ssize_t qio_channel_tls_write_handler(const char *buf,
     QIOChannelTLS *tioc = QIO_CHANNEL_TLS(opaque);
     ssize_t ret;
 
-    ret = qio_channel_write(tioc->master, buf, len, NULL);
+    ret = qio_channel_write(tioc->master, buf, len, IGNORE_ERRORS);
     if (ret == QIO_CHANNEL_ERR_BLOCK) {
         errno = EAGAIN;
         return -1;
@@ -49,7 +49,7 @@ static ssize_t qio_channel_tls_read_handler(char *buf,
     QIOChannelTLS *tioc = QIO_CHANNEL_TLS(opaque);
     ssize_t ret;
 
-    ret = qio_channel_read(tioc->master, buf, len, NULL);
+    ret = qio_channel_read(tioc->master, buf, len, IGNORE_ERRORS);
     if (ret == QIO_CHANNEL_ERR_BLOCK) {
         errno = EAGAIN;
         return -1;

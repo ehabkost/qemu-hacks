@@ -2566,7 +2566,7 @@ static int sclp_parse(const char *devname)
 
     assert(arch_type == QEMU_ARCH_S390X);
 
-    dev_opts = qemu_opts_create(device, NULL, 0, NULL);
+    dev_opts = qemu_opts_create(device, NULL, 0, IGNORE_ERRORS);
     qemu_opt_set(dev_opts, "driver", "sclpconsole", &error_abort);
 
     snprintf(label, sizeof(label), "sclpcon%d", index);
@@ -2589,7 +2589,8 @@ static int debugcon_parse(const char *devname)
     if (!qemu_chr_new("debugcon", devname)) {
         exit(1);
     }
-    opts = qemu_opts_create(qemu_find_opts("device"), "debugcon", 1, NULL);
+    opts = qemu_opts_create(qemu_find_opts("device"), "debugcon", 1,
+                            IGNORE_ERRORS);
     if (!opts) {
         error_report("already have a debugcon device");
         exit(1);

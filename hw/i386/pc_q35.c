@@ -162,19 +162,20 @@ static void pc_q35_init(MachineState *machine)
     /* create pci host bus */
     q35_host = Q35_HOST_DEVICE(qdev_create(NULL, TYPE_Q35_HOST_DEVICE));
 
-    object_property_add_child(qdev_get_machine(), "q35", OBJECT(q35_host), NULL);
+    object_property_add_child(qdev_get_machine(), "q35", OBJECT(q35_host),
+                              IGNORE_ERRORS);
     object_property_set_link(OBJECT(q35_host), OBJECT(ram_memory),
-                             MCH_HOST_PROP_RAM_MEM, NULL);
+                             MCH_HOST_PROP_RAM_MEM, IGNORE_ERRORS);
     object_property_set_link(OBJECT(q35_host), OBJECT(pci_memory),
-                             MCH_HOST_PROP_PCI_MEM, NULL);
+                             MCH_HOST_PROP_PCI_MEM, IGNORE_ERRORS);
     object_property_set_link(OBJECT(q35_host), OBJECT(get_system_memory()),
-                             MCH_HOST_PROP_SYSTEM_MEM, NULL);
+                             MCH_HOST_PROP_SYSTEM_MEM, IGNORE_ERRORS);
     object_property_set_link(OBJECT(q35_host), OBJECT(system_io),
-                             MCH_HOST_PROP_IO_MEM, NULL);
+                             MCH_HOST_PROP_IO_MEM, IGNORE_ERRORS);
     object_property_set_int(OBJECT(q35_host), pcms->below_4g_mem_size,
-                            PCI_HOST_BELOW_4G_MEM_SIZE, NULL);
+                            PCI_HOST_BELOW_4G_MEM_SIZE, IGNORE_ERRORS);
     object_property_set_int(OBJECT(q35_host), pcms->above_4g_mem_size,
-                            PCI_HOST_ABOVE_4G_MEM_SIZE, NULL);
+                            PCI_HOST_ABOVE_4G_MEM_SIZE, IGNORE_ERRORS);
     /* pci */
     qdev_init_nofail(DEVICE(q35_host));
     phb = PCI_HOST_BRIDGE(q35_host);

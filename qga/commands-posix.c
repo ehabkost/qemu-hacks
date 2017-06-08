@@ -1273,7 +1273,7 @@ int64_t qmp_guest_fsfreeze_freeze_list(bool has_mountpoints,
 
 error:
     free_fs_mount_list(&mounts);
-    qmp_guest_fsfreeze_thaw(NULL);
+    qmp_guest_fsfreeze_thaw(IGNORE_ERRORS);
     return 0;
 }
 

@@ -1267,7 +1267,7 @@ static inline void s390_crypto_reset(void)
 static inline bool s390_get_squash_mcss(void)
 {
     if (object_property_get_bool(OBJECT(qdev_get_machine()), "s390-squash-mcss",
-                                 NULL)) {
+                                 IGNORE_ERRORS)) {
         return true;
     }
 

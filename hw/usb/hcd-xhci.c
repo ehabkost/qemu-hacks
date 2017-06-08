@@ -3425,7 +3425,7 @@ static void usb_xhci_realize(struct PCIDevice *dev, Error **errp)
         msix_init(dev, xhci->numintrs,
                   &xhci->mem, 0, OFF_MSIX_TABLE,
                   &xhci->mem, 0, OFF_MSIX_PBA,
-                  0x90, NULL);
+                  0x90, IGNORE_ERRORS);
     }
 }
 

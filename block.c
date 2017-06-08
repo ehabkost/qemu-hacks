@@ -2096,7 +2096,7 @@ void bdrv_set_backing_hd(BlockDriverState *bs, BlockDriverState *backing_hd,
     bdrv_refresh_filename(bs);
 
 out:
-    bdrv_refresh_limits(bs, NULL);
+    bdrv_refresh_limits(bs, IGNORE_ERRORS);
 }
 
 /*
@@ -3002,7 +3002,7 @@ void bdrv_reopen_commit(BDRVReopenState *reopen_state)
     reopen_state->bs->open_flags         = reopen_state->flags;
     reopen_state->bs->read_only = !(reopen_state->flags & BDRV_O_RDWR);
 
-    bdrv_refresh_limits(reopen_state->bs, NULL);
+    bdrv_refresh_limits(reopen_state->bs, IGNORE_ERRORS);
 }
 
 /*

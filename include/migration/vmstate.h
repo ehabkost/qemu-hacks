@@ -1033,7 +1033,7 @@ static inline int vmstate_register(DeviceState *dev, int instance_id,
                                    void *opaque)
 {
     return vmstate_register_with_alias_id(dev, instance_id, vmsd,
-                                          opaque, -1, 0, NULL);
+                                          opaque, -1, 0, IGNORE_ERRORS);
 }
 
 void vmstate_unregister(DeviceState *dev, const VMStateDescription *vmsd,

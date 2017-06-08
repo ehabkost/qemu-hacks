@@ -601,7 +601,7 @@ block_crypto_get_specific_info_luks(BlockDriverState *bs)
     ImageInfoSpecific *spec_info;
     QCryptoBlockInfo *info;
 
-    info = qcrypto_block_get_info(crypto->block, NULL);
+    info = qcrypto_block_get_info(crypto->block, IGNORE_ERRORS);
     if (!info) {
         return NULL;
     }

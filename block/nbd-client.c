@@ -56,7 +56,7 @@ static void nbd_teardown_connection(BlockDriverState *bs)
     /* finish any pending coroutines */
     qio_channel_shutdown(client->ioc,
                          QIO_CHANNEL_SHUTDOWN_BOTH,
-                         NULL);
+                         IGNORE_ERRORS);
     BDRV_POLL_WHILE(bs, client->read_reply_co);
 
     nbd_client_detach_aio_context(bs);
@@ -145,7 +145,7 @@ static int nbd_co_send_request(BlockDriverState *bs,
         rc = nbd_send_request(s->ioc, request);
         if (rc >= 0) {
             ret = nbd_wr_syncv(s->ioc, qiov->iov, qiov->niov, request->len,
-                               false, NULL);
+                               false, IGNORE_ERRORS);
             if (ret != request->len) {
                 rc = -EIO;
             }
@@ -174,7 +174,7 @@ static void nbd_co_receive_reply(NBDClientSession *s,
     } else {
         if (qiov && reply->error == 0) {
             ret = nbd_wr_syncv(s->ioc, qiov->iov, qiov->niov, request->len,
-                               true, NULL);
+                               true, IGNORE_ERRORS);
             if (ret != request->len) {
                 reply->error = EIO;
             }
@@ -382,7 +382,7 @@ int nbd_client_init(BlockDriverState *bs,
 
     /* NBD handshake */
     logout("session init %s\n", export);
-    qio_channel_set_blocking(QIO_CHANNEL(sioc), true, NULL);
+    qio_channel_set_blocking(QIO_CHANNEL(sioc), true, IGNORE_ERRORS);
 
     ret = nbd_receive_negotiate(QIO_CHANNEL(sioc), export,
                                 &client->nbdflags,
@@ -413,7 +413,7 @@ int nbd_client_init(BlockDriverState *bs,
 
     /* Now that we're connected, set the socket to be non-blocking and
      * kick the reply mechanism.  */
-    qio_channel_set_blocking(QIO_CHANNEL(sioc), false, NULL);
+    qio_channel_set_blocking(QIO_CHANNEL(sioc), false, IGNORE_ERRORS);
     client->read_reply_co = qemu_coroutine_create(nbd_read_reply_entry, client);
     nbd_client_attach_aio_context(bs, bdrv_get_aio_context(bs));
 

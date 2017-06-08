@@ -38,7 +38,7 @@ static gboolean nbd_accept(QIOChannel *ioc, GIOCondition condition,
     }
 
     cioc = qio_channel_socket_accept(QIO_CHANNEL_SOCKET(ioc),
-                                     NULL);
+                                     IGNORE_ERRORS);
     if (!cioc) {
         return TRUE;
     }

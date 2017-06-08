@@ -119,7 +119,8 @@ typedef abi_int         target_pid_t;
 static const char *get_elf_platform(void)
 {
     static char elf_platform[] = "i386";
-    int family = object_property_get_int(OBJECT(thread_cpu), "family", NULL);
+    int family = object_property_get_int(OBJECT(thread_cpu), "family",
+                                         IGNORE_ERRORS);
     if (family > 6)
         family = 6;
     if (family >= 3)

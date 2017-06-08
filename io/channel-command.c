@@ -218,7 +218,7 @@ static void qio_channel_command_finalize(Object *obj)
     ioc->writefd = ioc->readfd = -1;
     if (ioc->pid > 0) {
 #ifndef WIN32
-        qio_channel_command_abort(ioc, NULL);
+        qio_channel_command_abort(ioc, IGNORE_ERRORS);
 #endif
     }
 }

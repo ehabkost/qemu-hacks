@@ -92,7 +92,7 @@ bool sysbus_has_irq(SysBusDevice *dev, int n)
     char *prop = g_strdup_printf("%s[%d]", SYSBUS_DEVICE_GPIO_IRQ, n);
     ObjectProperty *r;
 
-    r = object_property_find(OBJECT(dev), prop, NULL);
+    r = object_property_find(OBJECT(dev), prop, IGNORE_ERRORS);
     g_free(prop);
 
     return (r != NULL);
@@ -362,7 +362,8 @@ static void main_system_bus_create(void)
     OBJECT(main_system_bus)->free = g_free;
     object_property_add_child(container_get(qdev_get_machine(),
                                             "/unattached"),
-                              "sysbus", OBJECT(main_system_bus), NULL);
+                              "sysbus", OBJECT(main_system_bus),
+                              IGNORE_ERRORS);
 }
 
 BusState *sysbus_get_default(void)

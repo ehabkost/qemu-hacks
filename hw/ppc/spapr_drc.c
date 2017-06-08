@@ -360,7 +360,7 @@ static void attach(sPAPRDRConnector *drc, DeviceState *d, void *fdt,
     object_property_add_link(OBJECT(drc), "device",
                              object_get_typename(OBJECT(drc->dev)),
                              (Object **)(&drc->dev),
-                             NULL, 0, NULL);
+                             NULL, 0, IGNORE_ERRORS);
 }
 
 static void detach(sPAPRDRConnector *drc, DeviceState *d, Error **errp)
@@ -432,7 +432,7 @@ static void detach(sPAPRDRConnector *drc, DeviceState *d, Error **errp)
     g_free(drc->fdt);
     drc->fdt = NULL;
     drc->fdt_start_offset = 0;
-    object_property_del(OBJECT(drc), "device", NULL);
+    object_property_del(OBJECT(drc), "device", IGNORE_ERRORS);
     drc->dev = NULL;
 }
 
@@ -592,8 +592,8 @@ sPAPRDRConnector *spapr_dr_connector_new(Object *owner, const char *type,
     drc->owner = owner;
     prop_name = g_strdup_printf("dr-connector[%"PRIu32"]",
                                 spapr_drc_index(drc));
-    object_property_add_child(owner, prop_name, OBJECT(drc), NULL);
-    object_property_set_bool(OBJECT(drc), true, "realized", NULL);
+    object_property_add_child(owner, prop_name, OBJECT(drc), IGNORE_ERRORS);
+    object_property_set_bool(OBJECT(drc), true, "realized", IGNORE_ERRORS);
     g_free(prop_name);
 
     /* human-readable name for a DRC to encode into the DT
@@ -647,12 +647,12 @@ static void spapr_dr_connector_instance_init(Object *obj)
 {
     sPAPRDRConnector *drc = SPAPR_DR_CONNECTOR(obj);
 
-    object_property_add_uint32_ptr(obj, "id", &drc->id, NULL);
+    object_property_add_uint32_ptr(obj, "id", &drc->id, IGNORE_ERRORS);
     object_property_add(obj, "index", "uint32", prop_get_index,
-                        NULL, NULL, NULL, NULL);
-    object_property_add_str(obj, "name", prop_get_name, NULL, NULL);
+                        NULL, NULL, NULL, IGNORE_ERRORS);
+    object_property_add_str(obj, "name", prop_get_name, NULL, IGNORE_ERRORS);
     object_property_add(obj, "fdt", "struct", prop_get_fdt,
-                        NULL, NULL, NULL, NULL);
+                        NULL, NULL, NULL, IGNORE_ERRORS);
 }
 
 static void spapr_dr_connector_class_init(ObjectClass *k, void *data)
@@ -823,7 +823,8 @@ int spapr_drc_populate_dt(void *fdt, int fdt_offset, Object *owner,
             continue;
         }
 
-        obj = object_property_get_link(root_container, prop->name, NULL);
+        obj = object_property_get_link(root_container, prop->name,
+                                       IGNORE_ERRORS);
         drc = SPAPR_DR_CONNECTOR(obj);
         drck = SPAPR_DR_CONNECTOR_GET_CLASS(drc);
 

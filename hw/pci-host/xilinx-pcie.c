@@ -121,7 +121,7 @@ static void xilinx_pcie_host_realize(DeviceState *dev, Error **errp)
     memory_region_set_enabled(&s->mmio, false);
 
     /* dummy I/O region */
-    memory_region_init_ram(&s->io, OBJECT(s), "io", 16, NULL);
+    memory_region_init_ram(&s->io, OBJECT(s), "io", 16, IGNORE_ERRORS);
     memory_region_set_enabled(&s->io, false);
 
     /* interrupt out */
@@ -150,7 +150,7 @@ static void xilinx_pcie_host_init(Object *obj)
     XilinxPCIERoot *root = &s->root;
 
     object_initialize(root, sizeof(*root), TYPE_XILINX_PCIE_ROOT);
-    object_property_add_child(obj, "root", OBJECT(root), NULL);
+    object_property_add_child(obj, "root", OBJECT(root), IGNORE_ERRORS);
     qdev_prop_set_uint32(DEVICE(root), "addr", PCI_DEVFN(0, 0));
     qdev_prop_set_bit(DEVICE(root), "multifunction", false);
 }

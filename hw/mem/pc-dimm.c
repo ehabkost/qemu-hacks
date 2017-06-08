@@ -182,7 +182,7 @@ int qmp_pc_dimm_device_list(Object *obj, void *opaque)
             di->slot = dimm->slot;
             di->node = dimm->node;
             di->size = object_property_get_int(OBJECT(dimm), PC_DIMM_SIZE_PROP,
-                                               NULL);
+                                               IGNORE_ERRORS);
             di->memdev = object_get_canonical_path(OBJECT(dimm->hostmem));
 
             info->u.dimm.data = di;

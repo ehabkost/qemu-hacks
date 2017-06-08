@@ -1377,7 +1377,7 @@ static BdrvDirtyBitmap *block_dirty_bitmap_lookup(const char *node,
         error_setg(errp, "Bitmap name cannot be NULL");
         return NULL;
     }
-    bs = bdrv_lookup_bs(node, node, NULL);
+    bs = bdrv_lookup_bs(node, node, IGNORE_ERRORS);
     if (!bs) {
         error_setg(errp, "Node '%s' not found", node);
         return NULL;
@@ -1707,7 +1707,7 @@ static void external_snapshot_prepare(BlkActionState *common,
         }
 
         if (snapshot_node_name &&
-            bdrv_lookup_bs(snapshot_node_name, snapshot_node_name, NULL)) {
+            bdrv_lookup_bs(snapshot_node_name, snapshot_node_name, IGNORE_ERRORS)) {
             error_setg(errp, "New snapshot node name already in use");
             return;
         }
@@ -1793,7 +1793,7 @@ static void external_snapshot_commit(BlkActionState *common)
      * don't want to abort all of them if one of them fails the reopen */
     if (!state->old_bs->copy_on_read) {
         bdrv_reopen(state->old_bs, state->old_bs->open_flags & ~BDRV_O_RDWR,
-                    NULL);
+                    IGNORE_ERRORS);
     }
 }
 
@@ -2916,7 +2916,7 @@ void qmp_block_resize(bool has_device, const char *device,
         goto out;
     }
 
-    if (bdrv_op_is_blocked(bs, BLOCK_OP_TYPE_RESIZE, NULL)) {
+    if (bdrv_op_is_blocked(bs, BLOCK_OP_TYPE_RESIZE, IGNORE_ERRORS)) {
         error_setg(errp, QERR_DEVICE_IN_USE, device);
         goto out;
     }
@@ -3055,7 +3055,7 @@ void qmp_block_commit(bool has_job_id, const char *job_id, const char *device,
      *  scenario in which all optional arguments are omitted. */
     bs = qmp_get_root_bs(device, &local_err);
     if (!bs) {
-        bs = bdrv_lookup_bs(device, device, NULL);
+        bs = bdrv_lookup_bs(device, device, IGNORE_ERRORS);
         if (!bs) {
             error_free(local_err);
             error_set(errp, ERROR_CLASS_DEVICE_NOT_FOUND,

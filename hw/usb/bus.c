@@ -270,7 +270,7 @@ static void usb_qdev_realize(DeviceState *qdev, Error **errp)
     if (dev->auto_attach) {
         usb_device_attach(dev, &local_err);
         if (local_err) {
-            usb_qdev_unrealize(qdev, NULL);
+            usb_qdev_unrealize(qdev, IGNORE_ERRORS);
             error_propagate(errp, local_err);
             return;
         }
@@ -446,7 +446,7 @@ void usb_claim_port(USBDevice *dev, Error **errp)
     } else {
         if (bus->nfree == 1 && strcmp(object_get_typename(OBJECT(dev)), "usb-hub") != 0) {
             /* Create a new hub and chain it on */
-            usb_try_create_simple(bus, "usb-hub", NULL);
+            usb_try_create_simple(bus, "usb-hub", IGNORE_ERRORS);
         }
         if (bus->nfree == 0) {
             error_setg(errp, "tried to attach usb device %s to a bus "
@@ -776,11 +776,11 @@ static void usb_device_instance_init(Object *obj)
     if (klass->attached_settable) {
         object_property_add_bool(obj, "attached",
                                  usb_get_attached, usb_set_attached,
-                                 NULL);
+                                 IGNORE_ERRORS);
     } else {
         object_property_add_bool(obj, "attached",
                                  usb_get_attached, NULL,
-                                 NULL);
+                                 IGNORE_ERRORS);
     }
 }
 

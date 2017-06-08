@@ -48,7 +48,7 @@ static int udp_chr_write(Chardev *chr, const uint8_t *buf, int len)
     UdpChardev *s = UDP_CHARDEV(chr);
 
     return qio_channel_write(
-        s->ioc, (const char *)buf, len, NULL);
+        s->ioc, (const char *)buf, len, IGNORE_ERRORS);
 }
 
 static void udp_chr_flush_buffer(UdpChardev *s)
@@ -88,7 +88,7 @@ static gboolean udp_chr_read(QIOChannel *chan, GIOCondition cond, void *opaque)
         return TRUE;
     }
     ret = qio_channel_read(
-        s->ioc, (char *)s->buf, sizeof(s->buf), NULL);
+        s->ioc, (char *)s->buf, sizeof(s->buf), IGNORE_ERRORS);
     if (ret <= 0) {
         remove_fd_in_watch(chr);
         return FALSE;

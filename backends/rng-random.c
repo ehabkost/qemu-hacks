@@ -110,7 +110,7 @@ static void rng_random_init(Object *obj)
     object_property_add_str(obj, "filename",
                             rng_random_get_filename,
                             rng_random_set_filename,
-                            NULL);
+                            IGNORE_ERRORS);
 
     s->filename = g_strdup("/dev/random");
     s->fd = -1;

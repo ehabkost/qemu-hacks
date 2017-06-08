@@ -66,7 +66,7 @@ static void usb_ehci_pci_realize(PCIDevice *dev, Error **errp)
     s->irq = pci_allocate_irq(dev);
     s->as = pci_get_address_space(dev);
 
-    usb_ehci_realize(s, DEVICE(dev), NULL);
+    usb_ehci_realize(s, DEVICE(dev), IGNORE_ERRORS);
     pci_register_bar(dev, 0, PCI_BASE_ADDRESS_SPACE_MEMORY, &s->mem);
 }
 
@@ -103,7 +103,7 @@ static void usb_ehci_pci_exit(PCIDevice *dev)
     EHCIPCIState *i = PCI_EHCI(dev);
     EHCIState *s = &i->ehci;
 
-    usb_ehci_unrealize(s, DEVICE(dev), NULL);
+    usb_ehci_unrealize(s, DEVICE(dev), IGNORE_ERRORS);
 
     g_free(s->irq);
     s->irq = NULL;

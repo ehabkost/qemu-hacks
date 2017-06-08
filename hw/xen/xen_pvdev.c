@@ -310,7 +310,7 @@ void xen_pv_del_xendev(struct XenDevice *xendev)
 
     QTAILQ_REMOVE(&xendevs, xendev, next);
 
-    qdev_unplug(&xendev->qdev, NULL);
+    qdev_unplug(&xendev->qdev, IGNORE_ERRORS);
 }
 
 void xen_pv_insert_xendev(struct XenDevice *xendev)

@@ -583,7 +583,7 @@ int main(int argc, char **argv)
 
     if (qemu_opts_foreach(&qemu_object_opts,
                           user_creatable_add_opts_foreach,
-                          NULL, NULL)) {
+                          NULL, IGNORE_ERRORS)) {
         exit(1);
     }
 

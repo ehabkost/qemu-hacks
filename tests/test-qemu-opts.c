@@ -335,7 +335,7 @@ static void test_qemu_opt_unset(void)
     int ret;
 
     /* dynamically initialized (parsed) opts */
-    opts = qemu_opts_parse(&opts_list_03, "key=value", false, NULL);
+    opts = qemu_opts_parse(&opts_list_03, "key=value", false, IGNORE_ERRORS);
     g_assert(opts != NULL);
 
     /* check default/parsed value */
@@ -445,7 +445,7 @@ static size_t opts_count(QemuOpts *opts)
 {
     size_t n = 0;
 
-    qemu_opt_foreach(opts, opts_count_iter, &n, NULL);
+    qemu_opt_foreach(opts, opts_count_iter, &n, IGNORE_ERRORS);
     return n;
 }
 

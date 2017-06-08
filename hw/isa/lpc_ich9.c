@@ -653,11 +653,11 @@ static void ich9_lpc_add_properties(ICH9LPCState *lpc)
 
     object_property_add(OBJECT(lpc), ACPI_PM_PROP_SCI_INT, "uint32",
                         ich9_lpc_get_sci_int,
-                        NULL, NULL, NULL, NULL);
+                        NULL, NULL, NULL, IGNORE_ERRORS);
     object_property_add_uint8_ptr(OBJECT(lpc), ACPI_PM_PROP_ACPI_ENABLE_CMD,
-                                  &acpi_enable_cmd, NULL);
+                                  &acpi_enable_cmd, IGNORE_ERRORS);
     object_property_add_uint8_ptr(OBJECT(lpc), ACPI_PM_PROP_ACPI_DISABLE_CMD,
-                                  &acpi_disable_cmd, NULL);
+                                  &acpi_disable_cmd, IGNORE_ERRORS);
 
     ich9_pm_add_properties(OBJECT(lpc), &lpc->pm, NULL);
 }

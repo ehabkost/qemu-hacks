@@ -550,7 +550,7 @@ static void mirror_exit(BlockJob *job, void *opaque)
         }
 
         if (bdrv_get_flags(target_bs) != bdrv_get_flags(to_replace)) {
-            bdrv_reopen(target_bs, bdrv_get_flags(to_replace), NULL);
+            bdrv_reopen(target_bs, bdrv_get_flags(to_replace), IGNORE_ERRORS);
         }
 
         /* The mirror job has no requests in flight any more, but we need to
@@ -729,7 +729,7 @@ static void coroutine_fn mirror_run(void *opaque)
         }
 
         if (s->bdev_length > base_length) {
-            ret = blk_truncate(s->target, s->bdev_length, NULL);
+            ret = blk_truncate(s->target, s->bdev_length, IGNORE_ERRORS);
             if (ret < 0) {
                 goto immediate_exit;
             }
@@ -1322,6 +1322,6 @@ void commit_active_start(const char *job_id, BlockDriverState *bs,
 error_restore_flags:
     /* ignore error and errp for bdrv_reopen, because we want to propagate
      * the original error */
-    bdrv_reopen(base, orig_base_flags, NULL);
+    bdrv_reopen(base, orig_base_flags, IGNORE_ERRORS);
     return;
 }

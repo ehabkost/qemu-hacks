@@ -760,7 +760,7 @@ static char *spapr_phb_vfio_get_loc_code(sPAPRPHBState *sphb,  PCIDevice *pdev)
     char *path = NULL, *buf = NULL, *host = NULL;
 
     /* Get the PCI VFIO host id */
-    host = object_property_get_str(OBJECT(pdev), "host", NULL);
+    host = object_property_get_str(OBJECT(pdev), "host", IGNORE_ERRORS);
     if (!host) {
         goto err_out;
     }
@@ -1697,7 +1697,7 @@ static void spapr_phb_realize(DeviceState *dev, Error **errp)
                            &sphb->memspace, &sphb->iospace,
                            PCI_DEVFN(0, 0), PCI_NUM_PINS, TYPE_PCI_BUS);
     phb->bus = bus;
-    qbus_set_hotplug_handler(BUS(phb->bus), DEVICE(sphb), NULL);
+    qbus_set_hotplug_handler(BUS(phb->bus), DEVICE(sphb), IGNORE_ERRORS);
 
     /*
      * Initialize PHB address space.

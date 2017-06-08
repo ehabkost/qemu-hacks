@@ -1379,7 +1379,7 @@ static void usb_net_instance_init(Object *obj)
 
     device_add_bootindex_property(obj, &s->conf.bootindex,
                                   "bootindex", "/ethernet-phy@0",
-                                  &dev->qdev, NULL);
+                                  &dev->qdev, IGNORE_ERRORS);
 }
 
 static USBDevice *usb_net_init(USBBus *bus, const char *cmdline)

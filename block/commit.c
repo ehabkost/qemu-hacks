@@ -112,10 +112,10 @@ static void commit_complete(BlockJob *job, void *opaque)
      * to r/o). These reopens do not need to be atomic, since we won't abort
      * even on failure here */
     if (s->base_flags != bdrv_get_flags(base)) {
-        bdrv_reopen(base, s->base_flags, NULL);
+        bdrv_reopen(base, s->base_flags, IGNORE_ERRORS);
     }
     if (overlay_bs && s->orig_overlay_flags != bdrv_get_flags(overlay_bs)) {
-        bdrv_reopen(overlay_bs, s->orig_overlay_flags, NULL);
+        bdrv_reopen(overlay_bs, s->orig_overlay_flags, IGNORE_ERRORS);
     }
     g_free(s->backing_file_str);
     blk_unref(s->top);
@@ -158,7 +158,7 @@ static void coroutine_fn commit_run(void *opaque)
     }
 
     if (base_len < s->common.len) {
-        ret = blk_truncate(s->base, s->common.len, NULL);
+        ret = blk_truncate(s->base, s->common.len, IGNORE_ERRORS);
         if (ret) {
             goto out;
         }
@@ -459,8 +459,8 @@ int bdrv_commit(BlockDriverState *bs)
         return -ENOTSUP;
     }
 
-    if (bdrv_op_is_blocked(bs, BLOCK_OP_TYPE_COMMIT_SOURCE, NULL) ||
-        bdrv_op_is_blocked(bs->backing->bs, BLOCK_OP_TYPE_COMMIT_TARGET, NULL)) {
+    if (bdrv_op_is_blocked(bs, BLOCK_OP_TYPE_COMMIT_SOURCE, IGNORE_ERRORS) ||
+        bdrv_op_is_blocked(bs->backing->bs, BLOCK_OP_TYPE_COMMIT_TARGET, IGNORE_ERRORS)) {
         return -EBUSY;
     }
 
@@ -468,7 +468,7 @@ int bdrv_commit(BlockDriverState *bs)
     open_flags =  bs->backing->bs->open_flags;
 
     if (ro) {
-        if (bdrv_reopen(bs->backing->bs, open_flags | BDRV_O_RDWR, NULL)) {
+        if (bdrv_reopen(bs->backing->bs, open_flags | BDRV_O_RDWR, IGNORE_ERRORS)) {
             return -EACCES;
         }
     }
@@ -582,7 +582,7 @@ ro_cleanup:
 
     if (ro) {
         /* ignoring error return here */
-        bdrv_reopen(bs->backing->bs, open_flags & ~BDRV_O_RDWR, NULL);
+        bdrv_reopen(bs->backing->bs, open_flags & ~BDRV_O_RDWR, IGNORE_ERRORS);
     }
 
     return ret;

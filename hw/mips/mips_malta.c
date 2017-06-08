@@ -569,7 +569,7 @@ static MaltaFPGAState *malta_fpga_init(MemoryRegion *address_space,
     memory_region_add_subregion(address_space, base + 0xa00, &s->iomem_hi);
 
     chr = qemu_chr_new("fpga", "vc:320x200");
-    qemu_chr_fe_init(&s->display, chr, NULL);
+    qemu_chr_fe_init(&s->display, chr, IGNORE_ERRORS);
     qemu_chr_fe_set_handlers(&s->display, NULL, NULL,
                              malta_fgpa_display_event, s, NULL, true);
 

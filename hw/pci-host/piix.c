@@ -275,19 +275,19 @@ static void i440fx_pcihost_initfn(Object *obj)
 
     object_property_add(obj, PCI_HOST_PROP_PCI_HOLE_START, "int",
                         i440fx_pcihost_get_pci_hole_start,
-                        NULL, NULL, NULL, NULL);
+                        NULL, NULL, NULL, IGNORE_ERRORS);
 
     object_property_add(obj, PCI_HOST_PROP_PCI_HOLE_END, "int",
                         i440fx_pcihost_get_pci_hole_end,
-                        NULL, NULL, NULL, NULL);
+                        NULL, NULL, NULL, IGNORE_ERRORS);
 
     object_property_add(obj, PCI_HOST_PROP_PCI_HOLE64_START, "int",
                         i440fx_pcihost_get_pci_hole64_start,
-                        NULL, NULL, NULL, NULL);
+                        NULL, NULL, NULL, IGNORE_ERRORS);
 
     object_property_add(obj, PCI_HOST_PROP_PCI_HOLE64_END, "int",
                         i440fx_pcihost_get_pci_hole64_end,
-                        NULL, NULL, NULL, NULL);
+                        NULL, NULL, NULL, IGNORE_ERRORS);
 }
 
 static void i440fx_pcihost_realize(DeviceState *dev, Error **errp)
@@ -306,7 +306,7 @@ static void i440fx_realize(PCIDevice *dev, Error **errp)
 {
     dev->config[I440FX_SMRAM] = 0x02;
 
-    if (object_property_get_bool(qdev_get_machine(), "iommu", NULL)) {
+    if (object_property_get_bool(qdev_get_machine(), "iommu", IGNORE_ERRORS)) {
         error_report("warning: i440fx doesn't support emulated iommu");
     }
 }
@@ -337,7 +337,8 @@ PCIBus *i440fx_init(const char *host_type, const char *pci_type,
     b = pci_bus_new(dev, NULL, pci_address_space,
                     address_space_io, 0, TYPE_PCI_BUS);
     s->bus = b;
-    object_property_add_child(qdev_get_machine(), "i440fx", OBJECT(dev), NULL);
+    object_property_add_child(qdev_get_machine(), "i440fx", OBJECT(dev),
+                              IGNORE_ERRORS);
     qdev_init_nofail(dev);
 
     d = pci_create_simple(b, 0, pci_type);

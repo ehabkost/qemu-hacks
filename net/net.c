@@ -1272,7 +1272,7 @@ static void netfilter_print_info(Monitor *mon, NetFilterState *nf)
             continue;
         }
         v = string_output_visitor_new(false, &str);
-        object_property_get(OBJECT(nf), v, prop->name, NULL);
+        object_property_get(OBJECT(nf), v, prop->name, IGNORE_ERRORS);
         visit_complete(v, &str);
         visit_free(v);
         monitor_printf(mon, ",%s=%s", prop->name, str);
@@ -1538,11 +1538,11 @@ int net_init_clients(void)
     QTAILQ_INIT(&net_clients);
 
     if (qemu_opts_foreach(qemu_find_opts("netdev"),
-                          net_init_netdev, NULL, NULL)) {
+                          net_init_netdev, NULL, IGNORE_ERRORS)) {
         return -1;
     }
 
-    if (qemu_opts_foreach(net, net_init_client, NULL, NULL)) {
+    if (qemu_opts_foreach(net, net_init_client, NULL, IGNORE_ERRORS)) {
         return -1;
     }
 

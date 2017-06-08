@@ -218,11 +218,11 @@ static void backup_cleanup_sync_bitmap(BackupBlockJob *job, int ret)
 
     if (ret < 0 || block_job_is_cancelled(&job->common)) {
         /* Merge the successor back into the parent, delete nothing. */
-        bm = bdrv_reclaim_dirty_bitmap(bs, job->sync_bitmap, NULL);
+        bm = bdrv_reclaim_dirty_bitmap(bs, job->sync_bitmap, IGNORE_ERRORS);
         assert(bm);
     } else {
         /* Everything is fine, delete this bitmap and install the backup. */
-        bm = bdrv_dirty_bitmap_abdicate(bs, job->sync_bitmap, NULL);
+        bm = bdrv_dirty_bitmap_abdicate(bs, job->sync_bitmap, IGNORE_ERRORS);
         assert(bm);
     }
 }
@@ -688,7 +688,7 @@ BlockJob *backup_job_create(const char *job_id, BlockDriverState *bs,
 
  error:
     if (sync_bitmap) {
-        bdrv_reclaim_dirty_bitmap(bs, sync_bitmap, NULL);
+        bdrv_reclaim_dirty_bitmap(bs, sync_bitmap, IGNORE_ERRORS);
     }
     if (job) {
         backup_clean(&job->common);

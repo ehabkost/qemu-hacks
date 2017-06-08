@@ -189,7 +189,7 @@ void s390_pci_sclp_deconfigure(SCCB *sccb)
         rc = SCLP_RC_NORMAL_COMPLETION;
 
         if (pbdev->release_timer) {
-            qdev_unplug(DEVICE(pbdev->pdev), NULL);
+            qdev_unplug(DEVICE(pbdev->pdev), IGNORE_ERRORS);
         }
     }
 out:
@@ -569,11 +569,11 @@ static int s390_pcihost_init(SysBusDevice *dev)
     pci_setup_iommu(b, s390_pci_dma_iommu, s);
 
     bus = BUS(b);
-    qbus_set_hotplug_handler(bus, DEVICE(dev), NULL);
+    qbus_set_hotplug_handler(bus, DEVICE(dev), IGNORE_ERRORS);
     phb->bus = b;
 
     s->bus = S390_PCI_BUS(qbus_create(TYPE_S390_PCI_BUS, DEVICE(s), NULL));
-    qbus_set_hotplug_handler(BUS(s->bus), DEVICE(s), NULL);
+    qbus_set_hotplug_handler(BUS(s->bus), DEVICE(s), IGNORE_ERRORS);
 
     s->iommu_table = g_hash_table_new_full(g_int64_hash, g_int64_equal,
                                            NULL, g_free);
@@ -761,7 +761,7 @@ static void s390_pcihost_timer_cb(void *opaque)
     pbdev->state = ZPCI_FS_STANDBY;
     s390_pci_generate_plug_event(HP_EVENT_CONFIGURED_TO_STBRES,
                                  pbdev->fh, pbdev->fid);
-    qdev_unplug(DEVICE(pbdev), NULL);
+    qdev_unplug(DEVICE(pbdev), IGNORE_ERRORS);
 }
 
 static void s390_pcihost_hot_unplug(HotplugHandler *hotplug_dev,

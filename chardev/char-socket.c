@@ -276,11 +276,11 @@ static ssize_t tcp_chr_recv(Chardev *chr, char *buf, size_t len)
     if (qio_channel_has_feature(s->ioc, QIO_CHANNEL_FEATURE_FD_PASS)) {
         ret = qio_channel_readv_full(s->ioc, &iov, 1,
                                      &msgfds, &msgfds_num,
-                                     NULL);
+                                     IGNORE_ERRORS);
     } else {
         ret = qio_channel_readv_full(s->ioc, &iov, 1,
                                      NULL, NULL,
-                                     NULL);
+                                     IGNORE_ERRORS);
     }
 
     if (ret == QIO_CHANNEL_ERR_BLOCK) {
@@ -550,7 +550,7 @@ static gboolean tcp_chr_telnet_init_io(QIOChannel *ioc,
     TCPChardevTelnetInit *init = user_data;
     ssize_t ret;
 
-    ret = qio_channel_write(ioc, init->buf, init->buflen, NULL);
+    ret = qio_channel_write(ioc, init->buf, init->buflen, IGNORE_ERRORS);
     if (ret < 0) {
         if (ret == QIO_CHANNEL_ERR_BLOCK) {
             ret = 0;
@@ -620,7 +620,7 @@ static void tcp_chr_tls_handshake(QIOTask *task,
     Chardev *chr = user_data;
     SocketChardev *s = user_data;
 
-    if (qio_task_propagate_error(task, NULL)) {
+    if (qio_task_propagate_error(task, IGNORE_ERRORS)) {
         tcp_chr_disconnect(chr);
     } else {
         /* tn3270 does not support TLS yet */
@@ -697,7 +697,7 @@ static int tcp_chr_new_client(Chardev *chr, QIOChannelSocket *sioc)
     s->sioc = sioc;
     object_ref(OBJECT(sioc));
 
-    qio_channel_set_blocking(s->ioc, false, NULL);
+    qio_channel_set_blocking(s->ioc, false, IGNORE_ERRORS);
 
     if (s->do_nodelay) {
         qio_channel_set_delay(s->ioc, false);
@@ -726,7 +726,7 @@ static int tcp_chr_add_client(Chardev *chr, int fd)
     int ret;
     QIOChannelSocket *sioc;
 
-    sioc = qio_channel_socket_new_fd(fd, NULL);
+    sioc = qio_channel_socket_new_fd(fd, IGNORE_ERRORS);
     if (!sioc) {
         return -1;
     }
@@ -744,7 +744,7 @@ static gboolean tcp_chr_accept(QIOChannel *channel,
     QIOChannelSocket *sioc;
 
     sioc = qio_channel_socket_accept(QIO_CHANNEL_SOCKET(channel),
-                                     NULL);
+                                     IGNORE_ERRORS);
     if (!sioc) {
         return TRUE;
     }
@@ -767,9 +767,11 @@ static int tcp_chr_wait_connected(Chardev *chr, Error **errp)
         if (s->is_listen) {
             error_report("QEMU waiting for connection on: %s",
                          chr->filename);
-            qio_channel_set_blocking(QIO_CHANNEL(s->listen_ioc), true, NULL);
+            qio_channel_set_blocking(QIO_CHANNEL(s->listen_ioc), true,
+                                     IGNORE_ERRORS);
             tcp_chr_accept(QIO_CHANNEL(s->listen_ioc), G_IO_IN, chr);
-            qio_channel_set_blocking(QIO_CHANNEL(s->listen_ioc), false, NULL);
+            qio_channel_set_blocking(QIO_CHANNEL(s->listen_ioc), false,
+                                     IGNORE_ERRORS);
         } else {
             sioc = qio_channel_socket_new();
             tcp_chr_set_client_ioc_name(chr, sioc);

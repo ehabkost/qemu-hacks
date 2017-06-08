@@ -1386,7 +1386,7 @@ int main(int argc, char **argv)
         config->method = NULL;
         config->channel_path = NULL;
 
-        addr = socket_local_address(FIRST_SOCKET_ACTIVATION_FD, NULL);
+        addr = socket_local_address(FIRST_SOCKET_ACTIVATION_FD, IGNORE_ERRORS);
         if (addr) {
             if (addr->type == SOCKET_ADDRESS_TYPE_UNIX) {
                 config->method = g_strdup("unix-listen");

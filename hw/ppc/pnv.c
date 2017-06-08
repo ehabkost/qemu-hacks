@@ -833,15 +833,15 @@ static void pnv_chip_init(Object *obj)
     chip->xscom_base = pcc->xscom_base;
 
     object_initialize(&chip->lpc, sizeof(chip->lpc), TYPE_PNV_LPC);
-    object_property_add_child(obj, "lpc", OBJECT(&chip->lpc), NULL);
+    object_property_add_child(obj, "lpc", OBJECT(&chip->lpc), IGNORE_ERRORS);
 
     object_initialize(&chip->psi, sizeof(chip->psi), TYPE_PNV_PSI);
-    object_property_add_child(obj, "psi", OBJECT(&chip->psi), NULL);
+    object_property_add_child(obj, "psi", OBJECT(&chip->psi), IGNORE_ERRORS);
     object_property_add_const_link(OBJECT(&chip->psi), "xics",
                                    OBJECT(qdev_get_machine()), &error_abort);
 
     object_initialize(&chip->occ, sizeof(chip->occ), TYPE_PNV_OCC);
-    object_property_add_child(obj, "occ", OBJECT(&chip->occ), NULL);
+    object_property_add_child(obj, "occ", OBJECT(&chip->occ), IGNORE_ERRORS);
     object_property_add_const_link(OBJECT(&chip->occ), "psi",
                                    OBJECT(&chip->psi), &error_abort);
 
@@ -1113,10 +1113,10 @@ static void powernv_machine_class_props_init(ObjectClass *oc)
 {
     object_class_property_add(oc, "num-chips", "uint32_t",
                               pnv_get_num_chips, pnv_set_num_chips,
-                              NULL, NULL, NULL);
+                              NULL, NULL, IGNORE_ERRORS);
     object_class_property_set_description(oc, "num-chips",
                               "Specifies the number of processor chips",
-                              NULL);
+                              IGNORE_ERRORS);
 }
 
 static void powernv_machine_class_init(ObjectClass *oc, void *data)

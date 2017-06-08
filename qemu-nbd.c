@@ -351,7 +351,7 @@ static gboolean nbd_accept(QIOChannel *ioc, GIOCondition cond, gpointer opaque)
     QIOChannelSocket *cioc;
 
     cioc = qio_channel_socket_accept(QIO_CHANNEL_SOCKET(ioc),
-                                     NULL);
+                                     IGNORE_ERRORS);
     if (!cioc) {
         return TRUE;
     }
@@ -780,7 +780,7 @@ int main(int argc, char **argv)
 
     if (qemu_opts_foreach(&qemu_object_opts,
                           user_creatable_add_opts_foreach,
-                          NULL, NULL)) {
+                          NULL, IGNORE_ERRORS)) {
         exit(EXIT_FAILURE);
     }
 

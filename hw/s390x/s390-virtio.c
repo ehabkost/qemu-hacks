@@ -82,7 +82,7 @@ void s390_init_ipl_dev(const char *kernel_filename,
     qdev_prop_set_string(dev, "netboot_fw", netboot_fw);
     qdev_prop_set_bit(dev, "enforce_bios", enforce_bios);
     object_property_add_child(qdev_get_machine(), TYPE_S390_IPL,
-                              new, NULL);
+                              new, IGNORE_ERRORS);
     object_unref(new);
     qdev_init_nofail(dev);
 }

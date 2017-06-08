@@ -64,7 +64,8 @@ hwaddr platform_bus_get_mmio_addr(PlatformBusDevice *pbus, SysBusDevice *sbdev,
         return -1;
     }
 
-    parent_mr = object_property_get_link(OBJECT(sbdev_mr), "container", NULL);
+    parent_mr = object_property_get_link(OBJECT(sbdev_mr), "container",
+                                         IGNORE_ERRORS);
 
     assert(parent_mr);
     if (parent_mr != pbus_mr_obj) {
@@ -72,7 +73,7 @@ hwaddr platform_bus_get_mmio_addr(PlatformBusDevice *pbus, SysBusDevice *sbdev,
         return -1;
     }
 
-    return object_property_get_int(OBJECT(sbdev_mr), "addr", NULL);
+    return object_property_get_int(OBJECT(sbdev_mr), "addr", IGNORE_ERRORS);
 }
 
 static void platform_bus_count_irqs(SysBusDevice *sbdev, void *opaque)

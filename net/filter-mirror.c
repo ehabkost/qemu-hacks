@@ -338,15 +338,15 @@ static void filter_redirector_set_outdev(Object *obj,
 static void filter_mirror_init(Object *obj)
 {
     object_property_add_str(obj, "outdev", filter_mirror_get_outdev,
-                            filter_mirror_set_outdev, NULL);
+                            filter_mirror_set_outdev, IGNORE_ERRORS);
 }
 
 static void filter_redirector_init(Object *obj)
 {
     object_property_add_str(obj, "indev", filter_redirector_get_indev,
-                            filter_redirector_set_indev, NULL);
+                            filter_redirector_set_indev, IGNORE_ERRORS);
     object_property_add_str(obj, "outdev", filter_redirector_get_outdev,
-                            filter_redirector_set_outdev, NULL);
+                            filter_redirector_set_outdev, IGNORE_ERRORS);
 }
 
 static void filter_mirror_fini(Object *obj)

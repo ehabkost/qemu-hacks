@@ -1065,7 +1065,7 @@ static void usb_host_instance_init(Object *obj)
 
     device_add_bootindex_property(obj, &s->bootindex,
                                   "bootindex", NULL,
-                                  &udev->qdev, NULL);
+                                  &udev->qdev, IGNORE_ERRORS);
 }
 
 static void usb_host_unrealize(USBDevice *udev, Error **errp)

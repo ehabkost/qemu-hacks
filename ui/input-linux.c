@@ -527,13 +527,13 @@ static void input_linux_instance_init(Object *obj)
 {
     object_property_add_str(obj, "evdev",
                             input_linux_get_evdev,
-                            input_linux_set_evdev, NULL);
+                            input_linux_set_evdev, IGNORE_ERRORS);
     object_property_add_bool(obj, "grab_all",
                              input_linux_get_grab_all,
-                             input_linux_set_grab_all, NULL);
+                             input_linux_set_grab_all, IGNORE_ERRORS);
     object_property_add_bool(obj, "repeat",
                              input_linux_get_repeat,
-                             input_linux_set_repeat, NULL);
+                             input_linux_set_repeat, IGNORE_ERRORS);
 }
 
 static void input_linux_class_init(ObjectClass *oc, void *data)

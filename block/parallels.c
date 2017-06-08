@@ -224,7 +224,7 @@ static int64_t allocate_clusters(BlockDriverState *bs, int64_t sector_num,
         } else {
             ret = bdrv_truncate(bs->file,
                                 (s->data_end + space) << BDRV_SECTOR_BITS,
-                                NULL);
+                                IGNORE_ERRORS);
         }
         if (ret < 0) {
             return ret;
@@ -699,7 +699,7 @@ static int parallels_open(BlockDriverState *bs, QDict *options, int flags,
     }
 
     if (!(flags & BDRV_O_RESIZE) || !bdrv_has_zero_init(bs->file->bs) ||
-            bdrv_truncate(bs->file, bdrv_getlength(bs->file->bs), NULL) != 0) {
+            bdrv_truncate(bs->file, bdrv_getlength(bs->file->bs), IGNORE_ERRORS) != 0) {
         s->prealloc_mode = PRL_PREALLOC_MODE_FALLOCATE;
     }
 
@@ -742,7 +742,8 @@ static void parallels_close(BlockDriverState *bs)
     }
 
     if (bs->open_flags & BDRV_O_RDWR) {
-        bdrv_truncate(bs->file, s->data_end << BDRV_SECTOR_BITS, NULL);
+        bdrv_truncate(bs->file, s->data_end << BDRV_SECTOR_BITS,
+                      IGNORE_ERRORS);
     }
 
     g_free(s->bat_dirty_bmap);

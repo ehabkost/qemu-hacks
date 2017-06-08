@@ -547,7 +547,7 @@ static int qemu_gluster_parse_json(BlockdevOptionsGluster *gconf,
             ptr = "inet";       /* accept legacy "tcp" */
         }
         type = qapi_enum_parse(SocketAddressType_lookup, ptr,
-                               SOCKET_ADDRESS_TYPE__MAX, -1, NULL);
+                               SOCKET_ADDRESS_TYPE__MAX, -1, IGNORE_ERRORS);
         if (type != SOCKET_ADDRESS_TYPE_INET
             && type != SOCKET_ADDRESS_TYPE_UNIX) {
             error_setg(&local_err,

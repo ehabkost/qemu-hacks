@@ -40,7 +40,7 @@ Object *container_get(Object *root, const char *path)
         child = object_resolve_path_component(obj, parts[i]);
         if (!child) {
             child = object_new("container");
-            object_property_add_child(obj, parts[i], child, NULL);
+            object_property_add_child(obj, parts[i], child, IGNORE_ERRORS);
             object_unref(child);
         }
     }

@@ -916,7 +916,7 @@ static void virtio_crypto_instance_init(Object *obj)
                              TYPE_CRYPTODEV_BACKEND,
                              (Object **)&vcrypto->conf.cryptodev,
                              virtio_crypto_check_cryptodev_is_used,
-                             OBJ_PROP_LINK_UNREF_ON_RELEASE, NULL);
+                             OBJ_PROP_LINK_UNREF_ON_RELEASE, IGNORE_ERRORS);
 }
 
 static const TypeInfo virtio_crypto_info = {

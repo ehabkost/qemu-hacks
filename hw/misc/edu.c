@@ -392,7 +392,7 @@ static void edu_instance_init(Object *obj)
 
     edu->dma_mask = (1UL << 28) - 1;
     object_property_add(obj, "dma_mask", "uint64", edu_obj_uint64,
-                    edu_obj_uint64, NULL, &edu->dma_mask, NULL);
+                    edu_obj_uint64, NULL, &edu->dma_mask, IGNORE_ERRORS);
 }
 
 static void edu_class_init(ObjectClass *class, void *data)

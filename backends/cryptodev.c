@@ -225,16 +225,16 @@ static void cryptodev_backend_instance_init(Object *obj)
     object_property_add(obj, "queues", "int",
                           cryptodev_backend_get_queues,
                           cryptodev_backend_set_queues,
-                          NULL, NULL, NULL);
+                          NULL, NULL, IGNORE_ERRORS);
     /* Initialize devices' queues property to 1 */
-    object_property_set_int(obj, 1, "queues", NULL);
+    object_property_set_int(obj, 1, "queues", IGNORE_ERRORS);
 }
 
 static void cryptodev_backend_finalize(Object *obj)
 {
     CryptoDevBackend *backend = CRYPTODEV_BACKEND(obj);
 
-    cryptodev_backend_cleanup(backend, NULL);
+    cryptodev_backend_cleanup(backend, IGNORE_ERRORS);
 }
 
 static void

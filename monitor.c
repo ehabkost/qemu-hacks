@@ -3211,7 +3211,7 @@ void chardev_add_completion(ReadLineState *rs, int nb_args, const char *str)
     len = strlen(str);
     readline_set_completion_index(rs, len);
 
-    start = list = qmp_query_chardev_backends(NULL);
+    start = list = qmp_query_chardev_backends(IGNORE_ERRORS);
     while (list) {
         const char *chr_name = list->value->name;
 
@@ -3322,7 +3322,7 @@ void chardev_remove_completion(ReadLineState *rs, int nb_args, const char *str)
     len = strlen(str);
     readline_set_completion_index(rs, len);
 
-    start = list = qmp_query_chardev(NULL);
+    start = list = qmp_query_chardev(IGNORE_ERRORS);
     while (list) {
         ChardevInfo *chr = list->value;
 
@@ -3342,7 +3342,7 @@ static void ringbuf_completion(ReadLineState *rs, const char *str)
     len = strlen(str);
     readline_set_completion_index(rs, len);
 
-    start = list = qmp_query_chardev(NULL);
+    start = list = qmp_query_chardev(IGNORE_ERRORS);
     while (list) {
         ChardevInfo *chr_info = list->value;
 
@@ -3389,7 +3389,7 @@ void object_del_completion(ReadLineState *rs, int nb_args, const char *str)
     len = strlen(str);
     readline_set_completion_index(rs, len);
 
-    start = list = qmp_qom_list("/objects", NULL);
+    start = list = qmp_qom_list("/objects", IGNORE_ERRORS);
     while (list) {
         ObjectPropertyInfo *info = list->value;
 
@@ -3921,7 +3921,7 @@ static QObject *get_qmp_greeting(void)
 {
     QObject *ver = NULL;
 
-    qmp_marshal_query_version(NULL, &ver, NULL);
+    qmp_marshal_query_version(NULL, &ver, IGNORE_ERRORS);
 
     return qobject_from_jsonf("{'QMP': {'version': %p, 'capabilities': []}}",
                               ver);

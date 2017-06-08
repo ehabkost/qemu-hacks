@@ -193,7 +193,7 @@ static void filter_buffer_init(Object *obj)
 {
     object_property_add(obj, "interval", "int",
                         filter_buffer_get_interval,
-                        filter_buffer_set_interval, NULL, NULL, NULL);
+                        filter_buffer_set_interval, NULL, NULL, IGNORE_ERRORS);
 }
 
 static const TypeInfo filter_buffer_info = {

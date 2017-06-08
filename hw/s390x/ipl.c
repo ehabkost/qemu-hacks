@@ -282,7 +282,8 @@ static bool s390_gen_initial_iplb(S390IPLState *ipl)
 int s390_ipl_set_loadparm(uint8_t *loadparm)
 {
     MachineState *machine = MACHINE(qdev_get_machine());
-    char *lp = object_property_get_str(OBJECT(machine), "loadparm", NULL);
+    char *lp = object_property_get_str(OBJECT(machine), "loadparm",
+                                       IGNORE_ERRORS);
 
     if (lp) {
         int i;

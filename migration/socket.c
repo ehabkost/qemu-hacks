@@ -154,7 +154,7 @@ static gboolean socket_accept_incoming_migration(QIOChannel *ioc,
 
 out:
     /* Close listening socket as its no longer needed */
-    qio_channel_close(ioc, NULL);
+    qio_channel_close(ioc, IGNORE_ERRORS);
     return FALSE; /* unregister */
 }
 

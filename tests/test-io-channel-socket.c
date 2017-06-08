@@ -160,7 +160,7 @@ static void test_io_channel_complete(QIOTask *task,
                                      gpointer opaque)
 {
     struct TestIOChannelData *data = opaque;
-    data->err = qio_task_propagate_error(task, NULL);
+    data->err = qio_task_propagate_error(task, IGNORE_ERRORS);
     g_main_loop_quit(data->loop);
 }
 

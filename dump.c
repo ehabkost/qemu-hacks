@@ -1681,7 +1681,7 @@ static void dump_process(DumpState *s, Error **errp)
                (local_err ? DUMP_STATUS_FAILED : DUMP_STATUS_COMPLETED));
 
     /* send DUMP_COMPLETED message (unconditionally) */
-    result = qmp_query_dump(NULL);
+    result = qmp_query_dump(IGNORE_ERRORS);
     /* should never fail */
     assert(result);
     qapi_event_send_dump_completed(result, !!local_err, (local_err ? \

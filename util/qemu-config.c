@@ -368,7 +368,7 @@ static int config_write_opts(void *opaque, QemuOpts *opts, Error **errp)
     } else {
         fprintf(data->fp, "[%s]\n", data->list->name);
     }
-    qemu_opt_foreach(opts, config_write_opt, data, NULL);
+    qemu_opt_foreach(opts, config_write_opt, data, IGNORE_ERRORS);
     fprintf(data->fp, "\n");
     return 0;
 }
@@ -382,7 +382,7 @@ void qemu_config_write(FILE *fp)
     fprintf(fp, "# qemu config file\n\n");
     for (i = 0; lists[i] != NULL; i++) {
         data.list = lists[i];
-        qemu_opts_foreach(data.list, config_write_opts, &data, NULL);
+        qemu_opts_foreach(data.list, config_write_opts, &data, IGNORE_ERRORS);
     }
 }
 
@@ -413,7 +413,7 @@ int qemu_config_parse(FILE *fp, QemuOptsList **lists, const char *fname)
                 error_report_err(local_err);
                 goto out;
             }
-            opts = qemu_opts_create(list, id, 1, NULL);
+            opts = qemu_opts_create(list, id, 1, IGNORE_ERRORS);
             continue;
         }
         if (sscanf(line, "[%63[^]]]", group) == 1) {

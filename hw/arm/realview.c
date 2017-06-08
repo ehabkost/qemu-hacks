@@ -109,7 +109,7 @@ static void realview_init(MachineState *machine,
          * does not currently support EL3 so the CPU EL3 property is disabled
          * before realization.
          */
-        if (object_property_find(cpuobj, "has_el3", NULL)) {
+        if (object_property_find(cpuobj, "has_el3", IGNORE_ERRORS)) {
             object_property_set_bool(cpuobj, false, "has_el3", &error_fatal);
         }
 

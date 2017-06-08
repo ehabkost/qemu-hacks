@@ -338,5 +338,5 @@ void device_add_bootindex_property(Object *obj, int32_t *bootindex,
         return;
     }
     /* initialize devices' bootindex property to -1 */
-    object_property_set_int(obj, -1, name, NULL);
+    object_property_set_int(obj, -1, name, IGNORE_ERRORS);
 }

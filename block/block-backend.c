@@ -819,7 +819,7 @@ void blk_dev_change_media_cb(BlockBackend *blk, bool load, Error **errp)
 
 static void blk_root_change_media(BdrvChild *child, bool load)
 {
-    blk_dev_change_media_cb(child->opaque, load, NULL);
+    blk_dev_change_media_cb(child->opaque, load, IGNORE_ERRORS);
 }
 
 /*

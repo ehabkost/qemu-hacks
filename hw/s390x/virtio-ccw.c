@@ -912,7 +912,7 @@ static void virtio_ccw_rng_realize(VirtioCcwDevice *ccw_dev, Error **errp)
 
     object_property_set_link(OBJECT(dev),
                              OBJECT(dev->vdev.conf.rng), "rng",
-                             NULL);
+                             IGNORE_ERRORS);
 }
 
 static void virtio_ccw_crypto_realize(VirtioCcwDevice *ccw_dev, Error **errp)
@@ -930,7 +930,7 @@ static void virtio_ccw_crypto_realize(VirtioCcwDevice *ccw_dev, Error **errp)
 
     object_property_set_link(OBJECT(vdev),
                              OBJECT(dev->vdev.conf.cryptodev), "cryptodev",
-                             NULL);
+                             IGNORE_ERRORS);
 }
 
 /* DeviceState to VirtioCcwDevice. Note: used on datapath,

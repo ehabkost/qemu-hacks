@@ -444,7 +444,7 @@ static void object_property_del_child(Object *obj, Object *child, Error **errp)
 void object_unparent(Object *obj)
 {
     if (obj->parent) {
-        object_property_del_child(obj->parent, obj, NULL);
+        object_property_del_child(obj->parent, obj, IGNORE_ERRORS);
     }
 }
 
@@ -924,7 +924,7 @@ object_property_add(Object *obj, const char *name, const char *type,
             char *full_name = g_strdup_printf("%s[%d]", name_no_array, i);
 
             ret = object_property_add(obj, full_name, type, get, set,
-                                      release, opaque, NULL);
+                                      release, opaque, IGNORE_ERRORS);
             g_free(full_name);
             if (ret) {
                 break;
@@ -934,7 +934,7 @@ object_property_add(Object *obj, const char *name, const char *type,
         return ret;
     }
 
-    if (object_property_find(obj, name, NULL) != NULL) {
+    if (object_property_find(obj, name, IGNORE_ERRORS) != NULL) {
         error_setg(errp, "attempt to add duplicate property '%s'"
                    " to object (type '%s')", name,
                    object_get_typename(obj));
@@ -967,7 +967,7 @@ object_class_property_add(ObjectClass *klass,
 {
     ObjectProperty *prop;
 
-    if (object_class_property_find(klass, name, NULL) != NULL) {
+    if (object_class_property_find(klass, name, IGNORE_ERRORS) != NULL) {
         error_setg(errp, "attempt to add duplicate property '%s'"
                    " to object (type '%s')", name,
                    object_class_get_name(klass));
@@ -995,7 +995,7 @@ ObjectProperty *object_property_find(Object *obj, const char *name,
     ObjectProperty *prop;
     ObjectClass *klass = object_get_class(obj);
 
-    prop = object_class_property_find(klass, name, NULL);
+    prop = object_class_property_find(klass, name, IGNORE_ERRORS);
     if (prop) {
         return prop;
     }
@@ -1037,7 +1037,7 @@ ObjectProperty *object_class_property_find(ObjectClass *klass, const char *name,
 
     parent_klass = object_class_get_parent(klass);
     if (parent_klass) {
-        prop = object_class_property_find(parent_klass, name, NULL);
+        prop = object_class_property_find(parent_klass, name, IGNORE_ERRORS);
         if (prop) {
             return prop;
         }
@@ -1449,7 +1449,7 @@ static Object *object_resolve_link(Object *obj, const char *name,
     Object *target;
 
     /* Go from link<FOO> to FOO.  */
-    type = object_property_get_type(obj, name, NULL);
+    type = object_property_get_type(obj, name, IGNORE_ERRORS);
     target_type = g_strndup(&type[5], strlen(type) - 6);
     target = object_resolve_path_type(path, target_type, &ambiguous);
 
@@ -1627,7 +1627,7 @@ gchar *object_get_canonical_path(Object *obj)
 
 Object *object_resolve_path_component(Object *parent, const gchar *part)
 {
-    ObjectProperty *prop = object_property_find(parent, part, NULL);
+    ObjectProperty *prop = object_property_find(parent, part, IGNORE_ERRORS);
     if (prop == NULL) {
         return NULL;
     }
@@ -2301,7 +2301,7 @@ void object_class_property_set_description(ObjectClass *klass,
 
 static void object_instance_init(Object *obj)
 {
-    object_property_add_str(obj, "type", qdev_get_type, NULL, NULL);
+    object_property_add_str(obj, "type", qdev_get_type, NULL, IGNORE_ERRORS);
 }
 
 static void register_types(void)

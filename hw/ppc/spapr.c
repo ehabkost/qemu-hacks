@@ -659,7 +659,7 @@ static int spapr_populate_drconf_memory(sPAPRMachineState *spapr, void *fdt)
             dynamic_memory[1] = cpu_to_be32(addr & 0xffffffff);
             dynamic_memory[2] = cpu_to_be32(spapr_drc_index(drc));
             dynamic_memory[3] = cpu_to_be32(0); /* reserved */
-            dynamic_memory[4] = cpu_to_be32(numa_get_node(addr, NULL));
+            dynamic_memory[4] = cpu_to_be32(numa_get_node(addr, IGNORE_ERRORS));
             if (memory_region_present(get_system_memory(), addr)) {
                 dynamic_memory[5] = cpu_to_be32(SPAPR_LMB_FLAGS_ASSIGNED);
             } else {
@@ -2481,19 +2481,20 @@ static void spapr_machine_initfn(Object *obj)
     spapr->htab_fd = -1;
     spapr->use_hotplug_event_source = true;
     object_property_add_str(obj, "kvm-type",
-                            spapr_get_kvm_type, spapr_set_kvm_type, NULL);
+                            spapr_get_kvm_type, spapr_set_kvm_type,
+                            IGNORE_ERRORS);
     object_property_set_description(obj, "kvm-type",
                                     "Specifies the KVM virtualization mode (HV, PR)",
-                                    NULL);
+                                    IGNORE_ERRORS);
     object_property_add_bool(obj, "modern-hotplug-events",
                             spapr_get_modern_hotplug_events,
                             spapr_set_modern_hotplug_events,
-                            NULL);
+                            IGNORE_ERRORS);
     object_property_set_description(obj, "modern-hotplug-events",
                                     "Use dedicated hotplug event mechanism in"
                                     " place of standard EPOW events when possible"
                                     " (required for memory hot-unplug support)",
-                                    NULL);
+                                    IGNORE_ERRORS);
 }
 
 static void spapr_machine_finalizefn(Object *obj)
@@ -2611,7 +2612,8 @@ static void spapr_memory_pre_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
         return;
     }
 
-    mem_dev = object_property_get_str(OBJECT(dimm), PC_DIMM_MEMDEV_PROP, NULL);
+    mem_dev = object_property_get_str(OBJECT(dimm), PC_DIMM_MEMDEV_PROP,
+                                      IGNORE_ERRORS);
     if (mem_dev && !kvmppc_is_mem_backend_page_size_ok(mem_dev)) {
         error_setg(errp, "Memory backend has bad page size. "
                    "Use 'memory-backend-file' with correct mem-path.");

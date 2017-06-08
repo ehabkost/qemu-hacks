@@ -59,7 +59,7 @@ static int ipmi_do_hw_op(IPMIInterface *s, enum ipmi_op op, int checkonly)
         if (checkonly) {
             return 0;
         }
-        qmp_inject_nmi(NULL);
+        qmp_inject_nmi(IGNORE_ERRORS);
         return 0;
 
     case IPMI_SHUTDOWN_VIA_ACPI_OVERTEMP:

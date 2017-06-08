@@ -94,7 +94,7 @@ static void gpex_host_initfn(Object *obj)
     GPEXRootState *root = &s->gpex_root;
 
     object_initialize(root, sizeof(*root), TYPE_GPEX_ROOT_DEVICE);
-    object_property_add_child(obj, "gpex_root", OBJECT(root), NULL);
+    object_property_add_child(obj, "gpex_root", OBJECT(root), IGNORE_ERRORS);
     qdev_prop_set_uint32(DEVICE(root), "addr", PCI_DEVFN(0, 0));
     qdev_prop_set_bit(DEVICE(root), "multifunction", false);
 }

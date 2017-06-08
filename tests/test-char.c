@@ -245,7 +245,7 @@ static gboolean char_socket_test_idle(gpointer user_data)
 {
     SocketIdleData *data = user_data;
 
-    if (object_property_get_bool(OBJECT(data->chr), "connected", NULL)
+    if (object_property_get_bool(OBJECT(data->chr), "connected", IGNORE_ERRORS)
         == data->conn_expected) {
         quit = true;
         return FALSE;

@@ -929,7 +929,7 @@ void qemu_opts_set_defaults(QemuOptsList *list, const char *params,
 {
     QemuOpts *opts;
 
-    opts = opts_parse(list, params, permit_abbrev, true, NULL);
+    opts = opts_parse(list, params, permit_abbrev, true, IGNORE_ERRORS);
     assert(opts);
 }
 

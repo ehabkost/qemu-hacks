@@ -208,7 +208,7 @@ void tpm_cleanup(void)
 int tpm_init(void)
 {
     if (qemu_opts_foreach(qemu_find_opts("tpmdev"),
-                          tpm_init_tpmdev, NULL, NULL)) {
+                          tpm_init_tpmdev, NULL, IGNORE_ERRORS)) {
         return -1;
     }
 

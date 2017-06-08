@@ -157,7 +157,7 @@ static void nbd_send_opt_abort(QIOChannel *ioc)
      * to disconnect without waiting for the server reply, so we don't
      * even care if the request makes it to the server, let alone
      * waiting around for whether the server replies. */
-    nbd_send_option_request(ioc, NBD_OPT_ABORT, 0, NULL, NULL);
+    nbd_send_option_request(ioc, NBD_OPT_ABORT, 0, NULL, IGNORE_ERRORS);
 }
 
 
@@ -759,7 +759,7 @@ ssize_t nbd_send_request(QIOChannel *ioc, NBDRequest *request)
     stq_be_p(buf + 16, request->from);
     stl_be_p(buf + 24, request->len);
 
-    return write_sync(ioc, buf, sizeof(buf), NULL);
+    return write_sync(ioc, buf, sizeof(buf), IGNORE_ERRORS);
 }
 
 ssize_t nbd_receive_reply(QIOChannel *ioc, NBDReply *reply, Error **errp)

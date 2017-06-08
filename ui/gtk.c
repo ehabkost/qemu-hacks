@@ -738,7 +738,7 @@ static gboolean gd_window_close(GtkWidget *widget, GdkEvent *event,
             }
             unregister_displaychangelistener(&s->vc[i].gfx.dcl);
         }
-        qmp_quit(NULL);
+        qmp_quit(IGNORE_ERRORS);
         return FALSE;
     }
 
@@ -1175,25 +1175,25 @@ static void gd_menu_pause(GtkMenuItem *item, void *opaque)
         return;
     }
     if (runstate_is_running()) {
-        qmp_stop(NULL);
+        qmp_stop(IGNORE_ERRORS);
     } else {
-        qmp_cont(NULL);
+        qmp_cont(IGNORE_ERRORS);
     }
 }
 
 static void gd_menu_reset(GtkMenuItem *item, void *opaque)
 {
-    qmp_system_reset(NULL);
+    qmp_system_reset(IGNORE_ERRORS);
 }
 
 static void gd_menu_powerdown(GtkMenuItem *item, void *opaque)
 {
-    qmp_system_powerdown(NULL);
+    qmp_system_powerdown(IGNORE_ERRORS);
 }
 
 static void gd_menu_quit(GtkMenuItem *item, void *opaque)
 {
-    qmp_quit(NULL);
+    qmp_quit(IGNORE_ERRORS);
 }
 
 static void gd_menu_switch_vc(GtkMenuItem *item, void *opaque)

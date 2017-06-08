@@ -683,7 +683,7 @@ static USBDevice *usb_msd_init(USBBus *bus, const char *filename)
     /* parse -usbdevice disk: syntax into drive opts */
     do {
         snprintf(id, sizeof(id), "usb%d", nr++);
-        opts = qemu_opts_create(qemu_find_opts("drive"), id, 1, NULL);
+        opts = qemu_opts_create(qemu_find_opts("drive"), id, 1, IGNORE_ERRORS);
     } while (!opts);
 
     p1 = strchr(filename, ':');
@@ -827,8 +827,8 @@ static void usb_msd_instance_init(Object *obj)
 {
     object_property_add(obj, "bootindex", "int32",
                         usb_msd_get_bootindex,
-                        usb_msd_set_bootindex, NULL, NULL, NULL);
-    object_property_set_int(obj, -1, "bootindex", NULL);
+                        usb_msd_set_bootindex, NULL, NULL, IGNORE_ERRORS);
+    object_property_set_int(obj, -1, "bootindex", IGNORE_ERRORS);
 }
 
 static void usb_msd_class_initfn_bot(ObjectClass *klass, void *data)

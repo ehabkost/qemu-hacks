@@ -2018,7 +2018,7 @@ static void pci_qdev_realize(DeviceState *qdev, Error **errp)
     pci_add_option_rom(pci_dev, is_default_rom, &local_err);
     if (local_err) {
         error_propagate(errp, local_err);
-        pci_qdev_unrealize(DEVICE(pci_dev), NULL);
+        pci_qdev_unrealize(DEVICE(pci_dev), IGNORE_ERRORS);
         return;
     }
 }

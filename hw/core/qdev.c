@@ -71,7 +71,7 @@ static void bus_remove_child(BusState *bus, DeviceState *child)
             QTAILQ_REMOVE(&bus->children, kid, sibling);
 
             /* This gives back ownership of kid->child back to us.  */
-            object_property_del(OBJECT(bus), name, NULL);
+            object_property_del(OBJECT(bus), name, IGNORE_ERRORS);
             object_unref(OBJECT(kid->child));
             g_free(kid);
             return;
@@ -97,7 +97,7 @@ static void bus_add_child(BusState *bus, DeviceState *child)
                              (Object **)&kid->child,
                              NULL, /* read-only property */
                              0, /* return ownership on prop deletion */
-                             NULL);
+                             IGNORE_ERRORS);
 }
 
 void qdev_set_parent_bus(DeviceState *dev, BusState *bus)
@@ -470,7 +470,8 @@ void qdev_connect_gpio_out_named(DeviceState *dev, const char *name, int n,
          */
         object_property_add_child(container_get(qdev_get_machine(),
                                                 "/unattached"),
-                                  "non-qdev-gpio[*]", OBJECT(pin), NULL);
+                                  "non-qdev-gpio[*]", OBJECT(pin),
+                                  IGNORE_ERRORS);
     }
     object_property_set_link(OBJECT(dev), OBJECT(pin), propname, &error_abort);
     g_free(propname);
@@ -482,7 +483,7 @@ qemu_irq qdev_get_gpio_out_connector(DeviceState *dev, const char *name, int n)
                                      name ? name : "unnamed-gpio-out", n);
 
     qemu_irq ret = (qemu_irq)object_property_get_link(OBJECT(dev), propname,
-                                                      NULL);
+                                                      IGNORE_ERRORS);
 
     return ret;
 }
@@ -496,9 +497,9 @@ static qemu_irq qdev_disconnect_gpio_out_named(DeviceState *dev,
                                      name ? name : "unnamed-gpio-out", n);
 
     qemu_irq ret = (qemu_irq)object_property_get_link(OBJECT(dev), propname,
-                                                      NULL);
+                                                      IGNORE_ERRORS);
     if (ret) {
-        object_property_set_link(OBJECT(dev), NULL, propname, NULL);
+        object_property_set_link(OBJECT(dev), NULL, propname, IGNORE_ERRORS);
     }
     g_free(propname);
     return ret;
@@ -838,7 +839,7 @@ static int qdev_add_hotpluggable_device(Object *obj, void *opaque)
         return 0;
     }
 
-    if (dev->realized && object_property_get_bool(obj, "hotpluggable", NULL)) {
+    if (dev->realized && object_property_get_bool(obj, "hotpluggable", IGNORE_ERRORS)) {
         *list = g_slist_append(*list, dev);
     }
 
@@ -978,7 +979,7 @@ static void device_set_realized(Object *obj, bool value, Error **errp)
 child_realize_fail:
     QLIST_FOREACH(bus, &dev->child_bus, sibling) {
         object_property_set_bool(OBJECT(bus), false, "realized",
-                                 NULL);
+                                 IGNORE_ERRORS);
     }
 
     if (qdev_get_vmsd(dev)) {
@@ -1029,9 +1030,10 @@ static void device_initfn(Object *obj)
     dev->realized = false;
 
     object_property_add_bool(obj, "realized",
-                             device_get_realized, device_set_realized, NULL);
+                             device_get_realized, device_set_realized,
+                             IGNORE_ERRORS);
     object_property_add_bool(obj, "hotpluggable",
-                             device_get_hotpluggable, NULL, NULL);
+                             device_get_hotpluggable, NULL, IGNORE_ERRORS);
     object_property_add_bool(obj, "hotplugged",
                              device_get_hotplugged, NULL,
                              &error_abort);
@@ -1090,7 +1092,7 @@ static void device_unparent(Object *obj)
     BusState *bus;
 
     if (dev->realized) {
-        object_property_set_bool(obj, false, "realized", NULL);
+        object_property_set_bool(obj, false, "realized", IGNORE_ERRORS);
     }
     while (dev->num_child_bus) {
         bus = QLIST_FIRST(&dev->child_bus);

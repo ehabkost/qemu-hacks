@@ -2192,7 +2192,7 @@ vmxnet3_init_msix(VMXNET3State *s)
                         VMXNET3_MSIX_BAR_IDX, VMXNET3_OFF_MSIX_TABLE,
                         &s->msix_bar,
                         VMXNET3_MSIX_BAR_IDX, VMXNET3_OFF_MSIX_PBA(s),
-                        VMXNET3_MSIX_OFFSET(s), NULL);
+                        VMXNET3_MSIX_OFFSET(s), IGNORE_ERRORS);
 
     if (0 > res) {
         VMW_WRPRN("Failed to initialize MSI-X, error %d", res);
@@ -2317,7 +2317,7 @@ static void vmxnet3_pci_realize(PCIDevice *pci_dev, Error **errp)
     pci_dev->config[PCI_INTERRUPT_PIN] = 0x01;
 
     ret = msi_init(pci_dev, VMXNET3_MSI_OFFSET(s), VMXNET3_MAX_NMSIX_INTRS,
-                   VMXNET3_USE_64BIT, VMXNET3_PER_VECTOR_MASK, NULL);
+                   VMXNET3_USE_64BIT, VMXNET3_PER_VECTOR_MASK, IGNORE_ERRORS);
     /* Any error other than -ENOTSUP(board's MSI support is broken)
      * is a programming error. Fall back to INTx silently on -ENOTSUP */
     assert(!ret || ret == -ENOTSUP);
@@ -2345,7 +2345,7 @@ static void vmxnet3_instance_init(Object *obj)
     VMXNET3State *s = VMXNET3(obj);
     device_add_bootindex_property(obj, &s->conf.bootindex,
                                   "bootindex", "/ethernet-phy@0",
-                                  DEVICE(obj), NULL);
+                                  DEVICE(obj), IGNORE_ERRORS);
 }
 
 static void vmxnet3_pci_uninit(PCIDevice *pci_dev)

@@ -112,7 +112,7 @@ uint16_t pvpanic_port(void)
     if (!o) {
         return 0;
     }
-    return object_property_get_int(o, PVPANIC_IOPORT_PROP, NULL);
+    return object_property_get_int(o, PVPANIC_IOPORT_PROP, IGNORE_ERRORS);
 }
 
 static Property pvpanic_isa_properties[] = {

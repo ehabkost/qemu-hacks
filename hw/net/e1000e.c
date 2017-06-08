@@ -293,7 +293,7 @@ e1000e_init_msix(E1000EState *s)
                         E1000E_MSIX_IDX, E1000E_MSIX_TABLE,
                         &s->msix,
                         E1000E_MSIX_IDX, E1000E_MSIX_PBA,
-                        0xA0, NULL);
+                        0xA0, IGNORE_ERRORS);
 
     if (res < 0) {
         trace_e1000e_msix_init_fail(res);
@@ -463,7 +463,7 @@ static void e1000e_pci_realize(PCIDevice *pci_dev, Error **errp)
         hw_error("Failed to initialize PCIe capability");
     }
 
-    ret = msi_init(PCI_DEVICE(s), 0xD0, 1, true, false, NULL);
+    ret = msi_init(PCI_DEVICE(s), 0xD0, 1, true, false, IGNORE_ERRORS);
     if (ret) {
         trace_e1000e_msi_init_fail(ret);
     }
@@ -474,7 +474,7 @@ static void e1000e_pci_realize(PCIDevice *pci_dev, Error **errp)
     }
 
     if (pcie_aer_init(pci_dev, PCI_ERR_VER, e1000e_aer_offset,
-                      PCI_ERR_SIZEOF, NULL) < 0) {
+                      PCI_ERR_SIZEOF, IGNORE_ERRORS) < 0) {
         hw_error("Failed to initialize AER capability");
     }
 
@@ -694,7 +694,7 @@ static void e1000e_instance_init(Object *obj)
     E1000EState *s = E1000E(obj);
     device_add_bootindex_property(obj, &s->conf.bootindex,
                                   "bootindex", "/ethernet-phy@0",
-                                  DEVICE(obj), NULL);
+                                  DEVICE(obj), IGNORE_ERRORS);
 }
 
 static const TypeInfo e1000e_info = {

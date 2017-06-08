@@ -568,7 +568,7 @@ VncInfo2List *qmp_query_vnc_servers(Error **errp)
                        &info->vencrypt, &info->has_vencrypt);
         if (vd->dcl.con) {
             dev = DEVICE(object_property_get_link(OBJECT(vd->dcl.con),
-                                                  "device", NULL));
+                                                  "device", IGNORE_ERRORS));
             info->has_display = true;
             info->display = g_strdup(dev->id);
         }
@@ -1123,7 +1123,7 @@ static void vnc_disconnect_start(VncState *vs)
     if (vs->ioc_tag) {
         g_source_remove(vs->ioc_tag);
     }
-    qio_channel_close(vs->ioc, NULL);
+    qio_channel_close(vs->ioc, IGNORE_ERRORS);
     vs->disconnecting = TRUE;
 }
 
@@ -2937,7 +2937,7 @@ static void vnc_connect(VncDisplay *vd, QIOChannelSocket *sioc,
 
     VNC_DEBUG("New client on socket %p\n", vs->sioc);
     update_displaychangelistener(&vd->dcl, VNC_REFRESH_INTERVAL_BASE);
-    qio_channel_set_blocking(vs->ioc, false, NULL);
+    qio_channel_set_blocking(vs->ioc, false, IGNORE_ERRORS);
     if (websocket) {
         vs->websocket = 1;
         if (vd->tlscreds) {
@@ -4022,7 +4022,7 @@ void vnc_display_add_client(const char *id, int csock, bool skipauth)
         return;
     }
 
-    sioc = qio_channel_socket_new_fd(csock, NULL);
+    sioc = qio_channel_socket_new_fd(csock, IGNORE_ERRORS);
     if (sioc) {
         qio_channel_set_name(QIO_CHANNEL(sioc), "vnc-server");
         vnc_connect(vd, sioc, skipauth, false);

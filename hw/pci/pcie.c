@@ -427,7 +427,7 @@ void pcie_cap_slot_init(PCIDevice *dev, uint16_t slot)
     dev->exp.hpev_notified = false;
 
     qbus_set_hotplug_handler(BUS(pci_bridge_get_sec_bus(PCI_BRIDGE(dev))),
-                             DEVICE(dev), NULL);
+                             DEVICE(dev), IGNORE_ERRORS);
 }
 
 void pcie_cap_slot_reset(PCIDevice *dev)

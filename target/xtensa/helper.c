@@ -130,7 +130,7 @@ XtensaCPU *cpu_xtensa_init(const char *cpu_model)
 
     xtensa_irq_init(env);
 
-    object_property_set_bool(OBJECT(cpu), true, "realized", NULL);
+    object_property_set_bool(OBJECT(cpu), true, "realized", IGNORE_ERRORS);
 
     return cpu;
 }

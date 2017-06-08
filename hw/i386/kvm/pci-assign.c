@@ -1843,7 +1843,7 @@ static void assigned_dev_instance_init(Object *obj)
 
     device_add_bootindex_property(obj, &d->bootindex,
                                   "bootindex", NULL,
-                                  &pci_dev->qdev, NULL);
+                                  &pci_dev->qdev, IGNORE_ERRORS);
 }
 
 static Property assigned_dev_properties[] = {

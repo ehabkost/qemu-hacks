@@ -348,7 +348,8 @@ static int set_dirty_tracking(void)
     QSIMPLEQ_FOREACH(bmds, &block_mig_state.bmds_list, entry) {
         aio_context_acquire(blk_get_aio_context(bmds->blk));
         bmds->dirty_bitmap = bdrv_create_dirty_bitmap(blk_bs(bmds->blk),
-                                                      BLOCK_SIZE, NULL, NULL);
+                                                      BLOCK_SIZE, NULL,
+                                                      IGNORE_ERRORS);
         aio_context_release(blk_get_aio_context(bmds->blk));
         if (!bmds->dirty_bitmap) {
             ret = -errno;

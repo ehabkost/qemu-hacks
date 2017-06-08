@@ -287,7 +287,7 @@ static void s390_cpu_initfn(Object *obj)
     cs->halted = 1;
     cs->exception_index = EXCP_HLT;
     object_property_add(OBJECT(cpu), "id", "int64_t", s390x_cpu_get_id,
-                        s390x_cpu_set_id, NULL, NULL, NULL);
+                        s390x_cpu_set_id, NULL, NULL, IGNORE_ERRORS);
     s390_cpu_model_register_props(obj);
 #if !defined(CONFIG_USER_ONLY)
     qemu_get_timedate(&tm, 0);

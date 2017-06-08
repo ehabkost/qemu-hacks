@@ -77,7 +77,7 @@ static void parse_drive(DeviceState *dev, const char *str, void **ptr,
 
     blk = blk_by_name(str);
     if (!blk) {
-        BlockDriverState *bs = bdrv_lookup_bs(NULL, str, NULL);
+        BlockDriverState *bs = bdrv_lookup_bs(NULL, str, IGNORE_ERRORS);
         if (bs) {
             blk = blk_new(0, BLK_PERM_ALL);
             blk_created = true;
@@ -442,7 +442,7 @@ void qdev_set_nic_properties(DeviceState *dev, NICInfo *nd)
         qdev_prop_set_netdev(dev, "netdev", nd->netdev);
     }
     if (nd->nvectors != DEV_NVECTORS_UNSPECIFIED &&
-        object_property_find(OBJECT(dev), "vectors", NULL)) {
+        object_property_find(OBJECT(dev), "vectors", IGNORE_ERRORS)) {
         qdev_prop_set_uint32(dev, "vectors", nd->nvectors);
     }
     nd->instantiated = 1;

@@ -124,7 +124,7 @@ static int nbd_negotiate_read(QIOChannel *ioc, void *buffer, size_t size)
                                   nbd_negotiate_continue,
                                   qemu_coroutine_self(),
                                   NULL);
-    ret = read_sync(ioc, buffer, size, NULL);
+    ret = read_sync(ioc, buffer, size, IGNORE_ERRORS);
     g_source_remove(watch);
     return ret;
 
@@ -142,7 +142,7 @@ static int nbd_negotiate_write(QIOChannel *ioc, const void *buffer, size_t size)
                                   nbd_negotiate_continue,
                                   qemu_coroutine_self(),
                                   NULL);
-    ret = write_sync(ioc, buffer, size, NULL);
+    ret = write_sync(ioc, buffer, size, IGNORE_ERRORS);
     g_source_remove(watch);
     return ret;
 }
@@ -632,7 +632,7 @@ static coroutine_fn int nbd_negotiate(NBDClientNewData *data)
         [28 .. 151]   reserved     (0, omit if no_zeroes)
      */
 
-    qio_channel_set_blocking(client->ioc, false, NULL);
+    qio_channel_set_blocking(client->ioc, false, IGNORE_ERRORS);
     rc = -EINVAL;
 
     TRACE("Beginning negotiation.");
@@ -694,7 +694,7 @@ static ssize_t nbd_receive_request(QIOChannel *ioc, NBDRequest *request)
     uint32_t magic;
     ssize_t ret;
 
-    ret = read_sync(ioc, buf, sizeof(buf), NULL);
+    ret = read_sync(ioc, buf, sizeof(buf), IGNORE_ERRORS);
     if (ret < 0) {
         return ret;
     }
@@ -745,7 +745,7 @@ static ssize_t nbd_send_reply(QIOChannel *ioc, NBDReply *reply)
     stl_be_p(buf + 4, reply->error);
     stq_be_p(buf + 8, reply->handle);
 
-    return write_sync(ioc, buf, sizeof(buf), NULL);
+    return write_sync(ioc, buf, sizeof(buf), IGNORE_ERRORS);
 }
 
 #define MAX_NBD_REQUESTS 16
@@ -790,7 +790,7 @@ static void client_close(NBDClient *client)
      * then we'll close the socket and free the NBDClient.
      */
     qio_channel_shutdown(client->ioc, QIO_CHANNEL_SHUTDOWN_BOTH,
-                         NULL);
+                         IGNORE_ERRORS);
 
     /* Also tell the client, so that they release their reference.  */
     if (client->close) {
@@ -920,7 +920,7 @@ NBDExport *nbd_export_new(BlockDriverState *bs, off_t dev_offset, off_t size,
      * access since the export could be available before migration handover.
      */
     aio_context_acquire(exp->ctx);
-    blk_invalidate_cache(blk, NULL);
+    blk_invalidate_cache(blk, IGNORE_ERRORS);
     aio_context_release(exp->ctx);
     return exp;
 
@@ -1048,7 +1048,7 @@ static ssize_t nbd_co_send_reply(NBDRequestData *req, NBDReply *reply,
         qio_channel_set_cork(client->ioc, true);
         rc = nbd_send_reply(client->ioc, reply);
         if (rc >= 0) {
-            ret = write_sync(client->ioc, req->data, len, NULL);
+            ret = write_sync(client->ioc, req->data, len, IGNORE_ERRORS);
             if (ret < 0) {
                 rc = -EIO;
             }
@@ -1123,7 +1123,7 @@ static ssize_t nbd_co_receive_request(NBDRequestData *req,
     if (request->type == NBD_CMD_WRITE) {
         TRACE("Reading %" PRIu32 " byte(s)", request->len);
 
-        if (read_sync(client->ioc, req->data, request->len, NULL) < 0) {
+        if (read_sync(client->ioc, req->data, request->len, IGNORE_ERRORS) < 0) {
             LOG("reading from socket failed");
             rc = -EIO;
             goto out;

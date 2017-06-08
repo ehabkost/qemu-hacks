@@ -553,7 +553,7 @@ static QObject *parse_value(JSONParserContext *ctxt, va_list *ap)
 
 QObject *json_parser_parse(GQueue *tokens, va_list *ap)
 {
-    return json_parser_parse_err(tokens, ap, NULL);
+    return json_parser_parse_err(tokens, ap, IGNORE_ERRORS);
 }
 
 QObject *json_parser_parse_err(GQueue *tokens, va_list *ap, Error **errp)

@@ -725,7 +725,8 @@ static void usb_hid_initfn(USBDevice *dev, int kind,
     us->intr = usb_ep_get(dev, USB_TOKEN_IN, 1);
     hid_init(&us->hid, kind, usb_hid_changed);
     if (us->display && us->hid.s) {
-        qemu_input_handler_bind(us->hid.s, us->display, us->head, NULL);
+        qemu_input_handler_bind(us->hid.s, us->display, us->head,
+                                IGNORE_ERRORS);
     }
 }
 

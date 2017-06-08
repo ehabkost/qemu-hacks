@@ -480,17 +480,17 @@ static void piix4_pm_add_propeties(PIIX4PMState *s)
     static const uint16_t sci_int = 9;
 
     object_property_add_uint8_ptr(OBJECT(s), ACPI_PM_PROP_ACPI_ENABLE_CMD,
-                                  &acpi_enable_cmd, NULL);
+                                  &acpi_enable_cmd, IGNORE_ERRORS);
     object_property_add_uint8_ptr(OBJECT(s), ACPI_PM_PROP_ACPI_DISABLE_CMD,
-                                  &acpi_disable_cmd, NULL);
+                                  &acpi_disable_cmd, IGNORE_ERRORS);
     object_property_add_uint32_ptr(OBJECT(s), ACPI_PM_PROP_GPE0_BLK,
-                                  &gpe0_blk, NULL);
+                                  &gpe0_blk, IGNORE_ERRORS);
     object_property_add_uint32_ptr(OBJECT(s), ACPI_PM_PROP_GPE0_BLK_LEN,
-                                  &gpe0_blk_len, NULL);
+                                  &gpe0_blk_len, IGNORE_ERRORS);
     object_property_add_uint16_ptr(OBJECT(s), ACPI_PM_PROP_SCI_INT,
-                                  &sci_int, NULL);
+                                  &sci_int, IGNORE_ERRORS);
     object_property_add_uint32_ptr(OBJECT(s), ACPI_PM_PROP_PM_IO_BASE,
-                                  &s->io_base, NULL);
+                                  &s->io_base, IGNORE_ERRORS);
 }
 
 static void piix4_pm_realize(PCIDevice *dev, Error **errp)
@@ -646,7 +646,7 @@ static void piix4_acpi_system_hot_add_init(MemoryRegion *parent,
     object_property_add_bool(OBJECT(s), "cpu-hotplug-legacy",
                              piix4_get_cpu_hotplug_legacy,
                              piix4_set_cpu_hotplug_legacy,
-                             NULL);
+                             IGNORE_ERRORS);
     legacy_acpi_cpu_hotplug_init(parent, OBJECT(s), &s->gpe_cpu,
                                  PIIX4_CPU_HOTPLUG_IO_BASE);
 

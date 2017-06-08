@@ -3458,7 +3458,7 @@ static void rtl8139_instance_init(Object *obj)
 
     device_add_bootindex_property(obj, &s->conf.bootindex,
                                   "bootindex", "/ethernet-phy@0",
-                                  DEVICE(obj), NULL);
+                                  DEVICE(obj), IGNORE_ERRORS);
 }
 
 static Property rtl8139_properties[] = {

@@ -106,10 +106,10 @@ static void spapr_rng_instance_init(Object *obj)
     object_property_add_link(obj, "rng", TYPE_RNG_BACKEND,
                              (Object **)&rngstate->backend,
                              object_property_allow_set_link,
-                             OBJ_PROP_LINK_UNREF_ON_RELEASE, NULL);
+                             OBJ_PROP_LINK_UNREF_ON_RELEASE, IGNORE_ERRORS);
     object_property_set_description(obj, "rng",
                                     "ID of the random number generator backend",
-                                    NULL);
+                                    IGNORE_ERRORS);
 }
 
 static void spapr_rng_realize(DeviceState *dev, Error **errp)

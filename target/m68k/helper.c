@@ -116,7 +116,7 @@ M68kCPU *cpu_m68k_init(const char *cpu_model)
 
     register_m68k_insns(env);
 
-    object_property_set_bool(OBJECT(cpu), true, "realized", NULL);
+    object_property_set_bool(OBJECT(cpu), true, "realized", IGNORE_ERRORS);
 
     return cpu;
 }

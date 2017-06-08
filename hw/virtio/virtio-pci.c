@@ -1686,7 +1686,7 @@ static void virtio_pci_device_plugged(DeviceState *d, Error **errp)
 
     if (proxy->nvectors) {
         int err = msix_init_exclusive_bar(&proxy->pci_dev, proxy->nvectors,
-                                          proxy->msix_bar_idx, NULL);
+                                          proxy->msix_bar_idx, IGNORE_ERRORS);
         if (err) {
             /* Notice when a system that supports MSIx can't initialize it */
             if (err != -ENOTSUP) {
@@ -2384,7 +2384,7 @@ static void virtio_rng_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
 
     object_property_set_link(OBJECT(vrng),
                              OBJECT(vrng->vdev.conf.rng), "rng",
-                             NULL);
+                             IGNORE_ERRORS);
 }
 
 static void virtio_rng_pci_class_init(ObjectClass *klass, void *data)

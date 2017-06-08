@@ -401,13 +401,14 @@ static int xen_9pfs_connect(struct XenDevice *xendev)
     v9fs_register_transport(s, &xen_9p_transport);
     fsdev = qemu_opts_create(qemu_find_opts("fsdev"),
             s->fsconf.tag,
-            1, NULL);
-    qemu_opt_set(fsdev, "fsdriver", "local", NULL);
-    qemu_opt_set(fsdev, "path", xen_9pdev->path, NULL);
-    qemu_opt_set(fsdev, "security_model", xen_9pdev->security_model, NULL);
+            1, IGNORE_ERRORS);
+    qemu_opt_set(fsdev, "fsdriver", "local", IGNORE_ERRORS);
+    qemu_opt_set(fsdev, "path", xen_9pdev->path, IGNORE_ERRORS);
+    qemu_opt_set(fsdev, "security_model", xen_9pdev->security_model,
+                 IGNORE_ERRORS);
     qemu_opts_set_id(fsdev, s->fsconf.fsdev_id);
     qemu_fsdev_add(fsdev);
-    v9fs_device_realize_common(s, NULL);
+    v9fs_device_realize_common(s, IGNORE_ERRORS);
 
     return 0;
 

@@ -168,7 +168,7 @@ static gboolean pty_chr_read(QIOChannel *chan, GIOCondition cond, void *opaque)
     if (len == 0) {
         return TRUE;
     }
-    ret = qio_channel_read(s->ioc, (char *)buf, len, NULL);
+    ret = qio_channel_read(s->ioc, (char *)buf, len, IGNORE_ERRORS);
     if (ret <= 0) {
         pty_chr_state(chr, 0);
         return FALSE;

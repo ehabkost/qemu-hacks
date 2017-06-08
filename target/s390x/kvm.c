@@ -238,7 +238,7 @@ static void kvm_s390_init_aes_kw(void)
     uint64_t attr = KVM_S390_VM_CRYPTO_DISABLE_AES_KW;
 
     if (object_property_get_bool(OBJECT(qdev_get_machine()), "aes-key-wrap",
-                                 NULL)) {
+                                 IGNORE_ERRORS)) {
             attr = KVM_S390_VM_CRYPTO_ENABLE_AES_KW;
     }
 
@@ -252,7 +252,7 @@ static void kvm_s390_init_dea_kw(void)
     uint64_t attr = KVM_S390_VM_CRYPTO_DISABLE_DEA_KW;
 
     if (object_property_get_bool(OBJECT(qdev_get_machine()), "dea-key-wrap",
-                                 NULL)) {
+                                 IGNORE_ERRORS)) {
             attr = KVM_S390_VM_CRYPTO_ENABLE_DEA_KW;
     }
 

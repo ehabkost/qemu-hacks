@@ -1560,7 +1560,7 @@ void pc_basic_device_init(ISABus *isa_bus, qemu_irq *gsi,
              * IRQ8 and IRQ2.
              */
             uint8_t compat = object_property_get_int(OBJECT(hpet),
-                    HPET_INTCAP, NULL);
+                    HPET_INTCAP, IGNORE_ERRORS);
             if (!compat) {
                 qdev_prop_set_uint32(hpet, HPET_INTCAP, hpet_irqs);
             }
@@ -1671,7 +1671,7 @@ void ioapic_init_gsi(GSIState *gsi_state, const char *parent_name)
     }
     if (parent_name) {
         object_property_add_child(object_resolve_path(parent_name, NULL),
-                                  "ioapic", OBJECT(dev), NULL);
+                                  "ioapic", OBJECT(dev), IGNORE_ERRORS);
     }
     qdev_init_nofail(dev);
     d = SYS_BUS_DEVICE(dev);

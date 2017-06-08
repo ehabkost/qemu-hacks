@@ -2020,7 +2020,7 @@ static int sd_create(const char *filename, QemuOpts *opts,
         BlockDriver *drv;
 
         /* Currently, only Sheepdog backing image is supported. */
-        drv = bdrv_find_protocol(backing_file, true, NULL);
+        drv = bdrv_find_protocol(backing_file, true, IGNORE_ERRORS);
         if (!drv || strcmp(drv->protocol_name, "sheepdog") != 0) {
             error_setg(errp, "backing_file must be a sheepdog image");
             ret = -EINVAL;
@@ -2448,7 +2448,7 @@ static coroutine_fn int sd_co_writev(BlockDriverState *bs, int64_t sector_num,
     BDRVSheepdogState *s = bs->opaque;
 
     if (offset > s->inode.vdi_size) {
-        ret = sd_truncate(bs, offset, NULL);
+        ret = sd_truncate(bs, offset, IGNORE_ERRORS);
         if (ret < 0) {
             return ret;
         }

@@ -385,7 +385,7 @@ static int quorum_compute_hash(QuorumAIOCB *acb, int i, QuorumVoteValue *hash)
     if (qcrypto_hash_bytesv(QCRYPTO_HASH_ALG_SHA256,
                             qiov->iov, qiov->niov,
                             &data, &len,
-                            NULL) < 0) {
+                            IGNORE_ERRORS) < 0) {
         return -EINVAL;
     }
 

@@ -234,7 +234,7 @@ SCSIDevice *scsi_bus_legacy_add_drive(SCSIBus *bus, BlockBackend *blk,
     driver = blk_is_sg(blk) ? "scsi-generic" : "scsi-disk";
     dev = qdev_create(&bus->qbus, driver);
     name = g_strdup_printf("legacy[%d]", unit);
-    object_property_add_child(OBJECT(bus), name, OBJECT(dev), NULL);
+    object_property_add_child(OBJECT(bus), name, OBJECT(dev), IGNORE_ERRORS);
     g_free(name);
 
     qdev_prop_set_uint32(dev, "scsi-id", unit);
@@ -242,10 +242,10 @@ SCSIDevice *scsi_bus_legacy_add_drive(SCSIBus *bus, BlockBackend *blk,
         object_property_set_int(OBJECT(dev), bootindex, "bootindex",
                                 &error_abort);
     }
-    if (object_property_find(OBJECT(dev), "removable", NULL)) {
+    if (object_property_find(OBJECT(dev), "removable", IGNORE_ERRORS)) {
         qdev_prop_set_bit(dev, "removable", removable);
     }
-    if (serial && object_property_find(OBJECT(dev), "serial", NULL)) {
+    if (serial && object_property_find(OBJECT(dev), "serial", IGNORE_ERRORS)) {
         qdev_prop_set_string(dev, "serial", serial);
     }
     qdev_prop_set_drive(dev, "drive", blk, &err);
@@ -2127,7 +2127,7 @@ static void scsi_dev_instance_init(Object *obj)
 
     device_add_bootindex_property(obj, &s->conf.bootindex,
                                   "bootindex", NULL,
-                                  &s->qdev, NULL);
+                                  &s->qdev, IGNORE_ERRORS);
 }
 
 static const TypeInfo scsi_device_type_info = {

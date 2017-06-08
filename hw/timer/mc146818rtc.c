@@ -989,10 +989,10 @@ static void rtc_realizefn(DeviceState *dev, Error **errp)
     qdev_set_legacy_instance_id(dev, base, 3);
     qemu_register_reset(rtc_reset, s);
 
-    object_property_add_tm(OBJECT(s), "date", rtc_get_date, NULL);
+    object_property_add_tm(OBJECT(s), "date", rtc_get_date, IGNORE_ERRORS);
 
     object_property_add_alias(qdev_get_machine(), "rtc-time",
-                              OBJECT(s), "date", NULL);
+                              OBJECT(s), "date", IGNORE_ERRORS);
 
     qdev_init_gpio_out(dev, &s->irq, 1);
 }
@@ -1050,7 +1050,7 @@ static void rtc_class_initfn(ObjectClass *klass, void *data)
 
 static void rtc_finalize(Object *obj)
 {
-    object_property_del(qdev_get_machine(), "rtc", NULL);
+    object_property_del(qdev_get_machine(), "rtc", IGNORE_ERRORS);
 }
 
 static const TypeInfo mc146818rtc_info = {

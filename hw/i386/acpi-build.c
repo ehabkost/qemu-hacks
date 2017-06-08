@@ -137,9 +137,11 @@ static void acpi_get_pm_info(AcpiPmInfo *pm)
         obj = piix;
         pm->cpu_hp_io_base = PIIX4_CPU_HOTPLUG_IO_BASE;
         pm->pcihp_io_base =
-            object_property_get_int(obj, ACPI_PCIHP_IO_BASE_PROP, NULL);
+            object_property_get_int(obj, ACPI_PCIHP_IO_BASE_PROP,
+                                    IGNORE_ERRORS);
         pm->pcihp_io_len =
-            object_property_get_int(obj, ACPI_PCIHP_IO_LEN_PROP, NULL);
+            object_property_get_int(obj, ACPI_PCIHP_IO_LEN_PROP,
+                                    IGNORE_ERRORS);
     }
     if (lpc) {
         obj = lpc;
@@ -148,21 +150,23 @@ static void acpi_get_pm_info(AcpiPmInfo *pm)
     assert(obj);
 
     /* Fill in optional s3/s4 related properties */
-    o = object_property_get_qobject(obj, ACPI_PM_PROP_S3_DISABLED, NULL);
+    o = object_property_get_qobject(obj, ACPI_PM_PROP_S3_DISABLED,
+                                    IGNORE_ERRORS);
     if (o) {
         pm->s3_disabled = qint_get_int(qobject_to_qint(o));
     } else {
         pm->s3_disabled = false;
     }
     qobject_decref(o);
-    o = object_property_get_qobject(obj, ACPI_PM_PROP_S4_DISABLED, NULL);
+    o = object_property_get_qobject(obj, ACPI_PM_PROP_S4_DISABLED,
+                                    IGNORE_ERRORS);
     if (o) {
         pm->s4_disabled = qint_get_int(qobject_to_qint(o));
     } else {
         pm->s4_disabled = false;
     }
     qobject_decref(o);
-    o = object_property_get_qobject(obj, ACPI_PM_PROP_S4_VAL, NULL);
+    o = object_property_get_qobject(obj, ACPI_PM_PROP_S4_VAL, IGNORE_ERRORS);
     if (o) {
         pm->s4_val = qint_get_int(qobject_to_qint(o));
     } else {
@@ -171,23 +175,24 @@ static void acpi_get_pm_info(AcpiPmInfo *pm)
     qobject_decref(o);
 
     /* Fill in mandatory properties */
-    pm->sci_int = object_property_get_int(obj, ACPI_PM_PROP_SCI_INT, NULL);
+    pm->sci_int = object_property_get_int(obj, ACPI_PM_PROP_SCI_INT,
+                                          IGNORE_ERRORS);
 
     pm->acpi_enable_cmd = object_property_get_int(obj,
                                                   ACPI_PM_PROP_ACPI_ENABLE_CMD,
-                                                  NULL);
+                                                  IGNORE_ERRORS);
     pm->acpi_disable_cmd = object_property_get_int(obj,
                                                   ACPI_PM_PROP_ACPI_DISABLE_CMD,
-                                                  NULL);
+                                                  IGNORE_ERRORS);
     pm->io_base = object_property_get_int(obj, ACPI_PM_PROP_PM_IO_BASE,
-                                          NULL);
+                                          IGNORE_ERRORS);
     pm->gpe0_blk = object_property_get_int(obj, ACPI_PM_PROP_GPE0_BLK,
-                                           NULL);
+                                           IGNORE_ERRORS);
     pm->gpe0_blk_len = object_property_get_int(obj, ACPI_PM_PROP_GPE0_BLK_LEN,
-                                               NULL);
+                                               IGNORE_ERRORS);
     pm->pcihp_bridge_en =
         object_property_get_bool(obj, "acpi-pci-hotplug-with-bridge-support",
-                                 NULL);
+                                 IGNORE_ERRORS);
 }
 
 static void acpi_get_misc_info(AcpiMiscInfo *info)
@@ -239,17 +244,17 @@ static void acpi_get_pci_holes(Range *hole, Range *hole64)
     range_set_bounds1(hole,
                       object_property_get_int(pci_host,
                                               PCI_HOST_PROP_PCI_HOLE_START,
-                                              NULL),
+                                              IGNORE_ERRORS),
                       object_property_get_int(pci_host,
                                               PCI_HOST_PROP_PCI_HOLE_END,
-                                              NULL));
+                                              IGNORE_ERRORS));
     range_set_bounds1(hole64,
                       object_property_get_int(pci_host,
                                               PCI_HOST_PROP_PCI_HOLE64_START,
-                                              NULL),
+                                              IGNORE_ERRORS),
                       object_property_get_int(pci_host,
                                               PCI_HOST_PROP_PCI_HOLE64_END,
-                                              NULL));
+                                              IGNORE_ERRORS));
 }
 
 #define ACPI_PORT_SMI_CMD           0x00b2 /* TODO: this is APM_CNT_IOPORT */
@@ -527,7 +532,8 @@ static void build_append_pci_bus_devices(Aml *parent_scope, PCIBus *bus,
     PCIBus *sec;
     int i;
 
-    bsel = object_property_get_qobject(OBJECT(bus), ACPI_PCIHP_PROP_BSEL, NULL);
+    bsel = object_property_get_qobject(OBJECT(bus), ACPI_PCIHP_PROP_BSEL,
+                                       IGNORE_ERRORS);
     if (bsel) {
         int64_t bsel_val = qint_get_int(qobject_to_qint(bsel));
 
@@ -2138,7 +2144,8 @@ build_dsdt(GArray *table_data, BIOSLinker *linker,
          * of the i/o region used is FW_CFG_CTL_SIZE; when using DMA, the
          * DMA control register is located at FW_CFG_DMA_IO_BASE + 4 */
         uint8_t io_size = object_property_get_bool(OBJECT(pcms->fw_cfg),
-                                                   "dma_enabled", NULL) ?
+                                                   "dma_enabled",
+                                                   IGNORE_ERRORS) ?
                           ROUND_UP(FW_CFG_CTL_SIZE, 4) + sizeof(dma_addr_t) :
                           FW_CFG_CTL_SIZE;
 
@@ -2327,7 +2334,7 @@ build_srat(GArray *table_data, BIOSLinker *linker, MachineState *machine)
     PCMachineState *pcms = PC_MACHINE(machine);
     ram_addr_t hotplugabble_address_space_size =
         object_property_get_int(OBJECT(pcms), PC_MACHINE_MEMHP_REGION_SIZE,
-                                NULL);
+                                IGNORE_ERRORS);
 
     srat_start = table_data->len;
 
@@ -2610,14 +2617,16 @@ static bool acpi_get_mcfg(AcpiMcfgInfo *mcfg)
     pci_host = acpi_get_i386_pci_host();
     g_assert(pci_host);
 
-    o = object_property_get_qobject(pci_host, PCIE_HOST_MCFG_BASE, NULL);
+    o = object_property_get_qobject(pci_host, PCIE_HOST_MCFG_BASE,
+                                    IGNORE_ERRORS);
     if (!o) {
         return false;
     }
     mcfg->mcfg_base = qint_get_int(qobject_to_qint(o));
     qobject_decref(o);
 
-    o = object_property_get_qobject(pci_host, PCIE_HOST_MCFG_SIZE, NULL);
+    o = object_property_get_qobject(pci_host, PCIE_HOST_MCFG_SIZE,
+                                    IGNORE_ERRORS);
     assert(o);
     mcfg->mcfg_size = qint_get_int(qobject_to_qint(o));
     qobject_decref(o);

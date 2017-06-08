@@ -455,33 +455,33 @@ void ich9_pm_add_properties(Object *obj, ICH9LPCPMRegs *pm, Error **errp)
                                    &pm->pm_io_base, errp);
     object_property_add(obj, ACPI_PM_PROP_GPE0_BLK, "uint32",
                         ich9_pm_get_gpe0_blk,
-                        NULL, NULL, pm, NULL);
+                        NULL, NULL, pm, IGNORE_ERRORS);
     object_property_add_uint32_ptr(obj, ACPI_PM_PROP_GPE0_BLK_LEN,
                                    &gpe0_len, errp);
     object_property_add_bool(obj, "memory-hotplug-support",
                              ich9_pm_get_memory_hotplug_support,
                              ich9_pm_set_memory_hotplug_support,
-                             NULL);
+                             IGNORE_ERRORS);
     object_property_add_bool(obj, "cpu-hotplug-legacy",
                              ich9_pm_get_cpu_hotplug_legacy,
                              ich9_pm_set_cpu_hotplug_legacy,
-                             NULL);
+                             IGNORE_ERRORS);
     object_property_add(obj, ACPI_PM_PROP_S3_DISABLED, "uint8",
                         ich9_pm_get_disable_s3,
                         ich9_pm_set_disable_s3,
-                        NULL, pm, NULL);
+                        NULL, pm, IGNORE_ERRORS);
     object_property_add(obj, ACPI_PM_PROP_S4_DISABLED, "uint8",
                         ich9_pm_get_disable_s4,
                         ich9_pm_set_disable_s4,
-                        NULL, pm, NULL);
+                        NULL, pm, IGNORE_ERRORS);
     object_property_add(obj, ACPI_PM_PROP_S4_VAL, "uint8",
                         ich9_pm_get_s4_val,
                         ich9_pm_set_s4_val,
-                        NULL, pm, NULL);
+                        NULL, pm, IGNORE_ERRORS);
     object_property_add_bool(obj, ACPI_PM_PROP_TCO_ENABLED,
                              ich9_pm_get_enable_tco,
                              ich9_pm_set_enable_tco,
-                             NULL);
+                             IGNORE_ERRORS);
 }
 
 void ich9_pm_device_plug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,

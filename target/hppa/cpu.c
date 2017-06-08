@@ -118,7 +118,7 @@ HPPACPU *cpu_hppa_init(const char *cpu_model)
 
     cpu = HPPA_CPU(object_new(TYPE_HPPA_CPU));
 
-    object_property_set_bool(OBJECT(cpu), true, "realized", NULL);
+    object_property_set_bool(OBJECT(cpu), true, "realized", IGNORE_ERRORS);
 
     return cpu;
 }

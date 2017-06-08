@@ -177,7 +177,7 @@ static void test_hash_iov(void)
                                   iov, 3,
                                   &result,
                                   &resultlen,
-                                  NULL);
+                                  IGNORE_ERRORS);
         g_assert(ret == 0);
         g_assert(resultlen == expected_lens[i]);
         for (j = 0; j < resultlen; j++) {

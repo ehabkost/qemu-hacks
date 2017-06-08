@@ -217,7 +217,8 @@ static void parse_numa_node(MachineState *ms, NumaNodeOptions *node,
         }
 
         object_ref(o);
-        numa_info[nodenr].node_mem = object_property_get_int(o, "size", NULL);
+        numa_info[nodenr].node_mem = object_property_get_int(o, "size",
+                                                             IGNORE_ERRORS);
         numa_info[nodenr].node_memdev = MEMORY_BACKEND(o);
     }
     numa_info[nodenr].present = true;
@@ -429,7 +430,7 @@ void parse_numa_opts(MachineState *ms)
     int i;
     MachineClass *mc = MACHINE_GET_CLASS(ms);
 
-    if (qemu_opts_foreach(qemu_find_opts("numa"), parse_numa, ms, NULL)) {
+    if (qemu_opts_foreach(qemu_find_opts("numa"), parse_numa, ms, IGNORE_ERRORS)) {
         exit(1);
     }
 
@@ -639,7 +640,7 @@ static int query_memdev(Object *obj, void *opaque)
 
         m->value = g_malloc0(sizeof(*m->value));
 
-        m->value->id = object_property_get_str(obj, "id", NULL);
+        m->value->id = object_property_get_str(obj, "id", IGNORE_ERRORS);
         m->value->has_id = !!m->value->id;
 
         m->value->size = object_property_get_int(obj, "size",

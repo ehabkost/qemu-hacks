@@ -833,15 +833,15 @@ qcrypto_tls_creds_x509_class_init(ObjectClass *oc, void *data)
     object_class_property_add_bool(oc, "loaded",
                                    qcrypto_tls_creds_x509_prop_get_loaded,
                                    qcrypto_tls_creds_x509_prop_set_loaded,
-                                   NULL);
+                                   IGNORE_ERRORS);
     object_class_property_add_bool(oc, "sanity-check",
                                    qcrypto_tls_creds_x509_prop_get_sanity,
                                    qcrypto_tls_creds_x509_prop_set_sanity,
-                                   NULL);
+                                   IGNORE_ERRORS);
     object_class_property_add_str(oc, "passwordid",
                                   qcrypto_tls_creds_x509_prop_get_passwordid,
                                   qcrypto_tls_creds_x509_prop_set_passwordid,
-                                  NULL);
+                                  IGNORE_ERRORS);
 }
 
 

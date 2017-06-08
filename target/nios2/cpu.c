@@ -87,7 +87,7 @@ Nios2CPU *cpu_nios2_init(const char *cpu_model)
 {
     Nios2CPU *cpu = NIOS2_CPU(object_new(TYPE_NIOS2_CPU));
 
-    object_property_set_bool(OBJECT(cpu), true, "realized", NULL);
+    object_property_set_bool(OBJECT(cpu), true, "realized", IGNORE_ERRORS);
 
     return cpu;
 }

@@ -267,7 +267,8 @@ static void virtio_input_hid_realize(DeviceState *dev, Error **errp)
 
     vhid->hs = qemu_input_handler_register(dev, vhid->handler);
     if (vhid->display && vhid->hs) {
-        qemu_input_handler_bind(vhid->hs, vhid->display, vhid->head, NULL);
+        qemu_input_handler_bind(vhid->hs, vhid->display, vhid->head,
+                                IGNORE_ERRORS);
     }
 }
 

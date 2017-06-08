@@ -170,7 +170,7 @@ AlphaCPU *cpu_alpha_init(const char *cpu_model)
     }
     cpu = ALPHA_CPU(object_new(object_class_get_name(cpu_class)));
 
-    object_property_set_bool(OBJECT(cpu), true, "realized", NULL);
+    object_property_set_bool(OBJECT(cpu), true, "realized", IGNORE_ERRORS);
 
     return cpu;
 }

@@ -419,7 +419,7 @@ static void block_job_completed_txn_abort(BlockJob *job)
         ctx = blk_get_aio_context(other_job->blk);
         if (!other_job->completed) {
             assert(other_job->cancelled);
-            block_job_finish_sync(other_job, NULL, NULL);
+            block_job_finish_sync(other_job, NULL, IGNORE_ERRORS);
         }
         block_job_completed_single(other_job);
         aio_context_release(ctx);
@@ -523,7 +523,7 @@ static void block_job_cancel_err(BlockJob *job, Error **errp)
 
 int block_job_cancel_sync(BlockJob *job)
 {
-    return block_job_finish_sync(job, &block_job_cancel_err, NULL);
+    return block_job_finish_sync(job, &block_job_cancel_err, IGNORE_ERRORS);
 }
 
 void block_job_cancel_sync_all(void)

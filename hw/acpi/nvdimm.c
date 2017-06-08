@@ -220,7 +220,7 @@ static NVDIMMDevice *nvdimm_get_device_by_handle(uint32_t handle)
     for (list = device_list; list; list = list->next) {
         NVDIMMDevice *nvd = list->data;
         int slot = object_property_get_int(OBJECT(nvd), PC_DIMM_SLOT_PROP,
-                                           NULL);
+                                           IGNORE_ERRORS);
 
         if (nvdimm_slot_to_handle(slot) == handle) {
             nvdimm = nvd;
@@ -238,13 +238,13 @@ nvdimm_build_structure_spa(GArray *structures, DeviceState *dev)
 {
     NvdimmNfitSpa *nfit_spa;
     uint64_t addr = object_property_get_int(OBJECT(dev), PC_DIMM_ADDR_PROP,
-                                            NULL);
+                                            IGNORE_ERRORS);
     uint64_t size = object_property_get_int(OBJECT(dev), PC_DIMM_SIZE_PROP,
-                                            NULL);
+                                            IGNORE_ERRORS);
     uint32_t node = object_property_get_int(OBJECT(dev), PC_DIMM_NODE_PROP,
-                                            NULL);
+                                            IGNORE_ERRORS);
     int slot = object_property_get_int(OBJECT(dev), PC_DIMM_SLOT_PROP,
-                                            NULL);
+                                            IGNORE_ERRORS);
 
     nfit_spa = acpi_data_push(structures, sizeof(*nfit_spa));
 
@@ -286,9 +286,9 @@ nvdimm_build_structure_memdev(GArray *structures, DeviceState *dev)
 {
     NvdimmNfitMemDev *nfit_memdev;
     uint64_t size = object_property_get_int(OBJECT(dev), PC_DIMM_SIZE_PROP,
-                                            NULL);
+                                            IGNORE_ERRORS);
     int slot = object_property_get_int(OBJECT(dev), PC_DIMM_SLOT_PROP,
-                                            NULL);
+                                            IGNORE_ERRORS);
     uint32_t handle = nvdimm_slot_to_handle(slot);
 
     nfit_memdev = acpi_data_push(structures, sizeof(*nfit_memdev));
@@ -322,7 +322,7 @@ static void nvdimm_build_structure_dcr(GArray *structures, DeviceState *dev)
 {
     NvdimmNfitControlRegion *nfit_dcr;
     int slot = object_property_get_int(OBJECT(dev), PC_DIMM_SLOT_PROP,
-                                       NULL);
+                                       IGNORE_ERRORS);
     uint32_t sn = nvdimm_slot_to_sn(slot);
 
     nfit_dcr = acpi_data_push(structures, sizeof(*nfit_dcr));

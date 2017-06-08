@@ -56,7 +56,7 @@ static gboolean fd_chr_read(QIOChannel *chan, GIOCondition cond, void *opaque)
     }
 
     ret = qio_channel_read(
-        chan, (gchar *)buf, len, NULL);
+        chan, (gchar *)buf, len, IGNORE_ERRORS);
     if (ret == 0) {
         remove_fd_in_watch(chr);
         qemu_chr_be_event(chr, CHR_EVENT_CLOSED);

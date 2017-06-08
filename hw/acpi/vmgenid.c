@@ -243,11 +243,11 @@ static void vmgenid_device_class_init(ObjectClass *klass, void *data)
     dc->props = vmgenid_properties;
 
     object_class_property_add_str(klass, VMGENID_GUID, NULL,
-                                  vmgenid_set_guid, NULL);
+                                  vmgenid_set_guid, IGNORE_ERRORS);
     object_class_property_set_description(klass, VMGENID_GUID,
                                     "Set Global Unique Identifier "
                                     "(big-endian) or auto for random value",
-                                    NULL);
+                                    IGNORE_ERRORS);
 }
 
 static const TypeInfo vmgenid_device_info = {

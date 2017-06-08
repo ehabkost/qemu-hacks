@@ -93,7 +93,7 @@ out:
     if (s->bs_flags != bdrv_get_flags(bs)) {
         /* Give up write permissions before making it read-only */
         blk_set_perm(job->blk, 0, BLK_PERM_ALL, &error_abort);
-        bdrv_reopen(bs, s->bs_flags, NULL);
+        bdrv_reopen(bs, s->bs_flags, IGNORE_ERRORS);
     }
 
     g_free(s->backing_file_str);
@@ -280,6 +280,6 @@ void stream_start(const char *job_id, BlockDriverState *bs,
 
 fail:
     if (orig_bs_flags != bdrv_get_flags(bs)) {
-        bdrv_reopen(bs, orig_bs_flags, NULL);
+        bdrv_reopen(bs, orig_bs_flags, IGNORE_ERRORS);
     }
 }

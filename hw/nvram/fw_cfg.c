@@ -917,7 +917,8 @@ static void fw_cfg_init1(DeviceState *dev)
 
     assert(!object_resolve_path(FW_CFG_PATH, NULL));
 
-    object_property_add_child(OBJECT(machine), FW_CFG_NAME, OBJECT(s), NULL);
+    object_property_add_child(OBJECT(machine), FW_CFG_NAME, OBJECT(s),
+                              IGNORE_ERRORS);
 
     qdev_init_nofail(dev);
 

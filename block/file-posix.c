@@ -2175,14 +2175,14 @@ static int raw_check_perm(BlockDriverState *bs, uint64_t perm, uint64_t shared,
 static void raw_set_perm(BlockDriverState *bs, uint64_t perm, uint64_t shared)
 {
     BDRVRawState *s = bs->opaque;
-    raw_handle_perm_lock(bs, RAW_PL_COMMIT, perm, shared, NULL);
+    raw_handle_perm_lock(bs, RAW_PL_COMMIT, perm, shared, IGNORE_ERRORS);
     s->perm = perm;
     s->shared_perm = shared;
 }
 
 static void raw_abort_perm_update(BlockDriverState *bs)
 {
-    raw_handle_perm_lock(bs, RAW_PL_ABORT, 0, 0, NULL);
+    raw_handle_perm_lock(bs, RAW_PL_ABORT, 0, 0, IGNORE_ERRORS);
 }
 
 BlockDriver bdrv_file = {

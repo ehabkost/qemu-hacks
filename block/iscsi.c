@@ -1362,7 +1362,7 @@ static char *get_initiator_name(QemuOpts *opts)
         return g_strdup(name);
     }
 
-    uuid_info = qmp_query_uuid(NULL);
+    uuid_info = qmp_query_uuid(IGNORE_ERRORS);
     if (strcmp(uuid_info->UUID, UUID_NONE) == 0) {
         name = qemu_get_vm_name();
     } else {
@@ -2111,7 +2111,7 @@ static int iscsi_create(const char *filename, QemuOpts *opts, Error **errp)
         error_propagate(errp, local_err);
         ret = -EINVAL;
     } else {
-        ret = iscsi_open(bs, bs_options, 0, NULL);
+        ret = iscsi_open(bs, bs_options, 0, IGNORE_ERRORS);
     }
     QDECREF(bs_options);
 

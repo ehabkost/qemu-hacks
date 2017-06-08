@@ -1379,7 +1379,7 @@ static void machvirt_init(MachineState *machine)
 
         cpuobj = object_new(typename);
         object_property_set_int(cpuobj, possible_cpus->cpus[n].arch_id,
-                                "mp-affinity", NULL);
+                                "mp-affinity", IGNORE_ERRORS);
 
         cs = CPU(cpuobj);
         cs->cpu_index = n;
@@ -1388,29 +1388,29 @@ static void machvirt_init(MachineState *machine)
                           &error_fatal);
 
         if (!vms->secure) {
-            object_property_set_bool(cpuobj, false, "has_el3", NULL);
+            object_property_set_bool(cpuobj, false, "has_el3", IGNORE_ERRORS);
         }
 
-        if (!vms->virt && object_property_find(cpuobj, "has_el2", NULL)) {
-            object_property_set_bool(cpuobj, false, "has_el2", NULL);
+        if (!vms->virt && object_property_find(cpuobj, "has_el2", IGNORE_ERRORS)) {
+            object_property_set_bool(cpuobj, false, "has_el2", IGNORE_ERRORS);
         }
 
         if (vms->psci_conduit != QEMU_PSCI_CONDUIT_DISABLED) {
             object_property_set_int(cpuobj, vms->psci_conduit,
-                                    "psci-conduit", NULL);
+                                    "psci-conduit", IGNORE_ERRORS);
 
             /* Secondary CPUs start in PSCI powered-down state */
             if (n > 0) {
                 object_property_set_bool(cpuobj, true,
-                                         "start-powered-off", NULL);
+                                         "start-powered-off", IGNORE_ERRORS);
             }
         }
 
-        if (vmc->no_pmu && object_property_find(cpuobj, "pmu", NULL)) {
-            object_property_set_bool(cpuobj, false, "pmu", NULL);
+        if (vmc->no_pmu && object_property_find(cpuobj, "pmu", IGNORE_ERRORS)) {
+            object_property_set_bool(cpuobj, false, "pmu", IGNORE_ERRORS);
         }
 
-        if (object_property_find(cpuobj, "reset-cbar", NULL)) {
+        if (object_property_find(cpuobj, "reset-cbar", IGNORE_ERRORS)) {
             object_property_set_int(cpuobj, vms->memmap[VIRT_CPUPERIPHS].base,
                                     "reset-cbar", &error_abort);
         }
@@ -1422,7 +1422,7 @@ static void machvirt_init(MachineState *machine)
                                      "secure-memory", &error_abort);
         }
 
-        object_property_set_bool(cpuobj, true, "realized", NULL);
+        object_property_set_bool(cpuobj, true, "realized", IGNORE_ERRORS);
         object_unref(cpuobj);
     }
     fdt_add_timer_nodes(vms);
@@ -1650,37 +1650,38 @@ static void virt_2_9_instance_init(Object *obj)
      */
     vms->secure = false;
     object_property_add_bool(obj, "secure", virt_get_secure,
-                             virt_set_secure, NULL);
+                             virt_set_secure, IGNORE_ERRORS);
     object_property_set_description(obj, "secure",
                                     "Set on/off to enable/disable the ARM "
                                     "Security Extensions (TrustZone)",
-                                    NULL);
+                                    IGNORE_ERRORS);
 
     /* EL2 is also disabled by default, for similar reasons */
     vms->virt = false;
     object_property_add_bool(obj, "virtualization", virt_get_virt,
-                             virt_set_virt, NULL);
+                             virt_set_virt, IGNORE_ERRORS);
     object_property_set_description(obj, "virtualization",
                                     "Set on/off to enable/disable emulating a "
                                     "guest CPU which implements the ARM "
                                     "Virtualization Extensions",
-                                    NULL);
+                                    IGNORE_ERRORS);
 
     /* High memory is enabled by default */
     vms->highmem = true;
     object_property_add_bool(obj, "highmem", virt_get_highmem,
-                             virt_set_highmem, NULL);
+                             virt_set_highmem, IGNORE_ERRORS);
     object_property_set_description(obj, "highmem",
                                     "Set on/off to enable/disable using "
                                     "physical address space above 32 bits",
-                                    NULL);
+                                    IGNORE_ERRORS);
     /* Default GIC type is v2 */
     vms->gic_version = 2;
     object_property_add_str(obj, "gic-version", virt_get_gic_version,
-                        virt_set_gic_version, NULL);
+                        virt_set_gic_version, IGNORE_ERRORS);
     object_property_set_description(obj, "gic-version",
                                     "Set GIC version. "
-                                    "Valid values are 2, 3 and host", NULL);
+                                    "Valid values are 2, 3 and host",
+                                    IGNORE_ERRORS);
 
     if (vmc->no_its) {
         vms->its = false;
@@ -1688,11 +1689,11 @@ static void virt_2_9_instance_init(Object *obj)
         /* Default allows ITS instantiation */
         vms->its = true;
         object_property_add_bool(obj, "its", virt_get_its,
-                                 virt_set_its, NULL);
+                                 virt_set_its, IGNORE_ERRORS);
         object_property_set_description(obj, "its",
                                         "Set on/off to enable/disable "
                                         "ITS instantiation",
-                                        NULL);
+                                        IGNORE_ERRORS);
     }
 
     vms->memmap = a15memmap;

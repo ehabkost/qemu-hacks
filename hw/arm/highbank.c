@@ -260,7 +260,7 @@ static void calxeda_init(MachineState *machine, enum cxmachines machine_id)
                                      "start-powered-off", &error_abort);
         }
 
-        if (object_property_find(cpuobj, "reset-cbar", NULL)) {
+        if (object_property_find(cpuobj, "reset-cbar", IGNORE_ERRORS)) {
             object_property_set_int(cpuobj, MPCORE_PERIPHBASE,
                                     "reset-cbar", &error_abort);
         }

@@ -80,7 +80,7 @@ static gpointer test_io_thread_writer(gpointer opaque)
     size_t niov = data->niov;
     struct iovec old = { 0 };
 
-    qio_channel_set_blocking(data->src, data->blocking, NULL);
+    qio_channel_set_blocking(data->src, data->blocking, IGNORE_ERRORS);
 
     while (niov) {
         ssize_t ret;
@@ -121,7 +121,7 @@ static gpointer test_io_thread_reader(gpointer opaque)
     size_t niov = data->niov;
     struct iovec old = { 0 };
 
-    qio_channel_set_blocking(data->dst, data->blocking, NULL);
+    qio_channel_set_blocking(data->dst, data->blocking, IGNORE_ERRORS);
 
     while (niov) {
         ssize_t ret;

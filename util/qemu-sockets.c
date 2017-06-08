@@ -306,7 +306,8 @@ static void wait_for_connect(void *opaque)
     if (s->current_addr) {
         while (s->current_addr->ai_next != NULL && s->fd < 0) {
             s->current_addr = s->current_addr->ai_next;
-            s->fd = inet_connect_addr(s->current_addr, &in_progress, s, NULL);
+            s->fd = inet_connect_addr(s->current_addr, &in_progress, s,
+                                      IGNORE_ERRORS);
             if (s->fd < 0) {
                 error_free(err);
                 err = NULL;

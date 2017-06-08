@@ -142,7 +142,7 @@ static void replication_close(BlockDriverState *bs)
     BDRVReplicationState *s = bs->opaque;
 
     if (s->stage == BLOCK_REPLICATION_RUNNING) {
-        replication_stop(s->rs, false, NULL);
+        replication_stop(s->rs, false, IGNORE_ERRORS);
     }
     if (s->stage == BLOCK_REPLICATION_FAILOVER) {
         block_job_cancel_sync(s->active_disk->bs->job);
@@ -389,13 +389,13 @@ static void backup_job_cleanup(BlockDriverState *bs)
     BDRVReplicationState *s = bs->opaque;
     BlockDriverState *top_bs;
 
-    top_bs = bdrv_lookup_bs(s->top_id, s->top_id, NULL);
+    top_bs = bdrv_lookup_bs(s->top_id, s->top_id, IGNORE_ERRORS);
     if (!top_bs) {
         return;
     }
     bdrv_op_unblock_all(top_bs, s->blocker);
     error_free(s->blocker);
-    reopen_backing_file(bs, false, NULL);
+    reopen_backing_file(bs, false, IGNORE_ERRORS);
 }
 
 static void backup_job_completed(void *opaque, int ret)
@@ -516,11 +516,11 @@ static void replication_start(ReplicationState *rs, ReplicationMode mode,
         error_setg(&s->blocker,
                    "Block device is in use by internal backup job");
 
-        top_bs = bdrv_lookup_bs(s->top_id, s->top_id, NULL);
+        top_bs = bdrv_lookup_bs(s->top_id, s->top_id, IGNORE_ERRORS);
         if (!top_bs || !bdrv_is_root_node(top_bs) ||
             !check_top_bs(top_bs, bs)) {
             error_setg(errp, "No top_bs or it is invalid");
-            reopen_backing_file(bs, false, NULL);
+            reopen_backing_file(bs, false, IGNORE_ERRORS);
             aio_context_release(aio_context);
             return;
         }
