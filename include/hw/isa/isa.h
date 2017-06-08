@@ -3,6 +3,7 @@
 
 /* ISA bus */
 
+#include "qapi/error.h"
 #include "exec/memory.h"
 #include "exec/ioport.h"
 #include "hw/qdev.h"

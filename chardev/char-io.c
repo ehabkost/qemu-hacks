@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "chardev/char-io.h"
 
 typedef struct IOWatchPoll {

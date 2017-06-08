@@ -1,5 +1,6 @@
 /* This is the Linux kernel elf-loading code, ported into user space */
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include <sys/param.h>
 
 #include <sys/resource.h>

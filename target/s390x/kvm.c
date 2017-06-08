@@ -22,6 +22,7 @@
  */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include <sys/ioctl.h>
 
 #include <linux/kvm.h>

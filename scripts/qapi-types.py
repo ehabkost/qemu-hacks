@@ -287,6 +287,7 @@ h_comment = '''
 fdef.write(mcgen('''
 #include "qemu/osdep.h"
 #include "qapi/dealloc-visitor.h"
+#include "qapi/error.h"
 #include "%(prefix)sqapi-types.h"
 #include "%(prefix)sqapi-visit.h"
 ''',

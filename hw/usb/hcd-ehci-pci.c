@@ -16,6 +16,7 @@
  */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "hw/usb/hcd-ehci.h"
 #include "qemu/range.h"
 

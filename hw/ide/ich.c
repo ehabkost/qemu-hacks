@@ -61,6 +61,7 @@
  */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "hw/hw.h"
 #include "hw/pci/msi.h"
 #include "hw/i386/pc.h"

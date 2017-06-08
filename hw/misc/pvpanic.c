@@ -13,6 +13,7 @@
  */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "qapi/qmp/qobject.h"
 #include "qapi/qmp/qjson.h"
 #include "sysemu/sysemu.h"

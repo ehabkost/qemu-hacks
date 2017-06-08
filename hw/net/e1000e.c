@@ -34,6 +34,7 @@
 */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "net/net.h"
 #include "net/tap.h"
 #include "qemu/range.h"

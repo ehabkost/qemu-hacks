@@ -23,6 +23,7 @@
  */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 
 #include "hw/qdev.h"
 #include "qom/object.h"

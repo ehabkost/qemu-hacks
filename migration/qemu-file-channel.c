@@ -23,6 +23,7 @@
  */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "qemu-file-channel.h"
 #include "exec/cpu-common.h"
 #include "qemu-file.h"

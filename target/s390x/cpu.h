@@ -24,6 +24,7 @@
 #define S390X_CPU_H
 
 #include "qemu-common.h"
+#include "qapi/error.h"
 #include "cpu-qom.h"
 
 #define TARGET_LONG_BITS 64

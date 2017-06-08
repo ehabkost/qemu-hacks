@@ -22,6 +22,7 @@
 
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 
 #include "crypto-tls-x509-helpers.h"
 #include "io/channel-tls.h"

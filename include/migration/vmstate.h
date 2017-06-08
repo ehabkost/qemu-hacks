@@ -27,6 +27,7 @@
 #ifndef QEMU_VMSTATE_H
 #define QEMU_VMSTATE_H
 
+#include "qapi/error.h"
 #include "migration/qjson.h"
 
 typedef void SaveStateHandler(QEMUFile *f, void *opaque);

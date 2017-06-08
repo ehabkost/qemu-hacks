@@ -50,6 +50,7 @@
 
 /* For crc32 */
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include <zlib.h>
 
 #include "hw/hw.h"

@@ -28,6 +28,7 @@
  * THE SOFTWARE.
  */
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "hw/hw.h"
 #include "hw/loader.h"
 #include "sysemu/arch_init.h"

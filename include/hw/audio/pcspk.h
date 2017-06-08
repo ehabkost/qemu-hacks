@@ -25,6 +25,7 @@
 #ifndef HW_PCSPK_H
 #define HW_PCSPK_H
 
+#include "qapi/error.h"
 #include "hw/hw.h"
 #include "hw/isa/isa.h"
 

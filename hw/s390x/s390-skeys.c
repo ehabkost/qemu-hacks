@@ -10,6 +10,7 @@
  */
 
 #include "qemu/osdep.h"
+#include "qapi/error.h"
 #include "hw/boards.h"
 #include "qmp-commands.h"
 #include "hw/s390x/storage-keys.h"
