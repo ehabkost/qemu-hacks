@@ -25,7 +25,7 @@ static void test_qapi_enum_parse(void)
     g_assert_cmpint(ret, ==, QTYPE_NONE);
 
     ret = qapi_enum_parse(QType_lookup, "junk", QTYPE__MAX, -1,
-                          NULL);
+                          IGNORE_ERRORS);
     g_assert_cmpint(ret, ==, -1);
 
     ret = qapi_enum_parse(QType_lookup, "junk", QTYPE__MAX, -1,
@@ -137,14 +137,14 @@ static void test_error_api(void)
 {
     Error *err = NULL;
 
-    successfn(NULL);
-    test_propagate(successfn, NULL);
+    successfn(IGNORE_ERRORS);
+    test_propagate(successfn, IGNORE_ERRORS);
 
-    fail1(NULL);
-    test_propagate(fail1, NULL);
+    fail1(IGNORE_ERRORS);
+    test_propagate(fail1, IGNORE_ERRORS);
 
-    multifn(NULL);
-    test_propagate(multifn, NULL);
+    multifn(IGNORE_ERRORS);
+    test_propagate(multifn, IGNORE_ERRORS);
 
     successfn(&err);
     g_assert(!err);
