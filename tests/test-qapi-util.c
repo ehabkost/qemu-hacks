@@ -77,25 +77,25 @@ static void test_parse_qapi_name(void)
 
 static void successfn(Error **errp)
 {
-    g_assert(ERR_IS_IGNORED(errp) || !ERR_IS_SET(errp));
+    g_assert(!ERR_IS_SET(errp));
 }
 
 static void fail1(Error **errp)
 {
-    g_assert(ERR_IS_IGNORED(errp) || !ERR_IS_SET(errp));
+    g_assert(!ERR_IS_SET(errp));
 
     error_setg(errp, "error1");
 
-    g_assert(ERR_IS_IGNORED(errp) || ERR_IS_SET(errp));
+    g_assert(ERR_IS_SET(errp));
 }
 
 static void fail2(Error **errp)
 {
-    g_assert(ERR_IS_IGNORED(errp) || !ERR_IS_SET(errp));
+    g_assert(!ERR_IS_SET(errp));
 
     error_setg(errp, "error2");
 
-    g_assert(ERR_IS_IGNORED(errp) || ERR_IS_SET(errp));
+    g_assert(ERR_IS_SET(errp));
 }
 
 static void multifn(Error **errp)
@@ -124,13 +124,13 @@ static void test_propagate(void (*fn)(Error **), Error **errp)
     bool failed;
     Error *local_err = NULL;
 
-    g_assert(ERR_IS_IGNORED(errp) || !ERR_IS_SET(errp));
+    g_assert(!ERR_IS_SET(errp));
 
     fn(&local_err);
     failed = !!local_err;
     error_propagate(errp, local_err);
 
-    g_assert(ERR_IS_IGNORED(errp) || (failed == !!ERR_IS_SET(errp)));
+    g_assert((failed == !!ERR_IS_SET(errp)));
 }
 
 static void test_error_api(void)

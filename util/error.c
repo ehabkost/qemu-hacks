@@ -28,6 +28,8 @@ struct Error
 
 Error *error_abort;
 Error *error_fatal;
+Error ignored_error_unset;
+Error ignored_error_set;
 
 static void error_handle_fatal(Error **errp, Error *err)
 {
@@ -52,6 +54,7 @@ static void error_setv(Error **errp,
     int saved_errno = errno;
 
     if (ERR_IS_IGNORED(errp)) {
+        *errp = &ignored_error_set;
         return;
     }
     assert(!ERR_IS_SET(errp));
@@ -104,6 +107,7 @@ void error_setg_errno_internal(Error **errp,
     int saved_errno = errno;
 
     if (ERR_IS_IGNORED(errp)) {
+        *errp = &ignored_error_set;
         return;
     }
 
@@ -126,6 +130,8 @@ void error_setg_file_open_internal(Error **errp,
 void error_vprepend(Error **errp, const char *fmt, va_list ap)
 {
     GString *newmsg;
+
+    assert(ERR_IS_SET(errp));
 
     if (ERR_IS_IGNORED(errp)) {
         return;
@@ -153,6 +159,8 @@ void error_append_hint(Error **errp, const char *fmt, ...)
     int saved_errno = errno;
     Error *err;
 
+    assert(ERR_IS_SET(errp));
+
     if (ERR_IS_IGNORED(errp)) {
         return;
     }
@@ -179,6 +187,7 @@ void error_setg_win32_internal(Error **errp,
     char *suffix = NULL;
 
     if (ERR_IS_IGNORED(errp)) {
+        *errp = &ignored_error_set;
         return;
     }
 
@@ -266,7 +275,9 @@ void error_propagate(Error **dst_errp, Error *local_err)
         return;
     }
     error_handle_fatal(dst_errp, local_err);
-    if (!ERR_IS_IGNORED(dst_errp) && !ERR_IS_SET(dst_errp)) {
+    if (ERR_IS_IGNORED(dst_errp)) {
+        *dst_errp = &ignored_error_set;
+    } else if (!ERR_IS_SET(dst_errp)) {
         *dst_errp = local_err;
     } else {
         error_free(local_err);

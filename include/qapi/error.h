@@ -117,10 +117,24 @@
 
 #include "qapi-types.h"
 
-#define IGNORE_ERRORS (NULL)
 
-#define ERR_IS_SET(e) (!!*(e))
-#define ERR_IS_IGNORED(e) (!(e))
+/*
+ * Special error value to indicate errors will be ignored, and no
+ * error was set.
+ */
+extern Error ignored_error_unset;
+
+/*
+ * Special error destination to indicate errors will be ignored,
+ * but an error value was set.
+ */
+extern Error ignored_error_set;
+
+
+#define IGNORE_ERRORS (& (Error *) { &ignored_error_unset })
+
+#define ERR_IS_SET(e) (*(e) && *(e) != &ignored_error_unset)
+#define ERR_IS_IGNORED(e) (!(e) || *(e) == &ignored_error_unset || *(e) == &ignored_error_set)
 
 /*
  * Overall category of an error.
