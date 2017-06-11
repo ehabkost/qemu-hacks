@@ -2282,7 +2282,8 @@ static void qemu_rdma_cleanup(RDMAContext *rdma)
 static int qemu_rdma_source_init(RDMAContext *rdma, bool pin_all, Error **errp)
 {
     int ret, idx;
-    Error *local_err = NULL, **temp = &local_err;
+    Error *local_err = NULL;
+    Error **temp = &local_err;
 
     /*
      * Will be validated against destination's actual capabilities
@@ -3433,7 +3434,8 @@ static int qemu_rdma_registration_start(QEMUFile *f, void *opaque,
 static int qemu_rdma_registration_stop(QEMUFile *f, void *opaque,
                                        uint64_t flags, void *data)
 {
-    Error *local_err = NULL, **errp = &local_err;
+    Error *local_err = NULL;
+    Error **errp = &local_err;
     QIOChannelRDMA *rioc = QIO_CHANNEL_RDMA(opaque);
     RDMAContext *rdma = rioc->rdma;
     RDMAControlHeader head = { .len = 0, .repeat = 1 };
@@ -3606,7 +3608,8 @@ static void rdma_accept_incoming_migration(void *opaque)
     RDMAContext *rdma = opaque;
     int ret;
     QEMUFile *f;
-    Error *local_err = NULL, **errp = &local_err;
+    Error *local_err = NULL;
+    Error **errp = &local_err;
 
     trace_qemu_rdma_accept_incoming_migration();
     ret = qemu_rdma_accept(rdma);
