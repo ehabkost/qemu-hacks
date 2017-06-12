@@ -830,7 +830,7 @@ static inline off_t cluster2sector(BDRVVVFATState* s, uint32_t cluster_num)
 
 static int init_directories(BDRVVVFATState* s,
                             const char *dirname, int heads, int secs,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     bootsector_t* bootsector;
     mapping_t* mapping;
@@ -980,7 +980,7 @@ static int init_directories(BDRVVVFATState* s,
 static BDRVVVFATState *vvv = NULL;
 #endif
 
-static int enable_write_target(BlockDriverState *bs, Error **errp);
+static int enable_write_target(BlockDriverState *bs, Error *errp[static 1]);
 static int is_consistent(BDRVVVFATState *s);
 
 static QemuOptsList runtime_opts = {
@@ -1017,7 +1017,7 @@ static QemuOptsList runtime_opts = {
 };
 
 static void vvfat_parse_filename(const char *filename, QDict *options,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     int fat_type = 0;
     bool floppy = false;
@@ -1064,7 +1064,7 @@ static void vvfat_parse_filename(const char *filename, QDict *options,
 }
 
 static int vvfat_open(BlockDriverState *bs, QDict *options, int flags,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     BDRVVVFATState *s = bs->opaque;
     int cyls, heads, secs;
@@ -1222,7 +1222,7 @@ fail:
     return ret;
 }
 
-static void vvfat_refresh_limits(BlockDriverState *bs, Error **errp)
+static void vvfat_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     bs->bl.request_alignment = BDRV_SECTOR_SIZE; /* No sub-sector I/O */
 }
@@ -3011,7 +3011,7 @@ static const BdrvChildRole child_vvfat_qcow = {
     .inherit_options    = vvfat_qcow_options,
 };
 
-static int enable_write_target(BlockDriverState *bs, Error **errp)
+static int enable_write_target(BlockDriverState *bs, Error *errp[static 1])
 {
     BDRVVVFATState *s = bs->opaque;
     BlockDriver *bdrv_qcow = NULL;

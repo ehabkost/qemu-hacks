@@ -14,7 +14,7 @@
 #include "qemu/osdep.h"
 #include "hw/vfio/vfio-amd-xgbe.h"
 
-static void amd_xgbe_realize(DeviceState *dev, Error **errp)
+static void amd_xgbe_realize(DeviceState *dev, Error *errp[static 1])
 {
     VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(dev);
     VFIOAmdXgbeDeviceClass *k = VFIO_AMD_XGBE_DEVICE_GET_CLASS(dev);

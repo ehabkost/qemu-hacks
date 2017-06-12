@@ -268,7 +268,7 @@ bool is_supported_silicon_rev(uint32_t silicon_rev)
     return false;
 }
 
-static void aspeed_scu_realize(DeviceState *dev, Error **errp)
+static void aspeed_scu_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     AspeedSCUState *s = ASPEED_SCU(dev);

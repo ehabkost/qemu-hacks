@@ -868,7 +868,7 @@ int qemu_find_nic_model(NICInfo *nd, const char * const *models,
 }
 
 static int net_init_nic(const Netdev *netdev, const char *name,
-                        NetClientState *peer, Error **errp)
+                        NetClientState *peer, Error *errp[static 1])
 {
     int idx;
     NICInfo *nd;
@@ -965,7 +965,8 @@ static int (* const net_client_init_fun[NET_CLIENT_DRIVER__MAX])(
 };
 
 
-static int net_client_init1(const void *object, bool is_netdev, Error **errp)
+static int net_client_init1(const void *object, bool is_netdev,
+                            Error *errp[static 1])
 {
     Netdev legacy = {0};
     const Netdev *netdev;
@@ -1071,7 +1072,7 @@ static int net_client_init1(const void *object, bool is_netdev, Error **errp)
 }
 
 
-int net_client_init(QemuOpts *opts, bool is_netdev, Error **errp)
+int net_client_init(QemuOpts *opts, bool is_netdev, Error *errp[static 1])
 {
     void *object = NULL;
     Error *err = NULL;
@@ -1205,12 +1206,12 @@ void hmp_host_net_remove(Monitor *mon, const QDict *qdict)
     qemu_opts_del(qemu_opts_find(qemu_find_opts("net"), device));
 }
 
-void netdev_add(QemuOpts *opts, Error **errp)
+void netdev_add(QemuOpts *opts, Error *errp[static 1])
 {
     net_client_init(opts, true, errp);
 }
 
-void qmp_netdev_add(QDict *qdict, QObject **ret, Error **errp)
+void qmp_netdev_add(QDict *qdict, QObject **ret, Error *errp[static 1])
 {
     Error *local_err = NULL;
     QemuOptsList *opts_list;
@@ -1236,7 +1237,7 @@ out:
     error_propagate(errp, local_err);
 }
 
-void qmp_netdev_del(const char *id, Error **errp)
+void qmp_netdev_del(const char *id, Error *errp[static 1])
 {
     NetClientState *nc;
     QemuOpts *opts;
@@ -1303,7 +1304,7 @@ void print_net_client(Monitor *mon, NetClientState *nc)
 }
 
 RxFilterInfoList *qmp_query_rx_filter(bool has_name, const char *name,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     NetClientState *nc;
     RxFilterInfoList *filter_list = NULL, *last_entry = NULL;
@@ -1386,7 +1387,7 @@ void hmp_info_network(Monitor *mon, const QDict *qdict)
     }
 }
 
-void qmp_set_link(const char *name, bool up, Error **errp)
+void qmp_set_link(const char *name, bool up, Error *errp[static 1])
 {
     NetClientState *ncs[MAX_QUEUE_NUM];
     NetClientState *nc;
@@ -1501,7 +1502,7 @@ void net_check_clients(void)
     }
 }
 
-static int net_init_client(void *dummy, QemuOpts *opts, Error **errp)
+static int net_init_client(void *dummy, QemuOpts *opts, Error *errp[static 1])
 {
     Error *local_err = NULL;
 
@@ -1514,7 +1515,7 @@ static int net_init_client(void *dummy, QemuOpts *opts, Error **errp)
     return 0;
 }
 
-static int net_init_netdev(void *dummy, QemuOpts *opts, Error **errp)
+static int net_init_netdev(void *dummy, QemuOpts *opts, Error *errp[static 1])
 {
     Error *local_err = NULL;
     int ret;

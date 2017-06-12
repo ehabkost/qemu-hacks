@@ -138,7 +138,7 @@ static void kvm_ioapic_set_irq(void *opaque, int irq, int level)
     apic_report_irq_delivered(delivered);
 }
 
-static void kvm_ioapic_realize(DeviceState *dev, Error **errp)
+static void kvm_ioapic_realize(DeviceState *dev, Error *errp[static 1])
 {
     IOAPICCommonState *s = IOAPIC_COMMON(dev);
 

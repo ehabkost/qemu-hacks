@@ -68,7 +68,7 @@ struct Chardev {
  * Returns: a new character backend
  */
 Chardev *qemu_chr_new_from_opts(QemuOpts *opts,
-                                Error **errp);
+                                Error *errp[static 1]);
 
 /**
  * @qemu_chr_parse_common:
@@ -166,7 +166,7 @@ void qemu_chr_set_feature(Chardev *chr,
 QemuOpts *qemu_chr_parse_compat(const char *label, const char *filename);
 int qemu_chr_write(Chardev *s, const uint8_t *buf, int len, bool write_all);
 #define qemu_chr_write_all(s, buf, len) qemu_chr_write(s, buf, len, true)
-int qemu_chr_wait_connected(Chardev *chr, Error **errp);
+int qemu_chr_wait_connected(Chardev *chr, Error *errp[static 1]);
 
 #define TYPE_CHARDEV "chardev"
 #define CHARDEV(obj) OBJECT_CHECK(Chardev, (obj), TYPE_CHARDEV)
@@ -219,11 +219,12 @@ typedef struct ChardevClass {
 } ChardevClass;
 
 Chardev *qemu_chardev_new(const char *id, const char *typename,
-                          ChardevBackend *backend, Error **errp);
+                          ChardevBackend *backend, Error *errp[static 1]);
 
 extern int term_escape_char;
 
 /* console.c */
-void qemu_chr_parse_vc(QemuOpts *opts, ChardevBackend *backend, Error **errp);
+void qemu_chr_parse_vc(QemuOpts *opts, ChardevBackend *backend,
+		       Error *errp[static 1]);
 
 #endif

@@ -96,7 +96,7 @@ World *rocker_get_world(Rocker *r, enum rocker_world_type type)
     return NULL;
 }
 
-RockerSwitch *qmp_query_rocker(const char *name, Error **errp)
+RockerSwitch *qmp_query_rocker(const char *name, Error *errp[static 1])
 {
     RockerSwitch *rocker;
     Rocker *r;
@@ -115,7 +115,8 @@ RockerSwitch *qmp_query_rocker(const char *name, Error **errp)
     return rocker;
 }
 
-RockerPortList *qmp_query_rocker_ports(const char *name, Error **errp)
+RockerPortList *qmp_query_rocker_ports(const char *name,
+                                       Error *errp[static 1])
 {
     RockerPortList *list = NULL;
     Rocker *r;

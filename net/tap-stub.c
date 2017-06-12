@@ -27,13 +27,14 @@
 #include "tap_int.h"
 
 int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
-             int vnet_hdr_required, int mq_required, Error **errp)
+             int vnet_hdr_required, int mq_required, Error *errp[static 1])
 {
     error_setg(errp, "tap is not supported in this build");
     return -1;
 }
 
-void tap_set_sndbuf(int fd, const NetdevTapOptions *tap, Error **errp)
+void tap_set_sndbuf(int fd, const NetdevTapOptions *tap,
+		    Error *errp[static 1])
 {
 }
 

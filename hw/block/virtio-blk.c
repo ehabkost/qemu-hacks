@@ -776,7 +776,7 @@ static void virtio_blk_set_config(VirtIODevice *vdev, const uint8_t *config)
 }
 
 static uint64_t virtio_blk_get_features(VirtIODevice *vdev, uint64_t features,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     VirtIOBlock *s = VIRTIO_BLK(vdev);
 
@@ -904,7 +904,7 @@ static const BlockDevOps virtio_block_ops = {
     .resize_cb = virtio_blk_resize,
 };
 
-static void virtio_blk_device_realize(DeviceState *dev, Error **errp)
+static void virtio_blk_device_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOBlock *s = VIRTIO_BLK(dev);
@@ -961,7 +961,8 @@ static void virtio_blk_device_realize(DeviceState *dev, Error **errp)
     blk_iostatus_enable(s->blk);
 }
 
-static void virtio_blk_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_blk_device_unrealize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOBlock *s = VIRTIO_BLK(dev);

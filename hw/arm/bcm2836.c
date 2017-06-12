@@ -51,7 +51,7 @@ static void bcm2836_init(Object *obj)
     qdev_set_parent_bus(DEVICE(&s->peripherals), sysbus_get_default());
 }
 
-static void bcm2836_realize(DeviceState *dev, Error **errp)
+static void bcm2836_realize(DeviceState *dev, Error *errp[static 1])
 {
     BCM2836State *s = BCM2836(dev);
     Object *obj;

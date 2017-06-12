@@ -762,7 +762,7 @@ static void xen_pt_destroy(PCIDevice *d) {
 }
 /* init */
 
-static void xen_pt_realize(PCIDevice *d, Error **errp)
+static void xen_pt_realize(PCIDevice *d, Error *errp[static 1])
 {
     XenPCIPassthroughState *s = XEN_PT_DEVICE(d);
     int i, rc = 0;

@@ -164,7 +164,8 @@ static const TypeInfo pxb_host_info = {
 /*
  * Registers the PXB bus as a child of pci host root bus.
  */
-static void pxb_register_bus(PCIDevice *dev, PCIBus *pxb_bus, Error **errp)
+static void pxb_register_bus(PCIDevice *dev, PCIBus *pxb_bus,
+                             Error *errp[static 1])
 {
     PCIBus *bus = dev->bus;
     int pxb_bus_num = pci_bus_num(pxb_bus);
@@ -210,7 +211,8 @@ static gint pxb_compare(gconstpointer a, gconstpointer b)
            0;
 }
 
-static void pxb_dev_realize_common(PCIDevice *dev, bool pcie, Error **errp)
+static void pxb_dev_realize_common(PCIDevice *dev, bool pcie,
+                                   Error *errp[static 1])
 {
     PXBDev *pxb = convert_to_pxb(dev);
     DeviceState *ds, *bds = NULL;
@@ -268,7 +270,7 @@ err_register_bus:
     object_unref(OBJECT(ds));
 }
 
-static void pxb_dev_realize(PCIDevice *dev, Error **errp)
+static void pxb_dev_realize(PCIDevice *dev, Error *errp[static 1])
 {
     if (pci_bus_is_express(dev->bus)) {
         error_setg(errp, "pxb devices cannot reside on a PCIe bus");
@@ -316,7 +318,7 @@ static const TypeInfo pxb_dev_info = {
     .class_init    = pxb_dev_class_init,
 };
 
-static void pxb_pcie_dev_realize(PCIDevice *dev, Error **errp)
+static void pxb_pcie_dev_realize(PCIDevice *dev, Error *errp[static 1])
 {
     if (!pci_bus_is_express(dev->bus)) {
         error_setg(errp, "pxb-pcie devices cannot reside on a PCI bus");

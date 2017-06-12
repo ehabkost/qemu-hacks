@@ -10,9 +10,9 @@ int msix_init(PCIDevice *dev, unsigned short nentries,
               MemoryRegion *table_bar, uint8_t table_bar_nr,
               unsigned table_offset, MemoryRegion *pba_bar,
               uint8_t pba_bar_nr, unsigned pba_offset, uint8_t cap_pos,
-              Error **errp);
+              Error *errp[static 1]);
 int msix_init_exclusive_bar(PCIDevice *dev, unsigned short nentries,
-                            uint8_t bar_nr, Error **errp);
+                            uint8_t bar_nr, Error *errp[static 1]);
 
 void msix_write_config(PCIDevice *dev, uint32_t address, uint32_t val, int len);
 

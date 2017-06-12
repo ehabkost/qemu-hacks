@@ -108,7 +108,7 @@ static void bitband_init(Object *obj)
     sysbus_init_mmio(dev, &s->iomem);
 }
 
-static void bitband_realize(DeviceState *dev, Error **errp)
+static void bitband_realize(DeviceState *dev, Error *errp[static 1])
 {
     BitBandState *s = BITBAND(dev);
 
@@ -157,7 +157,7 @@ static void armv7m_instance_init(Object *obj)
     }
 }
 
-static void armv7m_realize(DeviceState *dev, Error **errp)
+static void armv7m_realize(DeviceState *dev, Error *errp[static 1])
 {
     ARMv7MState *s = ARMV7M(dev);
     SysBusDevice *sbd;

@@ -28,7 +28,7 @@ typedef struct EHCIPCIInfo {
     bool companion;
 } EHCIPCIInfo;
 
-static void usb_ehci_pci_realize(PCIDevice *dev, Error **errp)
+static void usb_ehci_pci_realize(PCIDevice *dev, Error *errp[static 1])
 {
     EHCIPCIState *i = PCI_EHCI(dev);
     EHCIState *s = &i->ehci;

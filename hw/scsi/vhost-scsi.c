@@ -135,7 +135,7 @@ static void vhost_dummy_handle_output(VirtIODevice *vdev, VirtQueue *vq)
 {
 }
 
-static void vhost_scsi_realize(DeviceState *dev, Error **errp)
+static void vhost_scsi_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIOSCSICommon *vs = VIRTIO_SCSI_COMMON(dev);
     VHostSCSICommon *vsc = VHOST_SCSI_COMMON(dev);
@@ -208,7 +208,7 @@ static void vhost_scsi_realize(DeviceState *dev, Error **errp)
     return;
 }
 
-static void vhost_scsi_unrealize(DeviceState *dev, Error **errp)
+static void vhost_scsi_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VHostSCSICommon *vsc = VHOST_SCSI_COMMON(dev);

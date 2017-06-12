@@ -456,7 +456,7 @@ static void milkymist_tmu2_init(Object *obj)
     sysbus_init_mmio(dev, &s->regs_region);
 }
 
-static void milkymist_tmu2_realize(DeviceState *dev, Error **errp)
+static void milkymist_tmu2_realize(DeviceState *dev, Error *errp[static 1])
 {
     MilkymistTMU2State *s = MILKYMIST_TMU2(dev);
 

@@ -236,7 +236,7 @@ static const VMStateDescription vmstate_ssi_sd = {
     }
 };
 
-static void ssi_sd_realize(SSISlave *d, Error **errp)
+static void ssi_sd_realize(SSISlave *d, Error *errp[static 1])
 {
     ssi_sd_state *s = FROM_SSI_SLAVE(ssi_sd_state, d);
     DriveInfo *dinfo;

@@ -602,7 +602,7 @@ static const MemoryRegionOps lqspi_ops = {
     }
 };
 
-static void xilinx_spips_realize(DeviceState *dev, Error **errp)
+static void xilinx_spips_realize(DeviceState *dev, Error *errp[static 1])
 {
     XilinxSPIPS *s = XILINX_SPIPS(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
@@ -639,7 +639,7 @@ static void xilinx_spips_realize(DeviceState *dev, Error **errp)
     fifo8_create(&s->tx_fifo, xsc->tx_fifo_size);
 }
 
-static void xilinx_qspips_realize(DeviceState *dev, Error **errp)
+static void xilinx_qspips_realize(DeviceState *dev, Error *errp[static 1])
 {
     XilinxSPIPS *s = XILINX_SPIPS(dev);
     XilinxQSPIPS *q = XILINX_QSPIPS(dev);

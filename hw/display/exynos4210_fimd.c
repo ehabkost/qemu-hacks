@@ -1926,7 +1926,7 @@ static void exynos4210_fimd_init(Object *obj)
     sysbus_init_mmio(dev, &s->iomem);
 }
 
-static void exynos4210_fimd_realize(DeviceState *dev, Error **errp)
+static void exynos4210_fimd_realize(DeviceState *dev, Error *errp[static 1])
 {
     Exynos4210fimdState *s = EXYNOS4210_FIMD(dev);
 

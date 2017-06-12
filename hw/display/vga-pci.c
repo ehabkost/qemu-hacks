@@ -184,14 +184,15 @@ static void pci_vga_qext_write(void *ptr, hwaddr addr,
     }
 }
 
-static bool vga_get_big_endian_fb(Object *obj, Error **errp)
+static bool vga_get_big_endian_fb(Object *obj, Error *errp[static 1])
 {
     PCIVGAState *d = PCI_VGA(PCI_DEVICE(obj));
 
     return d->vga.big_endian_fb;
 }
 
-static void vga_set_big_endian_fb(Object *obj, bool value, Error **errp)
+static void vga_set_big_endian_fb(Object *obj, bool value,
+                                  Error *errp[static 1])
 {
     PCIVGAState *d = PCI_VGA(PCI_DEVICE(obj));
 
@@ -229,7 +230,7 @@ void pci_std_vga_mmio_region_init(VGACommonState *s,
     }
 }
 
-static void pci_std_vga_realize(PCIDevice *dev, Error **errp)
+static void pci_std_vga_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIVGAState *d = PCI_VGA(dev);
     VGACommonState *s = &d->vga;
@@ -272,7 +273,7 @@ static void pci_std_vga_init(Object *obj)
                              IGNORE_ERRORS);
 }
 
-static void pci_secondary_vga_realize(PCIDevice *dev, Error **errp)
+static void pci_secondary_vga_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIVGAState *d = PCI_VGA(dev);
     VGACommonState *s = &d->vga;

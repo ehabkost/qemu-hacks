@@ -71,7 +71,7 @@ static const MemoryRegionOps xen_pv_mmio_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void xen_pv_realize(PCIDevice *pci_dev, Error **errp)
+static void xen_pv_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     XenPVDevice *d = XEN_PV_DEVICE(pci_dev);
     uint8_t *pci_conf;

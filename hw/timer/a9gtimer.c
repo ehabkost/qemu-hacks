@@ -285,7 +285,7 @@ static void a9_gtimer_reset(DeviceState *dev)
     a9_gtimer_update(s, false);
 }
 
-static void a9_gtimer_realize(DeviceState *dev, Error **errp)
+static void a9_gtimer_realize(DeviceState *dev, Error *errp[static 1])
 {
     A9GTimerState *s = A9_GTIMER(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

@@ -1524,7 +1524,7 @@ static uint32_t css_find_free_subch(uint8_t cssid, uint8_t ssid)
  */
 static bool css_find_free_subch_for_devno(uint8_t cssid, uint8_t ssid,
                                           uint16_t devno, uint16_t *schid,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     uint32_t free_schid;
 
@@ -1558,7 +1558,7 @@ static bool css_find_free_subch_for_devno(uint8_t cssid, uint8_t ssid,
  */
 static bool css_find_free_subch_and_devno(uint8_t cssid, uint8_t *ssid,
                                           uint16_t *devno, uint16_t *schid,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     uint32_t free_schid, free_devno;
 
@@ -1939,7 +1939,7 @@ void css_reset(void)
 }
 
 static void get_css_devid(Object *obj, Visitor *v, const char *name,
-                          void *opaque, Error **errp)
+                          void *opaque, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -1969,7 +1969,7 @@ static void get_css_devid(Object *obj, Visitor *v, const char *name,
  * parse <cssid>.<ssid>.<devid> and assert valid range for cssid/ssid
  */
 static void set_css_devid(Object *obj, Visitor *v, const char *name,
-                          void *opaque, Error **errp)
+                          void *opaque, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -2024,7 +2024,7 @@ PropertyInfo css_devid_ro_propinfo = {
 };
 
 SubchDev *css_create_sch(CssDevId bus_id, bool is_virtual, bool squash_mcss,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     uint16_t schid = 0;
     SubchDev *sch;

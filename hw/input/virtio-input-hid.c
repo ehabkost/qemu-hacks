@@ -261,7 +261,7 @@ static void virtio_input_handle_sync(DeviceState *dev)
     virtio_input_send(vinput, &event);
 }
 
-static void virtio_input_hid_realize(DeviceState *dev, Error **errp)
+static void virtio_input_hid_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIOInputHID *vhid = VIRTIO_INPUT_HID(dev);
 
@@ -272,7 +272,8 @@ static void virtio_input_hid_realize(DeviceState *dev, Error **errp)
     }
 }
 
-static void virtio_input_hid_unrealize(DeviceState *dev, Error **errp)
+static void virtio_input_hid_unrealize(DeviceState *dev,
+                                       Error *errp[static 1])
 {
     VirtIOInputHID *vhid = VIRTIO_INPUT_HID(dev);
     qemu_input_handler_unregister(vhid->hs);

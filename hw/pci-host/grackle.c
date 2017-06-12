@@ -115,7 +115,7 @@ static int pci_grackle_init_device(SysBusDevice *dev)
     return 0;
 }
 
-static void grackle_pci_host_realize(PCIDevice *d, Error **errp)
+static void grackle_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     d->config[0x09] = 0x01;
 }

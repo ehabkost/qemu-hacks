@@ -153,7 +153,7 @@ void qio_task_set_error(QIOTask *task,
 
 
 bool qio_task_propagate_error(QIOTask *task,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     if (task->err) {
         error_propagate(errp, task->err);

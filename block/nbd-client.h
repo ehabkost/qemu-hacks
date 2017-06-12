@@ -39,7 +39,7 @@ int nbd_client_init(BlockDriverState *bs,
                     const char *export_name,
                     QCryptoTLSCreds *tlscreds,
                     const char *hostname,
-                    Error **errp);
+                    Error *errp[static 1]);
 void nbd_client_close(BlockDriverState *bs);
 
 int nbd_client_co_pdiscard(BlockDriverState *bs, int64_t offset, int count);

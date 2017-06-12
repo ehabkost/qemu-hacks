@@ -35,14 +35,15 @@ typedef struct CPUHotplugState {
 } CPUHotplugState;
 
 void acpi_cpu_plug_cb(HotplugHandler *hotplug_dev,
-                      CPUHotplugState *cpu_st, DeviceState *dev, Error **errp);
+                      CPUHotplugState *cpu_st, DeviceState *dev,
+                      Error *errp[static 1]);
 
 void acpi_cpu_unplug_request_cb(HotplugHandler *hotplug_dev,
                                 CPUHotplugState *cpu_st,
-                                DeviceState *dev, Error **errp);
+                                DeviceState *dev, Error *errp[static 1]);
 
 void acpi_cpu_unplug_cb(CPUHotplugState *cpu_st,
-                        DeviceState *dev, Error **errp);
+                        DeviceState *dev, Error *errp[static 1]);
 
 void cpu_hotplug_hw_init(MemoryRegion *as, Object *owner,
                          CPUHotplugState *state, hwaddr base_addr);

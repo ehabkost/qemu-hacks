@@ -310,7 +310,7 @@ static void imx_gpio_reset(DeviceState *dev)
     imx_gpio_update_int(s);
 }
 
-static void imx_gpio_realize(DeviceState *dev, Error **errp)
+static void imx_gpio_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMXGPIOState *s = IMX_GPIO(dev);
 

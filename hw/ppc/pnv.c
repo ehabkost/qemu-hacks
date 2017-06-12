@@ -795,7 +795,7 @@ static const TypeInfo pnv_chip_power9_info = {
     .class_init    = pnv_chip_power9_class_init,
 };
 
-static void pnv_chip_core_sanitize(PnvChip *chip, Error **errp)
+static void pnv_chip_core_sanitize(PnvChip *chip, Error *errp[static 1])
 {
     PnvChipClass *pcc = PNV_CHIP_GET_CLASS(chip);
     int cores_max;
@@ -850,7 +850,7 @@ static void pnv_chip_init(Object *obj)
                                    OBJECT(&chip->psi), &error_abort);
 }
 
-static void pnv_chip_icp_realize(PnvChip *chip, Error **errp)
+static void pnv_chip_icp_realize(PnvChip *chip, Error *errp[static 1])
 {
     PnvChipClass *pcc = PNV_CHIP_GET_CLASS(chip);
     char *typename = pnv_core_typename(pcc->cpu_model);
@@ -882,7 +882,7 @@ static void pnv_chip_icp_realize(PnvChip *chip, Error **errp)
     g_free(typename);
 }
 
-static void pnv_chip_realize(DeviceState *dev, Error **errp)
+static void pnv_chip_realize(DeviceState *dev, Error *errp[static 1])
 {
     PnvChip *chip = PNV_CHIP(dev);
     PnvChipClass *pcc = PNV_CHIP_GET_CLASS(chip);
@@ -1067,13 +1067,13 @@ static void pnv_pic_print_info(InterruptStatsProvider *obj,
 }
 
 static void pnv_get_num_chips(Object *obj, Visitor *v, const char *name,
-                              void *opaque, Error **errp)
+                              void *opaque, Error *errp[static 1])
 {
     visit_type_uint32(v, name, &POWERNV_MACHINE(obj)->num_chips, errp);
 }
 
 static void pnv_set_num_chips(Object *obj, Visitor *v, const char *name,
-                              void *opaque, Error **errp)
+                              void *opaque, Error *errp[static 1])
 {
     PnvMachineState *pnv = POWERNV_MACHINE(obj);
     uint32_t num_chips;

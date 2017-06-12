@@ -38,7 +38,7 @@
  */
 int qcrypto_random_bytes(uint8_t *buf,
                          size_t buflen,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * qcrypto_random_init:
@@ -48,6 +48,6 @@ int qcrypto_random_bytes(uint8_t *buf,
  *
  * Returns 0 on success, -1 on error
  */
-int qcrypto_random_init(Error **errp);
+int qcrypto_random_init(Error *errp[static 1]);
 
 #endif /* QCRYPTO_RANDOM_H */

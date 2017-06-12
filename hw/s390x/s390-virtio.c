@@ -183,7 +183,7 @@ int gtod_load(QEMUFile *f, void *opaque, int version_id)
     return 0;
 }
 
-void s390_nmi(NMIState *n, int cpu_index, Error **errp)
+void s390_nmi(NMIState *n, int cpu_index, Error *errp[static 1])
 {
     CPUState *cs = qemu_get_cpu(cpu_index);
 

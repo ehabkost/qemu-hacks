@@ -155,7 +155,7 @@ static void virtio_gpu_set_config(VirtIODevice *vdev, const uint8_t *config)
 }
 
 static uint64_t virtio_gpu_get_features(VirtIODevice *vdev, uint64_t features,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     VirtIOGPU *g = VIRTIO_GPU(vdev);
 
@@ -1099,7 +1099,8 @@ static int virtio_gpu_load(QEMUFile *f, void *opaque, size_t size,
     return 0;
 }
 
-static void virtio_gpu_device_realize(DeviceState *qdev, Error **errp)
+static void virtio_gpu_device_realize(DeviceState *qdev,
+                                      Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(qdev);
     VirtIOGPU *g = VIRTIO_GPU(qdev);
@@ -1166,7 +1167,8 @@ static void virtio_gpu_device_realize(DeviceState *qdev, Error **errp)
     }
 }
 
-static void virtio_gpu_device_unrealize(DeviceState *qdev, Error **errp)
+static void virtio_gpu_device_unrealize(DeviceState *qdev,
+                                        Error *errp[static 1])
 {
     VirtIOGPU *g = VIRTIO_GPU(qdev);
     if (g->migration_blocker) {

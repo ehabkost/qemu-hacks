@@ -31,7 +31,7 @@ QCryptoIVGen *qcrypto_ivgen_new(QCryptoIVGenAlgorithm alg,
                                 QCryptoCipherAlgorithm cipheralg,
                                 QCryptoHashAlgorithm hash,
                                 const uint8_t *key, size_t nkey,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     QCryptoIVGen *ivgen = g_new0(QCryptoIVGen, 1);
 
@@ -67,7 +67,7 @@ QCryptoIVGen *qcrypto_ivgen_new(QCryptoIVGenAlgorithm alg,
 int qcrypto_ivgen_calculate(QCryptoIVGen *ivgen,
                             uint64_t sector,
                             uint8_t *iv, size_t niv,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     return ivgen->driver->calculate(ivgen, sector, iv, niv, errp);
 }

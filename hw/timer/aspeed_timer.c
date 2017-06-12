@@ -423,7 +423,7 @@ static void aspeed_init_one_timer(AspeedTimerCtrlState *s, uint8_t id)
     timer_init_ns(&t->timer, QEMU_CLOCK_VIRTUAL, aspeed_timer_expire, t);
 }
 
-static void aspeed_timer_realize(DeviceState *dev, Error **errp)
+static void aspeed_timer_realize(DeviceState *dev, Error *errp[static 1])
 {
     int i;
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

@@ -714,7 +714,8 @@ void aio_context_setup(AioContext *ctx)
 }
 
 void aio_context_set_poll_params(AioContext *ctx, int64_t max_ns,
-                                 int64_t grow, int64_t shrink, Error **errp)
+                                 int64_t grow, int64_t shrink,
+                                 Error *errp[static 1])
 {
     /* No thread synchronization here, it doesn't matter if an incorrect value
      * is used once.

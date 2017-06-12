@@ -2,7 +2,7 @@
 #include "qmp-commands.h"
 #include "qapi/qmp/qerror.h"
 
-GuidInfo *qmp_query_vm_generation_id(Error **errp)
+GuidInfo *qmp_query_vm_generation_id(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;

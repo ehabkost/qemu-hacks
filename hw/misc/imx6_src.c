@@ -275,7 +275,7 @@ static const struct MemoryRegionOps imx6_src_ops = {
     },
 };
 
-static void imx6_src_realize(DeviceState *dev, Error **errp)
+static void imx6_src_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMX6SRCState *s = IMX6_SRC(dev);
 

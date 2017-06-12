@@ -136,7 +136,7 @@ bool throttle_timers_are_initialized(ThrottleTimers *tt);
 /* configuration */
 bool throttle_enabled(ThrottleConfig *cfg);
 
-bool throttle_is_valid(ThrottleConfig *cfg, Error **errp);
+bool throttle_is_valid(ThrottleConfig *cfg, Error *errp[static 1]);
 
 void throttle_config(ThrottleState *ts,
                      ThrottleTimers *tt,

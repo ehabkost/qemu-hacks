@@ -117,7 +117,7 @@ static void test_static_globalprop(void)
 #define TYPE_UNUSED_NOHOTPLUG "nohotplug-type"
 
 static void prop1_accessor(Object *obj, Visitor *v, const char *name,
-                           void *opaque, Error **errp)
+                           void *opaque, Error *errp[static 1])
 {
     MyType *mt = DYNAMIC_TYPE(obj);
 
@@ -125,7 +125,7 @@ static void prop1_accessor(Object *obj, Visitor *v, const char *name,
 }
 
 static void prop2_accessor(Object *obj, Visitor *v, const char *name,
-                           void *opaque, Error **errp)
+                           void *opaque, Error *errp[static 1])
 {
     MyType *mt = DYNAMIC_TYPE(obj);
 

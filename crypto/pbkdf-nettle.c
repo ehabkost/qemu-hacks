@@ -45,7 +45,7 @@ int qcrypto_pbkdf2(QCryptoHashAlgorithm hash,
                    const uint8_t *salt, size_t nsalt,
                    uint64_t iterations,
                    uint8_t *out, size_t nout,
-                   Error **errp)
+                   Error *errp[static 1])
 {
     union {
         struct hmac_md5_ctx md5;

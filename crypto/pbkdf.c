@@ -27,7 +27,7 @@
 
 
 static int qcrypto_pbkdf2_get_thread_cpu(unsigned long long *val_ms,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
 #ifdef _WIN32
     FILETIME creation_time, exit_time, kernel_time, user_time;
@@ -66,7 +66,7 @@ uint64_t qcrypto_pbkdf2_count_iters(QCryptoHashAlgorithm hash,
                                     const uint8_t *key, size_t nkey,
                                     const uint8_t *salt, size_t nsalt,
                                     size_t nout,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     uint64_t ret = -1;
     uint8_t *out;

@@ -680,7 +680,7 @@ static const ARMCPRegInfo gicv3_cpuif_reginfo[] = {
     REGINFO_SENTINEL
 };
 
-static void kvm_arm_gicv3_realize(DeviceState *dev, Error **errp)
+static void kvm_arm_gicv3_realize(DeviceState *dev, Error *errp[static 1])
 {
     GICv3State *s = KVM_ARM_GICV3(dev);
     KVMARMGICv3Class *kgc = KVM_ARM_GICV3_GET_CLASS(s);

@@ -174,7 +174,7 @@ const MemoryRegionOps pnv_xscom_ops = {
     .endianness = DEVICE_BIG_ENDIAN,
 };
 
-void pnv_xscom_realize(PnvChip *chip, Error **errp)
+void pnv_xscom_realize(PnvChip *chip, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(chip);
     char *name;

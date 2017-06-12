@@ -97,7 +97,7 @@ static int bochs_probe(const uint8_t *buf, int buf_size, const char *filename)
 }
 
 static int bochs_open(BlockDriverState *bs, QDict *options, int flags,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     BDRVBochsState *s = bs->opaque;
     uint32_t i;
@@ -197,7 +197,7 @@ fail:
     return ret;
 }
 
-static void bochs_refresh_limits(BlockDriverState *bs, Error **errp)
+static void bochs_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     bs->bl.request_alignment = BDRV_SECTOR_SIZE; /* No sub-sector I/O */
 }

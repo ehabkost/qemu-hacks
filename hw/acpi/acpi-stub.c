@@ -23,7 +23,7 @@
 #include "qmp-commands.h"
 #include "hw/acpi/acpi.h"
 
-void acpi_table_add(const QemuOpts *opts, Error **errp)
+void acpi_table_add(const QemuOpts *opts, Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 }

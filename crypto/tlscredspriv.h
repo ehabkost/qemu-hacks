@@ -29,12 +29,12 @@ int qcrypto_tls_creds_get_path(QCryptoTLSCreds *creds,
                                const char *filename,
                                bool required,
                                char **cred,
-                               Error **errp);
+                               Error *errp[static 1]);
 
 int qcrypto_tls_creds_get_dh_params_file(QCryptoTLSCreds *creds,
                                          const char *filename,
                                          gnutls_dh_params_t *dh_params,
-                                         Error **errp);
+                                         Error *errp[static 1]);
 
 #endif
 

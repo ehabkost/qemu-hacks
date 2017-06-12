@@ -286,7 +286,7 @@ static CPUState *find_paging_enabled_cpu(CPUState *start_cpu)
 
 void qemu_get_guest_memory_mapping(MemoryMappingList *list,
                                    const GuestPhysBlockList *guest_phys_blocks,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     CPUState *cpu, *first_paging_enabled_cpu;
     GuestPhysBlock *block;

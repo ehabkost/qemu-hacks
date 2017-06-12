@@ -199,7 +199,7 @@ static int vxhs_parse_uri(const char *filename, QDict *options)
 }
 
 static void vxhs_parse_filename(const char *filename, QDict *options,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     if (qdict_haskey(options, "vdisk-id") || qdict_haskey(options, "server")) {
         error_setg(errp, "vdisk-id/server and a file name may not be specified "
@@ -234,7 +234,7 @@ static void vxhs_unref(void)
 }
 
 static void vxhs_get_tls_creds(const char *id, char **cacert,
-                               char **key, char **cert, Error **errp)
+                               char **key, char **cert, Error *errp[static 1])
 {
     Object *obj;
     QCryptoTLSCreds *creds;
@@ -283,7 +283,7 @@ static void vxhs_get_tls_creds(const char *id, char **cacert,
 }
 
 static int vxhs_open(BlockDriverState *bs, QDict *options,
-                     int bdrv_flags, Error **errp)
+                     int bdrv_flags, Error *errp[static 1])
 {
     BDRVVXHSState *s = bs->opaque;
     void *dev_handlep;

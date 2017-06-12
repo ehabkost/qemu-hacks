@@ -58,7 +58,7 @@ static QTAILQ_HEAD(, BlockDriverState) monitor_bdrv_states =
     QTAILQ_HEAD_INITIALIZER(monitor_bdrv_states);
 
 static int do_open_tray(const char *blk_name, const char *qdev_id,
-                        bool force, Error **errp);
+                        bool force, Error *errp[static 1]);
 
 static const char *const if_name[IF_COUNT] = {
     [IF_NONE] = "none",
@@ -297,7 +297,8 @@ typedef struct {
     BlockDriverState *bs;
 } BDRVPutRefBH;
 
-static int parse_block_error_action(const char *buf, bool is_read, Error **errp)
+static int parse_block_error_action(const char *buf, bool is_read,
+                                    Error *errp[static 1])
 {
     if (!strcmp(buf, "ignore")) {
         return BLOCKDEV_ON_ERROR_IGNORE;
@@ -315,7 +316,7 @@ static int parse_block_error_action(const char *buf, bool is_read, Error **errp)
 }
 
 static bool parse_stats_intervals(BlockAcctStats *stats, QList *intervals,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     const QListEntry *entry;
     for (entry = qlist_first(intervals); entry; entry = qlist_next(entry)) {
@@ -358,7 +359,7 @@ typedef enum { MEDIA_DISK, MEDIA_CDROM } DriveMediaType;
 /* All parameters but @opts are optional and may be set to NULL. */
 static void extract_common_blockdev_options(QemuOpts *opts, int *bdrv_flags,
     const char **throttling_group, ThrottleConfig *throttle_cfg,
-    BlockdevDetectZeroesOptions *detect_zeroes, Error **errp)
+    BlockdevDetectZeroesOptions *detect_zeroes, Error *errp[static 1])
 {
     Error *local_error = NULL;
     const char *aio;
@@ -450,7 +451,7 @@ static void extract_common_blockdev_options(QemuOpts *opts, int *bdrv_flags,
 
 /* Takes the ownership of bs_opts */
 static BlockBackend *blockdev_init(const char *file, QDict *bs_opts,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     const char *buf;
     int bdrv_flags = 0;
@@ -638,7 +639,7 @@ err_no_opts:
 }
 
 /* Takes the ownership of bs_opts */
-static BlockDriverState *bds_tree_init(QDict *bs_opts, Error **errp)
+static BlockDriverState *bds_tree_init(QDict *bs_opts, Error *errp[static 1])
 {
     int bdrv_flags = 0;
 
@@ -677,7 +678,7 @@ BlockDriverState *bdrv_next_monitor_owned(BlockDriverState *bs)
 }
 
 static void qemu_opt_rename(QemuOpts *opts, const char *from, const char *to,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     const char *value;
 
@@ -1124,7 +1125,8 @@ fail:
     return dinfo;
 }
 
-static BlockDriverState *qmp_get_root_bs(const char *name, Error **errp)
+static BlockDriverState *qmp_get_root_bs(const char *name,
+                                         Error *errp[static 1])
 {
     BlockDriverState *bs;
 
@@ -1147,7 +1149,7 @@ static BlockDriverState *qmp_get_root_bs(const char *name, Error **errp)
 }
 
 static BlockBackend *qmp_get_blk(const char *blk_name, const char *qdev_id,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     BlockBackend *blk;
 
@@ -1205,7 +1207,8 @@ void hmp_commit(Monitor *mon, const QDict *qdict)
     }
 }
 
-static void blockdev_do_action(TransactionAction *action, Error **errp)
+static void blockdev_do_action(TransactionAction *action,
+                               Error *errp[static 1])
 {
     TransactionActionList list;
 
@@ -1220,7 +1223,8 @@ void qmp_blockdev_snapshot_sync(bool has_device, const char *device,
                                 bool has_snapshot_node_name,
                                 const char *snapshot_node_name,
                                 bool has_format, const char *format,
-                                bool has_mode, NewImageMode mode, Error **errp)
+                                bool has_mode, NewImageMode mode,
+                                Error *errp[static 1])
 {
     BlockdevSnapshotSync snapshot = {
         .has_device = has_device,
@@ -1243,7 +1247,7 @@ void qmp_blockdev_snapshot_sync(bool has_device, const char *device,
 }
 
 void qmp_blockdev_snapshot(const char *node, const char *overlay,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     BlockdevSnapshot snapshot_data = {
         .node = (char *) node,
@@ -1258,7 +1262,7 @@ void qmp_blockdev_snapshot(const char *node, const char *overlay,
 
 void qmp_blockdev_snapshot_internal_sync(const char *device,
                                          const char *name,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     BlockdevSnapshotInternal snapshot = {
         .device = (char *) device,
@@ -1276,7 +1280,7 @@ SnapshotInfo *qmp_blockdev_snapshot_delete_internal_sync(const char *device,
                                                          const char *id,
                                                          bool has_name,
                                                          const char *name,
-                                                         Error **errp)
+                                                         Error *errp[static 1])
 {
     BlockDriverState *bs;
     AioContext *aio_context;
@@ -1363,7 +1367,7 @@ static BdrvDirtyBitmap *block_dirty_bitmap_lookup(const char *node,
                                                   const char *name,
                                                   BlockDriverState **pbs,
                                                   AioContext **paio,
-                                                  Error **errp)
+                                                  Error *errp[static 1])
 {
     BlockDriverState *bs;
     BdrvDirtyBitmap *bitmap;
@@ -1465,7 +1469,8 @@ typedef struct InternalSnapshotState {
 } InternalSnapshotState;
 
 
-static int action_check_completion_mode(BlkActionState *s, Error **errp)
+static int action_check_completion_mode(BlkActionState *s,
+                                        Error *errp[static 1])
 {
     if (s->txn_props->completion_mode != ACTION_COMPLETION_MODE_INDIVIDUAL) {
         error_setg(errp,
@@ -1479,7 +1484,7 @@ static int action_check_completion_mode(BlkActionState *s, Error **errp)
 }
 
 static void internal_snapshot_prepare(BlkActionState *common,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     Error *local_err = NULL;
     const char *device;
@@ -1616,7 +1621,7 @@ typedef struct ExternalSnapshotState {
 } ExternalSnapshotState;
 
 static void external_snapshot_prepare(BlkActionState *common,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     int flags = 0;
     QDict *options = NULL;
@@ -1828,9 +1833,10 @@ typedef struct DriveBackupState {
 } DriveBackupState;
 
 static BlockJob *do_drive_backup(DriveBackup *backup, BlockJobTxn *txn,
-                            Error **errp);
+                            Error *errp[static 1]);
 
-static void drive_backup_prepare(BlkActionState *common, Error **errp)
+static void drive_backup_prepare(BlkActionState *common,
+                                 Error *errp[static 1])
 {
     DriveBackupState *state = DO_UPCAST(DriveBackupState, common, common);
     BlockDriverState *bs;
@@ -1892,9 +1898,10 @@ typedef struct BlockdevBackupState {
 } BlockdevBackupState;
 
 static BlockJob *do_blockdev_backup(BlockdevBackup *backup, BlockJobTxn *txn,
-                                    Error **errp);
+                                    Error *errp[static 1]);
 
-static void blockdev_backup_prepare(BlkActionState *common, Error **errp)
+static void blockdev_backup_prepare(BlkActionState *common,
+                                    Error *errp[static 1])
 {
     BlockdevBackupState *state = DO_UPCAST(BlockdevBackupState, common, common);
     BlockdevBackup *backup;
@@ -1968,7 +1975,7 @@ typedef struct BlockDirtyBitmapState {
 } BlockDirtyBitmapState;
 
 static void block_dirty_bitmap_add_prepare(BlkActionState *common,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     Error *local_err = NULL;
     BlockDirtyBitmapAdd *action;
@@ -2008,7 +2015,7 @@ static void block_dirty_bitmap_add_abort(BlkActionState *common)
 }
 
 static void block_dirty_bitmap_clear_prepare(BlkActionState *common,
-                                             Error **errp)
+                                             Error *errp[static 1])
 {
     BlockDirtyBitmapState *state = DO_UPCAST(BlockDirtyBitmapState,
                                              common, common);
@@ -2068,7 +2075,7 @@ static void block_dirty_bitmap_clear_clean(BlkActionState *common)
     }
 }
 
-static void abort_prepare(BlkActionState *common, Error **errp)
+static void abort_prepare(BlkActionState *common, Error *errp[static 1])
 {
     error_setg(errp, "Transaction aborted using Abort action");
 }
@@ -2158,7 +2165,7 @@ static TransactionProperties *get_transaction_properties(
 void qmp_transaction(TransactionActionList *dev_list,
                      bool has_props,
                      struct TransactionProperties *props,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     TransactionActionList *dev_entry = dev_list;
     BlockJobTxn *block_job_txn = NULL;
@@ -2235,7 +2242,7 @@ exit:
 
 void qmp_eject(bool has_device, const char *device,
                bool has_id, const char *id,
-               bool has_force, bool force, Error **errp)
+               bool has_force, bool force, Error *errp[static 1])
 {
     Error *local_err = NULL;
     int rc;
@@ -2258,7 +2265,7 @@ void qmp_eject(bool has_device, const char *device,
 
 void qmp_block_passwd(bool has_device, const char *device,
                       bool has_node_name, const char *node_name,
-                      const char *password, Error **errp)
+                      const char *password, Error *errp[static 1])
 {
     Error *local_err = NULL;
     BlockDriverState *bs;
@@ -2292,7 +2299,7 @@ void qmp_block_passwd(bool has_device, const char *device,
  * Else, return 0.
  */
 static int do_open_tray(const char *blk_name, const char *qdev_id,
-                        bool force, Error **errp)
+                        bool force, Error *errp[static 1])
 {
     BlockBackend *blk;
     const char *device = qdev_id ?: blk_name;
@@ -2338,7 +2345,7 @@ static int do_open_tray(const char *blk_name, const char *qdev_id,
 void qmp_blockdev_open_tray(bool has_device, const char *device,
                             bool has_id, const char *id,
                             bool has_force, bool force,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     Error *local_err = NULL;
     int rc;
@@ -2358,7 +2365,7 @@ void qmp_blockdev_open_tray(bool has_device, const char *device,
 
 void qmp_blockdev_close_tray(bool has_device, const char *device,
                              bool has_id, const char *id,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     BlockBackend *blk;
 
@@ -2391,7 +2398,8 @@ void qmp_blockdev_close_tray(bool has_device, const char *device,
 }
 
 void qmp_x_blockdev_remove_medium(bool has_device, const char *device,
-                                  bool has_id, const char *id, Error **errp)
+                                  bool has_id, const char *id,
+                                  Error *errp[static 1])
 {
     BlockBackend *blk;
     BlockDriverState *bs;
@@ -2448,7 +2456,8 @@ out:
 }
 
 static void qmp_blockdev_insert_anon_medium(BlockBackend *blk,
-                                            BlockDriverState *bs, Error **errp)
+                                            BlockDriverState *bs,
+                                            Error *errp[static 1])
 {
     bool has_device;
     int ret;
@@ -2492,7 +2501,8 @@ static void qmp_blockdev_insert_anon_medium(BlockBackend *blk,
 
 void qmp_x_blockdev_insert_medium(bool has_device, const char *device,
                                   bool has_id, const char *id,
-                                  const char *node_name, Error **errp)
+                                  const char *node_name,
+                                  Error *errp[static 1])
 {
     BlockBackend *blk;
     BlockDriverState *bs;
@@ -2524,7 +2534,7 @@ void qmp_blockdev_change_medium(bool has_device, const char *device,
                                 bool has_format, const char *format,
                                 bool has_read_only,
                                 BlockdevChangeReadOnlyMode read_only,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     BlockBackend *blk;
     BlockDriverState *medium_bs = NULL;
@@ -2722,7 +2732,7 @@ out:
 
 void qmp_block_dirty_bitmap_add(const char *node, const char *name,
                                 bool has_granularity, uint32_t granularity,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockDriverState *bs;
@@ -2758,7 +2768,7 @@ void qmp_block_dirty_bitmap_add(const char *node, const char *name,
 }
 
 void qmp_block_dirty_bitmap_remove(const char *node, const char *name,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockDriverState *bs;
@@ -2787,7 +2797,7 @@ void qmp_block_dirty_bitmap_remove(const char *node, const char *name,
  * immediately after a full backup operation.
  */
 void qmp_block_dirty_bitmap_clear(const char *node, const char *name,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     AioContext *aio_context;
     BdrvDirtyBitmap *bitmap;
@@ -2878,7 +2888,7 @@ void hmp_drive_del(Monitor *mon, const QDict *qdict)
 
 void qmp_block_resize(bool has_device, const char *device,
                       bool has_node_name, const char *node_name,
-                      int64_t size, Error **errp)
+                      int64_t size, Error *errp[static 1])
 {
     Error *local_err = NULL;
     BlockBackend *blk = NULL;
@@ -2933,7 +2943,7 @@ void qmp_block_stream(bool has_job_id, const char *job_id, const char *device,
                       bool has_backing_file, const char *backing_file,
                       bool has_speed, int64_t speed,
                       bool has_on_error, BlockdevOnError on_error,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     BlockDriverState *bs, *iter;
     BlockDriverState *base_bs = NULL;
@@ -3018,7 +3028,7 @@ void qmp_block_commit(bool has_job_id, const char *job_id, const char *device,
                       bool has_backing_file, const char *backing_file,
                       bool has_speed, int64_t speed,
                       bool has_filter_node_name, const char *filter_node_name,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     BlockDriverState *bs;
     BlockDriverState *iter;
@@ -3131,7 +3141,7 @@ out:
 }
 
 static BlockJob *do_drive_backup(DriveBackup *backup, BlockJobTxn *txn,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     BlockDriverState *bs;
     BlockDriverState *target_bs;
@@ -3267,7 +3277,7 @@ out:
     return job;
 }
 
-void qmp_drive_backup(DriveBackup *arg, Error **errp)
+void qmp_drive_backup(DriveBackup *arg, Error *errp[static 1])
 {
 
     BlockJob *job;
@@ -3277,13 +3287,13 @@ void qmp_drive_backup(DriveBackup *arg, Error **errp)
     }
 }
 
-BlockDeviceInfoList *qmp_query_named_block_nodes(Error **errp)
+BlockDeviceInfoList *qmp_query_named_block_nodes(Error *errp[static 1])
 {
     return bdrv_named_nodes_list(errp);
 }
 
 BlockJob *do_blockdev_backup(BlockdevBackup *backup, BlockJobTxn *txn,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     BlockDriverState *bs;
     BlockDriverState *target_bs;
@@ -3343,7 +3353,7 @@ out:
     return job;
 }
 
-void qmp_blockdev_backup(BlockdevBackup *arg, Error **errp)
+void qmp_blockdev_backup(BlockdevBackup *arg, Error *errp[static 1])
 {
     BlockJob *job;
     job = do_blockdev_backup(arg, NULL, errp);
@@ -3370,7 +3380,7 @@ static void blockdev_mirror_common(const char *job_id, BlockDriverState *bs,
                                    bool has_unmap, bool unmap,
                                    bool has_filter_node_name,
                                    const char *filter_node_name,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
 
     if (!has_speed) {
@@ -3583,7 +3593,7 @@ void qmp_blockdev_mirror(bool has_job_id, const char *job_id,
                          BlockdevOnError on_target_error,
                          bool has_filter_node_name,
                          const char *filter_node_name,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     BlockDriverState *bs;
     BlockDriverState *target_bs;
@@ -3621,7 +3631,7 @@ void qmp_blockdev_mirror(bool has_job_id, const char *job_id,
 
 /* Get a block job using its ID and acquire its AioContext */
 static BlockJob *find_block_job(const char *id, AioContext **aio_context,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     BlockJob *job;
 
@@ -3643,7 +3653,8 @@ static BlockJob *find_block_job(const char *id, AioContext **aio_context,
     return job;
 }
 
-void qmp_block_job_set_speed(const char *device, int64_t speed, Error **errp)
+void qmp_block_job_set_speed(const char *device, int64_t speed,
+                             Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockJob *job = find_block_job(device, &aio_context, errp);
@@ -3657,7 +3668,7 @@ void qmp_block_job_set_speed(const char *device, int64_t speed, Error **errp)
 }
 
 void qmp_block_job_cancel(const char *device,
-                          bool has_force, bool force, Error **errp)
+                          bool has_force, bool force, Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockJob *job = find_block_job(device, &aio_context, errp);
@@ -3682,7 +3693,7 @@ out:
     aio_context_release(aio_context);
 }
 
-void qmp_block_job_pause(const char *device, Error **errp)
+void qmp_block_job_pause(const char *device, Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockJob *job = find_block_job(device, &aio_context, errp);
@@ -3696,7 +3707,7 @@ void qmp_block_job_pause(const char *device, Error **errp)
     aio_context_release(aio_context);
 }
 
-void qmp_block_job_resume(const char *device, Error **errp)
+void qmp_block_job_resume(const char *device, Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockJob *job = find_block_job(device, &aio_context, errp);
@@ -3710,7 +3721,7 @@ void qmp_block_job_resume(const char *device, Error **errp)
     aio_context_release(aio_context);
 }
 
-void qmp_block_job_complete(const char *device, Error **errp)
+void qmp_block_job_complete(const char *device, Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockJob *job = find_block_job(device, &aio_context, errp);
@@ -3727,7 +3738,7 @@ void qmp_block_job_complete(const char *device, Error **errp)
 void qmp_change_backing_file(const char *device,
                              const char *image_node_name,
                              const char *backing_file,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     BlockDriverState *bs = NULL;
     AioContext *aio_context;
@@ -3837,7 +3848,7 @@ out:
     qemu_opts_del(opts);
 }
 
-void qmp_blockdev_add(BlockdevOptions *options, Error **errp)
+void qmp_blockdev_add(BlockdevOptions *options, Error *errp[static 1])
 {
     BlockDriverState *bs;
     QObject *obj;
@@ -3877,7 +3888,7 @@ fail:
     visit_free(v);
 }
 
-void qmp_blockdev_del(const char *node_name, Error **errp)
+void qmp_blockdev_del(const char *node_name, Error *errp[static 1])
 {
     AioContext *aio_context;
     BlockDriverState *bs;
@@ -3933,7 +3944,7 @@ static BdrvChild *bdrv_find_child(BlockDriverState *parent_bs,
 
 void qmp_x_blockdev_change(const char *parent, bool has_child,
                            const char *child, bool has_node,
-                           const char *node, Error **errp)
+                           const char *node, Error *errp[static 1])
 {
     BlockDriverState *parent_bs, *new_bs = NULL;
     BdrvChild *p_child;
@@ -3972,7 +3983,7 @@ void qmp_x_blockdev_change(const char *parent, bool has_child,
     }
 }
 
-BlockJobInfoList *qmp_query_block_jobs(Error **errp)
+BlockJobInfoList *qmp_query_block_jobs(Error *errp[static 1])
 {
     BlockJobInfoList *head = NULL, **p_next = &head;
     BlockJob *job;

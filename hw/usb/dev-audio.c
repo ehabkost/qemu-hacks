@@ -617,7 +617,7 @@ static void usb_audio_handle_data(USBDevice *dev, USBPacket *p)
     }
 }
 
-static void usb_audio_unrealize(USBDevice *dev, Error **errp)
+static void usb_audio_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     USBAudioState *s = USB_AUDIO(dev);
 
@@ -632,7 +632,7 @@ static void usb_audio_unrealize(USBDevice *dev, Error **errp)
     streambuf_fini(&s->out.buf);
 }
 
-static void usb_audio_realize(USBDevice *dev, Error **errp)
+static void usb_audio_realize(USBDevice *dev, Error *errp[static 1])
 {
     USBAudioState *s = USB_AUDIO(dev);
 

@@ -40,8 +40,8 @@ bool ga_is_frozen(GAState *s);
 void ga_set_frozen(GAState *s);
 void ga_unset_frozen(GAState *s);
 const char *ga_fsfreeze_hook(GAState *s);
-int64_t ga_get_fd_handle(GAState *s, Error **errp);
-int ga_parse_whence(GuestFileWhence *whence, Error **errp);
+int64_t ga_get_fd_handle(GAState *s, Error *errp[static 1]);
+int ga_parse_whence(GuestFileWhence *whence, Error *errp[static 1]);
 
 #ifndef _WIN32
 void reopen_fd_to_null(int fd);

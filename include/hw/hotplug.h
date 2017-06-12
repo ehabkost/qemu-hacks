@@ -72,7 +72,7 @@ typedef struct HotplugHandlerClass {
  */
 void hotplug_handler_plug(HotplugHandler *plug_handler,
                           DeviceState *plugged_dev,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 /**
  * hotplug_handler_pre_plug:
@@ -81,7 +81,7 @@ void hotplug_handler_plug(HotplugHandler *plug_handler,
  */
 void hotplug_handler_pre_plug(HotplugHandler *plug_handler,
                               DeviceState *plugged_dev,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 /**
  * hotplug_handler_unplug_request:
@@ -90,7 +90,7 @@ void hotplug_handler_pre_plug(HotplugHandler *plug_handler,
  */
 void hotplug_handler_unplug_request(HotplugHandler *plug_handler,
                                     DeviceState *plugged_dev,
-                                    Error **errp);
+                                    Error *errp[static 1]);
 /**
  * hotplug_handler_unplug:
  *
@@ -98,5 +98,5 @@ void hotplug_handler_unplug_request(HotplugHandler *plug_handler,
  */
 void hotplug_handler_unplug(HotplugHandler *plug_handler,
                             DeviceState *plugged_dev,
-                            Error **errp);
+                            Error *errp[static 1]);
 #endif

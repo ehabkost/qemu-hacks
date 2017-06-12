@@ -408,7 +408,7 @@ void memory_region_init_ram(MemoryRegion *mr,
                             struct Object *owner,
                             const char *name,
                             uint64_t size,
-                            Error **errp);
+                            Error *errp[static 1]);
 
 /**
  * memory_region_init_resizeable_ram:  Initialize memory region with resizeable
@@ -434,7 +434,7 @@ void memory_region_init_resizeable_ram(MemoryRegion *mr,
                                        void (*resized)(const char*,
                                                        uint64_t length,
                                                        void *host),
-                                       Error **errp);
+                                       Error *errp[static 1]);
 #ifdef __linux__
 /**
  * memory_region_init_ram_from_file:  Initialize RAM memory region with a
@@ -455,7 +455,7 @@ void memory_region_init_ram_from_file(MemoryRegion *mr,
                                       uint64_t size,
                                       bool share,
                                       const char *path,
-                                      Error **errp);
+                                      Error *errp[static 1]);
 #endif
 
 /**
@@ -537,7 +537,7 @@ void memory_region_init_rom(MemoryRegion *mr,
                             struct Object *owner,
                             const char *name,
                             uint64_t size,
-                            Error **errp);
+                            Error *errp[static 1]);
 
 /**
  * memory_region_init_rom_device:  Initialize a ROM memory region.  Writes are
@@ -557,7 +557,7 @@ void memory_region_init_rom_device(MemoryRegion *mr,
                                    void *opaque,
                                    const char *name,
                                    uint64_t size,
-                                   Error **errp);
+                                   Error *errp[static 1]);
 
 /**
  * memory_region_init_reservation: Initialize a memory region that reserves
@@ -859,7 +859,7 @@ void *memory_region_get_ram_ptr(MemoryRegion *mr);
  * @errp: pointer to Error*, to store an error if it happens.
  */
 void memory_region_ram_resize(MemoryRegion *mr, ram_addr_t newsize,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 /**
  * memory_region_set_log: Turn dirty logging on or off for a region.

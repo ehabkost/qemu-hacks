@@ -1046,7 +1046,7 @@ static target_ulong h_signal_sys_reset(PowerPCCPU *cpu,
 }
 
 static uint32_t cas_check_pvr(PowerPCCPU *cpu, target_ulong *addr,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     bool explicit_match = false; /* Matched the CPU's real PVR */
     uint32_t max_compat = cpu->max_compat;

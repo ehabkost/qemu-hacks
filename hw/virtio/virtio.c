@@ -2473,7 +2473,7 @@ static void virtio_memory_listener_commit(MemoryListener *listener)
     }
 }
 
-static void virtio_device_realize(DeviceState *dev, Error **errp)
+static void virtio_device_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtioDeviceClass *vdc = VIRTIO_DEVICE_GET_CLASS(dev);
@@ -2497,7 +2497,7 @@ static void virtio_device_realize(DeviceState *dev, Error **errp)
     memory_listener_register(&vdev->listener, vdev->dma_as);
 }
 
-static void virtio_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_device_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtioDeviceClass *vdc = VIRTIO_DEVICE_GET_CLASS(dev);

@@ -38,7 +38,7 @@
 #include "hw/mem/pc-dimm.h"
 #include "hw/acpi/acpi_dev_interface.h"
 
-NameInfo *qmp_query_name(Error **errp)
+NameInfo *qmp_query_name(Error *errp[static 1])
 {
     NameInfo *info = g_malloc0(sizeof(*info));
 
@@ -50,7 +50,7 @@ NameInfo *qmp_query_name(Error **errp)
     return info;
 }
 
-VersionInfo *qmp_query_version(Error **errp)
+VersionInfo *qmp_query_version(Error *errp[static 1])
 {
     VersionInfo *info = g_new0(VersionInfo, 1);
 
@@ -63,7 +63,7 @@ VersionInfo *qmp_query_version(Error **errp)
     return info;
 }
 
-KvmInfo *qmp_query_kvm(Error **errp)
+KvmInfo *qmp_query_kvm(Error *errp[static 1])
 {
     KvmInfo *info = g_malloc0(sizeof(*info));
 
@@ -73,7 +73,7 @@ KvmInfo *qmp_query_kvm(Error **errp)
     return info;
 }
 
-UuidInfo *qmp_query_uuid(Error **errp)
+UuidInfo *qmp_query_uuid(Error *errp[static 1])
 {
     UuidInfo *info = g_malloc0(sizeof(*info));
 
@@ -81,13 +81,13 @@ UuidInfo *qmp_query_uuid(Error **errp)
     return info;
 }
 
-void qmp_quit(Error **errp)
+void qmp_quit(Error *errp[static 1])
 {
     no_shutdown = 0;
     qemu_system_shutdown_request(SHUTDOWN_CAUSE_HOST_QMP);
 }
 
-void qmp_stop(Error **errp)
+void qmp_stop(Error *errp[static 1])
 {
     /* if there is a dump in background, we should wait until the dump
      * finished */
@@ -103,22 +103,22 @@ void qmp_stop(Error **errp)
     }
 }
 
-void qmp_system_reset(Error **errp)
+void qmp_system_reset(Error *errp[static 1])
 {
     qemu_system_reset_request(SHUTDOWN_CAUSE_HOST_QMP);
 }
 
-void qmp_system_powerdown(Error **erp)
+void qmp_system_powerdown(Error *erp[static 1])
 {
     qemu_system_powerdown_request();
 }
 
-void qmp_cpu(int64_t index, Error **errp)
+void qmp_cpu(int64_t index, Error *errp[static 1])
 {
     /* Just do nothing */
 }
 
-void qmp_cpu_add(int64_t id, Error **errp)
+void qmp_cpu_add(int64_t id, Error *errp[static 1])
 {
     MachineClass *mc;
 
@@ -133,13 +133,13 @@ void qmp_cpu_add(int64_t id, Error **errp)
 #ifndef CONFIG_VNC
 /* If VNC support is enabled, the "true" query-vnc command is
    defined in the VNC subsystem */
-VncInfo *qmp_query_vnc(Error **errp)
+VncInfo *qmp_query_vnc(Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "vnc");
     return NULL;
 };
 
-VncInfo2List *qmp_query_vnc_servers(Error **errp)
+VncInfo2List *qmp_query_vnc_servers(Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "vnc");
     return NULL;
@@ -156,13 +156,13 @@ VncInfo2List *qmp_query_vnc_servers(Error **errp)
  * one, or else linking fails.  FIXME Educate the QAPI schema on
  * CONFIG_SPICE.
  */
-SpiceInfo *qmp_query_spice(Error **errp)
+SpiceInfo *qmp_query_spice(Error *errp[static 1])
 {
     abort();
 };
 #endif
 
-void qmp_cont(Error **errp)
+void qmp_cont(Error *errp[static 1])
 {
     BlockBackend *blk;
     BlockDriverState *bs;
@@ -211,12 +211,12 @@ void qmp_cont(Error **errp)
     }
 }
 
-void qmp_system_wakeup(Error **errp)
+void qmp_system_wakeup(Error *errp[static 1])
 {
     qemu_system_wakeup_request(QEMU_WAKEUP_REASON_OTHER);
 }
 
-ObjectPropertyInfoList *qmp_qom_list(const char *path, Error **errp)
+ObjectPropertyInfoList *qmp_qom_list(const char *path, Error *errp[static 1])
 {
     Object *obj;
     bool ambiguous = false;
@@ -251,7 +251,7 @@ ObjectPropertyInfoList *qmp_qom_list(const char *path, Error **errp)
 }
 
 void qmp_qom_set(const char *path, const char *property, QObject *value,
-                 Error **errp)
+                 Error *errp[static 1])
 {
     Object *obj;
 
@@ -265,7 +265,8 @@ void qmp_qom_set(const char *path, const char *property, QObject *value,
     object_property_set_qobject(obj, value, property, errp);
 }
 
-QObject *qmp_qom_get(const char *path, const char *property, Error **errp)
+QObject *qmp_qom_get(const char *path, const char *property,
+                     Error *errp[static 1])
 {
     Object *obj;
 
@@ -280,7 +281,8 @@ QObject *qmp_qom_get(const char *path, const char *property, Error **errp)
 }
 
 void qmp_set_password(const char *protocol, const char *password,
-                      bool has_connected, const char *connected, Error **errp)
+                      bool has_connected, const char *connected,
+                      Error *errp[static 1])
 {
     int disconnect_if_connected = 0;
     int fail_if_connected = 0;
@@ -330,7 +332,7 @@ void qmp_set_password(const char *protocol, const char *password,
 }
 
 void qmp_expire_password(const char *protocol, const char *whenstr,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     time_t when;
     int rc;
@@ -368,14 +370,14 @@ void qmp_expire_password(const char *protocol, const char *whenstr,
 }
 
 #ifdef CONFIG_VNC
-void qmp_change_vnc_password(const char *password, Error **errp)
+void qmp_change_vnc_password(const char *password, Error *errp[static 1])
 {
     if (vnc_display_password(NULL, password) < 0) {
         error_setg(errp, QERR_SET_PASSWD_FAILED);
     }
 }
 
-static void qmp_change_vnc_listen(const char *target, Error **errp)
+static void qmp_change_vnc_listen(const char *target, Error *errp[static 1])
 {
     QemuOptsList *olist = qemu_find_opts("vnc");
     QemuOpts *opts;
@@ -398,7 +400,7 @@ static void qmp_change_vnc_listen(const char *target, Error **errp)
 }
 
 static void qmp_change_vnc(const char *target, bool has_arg, const char *arg,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     if (strcmp(target, "passwd") == 0 || strcmp(target, "password") == 0) {
         if (!has_arg) {
@@ -411,19 +413,19 @@ static void qmp_change_vnc(const char *target, bool has_arg, const char *arg,
     }
 }
 #else
-void qmp_change_vnc_password(const char *password, Error **errp)
+void qmp_change_vnc_password(const char *password, Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "vnc");
 }
 static void qmp_change_vnc(const char *target, bool has_arg, const char *arg,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "vnc");
 }
 #endif /* !CONFIG_VNC */
 
 void qmp_change(const char *device, const char *target,
-                bool has_arg, const char *arg, Error **errp)
+                bool has_arg, const char *arg, Error *errp[static 1])
 {
     if (strcmp(device, "vnc") == 0) {
         qmp_change_vnc(target, has_arg, arg, errp);
@@ -451,7 +453,7 @@ ObjectTypeInfoList *qmp_qom_list_types(bool has_implements,
                                        const char *implements,
                                        bool has_abstract,
                                        bool abstract,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     ObjectTypeInfoList *ret = NULL;
 
@@ -512,7 +514,7 @@ static DevicePropertyInfo *make_device_property_info(ObjectClass *klass,
 }
 
 DevicePropertyInfoList *qmp_device_list_properties(const char *typename,
-                                                   Error **errp)
+                                                   Error *errp[static 1])
 {
     ObjectClass *klass;
     Object *obj;
@@ -579,35 +581,35 @@ DevicePropertyInfoList *qmp_device_list_properties(const char *typename,
     return prop_list;
 }
 
-CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
+CpuDefinitionInfoList *qmp_query_cpu_definitions(Error *errp[static 1])
 {
     return arch_query_cpu_definitions(errp);
 }
 
 CpuModelExpansionInfo *qmp_query_cpu_model_expansion(CpuModelExpansionType type,
                                                      CpuModelInfo *model,
-                                                     Error **errp)
+                                                     Error *errp[static 1])
 {
     return arch_query_cpu_model_expansion(type, model, errp);
 }
 
 CpuModelCompareInfo *qmp_query_cpu_model_comparison(CpuModelInfo *modela,
                                                     CpuModelInfo *modelb,
-                                                    Error **errp)
+                                                    Error *errp[static 1])
 {
     return arch_query_cpu_model_comparison(modela, modelb, errp);
 }
 
 CpuModelBaselineInfo *qmp_query_cpu_model_baseline(CpuModelInfo *modela,
                                                    CpuModelInfo *modelb,
-                                                   Error **errp)
+                                                   Error *errp[static 1])
 {
     return arch_query_cpu_model_baseline(modela, modelb, errp);
 }
 
 void qmp_add_client(const char *protocol, const char *fdname,
                     bool has_skipauth, bool skipauth, bool has_tls, bool tls,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     Chardev *s;
     int fd;
@@ -650,7 +652,7 @@ void qmp_add_client(const char *protocol, const char *fdname,
 
 
 void qmp_object_add(const char *type, const char *id,
-                    bool has_props, QObject *props, Error **errp)
+                    bool has_props, QObject *props, Error *errp[static 1])
 {
     QDict *pdict;
     Visitor *v;
@@ -676,12 +678,12 @@ void qmp_object_add(const char *type, const char *id,
     QDECREF(pdict);
 }
 
-void qmp_object_del(const char *id, Error **errp)
+void qmp_object_del(const char *id, Error *errp[static 1])
 {
     user_creatable_del(id, errp);
 }
 
-MemoryDeviceInfoList *qmp_query_memory_devices(Error **errp)
+MemoryDeviceInfoList *qmp_query_memory_devices(Error *errp[static 1])
 {
     MemoryDeviceInfoList *head = NULL;
     MemoryDeviceInfoList **prev = &head;
@@ -691,7 +693,7 @@ MemoryDeviceInfoList *qmp_query_memory_devices(Error **errp)
     return head;
 }
 
-ACPIOSTInfoList *qmp_query_acpi_ospm_status(Error **errp)
+ACPIOSTInfoList *qmp_query_acpi_ospm_status(Error *errp[static 1])
 {
     bool ambig;
     ACPIOSTInfoList *head = NULL;

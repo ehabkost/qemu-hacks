@@ -673,7 +673,7 @@ static void virtio_scsi_set_config(VirtIODevice *vdev,
 
 static uint64_t virtio_scsi_get_features(VirtIODevice *vdev,
                                          uint64_t requested_features,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     VirtIOSCSI *s = VIRTIO_SCSI(vdev);
 
@@ -783,7 +783,7 @@ static void virtio_scsi_change(SCSIBus *bus, SCSIDevice *dev, SCSISense sense)
 }
 
 static void virtio_scsi_hotplug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(hotplug_dev);
     VirtIOSCSI *s = VIRTIO_SCSI(vdev);
@@ -809,7 +809,7 @@ static void virtio_scsi_hotplug(HotplugHandler *hotplug_dev, DeviceState *dev,
 }
 
 static void virtio_scsi_hotunplug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(hotplug_dev);
     VirtIOSCSI *s = VIRTIO_SCSI(vdev);
@@ -845,7 +845,7 @@ void virtio_scsi_common_realize(DeviceState *dev,
                                 VirtIOHandleOutput ctrl,
                                 VirtIOHandleOutput evt,
                                 VirtIOHandleOutput cmd,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOSCSICommon *s = VIRTIO_SCSI_COMMON(dev);
@@ -873,7 +873,8 @@ void virtio_scsi_common_realize(DeviceState *dev,
     }
 }
 
-static void virtio_scsi_device_realize(DeviceState *dev, Error **errp)
+static void virtio_scsi_device_realize(DeviceState *dev,
+                                       Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOSCSI *s = VIRTIO_SCSI(dev);
@@ -905,7 +906,7 @@ static void virtio_scsi_instance_init(Object *obj)
                              OBJ_PROP_LINK_UNREF_ON_RELEASE, &error_abort);
 }
 
-void virtio_scsi_common_unrealize(DeviceState *dev, Error **errp)
+void virtio_scsi_common_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOSCSICommon *vs = VIRTIO_SCSI_COMMON(dev);
@@ -914,7 +915,8 @@ void virtio_scsi_common_unrealize(DeviceState *dev, Error **errp)
     virtio_cleanup(vdev);
 }
 
-static void virtio_scsi_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_scsi_device_unrealize(DeviceState *dev,
+                                         Error *errp[static 1])
 {
     VirtIOSCSI *s = VIRTIO_SCSI(dev);
 

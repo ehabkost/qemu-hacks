@@ -62,7 +62,7 @@ struct CryptoDevBackendBuiltin {
 };
 
 static void cryptodev_builtin_init(
-             CryptoDevBackend *backend, Error **errp)
+             CryptoDevBackend *backend, Error *errp[static 1])
 {
     /* Only support one queue */
     int queues = backend->conf.peers.queues;
@@ -120,7 +120,8 @@ cryptodev_builtin_get_unused_session_index(
 #define AES_KEYSIZE_256_XTS 64
 
 static int
-cryptodev_builtin_get_aes_algo(uint32_t key_len, int mode, Error **errp)
+cryptodev_builtin_get_aes_algo(uint32_t key_len, int mode,
+                               Error *errp[static 1])
 {
     int algo;
 
@@ -154,7 +155,7 @@ err:
 static int cryptodev_builtin_create_cipher_session(
                     CryptoDevBackendBuiltin *builtin,
                     CryptoDevBackendSymSessionInfo *sess_info,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     int algo;
     int mode;
@@ -246,7 +247,7 @@ static int cryptodev_builtin_create_cipher_session(
 static int64_t cryptodev_builtin_sym_create_session(
            CryptoDevBackend *backend,
            CryptoDevBackendSymSessionInfo *sess_info,
-           uint32_t queue_index, Error **errp)
+           uint32_t queue_index, Error *errp[static 1])
 {
     CryptoDevBackendBuiltin *builtin =
                       CRYPTODEV_BACKEND_BUILTIN(backend);
@@ -277,7 +278,7 @@ static int64_t cryptodev_builtin_sym_create_session(
 static int cryptodev_builtin_sym_close_session(
            CryptoDevBackend *backend,
            uint64_t session_id,
-           uint32_t queue_index, Error **errp)
+           uint32_t queue_index, Error *errp[static 1])
 {
     CryptoDevBackendBuiltin *builtin =
                       CRYPTODEV_BACKEND_BUILTIN(backend);
@@ -298,7 +299,7 @@ static int cryptodev_builtin_sym_close_session(
 static int cryptodev_builtin_sym_operation(
                  CryptoDevBackend *backend,
                  CryptoDevBackendSymOpInfo *op_info,
-                 uint32_t queue_index, Error **errp)
+                 uint32_t queue_index, Error *errp[static 1])
 {
     CryptoDevBackendBuiltin *builtin =
                       CRYPTODEV_BACKEND_BUILTIN(backend);
@@ -346,7 +347,7 @@ static int cryptodev_builtin_sym_operation(
 
 static void cryptodev_builtin_cleanup(
              CryptoDevBackend *backend,
-             Error **errp)
+             Error *errp[static 1])
 {
     CryptoDevBackendBuiltin *builtin =
                       CRYPTODEV_BACKEND_BUILTIN(backend);

@@ -41,7 +41,7 @@ do { printf("virtio_bus: " fmt , ## __VA_ARGS__); } while (0)
 #endif
 
 /* A VirtIODevice is being plugged */
-void virtio_bus_device_plugged(VirtIODevice *vdev, Error **errp)
+void virtio_bus_device_plugged(VirtIODevice *vdev, Error *errp[static 1])
 {
     DeviceState *qdev = DEVICE(vdev);
     BusState *qbus = BUS(qdev_get_parent_bus(qdev));

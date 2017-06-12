@@ -143,7 +143,7 @@ static const MemoryRegionOps vmport_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void vmport_realizefn(DeviceState *dev, Error **errp)
+static void vmport_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     VMPortState *s = VMPORT(dev);

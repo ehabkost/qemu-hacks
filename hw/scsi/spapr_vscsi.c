@@ -1198,7 +1198,7 @@ static void spapr_vscsi_reset(VIOsPAPRDevice *dev)
     }
 }
 
-static void spapr_vscsi_realize(VIOsPAPRDevice *dev, Error **errp)
+static void spapr_vscsi_realize(VIOsPAPRDevice *dev, Error *errp[static 1])
 {
     VSCSIState *s = VIO_SPAPR_VSCSI_DEVICE(dev);
 

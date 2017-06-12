@@ -182,7 +182,7 @@ Chardev *qemu_chr_fe_get_driver(CharBackend *be)
     return be->chr;
 }
 
-bool qemu_chr_fe_init(CharBackend *b, Chardev *s, Error **errp)
+bool qemu_chr_fe_init(CharBackend *b, Chardev *s, Error *errp[static 1])
 {
     int tag = 0;
 
@@ -292,7 +292,7 @@ void qemu_chr_fe_take_focus(CharBackend *b)
     }
 }
 
-int qemu_chr_fe_wait_connected(CharBackend *be, Error **errp)
+int qemu_chr_fe_wait_connected(CharBackend *be, Error *errp[static 1])
 {
     if (!be->chr) {
         error_setg(errp, "missing associated backend");

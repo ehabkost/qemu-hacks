@@ -71,7 +71,7 @@ static void ich9_smbus_write_config(PCIDevice *d, uint32_t address,
     }
 }
 
-static void ich9_smbus_realize(PCIDevice *d, Error **errp)
+static void ich9_smbus_realize(PCIDevice *d, Error *errp[static 1])
 {
     ICH9SMBState *s = ICH9_SMB_DEVICE(d);
 

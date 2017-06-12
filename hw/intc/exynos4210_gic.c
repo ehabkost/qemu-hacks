@@ -436,7 +436,8 @@ static void exynos4210_irq_gate_init(Object *obj)
     sysbus_init_irq(sbd, &s->out);
 }
 
-static void exynos4210_irq_gate_realize(DeviceState *dev, Error **errp)
+static void exynos4210_irq_gate_realize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     Exynos4210IRQGateState *s = EXYNOS4210_IRQ_GATE(dev);
 

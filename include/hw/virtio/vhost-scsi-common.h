@@ -43,6 +43,6 @@ char *vhost_scsi_common_get_fw_dev_path(FWPathProvider *p, BusState *bus,
                                         DeviceState *dev);
 void vhost_scsi_common_set_config(VirtIODevice *vdev, const uint8_t *config);
 uint64_t vhost_scsi_common_get_features(VirtIODevice *vdev, uint64_t features,
-                                        Error **errp);
+                                        Error *errp[static 1]);
 
 #endif /* VHOST_SCSI_COMMON_H */

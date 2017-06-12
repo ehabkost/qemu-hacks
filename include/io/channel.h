@@ -224,7 +224,7 @@ ssize_t qio_channel_readv_full(QIOChannel *ioc,
                                size_t niov,
                                int **fds,
                                size_t *nfds,
-                               Error **errp);
+                               Error *errp[static 1]);
 
 
 /**
@@ -266,7 +266,7 @@ ssize_t qio_channel_writev_full(QIOChannel *ioc,
                                 size_t niov,
                                 int *fds,
                                 size_t nfds,
-                                Error **errp);
+                                Error *errp[static 1]);
 
 /**
  * qio_channel_readv:
@@ -281,7 +281,7 @@ ssize_t qio_channel_writev_full(QIOChannel *ioc,
 ssize_t qio_channel_readv(QIOChannel *ioc,
                           const struct iovec *iov,
                           size_t niov,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 /**
  * qio_channel_writev:
@@ -296,7 +296,7 @@ ssize_t qio_channel_readv(QIOChannel *ioc,
 ssize_t qio_channel_writev(QIOChannel *ioc,
                            const struct iovec *iov,
                            size_t niov,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 /**
  * qio_channel_readv:
@@ -312,7 +312,7 @@ ssize_t qio_channel_writev(QIOChannel *ioc,
 ssize_t qio_channel_read(QIOChannel *ioc,
                          char *buf,
                          size_t buflen,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * qio_channel_write:
@@ -328,7 +328,7 @@ ssize_t qio_channel_read(QIOChannel *ioc,
 ssize_t qio_channel_write(QIOChannel *ioc,
                           const char *buf,
                           size_t buflen,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 /**
  * qio_channel_set_blocking:
@@ -345,7 +345,7 @@ ssize_t qio_channel_write(QIOChannel *ioc,
  */
 int qio_channel_set_blocking(QIOChannel *ioc,
                              bool enabled,
-                             Error **errp);
+                             Error *errp[static 1]);
 
 /**
  * qio_channel_close:
@@ -357,7 +357,7 @@ int qio_channel_set_blocking(QIOChannel *ioc,
  * Returns: 0 on success, -1 on error
  */
 int qio_channel_close(QIOChannel *ioc,
-                      Error **errp);
+                      Error *errp[static 1]);
 
 /**
  * qio_channel_shutdown:
@@ -378,7 +378,7 @@ int qio_channel_close(QIOChannel *ioc,
  */
 int qio_channel_shutdown(QIOChannel *ioc,
                          QIOChannelShutdown how,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * qio_channel_set_delay:
@@ -457,7 +457,7 @@ void qio_channel_set_cork(QIOChannel *ioc,
 off_t qio_channel_io_seek(QIOChannel *ioc,
                           off_t offset,
                           int whence,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 
 /**

@@ -60,7 +60,7 @@ static void spapr_cpu_destroy(PowerPCCPU *cpu)
 }
 
 static void spapr_cpu_init(sPAPRMachineState *spapr, PowerPCCPU *cpu,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     CPUPPCState *env = &cpu->env;
 
@@ -111,7 +111,8 @@ char *spapr_get_cpu_core_type(const char *model)
     return core_type;
 }
 
-static void spapr_cpu_core_unrealizefn(DeviceState *dev, Error **errp)
+static void spapr_cpu_core_unrealizefn(DeviceState *dev,
+                                       Error *errp[static 1])
 {
     sPAPRCPUCore *sc = SPAPR_CPU_CORE(OBJECT(dev));
     sPAPRCPUCoreClass *scc = SPAPR_CPU_CORE_GET_CLASS(OBJECT(dev));
@@ -134,7 +135,7 @@ static void spapr_cpu_core_unrealizefn(DeviceState *dev, Error **errp)
     g_free(sc->threads);
 }
 
-static void spapr_cpu_core_realize_child(Object *child, Error **errp)
+static void spapr_cpu_core_realize_child(Object *child, Error *errp[static 1])
 {
     Error *local_err = NULL;
     sPAPRMachineState *spapr = SPAPR_MACHINE(qdev_get_machine());
@@ -169,7 +170,7 @@ error:
     error_propagate(errp, local_err);
 }
 
-static void spapr_cpu_core_realize(DeviceState *dev, Error **errp)
+static void spapr_cpu_core_realize(DeviceState *dev, Error *errp[static 1])
 {
     sPAPRCPUCore *sc = SPAPR_CPU_CORE(OBJECT(dev));
     sPAPRCPUCoreClass *scc = SPAPR_CPU_CORE_GET_CLASS(OBJECT(dev));

@@ -41,7 +41,7 @@
 static void qmp_chardev_open_serial(Chardev *chr,
                                     ChardevBackend *backend,
                                     bool *be_opened,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     ChardevHostdev *serial = backend->u.serial.data;
 
@@ -253,7 +253,7 @@ static int tty_serial_ioctl(Chardev *chr, int cmd, void *arg)
 static void qmp_chardev_open_serial(Chardev *chr,
                                     ChardevBackend *backend,
                                     bool *be_opened,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     ChardevHostdev *serial = backend->u.serial.data;
     int fd;
@@ -271,7 +271,7 @@ static void qmp_chardev_open_serial(Chardev *chr,
 
 #ifdef HAVE_CHARDEV_SERIAL
 static void qemu_chr_parse_serial(QemuOpts *opts, ChardevBackend *backend,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     const char *device = qemu_opt_get(opts, "path");
     ChardevHostdev *serial;

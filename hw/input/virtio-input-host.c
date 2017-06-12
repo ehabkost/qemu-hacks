@@ -95,7 +95,7 @@ static void virtio_input_abs_config(VirtIOInputHost *vih, int axis)
     virtio_input_add_config(VIRTIO_INPUT(vih), &config);
 }
 
-static void virtio_input_host_realize(DeviceState *dev, Error **errp)
+static void virtio_input_host_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIOInputHost *vih = VIRTIO_INPUT_HOST(dev);
     VirtIOInput *vinput = VIRTIO_INPUT(dev);
@@ -178,7 +178,8 @@ err_close:
     return;
 }
 
-static void virtio_input_host_unrealize(DeviceState *dev, Error **errp)
+static void virtio_input_host_unrealize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     VirtIOInputHost *vih = VIRTIO_INPUT_HOST(dev);
 

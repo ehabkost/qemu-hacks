@@ -490,7 +490,7 @@ static void kvm_arm_gic_reset(DeviceState *dev)
     }
 }
 
-static void kvm_arm_gic_realize(DeviceState *dev, Error **errp)
+static void kvm_arm_gic_realize(DeviceState *dev, Error *errp[static 1])
 {
     int i;
     GICState *s = KVM_ARM_GIC(dev);

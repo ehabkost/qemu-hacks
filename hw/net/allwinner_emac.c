@@ -442,7 +442,7 @@ static void aw_emac_init(Object *obj)
     sysbus_init_irq(sbd, &s->irq);
 }
 
-static void aw_emac_realize(DeviceState *dev, Error **errp)
+static void aw_emac_realize(DeviceState *dev, Error *errp[static 1])
 {
     AwEmacState *s = AW_EMAC(dev);
 

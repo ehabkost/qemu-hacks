@@ -219,7 +219,7 @@ void device_listener_unregister(DeviceListener *listener)
     QTAILQ_REMOVE(&device_listeners, listener, link);
 }
 
-static void device_realize(DeviceState *dev, Error **errp)
+static void device_realize(DeviceState *dev, Error *errp[static 1])
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
 
@@ -232,7 +232,7 @@ static void device_realize(DeviceState *dev, Error **errp)
     }
 }
 
-static void device_unrealize(DeviceState *dev, Error **errp)
+static void device_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
 
@@ -309,7 +309,7 @@ void qbus_reset_all_fn(void *opaque)
 
 /* can be used as ->unplug() callback for the simple cases */
 void qdev_simple_device_unplug_cb(HotplugHandler *hotplug_dev,
-                                  DeviceState *dev, Error **errp)
+                                  DeviceState *dev, Error *errp[static 1])
 {
     /* just zap it */
     object_unparent(OBJECT(dev));
@@ -707,7 +707,7 @@ char *qdev_get_dev_path(DeviceState *dev)
 
 static void qdev_get_legacy_property(Object *obj, Visitor *v,
                                      const char *name, void *opaque,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -736,7 +736,7 @@ static void qdev_get_legacy_property(Object *obj, Visitor *v,
  * will be given names in the "legacy" namespace.
  */
 static void qdev_property_add_legacy(DeviceState *dev, Property *prop,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     gchar *name;
 
@@ -766,7 +766,7 @@ static void qdev_property_add_legacy(DeviceState *dev, Property *prop,
  * The type of the QOM property is derived from prop->info.
  */
 void qdev_property_add_static(DeviceState *dev, Property *prop,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     Object *obj = OBJECT(dev);
 
@@ -853,13 +853,13 @@ GSList *qdev_build_hotpluggable_device_list(Object *peripheral)
     return list;
 }
 
-static bool device_get_realized(Object *obj, Error **errp)
+static bool device_get_realized(Object *obj, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     return dev->realized;
 }
 
-static bool check_only_migratable(Object *obj, Error **err)
+static bool check_only_migratable(Object *obj, Error *err[static 1])
 {
     DeviceClass *dc = DEVICE_GET_CLASS(obj);
 
@@ -873,7 +873,8 @@ static bool check_only_migratable(Object *obj, Error **err)
     return true;
 }
 
-static void device_set_realized(Object *obj, bool value, Error **errp)
+static void device_set_realized(Object *obj, bool value,
+                                Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
@@ -997,7 +998,7 @@ fail:
     }
 }
 
-static bool device_get_hotpluggable(Object *obj, Error **errp)
+static bool device_get_hotpluggable(Object *obj, Error *errp[static 1])
 {
     DeviceClass *dc = DEVICE_GET_CLASS(obj);
     DeviceState *dev = DEVICE(obj);
@@ -1006,7 +1007,7 @@ static bool device_get_hotpluggable(Object *obj, Error **errp)
                                 qbus_is_hotpluggable(dev->parent_bus));
 }
 
-static bool device_get_hotplugged(Object *obj, Error **err)
+static bool device_get_hotplugged(Object *obj, Error *err[static 1])
 {
     DeviceState *dev = DEVICE(obj);
 

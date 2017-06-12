@@ -363,7 +363,7 @@ static int count_contiguous_clusters_unallocated(int nb_clusters,
 int qcow2_encrypt_sectors(BDRVQcow2State *s, int64_t sector_num,
                           uint8_t *out_buf, const uint8_t *in_buf,
                           int nb_sectors, bool enc,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     union {
         uint64_t ll[2];

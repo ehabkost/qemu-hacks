@@ -3037,7 +3037,7 @@ static void cirrus_init_common(CirrusVGAState *s, Object *owner,
  *
  ***************************************/
 
-static void isa_cirrus_vga_realizefn(DeviceState *dev, Error **errp)
+static void isa_cirrus_vga_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     ISACirrusVGAState *d = ISA_CIRRUS_VGA(dev);
@@ -3092,7 +3092,7 @@ static const TypeInfo isa_cirrus_vga_info = {
  *
  ***************************************/
 
-static void pci_cirrus_vga_realize(PCIDevice *dev, Error **errp)
+static void pci_cirrus_vga_realize(PCIDevice *dev, Error *errp[static 1])
 {
      PCICirrusVGAState *d = PCI_CIRRUS_VGA(dev);
      CirrusVGAState *s = &d->cirrus_vga;

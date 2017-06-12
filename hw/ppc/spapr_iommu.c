@@ -371,7 +371,7 @@ void spapr_tce_table_disable(sPAPRTCETable *tcet)
     tcet->nb_table = 0;
 }
 
-static void spapr_tce_table_unrealize(DeviceState *dev, Error **errp)
+static void spapr_tce_table_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     sPAPRTCETable *tcet = SPAPR_TCE_TABLE(dev);
 

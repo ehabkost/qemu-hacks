@@ -125,7 +125,8 @@ static void handle_input(VirtIODevice *vdev, VirtQueue *vq)
     virtio_rng_process(vrng);
 }
 
-static uint64_t get_features(VirtIODevice *vdev, uint64_t f, Error **errp)
+static uint64_t get_features(VirtIODevice *vdev, uint64_t f,
+                             Error *errp[static 1])
 {
     return f;
 }
@@ -156,7 +157,7 @@ static void check_rate_limit(void *opaque)
     vrng->activate_timer = true;
 }
 
-static void virtio_rng_device_realize(DeviceState *dev, Error **errp)
+static void virtio_rng_device_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIORNG *vrng = VIRTIO_RNG(dev);
@@ -215,7 +216,8 @@ static void virtio_rng_device_realize(DeviceState *dev, Error **errp)
                                                      vrng);
 }
 
-static void virtio_rng_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_rng_device_unrealize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIORNG *vrng = VIRTIO_RNG(dev);

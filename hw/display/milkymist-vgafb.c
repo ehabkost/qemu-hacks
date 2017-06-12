@@ -302,7 +302,7 @@ static void milkymist_vgafb_init(Object *obj)
     sysbus_init_mmio(dev, &s->regs_region);
 }
 
-static void milkymist_vgafb_realize(DeviceState *dev, Error **errp)
+static void milkymist_vgafb_realize(DeviceState *dev, Error *errp[static 1])
 {
     MilkymistVgafbState *s = MILKYMIST_VGAFB(dev);
 

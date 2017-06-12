@@ -191,7 +191,7 @@ static ssize_t test_block_read_func(QCryptoBlock *block,
                                     uint8_t *buf,
                                     size_t buflen,
                                     void *opaque,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     Buffer *header = opaque;
 
@@ -206,7 +206,7 @@ static ssize_t test_block_read_func(QCryptoBlock *block,
 static ssize_t test_block_init_func(QCryptoBlock *block,
                                     size_t headerlen,
                                     void *opaque,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     Buffer *header = opaque;
 
@@ -223,7 +223,7 @@ static ssize_t test_block_write_func(QCryptoBlock *block,
                                      const uint8_t *buf,
                                      size_t buflen,
                                      void *opaque,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     Buffer *header = opaque;
 

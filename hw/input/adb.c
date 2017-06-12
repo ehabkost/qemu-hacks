@@ -138,7 +138,7 @@ static const VMStateDescription vmstate_adb_device = {
     }
 };
 
-static void adb_device_realizefn(DeviceState *dev, Error **errp)
+static void adb_device_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ADBDevice *d = ADB_DEVICE(dev);
     ADBBusState *bus = ADB_BUS(qdev_get_parent_bus(dev));
@@ -489,7 +489,7 @@ static QemuInputHandler adb_keyboard_handler = {
     .event = adb_keyboard_event,
 };
 
-static void adb_kbd_realizefn(DeviceState *dev, Error **errp)
+static void adb_kbd_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ADBKeyboardClass *akc = ADB_KEYBOARD_GET_CLASS(dev);
     akc->parent_realize(dev, errp);
@@ -704,7 +704,7 @@ static const VMStateDescription vmstate_adb_mouse = {
     }
 };
 
-static void adb_mouse_realizefn(DeviceState *dev, Error **errp)
+static void adb_mouse_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     MouseState *s = ADB_MOUSE(dev);
     ADBMouseClass *amc = ADB_MOUSE_GET_CLASS(dev);

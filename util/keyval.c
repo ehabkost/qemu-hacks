@@ -133,7 +133,7 @@ static int key_to_index(const char *key, const char **end)
 static QObject *keyval_parse_put(QDict *cur,
                                  const char *key_in_cur, QString *value,
                                  const char *key, const char *key_cursor,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     QObject *old, *new;
 
@@ -166,7 +166,7 @@ static QObject *keyval_parse_put(QDict *cur,
  */
 static const char *keyval_parse_one(QDict *qdict, const char *params,
                                     const char *implied_key,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     const char *key, *key_end, *s, *end;
     size_t len;
@@ -285,7 +285,8 @@ static char *reassemble_key(GSList *key)
  * On success, return either @cur or its replacement.
  * On failure, store an error through @errp and return NULL.
  */
-static QObject *keyval_listify(QDict *cur, GSList *key_of_cur, Error **errp)
+static QObject *keyval_listify(QDict *cur, GSList *key_of_cur,
+                               Error *errp[static 1])
 {
     GSList key_node;
     bool has_index, has_member;
@@ -393,7 +394,7 @@ static QObject *keyval_listify(QDict *cur, GSList *key_of_cur, Error **errp)
  * On failure, store an error through @errp and return NULL.
  */
 QDict *keyval_parse(const char *params, const char *implied_key,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     QDict *qdict = qdict_new();
     QObject *listified;

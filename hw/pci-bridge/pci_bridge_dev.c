@@ -184,7 +184,7 @@ static const VMStateDescription pci_bridge_dev_vmstate = {
 };
 
 static void pci_bridge_dev_hotplug_cb(HotplugHandler *hotplug_dev,
-                                      DeviceState *dev, Error **errp)
+                                      DeviceState *dev, Error *errp[static 1])
 {
     PCIDevice *pci_hotplug_dev = PCI_DEVICE(hotplug_dev);
 
@@ -198,7 +198,7 @@ static void pci_bridge_dev_hotplug_cb(HotplugHandler *hotplug_dev,
 
 static void pci_bridge_dev_hot_unplug_request_cb(HotplugHandler *hotplug_dev,
                                                  DeviceState *dev,
-                                                 Error **errp)
+                                                 Error *errp[static 1])
 {
     PCIDevice *pci_hotplug_dev = PCI_DEVICE(hotplug_dev);
 

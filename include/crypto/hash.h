@@ -70,7 +70,7 @@ int qcrypto_hash_bytesv(QCryptoHashAlgorithm alg,
                         size_t niov,
                         uint8_t **result,
                         size_t *resultlen,
-                        Error **errp);
+                        Error *errp[static 1]);
 
 /**
  * qcrypto_hash_bytes:
@@ -95,7 +95,7 @@ int qcrypto_hash_bytes(QCryptoHashAlgorithm alg,
                        size_t len,
                        uint8_t **result,
                        size_t *resultlen,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 /**
  * qcrypto_hash_digestv:
@@ -118,7 +118,7 @@ int qcrypto_hash_digestv(QCryptoHashAlgorithm alg,
                          const struct iovec *iov,
                          size_t niov,
                          char **digest,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * qcrypto_hash_digest:
@@ -141,7 +141,7 @@ int qcrypto_hash_digest(QCryptoHashAlgorithm alg,
                         const char *buf,
                         size_t len,
                         char **digest,
-                        Error **errp);
+                        Error *errp[static 1]);
 
 /**
  * qcrypto_hash_base64v:
@@ -164,7 +164,7 @@ int qcrypto_hash_base64v(QCryptoHashAlgorithm alg,
                          const struct iovec *iov,
                          size_t niov,
                          char **base64,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * qcrypto_hash_base64:
@@ -187,6 +187,6 @@ int qcrypto_hash_base64(QCryptoHashAlgorithm alg,
                         const char *buf,
                         size_t len,
                         char **base64,
-                        Error **errp);
+                        Error *errp[static 1]);
 
 #endif /* QCRYPTO_HASH_H */

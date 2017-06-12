@@ -532,7 +532,7 @@ static void hostdev_event(void *opaque, int event)
     }
 }
 
-static void ipoctal_realize(DeviceState *dev, Error **errp)
+static void ipoctal_realize(DeviceState *dev, Error *errp[static 1])
 {
     IPOctalState *s = IPOCTAL(dev);
     unsigned i;

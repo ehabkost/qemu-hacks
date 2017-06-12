@@ -213,7 +213,7 @@ static void aspeed_sdmc_reset(DeviceState *dev)
     }
 }
 
-static void aspeed_sdmc_realize(DeviceState *dev, Error **errp)
+static void aspeed_sdmc_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     AspeedSDMCState *s = ASPEED_SDMC(dev);

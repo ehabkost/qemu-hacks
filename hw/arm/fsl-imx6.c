@@ -119,7 +119,7 @@ static void fsl_imx6_init(Object *obj)
     object_property_add_child(obj, "eth", OBJECT(&s->eth), IGNORE_ERRORS);
 }
 
-static void fsl_imx6_realize(DeviceState *dev, Error **errp)
+static void fsl_imx6_realize(DeviceState *dev, Error *errp[static 1])
 {
     FslIMX6State *s = FSL_IMX6(dev);
     uint16_t i;

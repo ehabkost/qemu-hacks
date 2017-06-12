@@ -302,7 +302,7 @@ static const VMStateDescription imx_i2c_vmstate = {
     }
 };
 
-static void imx_i2c_realize(DeviceState *dev, Error **errp)
+static void imx_i2c_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMXI2CState *s = IMX_I2C(dev);
 

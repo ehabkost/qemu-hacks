@@ -44,7 +44,7 @@ static void gpex_set_irq(void *opaque, int irq_num, int level)
     qemu_set_irq(s->irq[irq_num], level);
 }
 
-static void gpex_host_realize(DeviceState *dev, Error **errp)
+static void gpex_host_realize(DeviceState *dev, Error *errp[static 1])
 {
     PCIHostState *pci = PCI_HOST_BRIDGE(dev);
     GPEXHost *s = GPEX_HOST(dev);

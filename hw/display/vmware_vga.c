@@ -1294,7 +1294,7 @@ static const MemoryRegionOps vmsvga_io_ops = {
     },
 };
 
-static void pci_vmsvga_realize(PCIDevice *dev, Error **errp)
+static void pci_vmsvga_realize(PCIDevice *dev, Error *errp[static 1])
 {
     struct pci_vmsvga_state_s *s = VMWARE_SVGA(dev);
 

@@ -756,7 +756,7 @@ static gboolean tcp_chr_accept(QIOChannel *channel,
     return TRUE;
 }
 
-static int tcp_chr_wait_connected(Chardev *chr, Error **errp)
+static int tcp_chr_wait_connected(Chardev *chr, Error *errp[static 1])
 {
     SocketChardev *s = SOCKET_CHARDEV(chr);
     QIOChannelSocket *sioc;
@@ -857,7 +857,7 @@ static gboolean socket_reconnect_timeout(gpointer opaque)
 static void qmp_chardev_open_socket(Chardev *chr,
                                     ChardevBackend *backend,
                                     bool *be_opened,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     SocketChardev *s = SOCKET_CHARDEV(chr);
     ChardevSocket *sock = backend->u.socket.data;
@@ -975,7 +975,7 @@ error:
 }
 
 static void qemu_chr_parse_socket(QemuOpts *opts, ChardevBackend *backend,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     bool is_listen      = qemu_opt_get_bool(opts, "server", false);
     bool is_waitconnect = is_listen && qemu_opt_get_bool(opts, "wait", true);
@@ -1049,7 +1049,7 @@ static void qemu_chr_parse_socket(QemuOpts *opts, ChardevBackend *backend,
 
 static void
 char_socket_get_addr(Object *obj, Visitor *v, const char *name,
-                     void *opaque, Error **errp)
+                     void *opaque, Error *errp[static 1])
 {
     SocketChardev *s = SOCKET_CHARDEV(obj);
 
@@ -1057,7 +1057,7 @@ char_socket_get_addr(Object *obj, Visitor *v, const char *name,
 }
 
 static bool
-char_socket_get_connected(Object *obj, Error **errp)
+char_socket_get_connected(Object *obj, Error *errp[static 1])
 {
     SocketChardev *s = SOCKET_CHARDEV(obj);
 

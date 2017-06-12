@@ -91,7 +91,7 @@ static int emulated_ccw_3270_cb(SubchDev *sch, CCW1 ccw)
     return rc;
 }
 
-static void emulated_ccw_3270_realize(DeviceState *ds, Error **errp)
+static void emulated_ccw_3270_realize(DeviceState *ds, Error *errp[static 1])
 {
     uint16_t chpid;
     EmulatedCcw3270Device *dev = EMULATED_CCW_3270(ds);

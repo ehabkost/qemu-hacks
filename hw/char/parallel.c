@@ -504,7 +504,7 @@ static const VMStateDescription vmstate_parallel_isa = {
 };
 
 
-static void parallel_isa_realizefn(DeviceState *dev, Error **errp)
+static void parallel_isa_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     static int index;
     ISADevice *isadev = ISA_DEVICE(dev);

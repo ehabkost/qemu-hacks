@@ -82,7 +82,7 @@ pkt_copy(const void *_src, void *_dst, int l)
  * (which is the case for the VALE bridge).
  */
 static struct nm_desc *netmap_open(const NetdevNetmapOptions *nm_opts,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     struct nm_desc *nmd;
     struct nmreq req;
@@ -419,7 +419,8 @@ static NetClientInfo net_netmap_info = {
  * ... -net netmap,ifname="..."
  */
 int net_init_netmap(const Netdev *netdev,
-                    const char *name, NetClientState *peer, Error **errp)
+                    const char *name, NetClientState *peer,
+                    Error *errp[static 1])
 {
     const NetdevNetmapOptions *netmap_opts = &netdev->u.netmap;
     struct nm_desc *nmd;

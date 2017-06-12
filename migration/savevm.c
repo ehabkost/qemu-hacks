@@ -673,7 +673,7 @@ int vmstate_register_with_alias_id(DeviceState *dev, int instance_id,
                                    const VMStateDescription *vmsd,
                                    void *opaque, int alias_id,
                                    int required_for_version,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     SaveStateEntry *se;
 
@@ -947,7 +947,7 @@ void qemu_savevm_send_postcopy_run(QEMUFile *f)
     qemu_savevm_command_send(f, MIG_CMD_POSTCOPY_RUN, 0, NULL);
 }
 
-bool qemu_savevm_state_blocked(Error **errp)
+bool qemu_savevm_state_blocked(Error *errp[static 1])
 {
     SaveStateEntry *se;
 
@@ -1235,7 +1235,7 @@ void qemu_savevm_state_cleanup(void)
     }
 }
 
-static int qemu_savevm_state(QEMUFile *f, Error **errp)
+static int qemu_savevm_state(QEMUFile *f, Error *errp[static 1])
 {
     int ret;
     MigrationState *ms = migrate_init();
@@ -2055,7 +2055,7 @@ int qemu_loadvm_state(QEMUFile *f)
     return ret;
 }
 
-int save_snapshot(const char *name, Error **errp)
+int save_snapshot(const char *name, Error *errp[static 1])
 {
     BlockDriverState *bs, *bs1;
     QEMUSnapshotInfo sn1, *sn = &sn1, old_sn1, *old_sn = &old_sn1;
@@ -2153,7 +2153,7 @@ int save_snapshot(const char *name, Error **errp)
     return ret;
 }
 
-void qmp_xen_save_devices_state(const char *filename, Error **errp)
+void qmp_xen_save_devices_state(const char *filename, Error *errp[static 1])
 {
     QEMUFile *f;
     QIOChannelFile *ioc;
@@ -2182,7 +2182,7 @@ void qmp_xen_save_devices_state(const char *filename, Error **errp)
     }
 }
 
-void qmp_xen_load_devices_state(const char *filename, Error **errp)
+void qmp_xen_load_devices_state(const char *filename, Error *errp[static 1])
 {
     QEMUFile *f;
     QIOChannelFile *ioc;
@@ -2212,7 +2212,7 @@ void qmp_xen_load_devices_state(const char *filename, Error **errp)
     migration_incoming_state_destroy();
 }
 
-int load_snapshot(const char *name, Error **errp)
+int load_snapshot(const char *name, Error *errp[static 1])
 {
     BlockDriverState *bs, *bs_vm_state;
     QEMUSnapshotInfo sn;

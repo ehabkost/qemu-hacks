@@ -171,7 +171,7 @@ static void s390_cpu_disas_set_info(CPUState *cpu, disassemble_info *info)
     info->print_insn = print_insn_s390;
 }
 
-static void s390_cpu_realizefn(DeviceState *dev, Error **errp)
+static void s390_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     S390CPUClass *scc = S390_CPU_GET_CLASS(dev);
@@ -235,7 +235,7 @@ out:
 }
 
 static void s390x_cpu_get_id(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     S390CPU *cpu = S390_CPU(obj);
     int64_t value = cpu->id;
@@ -244,7 +244,7 @@ static void s390x_cpu_get_id(Object *obj, Visitor *v, const char *name,
 }
 
 static void s390x_cpu_set_id(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     S390CPU *cpu = S390_CPU(obj);
     DeviceState *dev = DEVICE(obj);

@@ -94,7 +94,7 @@ typedef struct BlockBackendPublic {
 
 BlockBackend *blk_new(uint64_t perm, uint64_t shared_perm);
 BlockBackend *blk_new_open(const char *filename, const char *reference,
-                           QDict *options, int flags, Error **errp);
+                           QDict *options, int flags, Error *errp[static 1]);
 int blk_get_refcnt(BlockBackend *blk);
 void blk_ref(BlockBackend *blk);
 void blk_unref(BlockBackend *blk);
@@ -102,7 +102,8 @@ void blk_remove_all_bs(void);
 const char *blk_name(const BlockBackend *blk);
 BlockBackend *blk_by_name(const char *name);
 BlockBackend *blk_next(BlockBackend *blk);
-bool monitor_add_blk(BlockBackend *blk, const char *name, Error **errp);
+bool monitor_add_blk(BlockBackend *blk, const char *name,
+		     Error *errp[static 1]);
 void monitor_remove_blk(BlockBackend *blk);
 
 BlockBackendPublic *blk_get_public(BlockBackend *blk);
@@ -110,11 +111,12 @@ BlockBackend *blk_by_public(BlockBackendPublic *public);
 
 BlockDriverState *blk_bs(BlockBackend *blk);
 void blk_remove_bs(BlockBackend *blk);
-int blk_insert_bs(BlockBackend *blk, BlockDriverState *bs, Error **errp);
+int blk_insert_bs(BlockBackend *blk, BlockDriverState *bs,
+		  Error *errp[static 1]);
 bool bdrv_has_blk(BlockDriverState *bs);
 bool bdrv_is_root_node(BlockDriverState *bs);
 int blk_set_perm(BlockBackend *blk, uint64_t perm, uint64_t shared_perm,
-                 Error **errp);
+                 Error *errp[static 1]);
 void blk_get_perm(BlockBackend *blk, uint64_t *perm, uint64_t *shared_perm);
 
 void blk_set_allow_write_beyond_eof(BlockBackend *blk, bool allow);
@@ -129,7 +131,7 @@ void blk_attach_dev_legacy(BlockBackend *blk, void *dev);
 void blk_detach_dev(BlockBackend *blk, void *dev);
 void *blk_get_attached_dev(BlockBackend *blk);
 BlockBackend *blk_by_dev(void *dev);
-BlockBackend *blk_by_qdev_id(const char *id, Error **errp);
+BlockBackend *blk_by_qdev_id(const char *id, Error *errp[static 1]);
 void blk_set_dev_ops(BlockBackend *blk, const BlockDevOps *ops, void *opaque);
 int blk_pread_unthrottled(BlockBackend *blk, int64_t offset, uint8_t *buf,
                           int count);
@@ -184,7 +186,7 @@ int blk_is_read_only(BlockBackend *blk);
 int blk_is_sg(BlockBackend *blk);
 int blk_enable_write_cache(BlockBackend *blk);
 void blk_set_enable_write_cache(BlockBackend *blk, bool wce);
-void blk_invalidate_cache(BlockBackend *blk, Error **errp);
+void blk_invalidate_cache(BlockBackend *blk, Error *errp[static 1]);
 bool blk_is_inserted(BlockBackend *blk);
 bool blk_is_available(BlockBackend *blk);
 void blk_lock_medium(BlockBackend *blk, bool locked);
@@ -195,7 +197,8 @@ int blk_get_max_iov(BlockBackend *blk);
 void blk_set_guest_block_size(BlockBackend *blk, int align);
 void *blk_try_blockalign(BlockBackend *blk, size_t size);
 void *blk_blockalign(BlockBackend *blk, size_t size);
-bool blk_op_is_blocked(BlockBackend *blk, BlockOpType op, Error **errp);
+bool blk_op_is_blocked(BlockBackend *blk, BlockOpType op,
+		       Error *errp[static 1]);
 void blk_op_unblock(BlockBackend *blk, BlockOpType op, Error *reason);
 void blk_op_block_all(BlockBackend *blk, Error *reason);
 void blk_op_unblock_all(BlockBackend *blk, Error *reason);
@@ -225,7 +228,7 @@ int coroutine_fn blk_co_pwrite_zeroes(BlockBackend *blk, int64_t offset,
                                       int count, BdrvRequestFlags flags);
 int blk_pwrite_compressed(BlockBackend *blk, int64_t offset, const void *buf,
                           int count);
-int blk_truncate(BlockBackend *blk, int64_t offset, Error **errp);
+int blk_truncate(BlockBackend *blk, int64_t offset, Error *errp[static 1]);
 int blk_pdiscard(BlockBackend *blk, int64_t offset, int count);
 int blk_save_vmstate(BlockBackend *blk, const uint8_t *buf,
                      int64_t pos, int size);

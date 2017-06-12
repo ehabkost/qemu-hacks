@@ -74,7 +74,7 @@ void vty_putchars(VIOsPAPRDevice *sdev, uint8_t *buf, int len)
     qemu_chr_fe_write_all(&dev->chardev, buf, len);
 }
 
-static void spapr_vty_realize(VIOsPAPRDevice *sdev, Error **errp)
+static void spapr_vty_realize(VIOsPAPRDevice *sdev, Error *errp[static 1])
 {
     VIOsPAPRVTYDevice *dev = VIO_SPAPR_VTY_DEVICE(sdev);
 

@@ -25,7 +25,7 @@ static uint8_t gen_rp_aer_vector(const PCIDevice *d)
     return 0;
 }
 
-static int gen_rp_interrupts_init(PCIDevice *d, Error **errp)
+static int gen_rp_interrupts_init(PCIDevice *d, Error *errp[static 1])
 {
     int rc;
 

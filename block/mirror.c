@@ -915,7 +915,8 @@ immediate_exit:
     block_job_defer_to_main_loop(&s->common, mirror_exit, data);
 }
 
-static void mirror_set_speed(BlockJob *job, int64_t speed, Error **errp)
+static void mirror_set_speed(BlockJob *job, int64_t speed,
+                             Error *errp[static 1])
 {
     MirrorBlockJob *s = container_of(job, MirrorBlockJob, common);
 
@@ -926,7 +927,7 @@ static void mirror_set_speed(BlockJob *job, int64_t speed, Error **errp)
     ratelimit_set_speed(&s->limit, speed / BDRV_SECTOR_SIZE, SLICE_TIME);
 }
 
-static void mirror_complete(BlockJob *job, Error **errp)
+static void mirror_complete(BlockJob *job, Error *errp[static 1])
 {
     MirrorBlockJob *s = container_of(job, MirrorBlockJob, common);
     BlockDriverState *target;
@@ -1121,7 +1122,7 @@ static void mirror_start_job(const char *job_id, BlockDriverState *bs,
                              const BlockJobDriver *driver,
                              bool is_none_mode, BlockDriverState *base,
                              bool auto_complete, const char *filter_node_name,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     MirrorBlockJob *s;
     BlockDriverState *mirror_top_bs;
@@ -1271,7 +1272,8 @@ void mirror_start(const char *job_id, BlockDriverState *bs,
                   MirrorSyncMode mode, BlockMirrorBackingMode backing_mode,
                   BlockdevOnError on_source_error,
                   BlockdevOnError on_target_error,
-                  bool unmap, const char *filter_node_name, Error **errp)
+                  bool unmap, const char *filter_node_name,
+                  Error *errp[static 1])
 {
     bool is_none_mode;
     BlockDriverState *base;
@@ -1294,7 +1296,7 @@ void commit_active_start(const char *job_id, BlockDriverState *bs,
                          int64_t speed, BlockdevOnError on_error,
                          const char *filter_node_name,
                          BlockCompletionFunc *cb, void *opaque,
-                         bool auto_complete, Error **errp)
+                         bool auto_complete, Error *errp[static 1])
 {
     int orig_base_flags;
 

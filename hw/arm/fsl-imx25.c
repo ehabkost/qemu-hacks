@@ -74,7 +74,7 @@ static void fsl_imx25_init(Object *obj)
     }
 }
 
-static void fsl_imx25_realize(DeviceState *dev, Error **errp)
+static void fsl_imx25_realize(DeviceState *dev, Error *errp[static 1])
 {
     FslIMX25State *s = FSL_IMX25(dev);
     uint8_t i;

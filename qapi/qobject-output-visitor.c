@@ -100,7 +100,8 @@ static void qobject_output_add_obj(QObjectOutputVisitor *qov, const char *name,
 }
 
 static void qobject_output_start_struct(Visitor *v, const char *name,
-                                        void **obj, size_t unused, Error **errp)
+                                        void **obj, size_t unused,
+                                        Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     QDict *dict = qdict_new();
@@ -118,7 +119,7 @@ static void qobject_output_end_struct(Visitor *v, void **obj)
 
 static void qobject_output_start_list(Visitor *v, const char *name,
                                       GenericList **listp, size_t size,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     QList *list = qlist_new();
@@ -141,14 +142,14 @@ static void qobject_output_end_list(Visitor *v, void **obj)
 }
 
 static void qobject_output_type_int64(Visitor *v, const char *name,
-                                      int64_t *obj, Error **errp)
+                                      int64_t *obj, Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     qobject_output_add(qov, name, qint_from_int(*obj));
 }
 
 static void qobject_output_type_uint64(Visitor *v, const char *name,
-                                       uint64_t *obj, Error **errp)
+                                       uint64_t *obj, Error *errp[static 1])
 {
     /* FIXME values larger than INT64_MAX become negative */
     QObjectOutputVisitor *qov = to_qov(v);
@@ -156,14 +157,14 @@ static void qobject_output_type_uint64(Visitor *v, const char *name,
 }
 
 static void qobject_output_type_bool(Visitor *v, const char *name, bool *obj,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     qobject_output_add(qov, name, qbool_from_bool(*obj));
 }
 
 static void qobject_output_type_str(Visitor *v, const char *name, char **obj,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     if (*obj) {
@@ -174,21 +175,22 @@ static void qobject_output_type_str(Visitor *v, const char *name, char **obj,
 }
 
 static void qobject_output_type_number(Visitor *v, const char *name,
-                                       double *obj, Error **errp)
+                                       double *obj, Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     qobject_output_add(qov, name, qfloat_from_double(*obj));
 }
 
 static void qobject_output_type_any(Visitor *v, const char *name,
-                                    QObject **obj, Error **errp)
+                                    QObject **obj, Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     qobject_incref(*obj);
     qobject_output_add_obj(qov, name, *obj);
 }
 
-static void qobject_output_type_null(Visitor *v, const char *name, Error **errp)
+static void qobject_output_type_null(Visitor *v, const char *name,
+                                     Error *errp[static 1])
 {
     QObjectOutputVisitor *qov = to_qov(v);
     qobject_output_add_obj(qov, name, qnull());

@@ -2323,7 +2323,7 @@ static const struct SCSIBusInfo megasas_scsi_info = {
     .cancel = megasas_command_cancelled,
 };
 
-static void megasas_scsi_realize(PCIDevice *dev, Error **errp)
+static void megasas_scsi_realize(PCIDevice *dev, Error *errp[static 1])
 {
     MegasasState *s = MEGASAS(dev);
     MegasasBaseClass *b = MEGASAS_DEVICE_GET_CLASS(s);

@@ -52,7 +52,7 @@ static int dec_map_irq(PCIDevice *pci_dev, int irq_num)
     return irq_num;
 }
 
-static void dec_pci_bridge_realize(PCIDevice *pci_dev, Error **errp)
+static void dec_pci_bridge_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     pci_bridge_initfn(pci_dev, TYPE_PCI_BUS);
 }
@@ -108,7 +108,7 @@ static int pci_dec_21154_device_init(SysBusDevice *dev)
     return 0;
 }
 
-static void dec_21154_pci_host_realize(PCIDevice *d, Error **errp)
+static void dec_21154_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     /* PCI2PCI bridge same values as PearPC - check this */
 }

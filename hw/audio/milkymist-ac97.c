@@ -299,7 +299,7 @@ static void milkymist_ac97_init(Object *obj)
     sysbus_init_mmio(dev, &s->regs_region);
 }
 
-static void milkymist_ac97_realize(DeviceState *dev, Error **errp)
+static void milkymist_ac97_realize(DeviceState *dev, Error *errp[static 1])
 {
     MilkymistAC97State *s = MILKYMIST_AC97(dev);
     struct audsettings as;

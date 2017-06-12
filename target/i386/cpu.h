@@ -1311,7 +1311,7 @@ int x86_cpu_write_elf32_qemunote(WriteCoreDumpFunction f, CPUState *cpu,
                                  void *opaque);
 
 void x86_cpu_get_memory_mapping(CPUState *cpu, MemoryMappingList *list,
-                                Error **errp);
+                                Error *errp[static 1]);
 
 void x86_cpu_dump_state(CPUState *cs, FILE *f, fprintf_function cpu_fprintf,
                         int flags);

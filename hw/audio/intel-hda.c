@@ -51,7 +51,7 @@ void hda_codec_bus_init(DeviceState *dev, HDACodecBus *bus, size_t bus_size,
     bus->xfer = xfer;
 }
 
-static void hda_codec_dev_realize(DeviceState *qdev, Error **errp)
+static void hda_codec_dev_realize(DeviceState *qdev, Error *errp[static 1])
 {
     HDACodecBus *bus = HDA_BUS(qdev->parent_bus);
     HDACodecDevice *dev = HDA_CODEC_DEVICE(qdev);
@@ -70,7 +70,7 @@ static void hda_codec_dev_realize(DeviceState *qdev, Error **errp)
     }
 }
 
-static void hda_codec_dev_unrealize(DeviceState *qdev, Error **errp)
+static void hda_codec_dev_unrealize(DeviceState *qdev, Error *errp[static 1])
 {
     HDACodecDevice *dev = HDA_CODEC_DEVICE(qdev);
     HDACodecDeviceClass *cdc = HDA_CODEC_DEVICE_GET_CLASS(dev);
@@ -1128,7 +1128,7 @@ static void intel_hda_reset(DeviceState *dev)
     intel_hda_update_irq(d);
 }
 
-static void intel_hda_realize(PCIDevice *pci, Error **errp)
+static void intel_hda_realize(PCIDevice *pci, Error *errp[static 1])
 {
     IntelHDAState *d = INTEL_HDA(pci);
     uint8_t *conf = d->pci.config;

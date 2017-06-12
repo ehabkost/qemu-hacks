@@ -253,7 +253,7 @@ static void mv88w8618_audio_init(Object *obj)
     sysbus_init_mmio(dev, &s->iomem);
 }
 
-static void mv88w8618_audio_realize(DeviceState *dev, Error **errp)
+static void mv88w8618_audio_realize(DeviceState *dev, Error *errp[static 1])
 {
     mv88w8618_audio_state *s = MV88W8618_AUDIO(dev);
 

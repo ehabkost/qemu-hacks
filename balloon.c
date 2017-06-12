@@ -49,7 +49,7 @@ void qemu_balloon_inhibit(bool state)
     balloon_inhibited = state;
 }
 
-static bool have_balloon(Error **errp)
+static bool have_balloon(Error *errp[static 1])
 {
     if (kvm_enabled() && !kvm_has_sync_mmu()) {
         error_set(errp, ERROR_CLASS_KVM_MISSING_CAP,
@@ -89,7 +89,7 @@ void qemu_remove_balloon_handler(void *opaque)
     balloon_opaque = NULL;
 }
 
-BalloonInfo *qmp_query_balloon(Error **errp)
+BalloonInfo *qmp_query_balloon(Error *errp[static 1])
 {
     BalloonInfo *info;
 
@@ -102,7 +102,7 @@ BalloonInfo *qmp_query_balloon(Error **errp)
     return info;
 }
 
-void qmp_balloon(int64_t target, Error **errp)
+void qmp_balloon(int64_t target, Error *errp[static 1])
 {
     if (!have_balloon(errp)) {
         return;

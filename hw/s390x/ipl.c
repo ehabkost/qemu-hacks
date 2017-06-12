@@ -98,7 +98,7 @@ static uint64_t bios_translate_addr(void *opaque, uint64_t srcaddr)
     return srcaddr + dstaddr;
 }
 
-static void s390_ipl_realize(DeviceState *dev, Error **errp)
+static void s390_ipl_realize(DeviceState *dev, Error *errp[static 1])
 {
     S390IPLState *ipl = S390_IPL(dev);
     uint64_t pentry = KERN_IMAGE_START;
@@ -300,7 +300,7 @@ int s390_ipl_set_loadparm(uint8_t *loadparm)
     return -1;
 }
 
-static int load_netboot_image(Error **errp)
+static int load_netboot_image(Error *errp[static 1])
 {
     S390IPLState *ipl = get_ipl_device();
     char *netboot_filename;

@@ -114,7 +114,7 @@ static void juart_reset(DeviceState *d)
     s->jrx = 0;
 }
 
-static void lm32_juart_realize(DeviceState *dev, Error **errp)
+static void lm32_juart_realize(DeviceState *dev, Error *errp[static 1])
 {
     LM32JuartState *s = LM32_JUART(dev);
 

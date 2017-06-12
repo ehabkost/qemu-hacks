@@ -276,7 +276,7 @@ void qio_task_set_error(QIOTask *task,
  * Returns: true if an error was propagated, false otherwise
  */
 bool qio_task_propagate_error(QIOTask *task,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 
 /**

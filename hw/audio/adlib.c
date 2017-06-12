@@ -254,7 +254,7 @@ static MemoryRegionPortio adlib_portio_list[] = {
     PORTIO_END_OF_LIST(),
 };
 
-static void adlib_realizefn (DeviceState *dev, Error **errp)
+static void adlib_realizefn (DeviceState *dev, Error *errp[static 1])
 {
     AdlibState *s = ADLIB(dev);
     struct audsettings as;

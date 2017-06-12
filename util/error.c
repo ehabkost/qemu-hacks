@@ -262,7 +262,7 @@ void error_free(Error *err)
     }
 }
 
-void error_free_or_abort(Error **errp)
+void error_free_or_abort(Error *errp[static 1])
 {
     assert(!ERR_IS_IGNORED(errp) && ERR_IS_SET(errp));
     error_free(*errp);

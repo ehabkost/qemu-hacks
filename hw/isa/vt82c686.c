@@ -262,7 +262,7 @@ static const VMStateDescription vmstate_acpi = {
  * just register a PCI device now, functionalities will be implemented later.
  */
 
-static void vt82c686b_ac97_realize(PCIDevice *dev, Error **errp)
+static void vt82c686b_ac97_realize(PCIDevice *dev, Error *errp[static 1])
 {
     VT686AC97State *s = VT82C686B_AC97_DEVICE(dev);
     uint8_t *pci_conf = s->dev.config;
@@ -303,7 +303,7 @@ static const TypeInfo via_ac97_info = {
     .class_init    = via_ac97_class_init,
 };
 
-static void vt82c686b_mc97_realize(PCIDevice *dev, Error **errp)
+static void vt82c686b_mc97_realize(PCIDevice *dev, Error *errp[static 1])
 {
     VT686MC97State *s = VT82C686B_MC97_DEVICE(dev);
     uint8_t *pci_conf = s->dev.config;
@@ -344,7 +344,7 @@ static const TypeInfo via_mc97_info = {
 };
 
 /* vt82c686 pm init */
-static void vt82c686b_pm_realize(PCIDevice *dev, Error **errp)
+static void vt82c686b_pm_realize(PCIDevice *dev, Error *errp[static 1])
 {
     VT686PMState *s = VT82C686B_PM_DEVICE(dev);
     uint8_t *pci_conf;
@@ -432,7 +432,7 @@ static const VMStateDescription vmstate_via = {
 };
 
 /* init the PCI-to-ISA bridge */
-static void vt82c686b_realize(PCIDevice *d, Error **errp)
+static void vt82c686b_realize(PCIDevice *d, Error *errp[static 1])
 {
     VT82C686BState *vt82c = VT82C686B_DEVICE(d);
     uint8_t *pci_conf;

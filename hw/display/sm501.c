@@ -1692,7 +1692,7 @@ typedef struct {
     void *chr_state;
 } SM501SysBusState;
 
-static void sm501_realize_sysbus(DeviceState *dev, Error **errp)
+static void sm501_realize_sysbus(DeviceState *dev, Error *errp[static 1])
 {
     SM501SysBusState *s = SYSBUS_SM501(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
@@ -1781,7 +1781,7 @@ typedef struct {
     uint32_t vram_size;
 } SM501PCIState;
 
-static void sm501_realize_pci(PCIDevice *dev, Error **errp)
+static void sm501_realize_pci(PCIDevice *dev, Error *errp[static 1])
 {
     SM501PCIState *s = PCI_SM501(dev);
 

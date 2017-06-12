@@ -207,7 +207,7 @@ static void uart_event(void *opaque, int event)
 
 }
 
-static void xilinx_uartlite_realize(DeviceState *dev, Error **errp)
+static void xilinx_uartlite_realize(DeviceState *dev, Error *errp[static 1])
 {
     XilinxUARTLite *s = XILINX_UARTLITE(dev);
 

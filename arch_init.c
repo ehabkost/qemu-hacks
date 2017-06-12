@@ -104,7 +104,7 @@ int xen_available(void)
 }
 
 
-TargetInfo *qmp_query_target(Error **errp)
+TargetInfo *qmp_query_target(Error *errp[static 1])
 {
     TargetInfo *info = g_malloc0(sizeof(*info));
 

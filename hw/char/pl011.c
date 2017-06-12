@@ -324,7 +324,7 @@ static void pl011_init(Object *obj)
     s->id = pl011_id_arm;
 }
 
-static void pl011_realize(DeviceState *dev, Error **errp)
+static void pl011_realize(DeviceState *dev, Error *errp[static 1])
 {
     PL011State *s = PL011(dev);
 

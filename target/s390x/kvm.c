@@ -2550,7 +2550,7 @@ bool kvm_s390_cpu_models_supported(void)
                              KVM_S390_VM_CPU_MACHINE_SUBFUNC);
 }
 
-void kvm_s390_get_host_cpu_model(S390CPUModel *model, Error **errp)
+void kvm_s390_get_host_cpu_model(S390CPUModel *model, Error *errp[static 1])
 {
     struct kvm_s390_vm_cpu_machine prop = {};
     struct kvm_device_attr attr = {
@@ -2627,7 +2627,8 @@ void kvm_s390_get_host_cpu_model(S390CPUModel *model, Error **errp)
                S390_FEAT_MAX);
 }
 
-void kvm_s390_apply_cpu_model(const S390CPUModel *model, Error **errp)
+void kvm_s390_apply_cpu_model(const S390CPUModel *model,
+                              Error *errp[static 1])
 {
     struct kvm_s390_vm_cpu_processor prop  = {
         .fac_list = { 0 },

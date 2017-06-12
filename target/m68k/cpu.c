@@ -216,7 +216,7 @@ static const M68kCPUInfo m68k_cpus[] = {
     { .name = "any",   .instance_init = any_cpu_initfn },
 };
 
-static void m68k_cpu_realizefn(DeviceState *dev, Error **errp)
+static void m68k_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     M68kCPU *cpu = M68K_CPU(dev);

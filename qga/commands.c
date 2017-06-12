@@ -37,18 +37,18 @@ void slog(const gchar *fmt, ...)
     va_end(ap);
 }
 
-int64_t qmp_guest_sync_delimited(int64_t id, Error **errp)
+int64_t qmp_guest_sync_delimited(int64_t id, Error *errp[static 1])
 {
     ga_set_response_delimited(ga_state);
     return id;
 }
 
-int64_t qmp_guest_sync(int64_t id, Error **errp)
+int64_t qmp_guest_sync(int64_t id, Error *errp[static 1])
 {
     return id;
 }
 
-void qmp_guest_ping(Error **errp)
+void qmp_guest_ping(Error *errp[static 1])
 {
     slog("guest-ping called");
 }
@@ -70,7 +70,7 @@ static void qmp_command_info(QmpCommand *cmd, void *opaque)
     info->supported_commands = cmd_info_list;
 }
 
-struct GuestAgentInfo *qmp_guest_info(Error **errp)
+struct GuestAgentInfo *qmp_guest_info(Error *errp[static 1])
 {
     GuestAgentInfo *info = g_new0(GuestAgentInfo, 1);
 
@@ -142,7 +142,7 @@ static GuestExecInfo *guest_exec_info_find(int64_t pid_numeric)
     return NULL;
 }
 
-GuestExecStatus *qmp_guest_exec_status(int64_t pid, Error **err)
+GuestExecStatus *qmp_guest_exec_status(int64_t pid, Error *err[static 1])
 {
     GuestExecInfo *gei;
     GuestExecStatus *ges;
@@ -481,7 +481,7 @@ done:
 
 /* Convert GuestFileWhence (either a raw integer or an enum value) into
  * the guest's SEEK_ constants.  */
-int ga_parse_whence(GuestFileWhence *whence, Error **errp)
+int ga_parse_whence(GuestFileWhence *whence, Error *errp[static 1])
 {
     /* Exploit the fact that we picked values to match QGA_SEEK_*. */
     if (whence->type == QTYPE_QSTRING) {
@@ -500,7 +500,7 @@ int ga_parse_whence(GuestFileWhence *whence, Error **errp)
     return -1;
 }
 
-GuestHostName *qmp_guest_get_host_name(Error **err)
+GuestHostName *qmp_guest_get_host_name(Error *err[static 1])
 {
     GuestHostName *result = NULL;
     gchar const *hostname = g_get_host_name();
@@ -511,7 +511,7 @@ GuestHostName *qmp_guest_get_host_name(Error **err)
     return result;
 }
 
-GuestTimezone *qmp_guest_get_timezone(Error **errp)
+GuestTimezone *qmp_guest_get_timezone(Error *errp[static 1])
 {
 #if GLIB_CHECK_VERSION(2, 28, 0)
     GuestTimezone *info = NULL;

@@ -869,7 +869,7 @@ static void nbd_eject_notifier(Notifier *n, void *data)
 NBDExport *nbd_export_new(BlockDriverState *bs, off_t dev_offset, off_t size,
                           uint16_t nbdflags, void (*close)(NBDExport *),
                           bool writethrough, BlockBackend *on_eject_blk,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     BlockBackend *blk;
     NBDExport *exp = g_malloc0(sizeof(NBDExport));

@@ -1458,7 +1458,7 @@ static NetClientInfo net_gem_info = {
     .link_status_changed = gem_set_link,
 };
 
-static void gem_realize(DeviceState *dev, Error **errp)
+static void gem_realize(DeviceState *dev, Error *errp[static 1])
 {
     CadenceGEMState *s = CADENCE_GEM(dev);
     int i;

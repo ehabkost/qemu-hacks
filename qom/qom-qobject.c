@@ -19,7 +19,7 @@
 #include "qapi/qobject-output-visitor.h"
 
 void object_property_set_qobject(Object *obj, QObject *value,
-                                 const char *name, Error **errp)
+                                 const char *name, Error *errp[static 1])
 {
     Visitor *v;
 
@@ -29,7 +29,7 @@ void object_property_set_qobject(Object *obj, QObject *value,
 }
 
 QObject *object_property_get_qobject(Object *obj, const char *name,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QObject *ret = NULL;
     Error *local_err = NULL;

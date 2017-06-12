@@ -126,7 +126,7 @@ int get_param_value(char *buf, int buf_size,
 }
 
 static void parse_option_bool(const char *name, const char *value, bool *ret,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     if (!strcmp(value, "on")) {
         *ret = 1;
@@ -139,7 +139,7 @@ static void parse_option_bool(const char *name, const char *value, bool *ret,
 }
 
 static void parse_option_number(const char *name, const char *value,
-                                uint64_t *ret, Error **errp)
+                                uint64_t *ret, Error *errp[static 1])
 {
     uint64_t number;
     int err;
@@ -172,7 +172,7 @@ static const QemuOptDesc *find_desc_by_name(const QemuOptDesc *desc,
 }
 
 void parse_option_size(const char *name, const char *value,
-                       uint64_t *ret, Error **errp)
+                       uint64_t *ret, Error *errp[static 1])
 {
     uint64_t size;
     int err;
@@ -479,7 +479,7 @@ uint64_t qemu_opt_get_size_del(QemuOpts *opts, const char *name,
     return qemu_opt_get_size_helper(opts, name, defval, true);
 }
 
-static void qemu_opt_parse(QemuOpt *opt, Error **errp)
+static void qemu_opt_parse(QemuOpt *opt, Error *errp[static 1])
 {
     if (opt->desc == NULL)
         return;
@@ -522,7 +522,7 @@ int qemu_opt_unset(QemuOpts *opts, const char *name)
 }
 
 static void opt_set(QemuOpts *opts, const char *name, const char *value,
-                    bool prepend, Error **errp)
+                    bool prepend, Error *errp[static 1])
 {
     QemuOpt *opt;
     const QemuOptDesc *desc;
@@ -551,13 +551,13 @@ static void opt_set(QemuOpts *opts, const char *name, const char *value,
 }
 
 void qemu_opt_set(QemuOpts *opts, const char *name, const char *value,
-                  Error **errp)
+                  Error *errp[static 1])
 {
     opt_set(opts, name, value, false, errp);
 }
 
 void qemu_opt_set_bool(QemuOpts *opts, const char *name, bool val,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     QemuOpt *opt;
     const QemuOptDesc *desc = opts->list->desc;
@@ -578,7 +578,7 @@ void qemu_opt_set_bool(QemuOpts *opts, const char *name, bool val,
 }
 
 void qemu_opt_set_number(QemuOpts *opts, const char *name, int64_t val,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     QemuOpt *opt;
     const QemuOptDesc *desc = opts->list->desc;
@@ -605,7 +605,7 @@ void qemu_opt_set_number(QemuOpts *opts, const char *name, int64_t val,
  * Return zero when the loop completes.
  */
 int qemu_opt_foreach(QemuOpts *opts, qemu_opt_loopfunc func, void *opaque,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     QemuOpt *opt;
     int rc;
@@ -636,7 +636,7 @@ QemuOpts *qemu_opts_find(QemuOptsList *list, const char *id)
 }
 
 QemuOpts *qemu_opts_create(QemuOptsList *list, const char *id,
-                           int fail_if_exists, Error **errp)
+                           int fail_if_exists, Error *errp[static 1])
 {
     QemuOpts *opts = NULL;
 
@@ -687,7 +687,7 @@ void qemu_opts_loc_restore(QemuOpts *opts)
 }
 
 void qemu_opts_set(QemuOptsList *list, const char *id,
-                   const char *name, const char *value, Error **errp)
+                   const char *name, const char *value, Error *errp[static 1])
 {
     QemuOpts *opts;
     Error *local_err = NULL;
@@ -784,7 +784,8 @@ void qemu_opts_print(QemuOpts *opts, const char *separator)
 }
 
 static void opts_do_parse(QemuOpts *opts, const char *params,
-                          const char *firstname, bool prepend, Error **errp)
+                          const char *firstname, bool prepend,
+                          Error *errp[static 1])
 {
     char option[128], value[1024];
     const char *p,*pe,*pc;
@@ -837,13 +838,14 @@ static void opts_do_parse(QemuOpts *opts, const char *params,
  * On error, store an error object through @errp if non-null.
  */
 void qemu_opts_do_parse(QemuOpts *opts, const char *params,
-                       const char *firstname, Error **errp)
+                       const char *firstname, Error *errp[static 1])
 {
     opts_do_parse(opts, params, firstname, false, errp);
 }
 
 static QemuOpts *opts_parse(QemuOptsList *list, const char *params,
-                            bool permit_abbrev, bool defaults, Error **errp)
+                            bool permit_abbrev, bool defaults,
+                            Error *errp[static 1])
 {
     const char *firstname;
     char value[1024], *id = NULL;
@@ -894,7 +896,7 @@ static QemuOpts *opts_parse(QemuOptsList *list, const char *params,
  * Return the new QemuOpts on success, null pointer on error.
  */
 QemuOpts *qemu_opts_parse(QemuOptsList *list, const char *params,
-                          bool permit_abbrev, Error **errp)
+                          bool permit_abbrev, Error *errp[static 1])
 {
     return opts_parse(list, params, permit_abbrev, false, errp);
 }
@@ -980,7 +982,7 @@ static void qemu_opts_from_qdict_1(const char *key, QObject *obj, void *opaque)
  * other types are silently ignored.
  */
 QemuOpts *qemu_opts_from_qdict(QemuOptsList *list, const QDict *qdict,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     OptsFromQDictState state;
     Error *local_err = NULL;
@@ -1012,7 +1014,8 @@ QemuOpts *qemu_opts_from_qdict(QemuOptsList *list, const QDict *qdict,
  * from the QDict. When this function returns, the QDict contains only those
  * entries that couldn't be added to the QemuOpts.
  */
-void qemu_opts_absorb_qdict(QemuOpts *opts, QDict *qdict, Error **errp)
+void qemu_opts_absorb_qdict(QemuOpts *opts, QDict *qdict,
+                            Error *errp[static 1])
 {
     const QDictEntry *entry, *next;
 
@@ -1066,7 +1069,8 @@ QDict *qemu_opts_to_qdict(QemuOpts *opts, QDict *qdict)
 /* Validate parsed opts against descriptions where no
  * descriptions were provided in the QemuOptsList.
  */
-void qemu_opts_validate(QemuOpts *opts, const QemuOptDesc *desc, Error **errp)
+void qemu_opts_validate(QemuOpts *opts, const QemuOptDesc *desc,
+                        Error *errp[static 1])
 {
     QemuOpt *opt;
 
@@ -1094,7 +1098,7 @@ void qemu_opts_validate(QemuOpts *opts, const QemuOptDesc *desc, Error **errp)
  * Return zero when the loop completes.
  */
 int qemu_opts_foreach(QemuOptsList *list, qemu_opts_loopfunc func,
-                      void *opaque, Error **errp)
+                      void *opaque, Error *errp[static 1])
 {
     Location loc;
     QemuOpts *opts;

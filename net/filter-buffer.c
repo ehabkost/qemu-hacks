@@ -114,7 +114,7 @@ static void filter_buffer_setup_timer(NetFilterState *nf)
     }
 }
 
-static void filter_buffer_setup(NetFilterState *nf, Error **errp)
+static void filter_buffer_setup(NetFilterState *nf, Error *errp[static 1])
 {
     FilterBufferState *s = FILTER_BUFFER(nf);
 
@@ -132,7 +132,8 @@ static void filter_buffer_setup(NetFilterState *nf, Error **errp)
     filter_buffer_setup_timer(nf);
 }
 
-static void filter_buffer_status_changed(NetFilterState *nf, Error **errp)
+static void filter_buffer_status_changed(NetFilterState *nf,
+                                         Error *errp[static 1])
 {
     FilterBufferState *s = FILTER_BUFFER(nf);
 
@@ -158,7 +159,7 @@ static void filter_buffer_class_init(ObjectClass *oc, void *data)
 
 static void filter_buffer_get_interval(Object *obj, Visitor *v,
                                        const char *name, void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     FilterBufferState *s = FILTER_BUFFER(obj);
     uint32_t value = s->interval;
@@ -168,7 +169,7 @@ static void filter_buffer_get_interval(Object *obj, Visitor *v,
 
 static void filter_buffer_set_interval(Object *obj, Visitor *v,
                                        const char *name, void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     FilterBufferState *s = FILTER_BUFFER(obj);
     Error *local_err = NULL;

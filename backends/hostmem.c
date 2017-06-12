@@ -29,7 +29,7 @@ QEMU_BUILD_BUG_ON(HOST_MEM_POLICY_INTERLEAVE != MPOL_INTERLEAVE);
 
 static void
 host_memory_backend_get_size(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
     uint64_t value = backend->size;
@@ -39,7 +39,7 @@ host_memory_backend_get_size(Object *obj, Visitor *v, const char *name,
 
 static void
 host_memory_backend_set_size(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
     Error *local_err = NULL;
@@ -66,7 +66,7 @@ out:
 
 static void
 host_memory_backend_get_host_nodes(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
     uint16List *host_nodes = NULL;
@@ -98,7 +98,7 @@ host_memory_backend_get_host_nodes(Object *obj, Visitor *v, const char *name,
 
 static void
 host_memory_backend_set_host_nodes(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
 #ifdef CONFIG_NUMA
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
@@ -116,14 +116,15 @@ host_memory_backend_set_host_nodes(Object *obj, Visitor *v, const char *name,
 }
 
 static int
-host_memory_backend_get_policy(Object *obj, Error **errp G_GNUC_UNUSED)
+host_memory_backend_get_policy(Object *obj,
+                               Error *errp[static 1] G_GNUC_UNUSED)
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
     return backend->policy;
 }
 
 static void
-host_memory_backend_set_policy(Object *obj, int policy, Error **errp)
+host_memory_backend_set_policy(Object *obj, int policy, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
     backend->policy = policy;
@@ -135,14 +136,15 @@ host_memory_backend_set_policy(Object *obj, int policy, Error **errp)
 #endif
 }
 
-static bool host_memory_backend_get_merge(Object *obj, Error **errp)
+static bool host_memory_backend_get_merge(Object *obj, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
 
     return backend->merge;
 }
 
-static void host_memory_backend_set_merge(Object *obj, bool value, Error **errp)
+static void host_memory_backend_set_merge(Object *obj, bool value,
+                                          Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
 
@@ -161,14 +163,15 @@ static void host_memory_backend_set_merge(Object *obj, bool value, Error **errp)
     }
 }
 
-static bool host_memory_backend_get_dump(Object *obj, Error **errp)
+static bool host_memory_backend_get_dump(Object *obj, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
 
     return backend->dump;
 }
 
-static void host_memory_backend_set_dump(Object *obj, bool value, Error **errp)
+static void host_memory_backend_set_dump(Object *obj, bool value,
+                                         Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
 
@@ -187,7 +190,8 @@ static void host_memory_backend_set_dump(Object *obj, bool value, Error **errp)
     }
 }
 
-static bool host_memory_backend_get_prealloc(Object *obj, Error **errp)
+static bool host_memory_backend_get_prealloc(Object *obj,
+                                             Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
 
@@ -195,7 +199,7 @@ static bool host_memory_backend_get_prealloc(Object *obj, Error **errp)
 }
 
 static void host_memory_backend_set_prealloc(Object *obj, bool value,
-                                             Error **errp)
+                                             Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(obj);
 
@@ -245,7 +249,8 @@ bool host_memory_backend_mr_inited(HostMemoryBackend *backend)
 }
 
 MemoryRegion *
-host_memory_backend_get_memory(HostMemoryBackend *backend, Error **errp)
+host_memory_backend_get_memory(HostMemoryBackend *backend,
+                               Error *errp[static 1])
 {
     return host_memory_backend_mr_inited(backend) ? &backend->mr : NULL;
 }
@@ -261,7 +266,7 @@ bool host_memory_backend_is_mapped(HostMemoryBackend *backend)
 }
 
 static void
-host_memory_backend_memory_complete(UserCreatable *uc, Error **errp)
+host_memory_backend_memory_complete(UserCreatable *uc, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(uc);
     HostMemoryBackendClass *bc = MEMORY_BACKEND_GET_CLASS(uc);
@@ -340,7 +345,7 @@ out:
 }
 
 static bool
-host_memory_backend_can_be_deleted(UserCreatable *uc, Error **errp)
+host_memory_backend_can_be_deleted(UserCreatable *uc, Error *errp[static 1])
 {
     if (host_memory_backend_is_mapped(MEMORY_BACKEND(uc))) {
         return false;
@@ -349,14 +354,14 @@ host_memory_backend_can_be_deleted(UserCreatable *uc, Error **errp)
     }
 }
 
-static char *get_id(Object *o, Error **errp)
+static char *get_id(Object *o, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(o);
 
     return g_strdup(backend->id);
 }
 
-static void set_id(Object *o, const char *str, Error **errp)
+static void set_id(Object *o, const char *str, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(o);
 

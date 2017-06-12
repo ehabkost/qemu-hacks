@@ -306,7 +306,7 @@ static void ecc_init(Object *obj)
     sysbus_init_mmio(dev, &s->iomem);
 }
 
-static void ecc_realize(DeviceState *dev, Error **errp)
+static void ecc_realize(DeviceState *dev, Error *errp[static 1])
 {
     ECCState *s = ECC_MEMCTL(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

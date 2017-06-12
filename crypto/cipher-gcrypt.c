@@ -67,7 +67,7 @@ struct QCryptoCipherGcrypt {
 QCryptoCipher *qcrypto_cipher_new(QCryptoCipherAlgorithm alg,
                                   QCryptoCipherMode mode,
                                   const uint8_t *key, size_t nkey,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     QCryptoCipher *cipher;
     QCryptoCipherGcrypt *ctx;
@@ -279,7 +279,7 @@ int qcrypto_cipher_encrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoCipherGcrypt *ctx = cipher->opaque;
     gcry_error_t err;
@@ -314,7 +314,7 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoCipherGcrypt *ctx = cipher->opaque;
     gcry_error_t err;
@@ -346,7 +346,7 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
 
 int qcrypto_cipher_setiv(QCryptoCipher *cipher,
                          const uint8_t *iv, size_t niv,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     QCryptoCipherGcrypt *ctx = cipher->opaque;
     gcry_error_t err;

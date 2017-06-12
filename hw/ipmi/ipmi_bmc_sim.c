@@ -1924,7 +1924,7 @@ out:
     fru->nentries = size / fru->areasize;
 }
 
-static void ipmi_sim_realize(DeviceState *dev, Error **errp)
+static void ipmi_sim_realize(DeviceState *dev, Error *errp[static 1])
 {
     IPMIBmc *b = IPMI_BMC(dev);
     unsigned int i;

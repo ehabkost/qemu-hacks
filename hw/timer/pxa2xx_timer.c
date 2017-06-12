@@ -451,7 +451,7 @@ static void pxa2xx_timer_init(Object *obj)
     sysbus_init_mmio(dev, &s->iomem);
 }
 
-static void pxa2xx_timer_realize(DeviceState *dev, Error **errp)
+static void pxa2xx_timer_realize(DeviceState *dev, Error *errp[static 1])
 {
     PXA2xxTimerInfo *s = PXA2XX_TIMER(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

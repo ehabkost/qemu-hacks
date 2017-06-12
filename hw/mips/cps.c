@@ -60,7 +60,7 @@ static bool cpu_mips_itu_supported(CPUMIPSState *env)
     return is_mt && !kvm_enabled();
 }
 
-static void mips_cps_realize(DeviceState *dev, Error **errp)
+static void mips_cps_realize(DeviceState *dev, Error *errp[static 1])
 {
     MIPSCPSState *s = MIPS_CPS(dev);
     CPUMIPSState *env;

@@ -283,7 +283,7 @@ static void aspeed_vic_reset(DeviceState *dev)
 
 #define AVIC_IO_REGION_SIZE 0x20000
 
-static void aspeed_vic_realize(DeviceState *dev, Error **errp)
+static void aspeed_vic_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     AspeedVICState *s = ASPEED_VIC(dev);

@@ -274,7 +274,7 @@ static void bcm2835_aux_init(Object *obj)
     sysbus_init_irq(sbd, &s->irq);
 }
 
-static void bcm2835_aux_realize(DeviceState *dev, Error **errp)
+static void bcm2835_aux_realize(DeviceState *dev, Error *errp[static 1])
 {
     BCM2835AuxState *s = BCM2835_AUX(dev);
 

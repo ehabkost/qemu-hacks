@@ -38,7 +38,7 @@ static bool fd_is_socket(int fd)
 
 
 QIOChannel *qio_channel_new_fd(int fd,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     QIOChannel *ioc;
 

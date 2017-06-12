@@ -35,7 +35,8 @@ typedef struct pc_dimms_capacity {
 } pc_dimms_capacity;
 
 void pc_dimm_memory_plug(DeviceState *dev, MemoryHotplugState *hpms,
-                         MemoryRegion *mr, uint64_t align, Error **errp)
+                         MemoryRegion *mr, uint64_t align,
+                         Error *errp[static 1])
 {
     int slot;
     MachineState *machine = MACHINE(qdev_get_machine());
@@ -147,7 +148,7 @@ static int pc_existing_dimms_capacity_internal(Object *obj, void *opaque)
     return 0;
 }
 
-uint64_t pc_existing_dimms_capacity(Error **errp)
+uint64_t pc_existing_dimms_capacity(Error *errp[static 1])
 {
     pc_dimms_capacity cap;
 
@@ -213,7 +214,8 @@ static int pc_dimm_slot2bitmap(Object *obj, void *opaque)
     return 0;
 }
 
-int pc_dimm_get_free_slot(const int *hint, int max_slots, Error **errp)
+int pc_dimm_get_free_slot(const int *hint, int max_slots,
+                          Error *errp[static 1])
 {
     unsigned long *bitmap = bitmap_new(max_slots);
     int slot = 0;
@@ -275,7 +277,7 @@ static int pc_dimm_built_list(Object *obj, void *opaque)
 uint64_t pc_dimm_get_free_addr(uint64_t address_space_start,
                                uint64_t address_space_size,
                                uint64_t *hint, uint64_t align, uint64_t size,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     GSList *list = NULL, *item;
     uint64_t new_addr, ret = 0;
@@ -353,7 +355,7 @@ static Property pc_dimm_properties[] = {
 };
 
 static void pc_dimm_get_size(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     int64_t value;
     MemoryRegion *mr;
@@ -367,7 +369,7 @@ static void pc_dimm_get_size(Object *obj, Visitor *v, const char *name,
 }
 
 static void pc_dimm_check_memdev_is_busy(Object *obj, const char *name,
-                                      Object *val, Error **errp)
+                                      Object *val, Error *errp[static 1])
 {
     Error *local_err = NULL;
 
@@ -395,7 +397,7 @@ static void pc_dimm_init(Object *obj)
                              &error_abort);
 }
 
-static void pc_dimm_realize(DeviceState *dev, Error **errp)
+static void pc_dimm_realize(DeviceState *dev, Error *errp[static 1])
 {
     PCDIMMDevice *dimm = PC_DIMM(dev);
     PCDIMMDeviceClass *ddc = PC_DIMM_GET_CLASS(dimm);
@@ -419,7 +421,7 @@ static void pc_dimm_realize(DeviceState *dev, Error **errp)
     host_memory_backend_set_mapped(dimm->hostmem, true);
 }
 
-static void pc_dimm_unrealize(DeviceState *dev, Error **errp)
+static void pc_dimm_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     PCDIMMDevice *dimm = PC_DIMM(dev);
 

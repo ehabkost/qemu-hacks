@@ -1004,7 +1004,7 @@ static libusb_device *usb_host_find_ref(int bus, int addr)
     return ret;
 }
 
-static void usb_host_realize(USBDevice *udev, Error **errp)
+static void usb_host_realize(USBDevice *udev, Error *errp[static 1])
 {
     USBHostDevice *s = USB_HOST_DEVICE(udev);
     libusb_device *ldev;
@@ -1068,7 +1068,7 @@ static void usb_host_instance_init(Object *obj)
                                   &udev->qdev, IGNORE_ERRORS);
 }
 
-static void usb_host_unrealize(USBDevice *udev, Error **errp)
+static void usb_host_unrealize(USBDevice *udev, Error *errp[static 1])
 {
     USBHostDevice *s = USB_HOST_DEVICE(udev);
 

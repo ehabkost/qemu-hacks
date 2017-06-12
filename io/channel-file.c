@@ -44,7 +44,7 @@ QIOChannelFile *
 qio_channel_file_new_path(const char *path,
                           int flags,
                           mode_t mode,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     QIOChannelFile *ioc;
 
@@ -89,7 +89,7 @@ static ssize_t qio_channel_file_readv(QIOChannel *ioc,
                                       size_t niov,
                                       int **fds,
                                       size_t *nfds,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     QIOChannelFile *fioc = QIO_CHANNEL_FILE(ioc);
     ssize_t ret;
@@ -117,7 +117,7 @@ static ssize_t qio_channel_file_writev(QIOChannel *ioc,
                                        size_t niov,
                                        int *fds,
                                        size_t nfds,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QIOChannelFile *fioc = QIO_CHANNEL_FILE(ioc);
     ssize_t ret;
@@ -140,7 +140,7 @@ static ssize_t qio_channel_file_writev(QIOChannel *ioc,
 
 static int qio_channel_file_set_blocking(QIOChannel *ioc,
                                          bool enabled,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QIOChannelFile *fioc = QIO_CHANNEL_FILE(ioc);
 
@@ -156,7 +156,7 @@ static int qio_channel_file_set_blocking(QIOChannel *ioc,
 static off_t qio_channel_file_seek(QIOChannel *ioc,
                                    off_t offset,
                                    int whence,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QIOChannelFile *fioc = QIO_CHANNEL_FILE(ioc);
     off_t ret;
@@ -173,7 +173,7 @@ static off_t qio_channel_file_seek(QIOChannel *ioc,
 
 
 static int qio_channel_file_close(QIOChannel *ioc,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     QIOChannelFile *fioc = QIO_CHANNEL_FILE(ioc);
 

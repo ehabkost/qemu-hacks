@@ -168,7 +168,7 @@ static void chr_event(void *opaque, int event)
     }
 }
 
-static void terminal_init(EmulatedCcw3270Device *dev, Error **errp)
+static void terminal_init(EmulatedCcw3270Device *dev, Error *errp[static 1])
 {
     Terminal3270 *t = TERMINAL_3270(dev);
     static bool terminal_available;

@@ -317,7 +317,7 @@ static void spapr_vlan_reset(VIOsPAPRDevice *sdev)
     qemu_format_nic_info_str(qemu_get_queue(dev->nic), dev->nicconf.macaddr.a);
 }
 
-static void spapr_vlan_realize(VIOsPAPRDevice *sdev, Error **errp)
+static void spapr_vlan_realize(VIOsPAPRDevice *sdev, Error *errp[static 1])
 {
     VIOsPAPRVLANDevice *dev = VIO_SPAPR_VLAN_DEVICE(sdev);
 

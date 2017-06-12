@@ -85,7 +85,7 @@ static const MemoryRegionOps debugcon_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void debugcon_realize_core(DebugconState *s, Error **errp)
+static void debugcon_realize_core(DebugconState *s, Error *errp[static 1])
 {
     if (!qemu_chr_fe_get_driver(&s->chr)) {
         error_setg(errp, "Can't create debugcon device, empty char device");
@@ -95,7 +95,7 @@ static void debugcon_realize_core(DebugconState *s, Error **errp)
     qemu_chr_fe_set_handlers(&s->chr, NULL, NULL, NULL, s, NULL, true);
 }
 
-static void debugcon_isa_realizefn(DeviceState *dev, Error **errp)
+static void debugcon_isa_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *d = ISA_DEVICE(dev);
     ISADebugconState *isa = ISA_DEBUGCON_DEVICE(dev);

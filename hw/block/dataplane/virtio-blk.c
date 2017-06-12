@@ -78,7 +78,7 @@ static void notify_guest_bh(void *opaque)
 /* Context: QEMU global mutex held */
 void virtio_blk_data_plane_create(VirtIODevice *vdev, VirtIOBlkConf *conf,
                                   VirtIOBlockDataPlane **dataplane,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     VirtIOBlockDataPlane *s;
     BusState *qbus = BUS(qdev_get_parent_bus(DEVICE(vdev)));

@@ -288,7 +288,7 @@ static void integratorcm_init(Object *obj)
     /* ??? Save/restore.  */
 }
 
-static void integratorcm_realize(DeviceState *d, Error **errp)
+static void integratorcm_realize(DeviceState *d, Error *errp[static 1])
 {
     IntegratorCMState *s = INTEGRATOR_CM(d);
 

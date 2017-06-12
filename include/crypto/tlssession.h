@@ -173,7 +173,7 @@ void qcrypto_tls_session_free(QCryptoTLSSession *sess);
  * Returns 0 if the credentials validated, -1 on error
  */
 int qcrypto_tls_session_check_credentials(QCryptoTLSSession *sess,
-                                          Error **errp);
+                                          Error *errp[static 1]);
 
 typedef ssize_t (*QCryptoTLSSessionWriteFunc)(const char *buf,
                                               size_t len,
@@ -264,7 +264,7 @@ ssize_t qcrypto_tls_session_read(QCryptoTLSSession *sess,
  * or write again
  */
 int qcrypto_tls_session_handshake(QCryptoTLSSession *sess,
-                                  Error **errp);
+                                  Error *errp[static 1]);
 
 typedef enum {
     QCRYPTO_TLS_HANDSHAKE_COMPLETE,
@@ -300,7 +300,7 @@ qcrypto_tls_session_get_handshake_status(QCryptoTLSSession *sess);
  * or -1 on error
  */
 int qcrypto_tls_session_get_key_size(QCryptoTLSSession *sess,
-                                     Error **errp);
+                                     Error *errp[static 1]);
 
 /**
  * qcrypto_tls_session_get_peer_name:

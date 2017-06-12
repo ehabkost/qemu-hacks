@@ -693,7 +693,7 @@ static void omap_gpio_init(Object *obj)
     sysbus_init_mmio(sbd, &s->iomem);
 }
 
-static void omap_gpio_realize(DeviceState *dev, Error **errp)
+static void omap_gpio_realize(DeviceState *dev, Error *errp[static 1])
 {
     struct omap_gpif_s *s = OMAP1_GPIO(dev);
 
@@ -702,7 +702,7 @@ static void omap_gpio_realize(DeviceState *dev, Error **errp)
     }
 }
 
-static void omap2_gpio_realize(DeviceState *dev, Error **errp)
+static void omap2_gpio_realize(DeviceState *dev, Error *errp[static 1])
 {
     struct omap2_gpif_s *s = OMAP2_GPIO(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

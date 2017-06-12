@@ -111,7 +111,7 @@ static void balloon_stats_poll_cb(void *opaque)
 }
 
 static void balloon_stats_get_all(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     Error *err = NULL;
     VirtIOBalloon *s = opaque;
@@ -151,7 +151,7 @@ out:
 
 static void balloon_stats_get_poll_interval(Object *obj, Visitor *v,
                                             const char *name, void *opaque,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     VirtIOBalloon *s = opaque;
     visit_type_int(v, name, &s->stats_poll_interval, errp);
@@ -159,7 +159,7 @@ static void balloon_stats_get_poll_interval(Object *obj, Visitor *v,
 
 static void balloon_stats_set_poll_interval(Object *obj, Visitor *v,
                                             const char *name, void *opaque,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     VirtIOBalloon *s = opaque;
     int64_t value;
@@ -367,7 +367,7 @@ static void virtio_balloon_set_config(VirtIODevice *vdev,
 }
 
 static uint64_t virtio_balloon_get_features(VirtIODevice *vdev, uint64_t f,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     VirtIOBalloon *dev = VIRTIO_BALLOON(vdev);
     f |= dev->host_features;
@@ -420,7 +420,8 @@ static const VMStateDescription vmstate_virtio_balloon_device = {
     },
 };
 
-static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
+static void virtio_balloon_device_realize(DeviceState *dev,
+                                          Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOBalloon *s = VIRTIO_BALLOON(dev);
@@ -445,7 +446,8 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
     reset_stats(s);
 }
 
-static void virtio_balloon_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_balloon_device_unrealize(DeviceState *dev,
+                                            Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOBalloon *s = VIRTIO_BALLOON(dev);

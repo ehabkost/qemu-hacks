@@ -65,7 +65,7 @@ static void openrisc_cpu_reset(CPUState *s)
 #endif
 }
 
-static void openrisc_cpu_realizefn(DeviceState *dev, Error **errp)
+static void openrisc_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     OpenRISCCPUClass *occ = OPENRISC_CPU_GET_CLASS(dev);

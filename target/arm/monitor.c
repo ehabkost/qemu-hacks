@@ -66,7 +66,7 @@ static inline void gic_cap_kvm_probe(GICCapability *v2, GICCapability *v3)
 #endif
 }
 
-GICCapabilityList *qmp_query_gic_capabilities(Error **errp)
+GICCapabilityList *qmp_query_gic_capabilities(Error *errp[static 1])
 {
     GICCapabilityList *head = NULL;
     GICCapability *v2 = gic_cap_new(2), *v3 = gic_cap_new(3);

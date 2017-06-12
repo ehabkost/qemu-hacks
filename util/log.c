@@ -110,7 +110,7 @@ void qemu_log_needs_buffers(void)
  * substituted with the current PID. This is useful for debugging many
  * nested linux-user tasks but will result in lots of logs.
  */
-void qemu_set_log_filename(const char *filename, Error **errp)
+void qemu_set_log_filename(const char *filename, Error *errp[static 1])
 {
     char *pidstr;
     g_free(logfilename);
@@ -150,7 +150,7 @@ bool qemu_log_in_addr_range(uint64_t addr)
 }
 
 
-void qemu_set_dfilter_ranges(const char *filter_spec, Error **errp)
+void qemu_set_dfilter_ranges(const char *filter_spec, Error *errp[static 1])
 {
     gchar **ranges = g_strsplit(filter_spec, ",", 0);
     int i;

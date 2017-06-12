@@ -138,7 +138,7 @@ void qemu_notify_event(void)
 
 static GArray *gpollfds;
 
-int qemu_init_main_loop(Error **errp)
+int qemu_init_main_loop(Error *errp[static 1])
 {
     int ret;
     GSource *src;

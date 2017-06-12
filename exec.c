@@ -754,7 +754,7 @@ void cpu_exec_initfn(CPUState *cpu)
 #endif
 }
 
-void cpu_exec_realizefn(CPUState *cpu, Error **errp)
+void cpu_exec_realizefn(CPUState *cpu, Error *errp[static 1])
 {
     CPUClass *cc ATTRIBUTE_UNUSED = CPU_GET_CLASS(cpu);
 
@@ -1485,7 +1485,7 @@ static int64_t get_file_size(int fd)
 static void *file_ram_alloc(RAMBlock *block,
                             ram_addr_t memory,
                             const char *path,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     bool unlink_on_error = false;
     char *filename;
@@ -1777,7 +1777,8 @@ static int memory_try_enable_merging(void *addr, size_t len)
  * resize callback to update device state and/or add assertions to detect
  * misuse, if necessary.
  */
-int qemu_ram_resize(RAMBlock *block, ram_addr_t newsize, Error **errp)
+int qemu_ram_resize(RAMBlock *block, ram_addr_t newsize,
+                    Error *errp[static 1])
 {
     assert(block);
 
@@ -1855,7 +1856,7 @@ static void dirty_memory_extend(ram_addr_t old_ram_size,
     }
 }
 
-static void ram_block_add(RAMBlock *new_block, Error **errp)
+static void ram_block_add(RAMBlock *new_block, Error *errp[static 1])
 {
     RAMBlock *block;
     RAMBlock *last_block = NULL;
@@ -1933,7 +1934,7 @@ static void ram_block_add(RAMBlock *new_block, Error **errp)
 #ifdef __linux__
 RAMBlock *qemu_ram_alloc_from_file(ram_addr_t size, MemoryRegion *mr,
                                    bool share, const char *mem_path,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     RAMBlock *new_block;
 
@@ -1981,7 +1982,7 @@ RAMBlock *qemu_ram_alloc_internal(ram_addr_t size, ram_addr_t max_size,
                                                   uint64_t length,
                                                   void *host),
                                   void *host, bool resizeable,
-                                  MemoryRegion *mr, Error **errp)
+                                  MemoryRegion *mr, Error *errp[static 1])
 {
     RAMBlock *new_block;
 
@@ -2011,12 +2012,13 @@ RAMBlock *qemu_ram_alloc_internal(ram_addr_t size, ram_addr_t max_size,
 }
 
 RAMBlock *qemu_ram_alloc_from_ptr(ram_addr_t size, void *host,
-                                   MemoryRegion *mr, Error **errp)
+                                   MemoryRegion *mr, Error *errp[static 1])
 {
     return qemu_ram_alloc_internal(size, size, NULL, host, false, mr, errp);
 }
 
-RAMBlock *qemu_ram_alloc(ram_addr_t size, MemoryRegion *mr, Error **errp)
+RAMBlock *qemu_ram_alloc(ram_addr_t size, MemoryRegion *mr,
+                         Error *errp[static 1])
 {
     return qemu_ram_alloc_internal(size, size, NULL, NULL, false, mr, errp);
 }
@@ -2025,7 +2027,7 @@ RAMBlock *qemu_ram_alloc_resizeable(ram_addr_t size, ram_addr_t maxsz,
                                      void (*resized)(const char*,
                                                      uint64_t length,
                                                      void *host),
-                                     MemoryRegion *mr, Error **errp)
+                                     MemoryRegion *mr, Error *errp[static 1])
 {
     return qemu_ram_alloc_internal(size, maxsz, resized, NULL, true, mr, errp);
 }

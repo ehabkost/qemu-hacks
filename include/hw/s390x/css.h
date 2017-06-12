@@ -161,7 +161,7 @@ typedef enum {
 
 uint32_t css_get_adapter_id(CssIoAdapterType type, uint8_t isc);
 void css_register_io_adapters(CssIoAdapterType type, bool swap, bool maskable,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 #ifndef CONFIG_USER_ONLY
 SubchDev *css_find_subch(uint8_t m, uint8_t cssid, uint8_t ssid,
@@ -218,5 +218,5 @@ extern PropertyInfo css_devid_ro_propinfo;
  * is responsible for unregistering and freeing it.
  */
 SubchDev *css_create_sch(CssDevId bus_id, bool is_virtual, bool squash_mcss,
-                         Error **errp);
+                         Error *errp[static 1]);
 #endif

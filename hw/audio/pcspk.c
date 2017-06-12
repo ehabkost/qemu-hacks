@@ -178,7 +178,7 @@ static void pcspk_initfn(Object *obj)
                              0, &error_abort);
 }
 
-static void pcspk_realizefn(DeviceState *dev, Error **errp)
+static void pcspk_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     PCSpkState *s = PC_SPEAKER(dev);

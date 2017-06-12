@@ -634,7 +634,7 @@ static void pci_apb_set_irq(void *opaque, int irq_num, int level)
     }
 }
 
-static void apb_pci_bridge_realize(PCIDevice *dev, Error **errp)
+static void apb_pci_bridge_realize(PCIDevice *dev, Error *errp[static 1])
 {
     pci_bridge_initfn(dev, TYPE_PCI_BUS);
 
@@ -788,7 +788,7 @@ static int pci_pbm_init_device(SysBusDevice *dev)
     return 0;
 }
 
-static void pbm_pci_host_realize(PCIDevice *d, Error **errp)
+static void pbm_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     pci_set_word(d->config + PCI_COMMAND,
                  PCI_COMMAND_MEMORY | PCI_COMMAND_MASTER);

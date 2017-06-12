@@ -1370,9 +1370,10 @@ static inline int cpu_mmu_index (CPUPPCState *env, bool ifetch)
 #if defined(TARGET_PPC64)
 bool ppc_check_compat(PowerPCCPU *cpu, uint32_t compat_pvr,
                       uint32_t min_compat_pvr, uint32_t max_compat_pvr);
-void ppc_set_compat(PowerPCCPU *cpu, uint32_t compat_pvr, Error **errp);
+void ppc_set_compat(PowerPCCPU *cpu, uint32_t compat_pvr,
+		    Error *errp[static 1]);
 #if !defined(CONFIG_USER_ONLY)
-void ppc_set_compat_all(uint32_t compat_pvr, Error **errp);
+void ppc_set_compat_all(uint32_t compat_pvr, Error *errp[static 1]);
 #endif
 int ppc_compat_max_threads(PowerPCCPU *cpu);
 #endif /* defined(TARGET_PPC64) */

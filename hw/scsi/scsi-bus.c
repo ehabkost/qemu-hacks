@@ -46,7 +46,7 @@ static const TypeInfo scsi_bus_info = {
 };
 static int next_scsi_bus;
 
-static void scsi_device_realize(SCSIDevice *s, Error **errp)
+static void scsi_device_realize(SCSIDevice *s, Error *errp[static 1])
 {
     SCSIDeviceClass *sc = SCSI_DEVICE_GET_CLASS(s);
     if (sc->realize) {
@@ -147,7 +147,7 @@ static void scsi_dma_restart_cb(void *opaque, int running, RunState state)
     }
 }
 
-static void scsi_qdev_realize(DeviceState *qdev, Error **errp)
+static void scsi_qdev_realize(DeviceState *qdev, Error *errp[static 1])
 {
     SCSIDevice *dev = SCSI_DEVICE(qdev);
     SCSIBus *bus = DO_UPCAST(SCSIBus, qbus, dev->qdev.parent_bus);
@@ -207,7 +207,7 @@ static void scsi_qdev_realize(DeviceState *qdev, Error **errp)
                                                      dev);
 }
 
-static void scsi_qdev_unrealize(DeviceState *qdev, Error **errp)
+static void scsi_qdev_unrealize(DeviceState *qdev, Error *errp[static 1])
 {
     SCSIDevice *dev = SCSI_DEVICE(qdev);
 
@@ -222,7 +222,8 @@ static void scsi_qdev_unrealize(DeviceState *qdev, Error **errp)
 /* handle legacy '-drive if=scsi,...' cmd line args */
 SCSIDevice *scsi_bus_legacy_add_drive(SCSIBus *bus, BlockBackend *blk,
                                       int unit, bool removable, int bootindex,
-                                      const char *serial, Error **errp)
+                                      const char *serial,
+                                      Error *errp[static 1])
 {
     const char *driver;
     char *name;

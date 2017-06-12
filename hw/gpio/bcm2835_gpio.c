@@ -305,7 +305,7 @@ static void bcm2835_gpio_init(Object *obj)
     qdev_init_gpio_out(dev, s->out, 54);
 }
 
-static void bcm2835_gpio_realize(DeviceState *dev, Error **errp)
+static void bcm2835_gpio_realize(DeviceState *dev, Error *errp[static 1])
 {
     BCM2835GpioState *s = BCM2835_GPIO(dev);
     Object *obj;

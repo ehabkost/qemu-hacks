@@ -39,7 +39,7 @@ typedef struct ISASGAState {
     ISADevice parent_obj;
 } ISASGAState;
 
-static void sga_realizefn(DeviceState *dev, Error **errp)
+static void sga_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     rom_add_vga(SGABIOS_FILENAME);
 }

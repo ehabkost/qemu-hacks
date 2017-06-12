@@ -36,7 +36,7 @@
 #define NTIMEOUT 5000
 
 static int win_chr_pipe_init(Chardev *chr, const char *filename,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     WinChardev *s = WIN_CHARDEV(chr);
     OVERLAPPED ov;
@@ -102,7 +102,7 @@ static int win_chr_pipe_init(Chardev *chr, const char *filename,
 static void qemu_chr_open_pipe(Chardev *chr,
                                ChardevBackend *backend,
                                bool *be_opened,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     ChardevHostdev *opts = backend->u.pipe.data;
     const char *filename = opts->device;
@@ -117,7 +117,7 @@ static void qemu_chr_open_pipe(Chardev *chr,
 static void qemu_chr_open_pipe(Chardev *chr,
                                ChardevBackend *backend,
                                bool *be_opened,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     ChardevHostdev *opts = backend->u.pipe.data;
     int fd_in, fd_out;
@@ -150,7 +150,7 @@ static void qemu_chr_open_pipe(Chardev *chr,
 #endif /* !_WIN32 */
 
 static void qemu_chr_parse_pipe(QemuOpts *opts, ChardevBackend *backend,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     const char *device = qemu_opt_get(opts, "path");
     ChardevHostdev *dev;

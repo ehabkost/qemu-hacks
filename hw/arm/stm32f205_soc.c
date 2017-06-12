@@ -82,7 +82,7 @@ static void stm32f205_soc_initfn(Object *obj)
     }
 }
 
-static void stm32f205_soc_realize(DeviceState *dev_soc, Error **errp)
+static void stm32f205_soc_realize(DeviceState *dev_soc, Error *errp[static 1])
 {
     STM32F205State *s = STM32F205_SOC(dev_soc);
     DeviceState *dev, *armv7m;

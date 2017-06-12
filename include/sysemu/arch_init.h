@@ -31,15 +31,15 @@ extern const uint32_t arch_type;
 int kvm_available(void);
 int xen_available(void);
 
-CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp);
+CpuDefinitionInfoList *arch_query_cpu_definitions(Error *errp[static 1]);
 CpuModelExpansionInfo *arch_query_cpu_model_expansion(CpuModelExpansionType type,
                                                       CpuModelInfo *mode,
-                                                      Error **errp);
+                                                      Error *errp[static 1]);
 CpuModelCompareInfo *arch_query_cpu_model_comparison(CpuModelInfo *modela,
                                                      CpuModelInfo *modelb,
-                                                     Error **errp);
+                                                     Error *errp[static 1]);
 CpuModelBaselineInfo *arch_query_cpu_model_baseline(CpuModelInfo *modela,
                                                     CpuModelInfo *modelb,
-                                                    Error **errp);
+                                                    Error *errp[static 1]);
 
 #endif

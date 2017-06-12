@@ -89,7 +89,7 @@ static void char_ringbuf_finalize(Object *obj)
 static void qemu_chr_open_ringbuf(Chardev *chr,
                                   ChardevBackend *backend,
                                   bool *be_opened,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     ChardevRingbuf *opts = backend->u.ringbuf.data;
     RingBufChardev *d = RINGBUF_CHARDEV(chr);
@@ -109,7 +109,7 @@ static void qemu_chr_open_ringbuf(Chardev *chr,
 
 void qmp_ringbuf_write(const char *device, const char *data,
                        bool has_format, enum DataFormat format,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     Chardev *chr;
     const uint8_t *write_data;
@@ -153,7 +153,7 @@ void qmp_ringbuf_write(const char *device, const char *data,
 
 char *qmp_ringbuf_read(const char *device, int64_t size,
                        bool has_format, enum DataFormat format,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     Chardev *chr;
     uint8_t *read_data;
@@ -201,7 +201,7 @@ char *qmp_ringbuf_read(const char *device, int64_t size,
 }
 
 static void qemu_chr_parse_ringbuf(QemuOpts *opts, ChardevBackend *backend,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     int val;
     ChardevRingbuf *ringbuf;

@@ -31,7 +31,7 @@
 static QCryptoTLSCreds *
 migration_tls_get_creds(MigrationState *s,
                         QCryptoTLSCredsEndpoint endpoint,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     Object *creds;
     QCryptoTLSCreds *ret;
@@ -81,7 +81,7 @@ static void migration_tls_incoming_handshake(QIOTask *task,
 
 void migration_tls_channel_process_incoming(MigrationState *s,
                                             QIOChannel *ioc,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     QCryptoTLSCreds *creds;
     QIOChannelTLS *tioc;
@@ -131,7 +131,7 @@ static void migration_tls_outgoing_handshake(QIOTask *task,
 void migration_tls_channel_connect(MigrationState *s,
                                    QIOChannel *ioc,
                                    const char *hostname,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QCryptoTLSCreds *creds;
     QIOChannelTLS *tioc;

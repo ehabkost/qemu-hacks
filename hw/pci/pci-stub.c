@@ -25,7 +25,7 @@
 #include "hw/pci/pci.h"
 #include "qmp-commands.h"
 
-PciInfoList *qmp_query_pci(Error **errp)
+PciInfoList *qmp_query_pci(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;

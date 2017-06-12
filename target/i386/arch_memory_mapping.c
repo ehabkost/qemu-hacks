@@ -268,7 +268,7 @@ static void walk_pml5e(MemoryMappingList *list, AddressSpace *as,
 #endif
 
 void x86_cpu_get_memory_mapping(CPUState *cs, MemoryMappingList *list,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(cs);
     CPUX86State *env = &cpu->env;

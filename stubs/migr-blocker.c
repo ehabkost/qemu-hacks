@@ -2,7 +2,7 @@
 #include "qemu-common.h"
 #include "migration/blocker.h"
 
-int migrate_add_blocker(Error *reason, Error **errp)
+int migrate_add_blocker(Error *reason, Error *errp[static 1])
 {
     return 0;
 }

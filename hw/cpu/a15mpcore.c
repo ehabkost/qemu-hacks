@@ -46,7 +46,7 @@ static void a15mp_priv_initfn(Object *obj)
     qdev_prop_set_uint32(gicdev, "revision", 2);
 }
 
-static void a15mp_priv_realize(DeviceState *dev, Error **errp)
+static void a15mp_priv_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     A15MPPrivState *s = A15MPCORE_PRIV(dev);

@@ -187,7 +187,7 @@ static void aspeed_soc_init(Object *obj)
     qdev_set_parent_bus(DEVICE(&s->ftgmac100), sysbus_get_default());
 }
 
-static void aspeed_soc_realize(DeviceState *dev, Error **errp)
+static void aspeed_soc_realize(DeviceState *dev, Error *errp[static 1])
 {
     int i;
     AspeedSoCState *s = ASPEED_SOC(dev);

@@ -127,7 +127,7 @@ static void char_udp_finalize(Object *obj)
 }
 
 static void qemu_chr_parse_udp(QemuOpts *opts, ChardevBackend *backend,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     const char *host = qemu_opt_get(opts, "host");
     const char *port = qemu_opt_get(opts, "port");
@@ -188,7 +188,7 @@ static void qemu_chr_parse_udp(QemuOpts *opts, ChardevBackend *backend,
 static void qmp_chardev_open_udp(Chardev *chr,
                                  ChardevBackend *backend,
                                  bool *be_opened,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     ChardevUdp *udp = backend->u.udp.data;
     SocketAddress *local_addr = socket_address_flatten(udp->local);

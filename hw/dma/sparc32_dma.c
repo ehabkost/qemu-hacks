@@ -284,7 +284,7 @@ static void sparc32_dma_init(Object *obj)
     qdev_init_gpio_out(dev, s->gpio, 2);
 }
 
-static void sparc32_dma_realize(DeviceState *dev, Error **errp)
+static void sparc32_dma_realize(DeviceState *dev, Error *errp[static 1])
 {
     DMAState *s = SPARC32_DMA(dev);
     int reg_size;

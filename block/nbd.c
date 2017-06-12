@@ -130,7 +130,8 @@ out:
     return ret;
 }
 
-static bool nbd_has_filename_options_conflict(QDict *options, Error **errp)
+static bool nbd_has_filename_options_conflict(QDict *options,
+                                              Error *errp[static 1])
 {
     const QDictEntry *e;
 
@@ -151,7 +152,7 @@ static bool nbd_has_filename_options_conflict(QDict *options, Error **errp)
 }
 
 static void nbd_parse_filename(const char *filename, QDict *options,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     char *file;
     char *export_name;
@@ -217,7 +218,7 @@ out:
 
 static bool nbd_process_legacy_socket_options(QDict *output_options,
                                               QemuOpts *legacy_opts,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     const char *path = qemu_opt_get(legacy_opts, "path");
     const char *host = qemu_opt_get(legacy_opts, "host");
@@ -259,7 +260,7 @@ static bool nbd_process_legacy_socket_options(QDict *output_options,
 }
 
 static SocketAddress *nbd_config(BDRVNBDState *s, QDict *options,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     SocketAddress *saddr = NULL;
     QDict *addr = NULL;
@@ -305,7 +306,7 @@ NBDClientSession *nbd_get_client_session(BlockDriverState *bs)
 }
 
 static QIOChannelSocket *nbd_establish_connection(SocketAddress *saddr,
-                                                  Error **errp)
+                                                  Error *errp[static 1])
 {
     QIOChannelSocket *sioc;
 
@@ -326,7 +327,8 @@ static QIOChannelSocket *nbd_establish_connection(SocketAddress *saddr,
 }
 
 
-static QCryptoTLSCreds *nbd_get_tls_creds(const char *id, Error **errp)
+static QCryptoTLSCreds *nbd_get_tls_creds(const char *id,
+                                          Error *errp[static 1])
 {
     Object *obj;
     QCryptoTLSCreds *creds;
@@ -389,7 +391,7 @@ static QemuOptsList nbd_runtime_opts = {
 };
 
 static int nbd_open(BlockDriverState *bs, QDict *options, int flags,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     BDRVNBDState *s = bs->opaque;
     QemuOpts *opts = NULL;
@@ -465,7 +467,7 @@ static int nbd_co_flush(BlockDriverState *bs)
     return nbd_client_co_flush(bs);
 }
 
-static void nbd_refresh_limits(BlockDriverState *bs, Error **errp)
+static void nbd_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     bs->bl.max_pdiscard = NBD_MAX_BUFFER_SIZE;
     bs->bl.max_pwrite_zeroes = NBD_MAX_BUFFER_SIZE;

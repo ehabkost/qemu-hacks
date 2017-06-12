@@ -90,7 +90,7 @@ void DMA_init(ISABus *bus, int high_page_enable)
 }
 
 static void fw_cfg_boot_set(void *opaque, const char *boot_device,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     fw_cfg_modify_i16(opaque, FW_CFG_BOOT_DEVICE, boot_device[0]);
 }
@@ -237,7 +237,7 @@ pci_ebus_init(PCIBus *bus, int devfn, qemu_irq *irqs)
     return isa_bus;
 }
 
-static void pci_ebus_realize(PCIDevice *pci_dev, Error **errp)
+static void pci_ebus_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     EbusState *s = DO_UPCAST(EbusState, pci_dev, pci_dev);
 
@@ -372,7 +372,7 @@ typedef struct RamDevice {
 } RamDevice;
 
 /* System RAM */
-static void ram_realize(DeviceState *dev, Error **errp)
+static void ram_realize(DeviceState *dev, Error *errp[static 1])
 {
     RamDevice *d = SUN4U_RAM(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

@@ -129,7 +129,7 @@ static void mb_disas_set_info(CPUState *cpu, disassemble_info *info)
     info->print_insn = print_insn_microblaze;
 }
 
-static void mb_cpu_realizefn(DeviceState *dev, Error **errp)
+static void mb_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     MicroBlazeCPUClass *mcc = MICROBLAZE_CPU_GET_CLASS(dev);

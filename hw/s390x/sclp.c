@@ -483,7 +483,7 @@ void s390_sclp_init(void)
     qdev_init_nofail(DEVICE(new));
 }
 
-static void sclp_realize(DeviceState *dev, Error **errp)
+static void sclp_realize(DeviceState *dev, Error *errp[static 1])
 {
     MachineState *machine = MACHINE(qdev_get_machine());
     SCLPDevice *sclp = SCLP(dev);

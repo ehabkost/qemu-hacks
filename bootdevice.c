@@ -50,7 +50,7 @@ void qemu_register_boot_set(QEMUBootSetHandler *func, void *opaque)
     boot_set_opaque = opaque;
 }
 
-void qemu_boot_set(const char *boot_order, Error **errp)
+void qemu_boot_set(const char *boot_order, Error *errp[static 1])
 {
     if (!boot_set_handler) {
         error_setg(errp, "no function defined to set boot device list for"
@@ -66,7 +66,7 @@ void qemu_boot_set(const char *boot_order, Error **errp)
     boot_set_handler(boot_set_opaque, boot_order, errp);
 }
 
-void validate_bootdevices(const char *devices, Error **errp)
+void validate_bootdevices(const char *devices, Error *errp[static 1])
 {
     /* We just do some generic consistency checks */
     const char *p;
@@ -113,7 +113,7 @@ void restore_boot_order(void *opaque)
     g_free(normal_boot_order);
 }
 
-void check_boot_index(int32_t bootindex, Error **errp)
+void check_boot_index(int32_t bootindex, Error *errp[static 1])
 {
     FWBootEntry *i;
 
@@ -271,14 +271,14 @@ typedef struct {
 } BootIndexProperty;
 
 static void device_get_bootindex(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     BootIndexProperty *prop = opaque;
     visit_type_int32(v, name, prop->bootindex, errp);
 }
 
 static void device_set_bootindex(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     BootIndexProperty *prop = opaque;
     int32_t boot_index;
@@ -314,7 +314,7 @@ static void property_release_bootindex(Object *obj, const char *name,
 
 void device_add_bootindex_property(Object *obj, int32_t *bootindex,
                                    const char *name, const char *suffix,
-                                   DeviceState *dev, Error **errp)
+                                   DeviceState *dev, Error *errp[static 1])
 {
     BootIndexProperty *prop = g_malloc0(sizeof(*prop));
 

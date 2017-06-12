@@ -99,7 +99,7 @@ static bool cpu_common_get_paging_enabled(const CPUState *cpu)
 }
 
 void cpu_get_memory_mapping(CPUState *cpu, MemoryMappingList *list,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     CPUClass *cc = CPU_GET_CLASS(cpu);
 
@@ -108,7 +108,7 @@ void cpu_get_memory_mapping(CPUState *cpu, MemoryMappingList *list,
 
 static void cpu_common_get_memory_mapping(CPUState *cpu,
                                           MemoryMappingList *list,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     error_setg(errp, "Obtaining memory mappings is unsupported on this CPU.");
 }
@@ -320,7 +320,7 @@ static ObjectClass *cpu_common_class_by_name(const char *cpu_model)
 }
 
 static void cpu_common_parse_features(const char *typename, char *features,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     char *featurestr; /* Single "key=value" string being parsed */
     char *val;
@@ -359,7 +359,7 @@ static void cpu_common_parse_features(const char *typename, char *features,
     }
 }
 
-static void cpu_common_realizefn(DeviceState *dev, Error **errp)
+static void cpu_common_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cpu = CPU(dev);
 
@@ -372,7 +372,7 @@ static void cpu_common_realizefn(DeviceState *dev, Error **errp)
     trace_init_vcpu(cpu);
 }
 
-static void cpu_common_unrealizefn(DeviceState *dev, Error **errp)
+static void cpu_common_unrealizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cpu = CPU(dev);
     /* NOTE: latest generic point before the cpu is fully unrealized */

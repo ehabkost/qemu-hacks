@@ -1520,7 +1520,7 @@ static void openpic_init(Object *obj)
     memory_region_init(&opp->mem, obj, "openpic", 0x40000);
 }
 
-static void openpic_realize(DeviceState *dev, Error **errp)
+static void openpic_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *d = SYS_BUS_DEVICE(dev);
     OpenPICState *opp = OPENPIC(dev);

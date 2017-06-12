@@ -422,7 +422,7 @@ static void aspeed_i2c_reset(DeviceState *dev)
  *   0x480 ... 0x4BF: Device 14
  *   0x800 ... 0xFFF: Buffer Pool  (unused in linux driver)
  */
-static void aspeed_i2c_realize(DeviceState *dev, Error **errp)
+static void aspeed_i2c_realize(DeviceState *dev, Error *errp[static 1])
 {
     int i;
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

@@ -639,7 +639,7 @@ static void exynos4210_uart_init(Object *obj)
     sysbus_init_irq(dev, &s->irq);
 }
 
-static void exynos4210_uart_realize(DeviceState *dev, Error **errp)
+static void exynos4210_uart_realize(DeviceState *dev, Error *errp[static 1])
 {
     Exynos4210UartState *s = EXYNOS4210_UART(dev);
 

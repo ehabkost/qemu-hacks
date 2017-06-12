@@ -54,7 +54,7 @@ static uint32_t ssi_transfer_raw_default(SSISlave *dev, uint32_t val)
     return 0;
 }
 
-static void ssi_slave_realize(DeviceState *dev, Error **errp)
+static void ssi_slave_realize(DeviceState *dev, Error *errp[static 1])
 {
     SSISlave *s = SSI_SLAVE(dev);
     SSISlaveClass *ssc = SSI_SLAVE_GET_CLASS(s);

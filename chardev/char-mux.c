@@ -300,7 +300,7 @@ void mux_set_focus(Chardev *chr, int focus)
 static void qemu_chr_open_mux(Chardev *chr,
                               ChardevBackend *backend,
                               bool *be_opened,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     ChardevMux *mux = backend->u.mux.data;
     Chardev *drv;
@@ -321,7 +321,7 @@ static void qemu_chr_open_mux(Chardev *chr,
 }
 
 static void qemu_chr_parse_mux(QemuOpts *opts, ChardevBackend *backend,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     const char *chardev = qemu_opt_get(opts, "chardev");
     ChardevMux *mux;

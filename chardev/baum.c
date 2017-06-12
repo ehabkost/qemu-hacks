@@ -630,7 +630,7 @@ static void char_braille_finalize(Object *obj)
 static void baum_chr_open(Chardev *chr,
                           ChardevBackend *backend,
                           bool *be_opened,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     BaumChardev *baum = BAUM_CHARDEV(chr);
     brlapi_handle_t *handle;

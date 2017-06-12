@@ -64,7 +64,7 @@ struct HostMemoryBackend {
 
 bool host_memory_backend_mr_inited(HostMemoryBackend *backend);
 MemoryRegion *host_memory_backend_get_memory(HostMemoryBackend *backend,
-                                             Error **errp);
+                                             Error *errp[static 1]);
 
 void host_memory_backend_set_mapped(HostMemoryBackend *backend, bool mapped);
 bool host_memory_backend_is_mapped(HostMemoryBackend *backend);

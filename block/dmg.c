@@ -128,7 +128,7 @@ static void update_max_chunk_size(BDRVDMGState *s, uint32_t chunk,
     }
 }
 
-static int64_t dmg_find_koly_offset(BdrvChild *file, Error **errp)
+static int64_t dmg_find_koly_offset(BdrvChild *file, Error *errp[static 1])
 {
     BlockDriverState *file_bs = file->bs;
     int64_t length;
@@ -404,7 +404,7 @@ fail:
 }
 
 static int dmg_open(BlockDriverState *bs, QDict *options, int flags,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     BDRVDMGState *s = bs->opaque;
     DmgHeaderState ds;
@@ -532,7 +532,7 @@ fail:
     return ret;
 }
 
-static void dmg_refresh_limits(BlockDriverState *bs, Error **errp)
+static void dmg_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     bs->bl.request_alignment = BDRV_SECTOR_SIZE; /* No sub-sector I/O */
 }

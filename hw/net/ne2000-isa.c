@@ -59,7 +59,7 @@ static const VMStateDescription vmstate_isa_ne2000 = {
     }
 };
 
-static void isa_ne2000_realizefn(DeviceState *dev, Error **errp)
+static void isa_ne2000_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     ISANE2000State *isa = ISA_NE2000(dev);
@@ -97,7 +97,7 @@ static void isa_ne2000_class_initfn(ObjectClass *klass, void *data)
 
 static void isa_ne2000_get_bootindex(Object *obj, Visitor *v,
                                      const char *name, void *opaque,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     ISANE2000State *isa = ISA_NE2000(obj);
     NE2000State *s = &isa->ne2000;
@@ -107,7 +107,7 @@ static void isa_ne2000_get_bootindex(Object *obj, Visitor *v,
 
 static void isa_ne2000_set_bootindex(Object *obj, Visitor *v,
                                      const char *name, void *opaque,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     ISANE2000State *isa = ISA_NE2000(obj);
     NE2000State *s = &isa->ne2000;

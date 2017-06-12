@@ -66,7 +66,7 @@ static void rng_random_request_entropy(RngBackend *b, RngRequest *req)
     }
 }
 
-static void rng_random_opened(RngBackend *b, Error **errp)
+static void rng_random_opened(RngBackend *b, Error *errp[static 1])
 {
     RngRandom *s = RNG_RANDOM(b);
 
@@ -81,7 +81,7 @@ static void rng_random_opened(RngBackend *b, Error **errp)
     }
 }
 
-static char *rng_random_get_filename(Object *obj, Error **errp)
+static char *rng_random_get_filename(Object *obj, Error *errp[static 1])
 {
     RngRandom *s = RNG_RANDOM(obj);
 
@@ -89,7 +89,7 @@ static char *rng_random_get_filename(Object *obj, Error **errp)
 }
 
 static void rng_random_set_filename(Object *obj, const char *filename,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     RngBackend *b = RNG_BACKEND(obj);
     RngRandom *s = RNG_RANDOM(obj);

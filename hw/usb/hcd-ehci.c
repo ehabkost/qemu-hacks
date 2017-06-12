@@ -773,7 +773,7 @@ static void ehci_wakeup(USBPort *port)
 
 static void ehci_register_companion(USBBus *bus, USBPort *ports[],
                                     uint32_t portcount, uint32_t firstport,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     EHCIState *s = container_of(bus, EHCIState, bus);
     uint32_t i;
@@ -2467,7 +2467,7 @@ const VMStateDescription vmstate_ehci = {
     }
 };
 
-void usb_ehci_realize(EHCIState *s, DeviceState *dev, Error **errp)
+void usb_ehci_realize(EHCIState *s, DeviceState *dev, Error *errp[static 1])
 {
     int i;
 
@@ -2492,7 +2492,7 @@ void usb_ehci_realize(EHCIState *s, DeviceState *dev, Error **errp)
     s->vmstate = qemu_add_vm_change_state_handler(usb_ehci_vm_state_change, s);
 }
 
-void usb_ehci_unrealize(EHCIState *s, DeviceState *dev, Error **errp)
+void usb_ehci_unrealize(EHCIState *s, DeviceState *dev, Error *errp[static 1])
 {
     trace_usb_ehci_unrealize();
 

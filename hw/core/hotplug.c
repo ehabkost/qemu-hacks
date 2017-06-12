@@ -15,7 +15,7 @@
 
 void hotplug_handler_pre_plug(HotplugHandler *plug_handler,
                               DeviceState *plugged_dev,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     HotplugHandlerClass *hdc = HOTPLUG_HANDLER_GET_CLASS(plug_handler);
 
@@ -26,7 +26,7 @@ void hotplug_handler_pre_plug(HotplugHandler *plug_handler,
 
 void hotplug_handler_plug(HotplugHandler *plug_handler,
                           DeviceState *plugged_dev,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     HotplugHandlerClass *hdc = HOTPLUG_HANDLER_GET_CLASS(plug_handler);
 
@@ -37,7 +37,7 @@ void hotplug_handler_plug(HotplugHandler *plug_handler,
 
 void hotplug_handler_unplug_request(HotplugHandler *plug_handler,
                                     DeviceState *plugged_dev,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     HotplugHandlerClass *hdc = HOTPLUG_HANDLER_GET_CLASS(plug_handler);
 
@@ -48,7 +48,7 @@ void hotplug_handler_unplug_request(HotplugHandler *plug_handler,
 
 void hotplug_handler_unplug(HotplugHandler *plug_handler,
                             DeviceState *plugged_dev,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     HotplugHandlerClass *hdc = HOTPLUG_HANDLER_GET_CLASS(plug_handler);
 

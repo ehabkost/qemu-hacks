@@ -71,7 +71,7 @@ static void gpio_key_set_irq(void *opaque, int irq, int level)
               qemu_clock_get_ms(QEMU_CLOCK_VIRTUAL) + GPIO_KEY_LATENCY);
 }
 
-static void gpio_key_realize(DeviceState *dev, Error **errp)
+static void gpio_key_realize(DeviceState *dev, Error *errp[static 1])
 {
     GPIOKEYState *s = GPIOKEY(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

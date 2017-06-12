@@ -239,7 +239,7 @@ static void xen_ram_init(PCMachineState *pcms,
 }
 
 void xen_ram_alloc(ram_addr_t ram_addr, ram_addr_t size, MemoryRegion *mr,
-                   Error **errp)
+                   Error *errp[static 1])
 {
     unsigned long nr_pfn;
     xen_pfn_t *pfn_list;
@@ -1421,7 +1421,7 @@ void xen_hvm_modified_memory(ram_addr_t start, ram_addr_t length)
     }
 }
 
-void qmp_xen_set_global_dirty_log(bool enable, Error **errp)
+void qmp_xen_set_global_dirty_log(bool enable, Error *errp[static 1])
 {
     if (enable) {
         memory_global_dirty_log_start();

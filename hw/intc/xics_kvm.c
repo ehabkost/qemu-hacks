@@ -159,12 +159,12 @@ static void icp_kvm_cpu_setup(ICPState *icp, PowerPCCPU *cpu)
     QLIST_INSERT_HEAD(&kvm_enabled_icps, enabled_icp, node);
 }
 
-static void icp_kvm_realize(DeviceState *dev, Error **errp)
+static void icp_kvm_realize(DeviceState *dev, Error *errp[static 1])
 {
     qemu_register_reset(icp_kvm_reset, dev);
 }
 
-static void icp_kvm_unrealize(DeviceState *dev, Error **errp)
+static void icp_kvm_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     qemu_unregister_reset(icp_kvm_reset, dev);
 }
@@ -351,7 +351,7 @@ static void ics_kvm_reset(void *dev)
     ics_set_kvm_state(ics, 1);
 }
 
-static void ics_kvm_realize(DeviceState *dev, Error **errp)
+static void ics_kvm_realize(DeviceState *dev, Error *errp[static 1])
 {
     ICSState *ics = ICS_SIMPLE(dev);
 
@@ -394,7 +394,7 @@ static void rtas_dummy(PowerPCCPU *cpu, sPAPRMachineState *spapr,
                  __func__);
 }
 
-int xics_kvm_init(sPAPRMachineState *spapr, Error **errp)
+int xics_kvm_init(sPAPRMachineState *spapr, Error *errp[static 1])
 {
     int rc;
     struct kvm_create_device xics_create_device = {

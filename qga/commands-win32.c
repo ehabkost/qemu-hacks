@@ -103,7 +103,7 @@ static OpenFlags *find_open_flag(const char *mode_str)
     return NULL;
 }
 
-static int64_t guest_file_handle_add(HANDLE fh, Error **errp)
+static int64_t guest_file_handle_add(HANDLE fh, Error *errp[static 1])
 {
     GuestFileHandle *gfh;
     int64_t handle;
@@ -120,7 +120,8 @@ static int64_t guest_file_handle_add(HANDLE fh, Error **errp)
     return handle;
 }
 
-static GuestFileHandle *guest_file_handle_find(int64_t id, Error **errp)
+static GuestFileHandle *guest_file_handle_find(int64_t id,
+                                               Error *errp[static 1])
 {
     GuestFileHandle *gfh;
     QTAILQ_FOREACH(gfh, &guest_file_state.filehandles, next) {
@@ -155,7 +156,7 @@ static void handle_set_nonblocking(HANDLE fh)
 }
 
 int64_t qmp_guest_file_open(const char *path, bool has_mode,
-                            const char *mode, Error **errp)
+                            const char *mode, Error *errp[static 1])
 {
     int64_t fd;
     HANDLE fh;
@@ -200,7 +201,7 @@ int64_t qmp_guest_file_open(const char *path, bool has_mode,
     return fd;
 }
 
-void qmp_guest_file_close(int64_t handle, Error **errp)
+void qmp_guest_file_close(int64_t handle, Error *errp[static 1])
 {
     bool ret;
     GuestFileHandle *gfh = guest_file_handle_find(handle, errp);
@@ -218,7 +219,7 @@ void qmp_guest_file_close(int64_t handle, Error **errp)
     g_free(gfh);
 }
 
-static void acquire_privilege(const char *name, Error **errp)
+static void acquire_privilege(const char *name, Error *errp[static 1])
 {
     HANDLE token = NULL;
     TOKEN_PRIVILEGES priv;
@@ -255,7 +256,7 @@ out:
 }
 
 static void execute_async(DWORD WINAPI (*func)(LPVOID), LPVOID opaque,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     Error *local_err = NULL;
 
@@ -267,7 +268,8 @@ static void execute_async(DWORD WINAPI (*func)(LPVOID), LPVOID opaque,
     }
 }
 
-void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
+void qmp_guest_shutdown(bool has_mode, const char *mode,
+                        Error *errp[static 1])
 {
     UINT shutdown_flag = EWX_FORCE;
 
@@ -299,7 +301,7 @@ void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
 }
 
 GuestFileRead *qmp_guest_file_read(int64_t handle, bool has_count,
-                                   int64_t count, Error **errp)
+                                   int64_t count, Error *errp[static 1])
 {
     GuestFileRead *read_data = NULL;
     guchar *buf;
@@ -342,7 +344,7 @@ GuestFileRead *qmp_guest_file_read(int64_t handle, bool has_count,
 
 GuestFileWrite *qmp_guest_file_write(int64_t handle, const char *buf_b64,
                                      bool has_count, int64_t count,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     GuestFileWrite *write_data = NULL;
     guchar *buf;
@@ -385,7 +387,7 @@ done:
 
 GuestFileSeek *qmp_guest_file_seek(int64_t handle, int64_t offset,
                                    GuestFileWhence *whence_code,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     GuestFileHandle *gfh;
     GuestFileSeek *seek_data;
@@ -419,7 +421,7 @@ GuestFileSeek *qmp_guest_file_seek(int64_t handle, int64_t offset,
     return seek_data;
 }
 
-void qmp_guest_file_flush(int64_t handle, Error **errp)
+void qmp_guest_file_flush(int64_t handle, Error *errp[static 1])
 {
     HANDLE fh;
     GuestFileHandle *gfh = guest_file_handle_find(handle, errp);
@@ -470,7 +472,7 @@ DEFINE_GUID(GUID_DEVINTERFACE_VOLUME,
         0x53f5630dL, 0xb6bf, 0x11d0, 0x94, 0xf2,
         0x00, 0xa0, 0xc9, 0x1e, 0xfb, 0x8b);
 
-static GuestPCIAddress *get_pci_info(char *guid, Error **errp)
+static GuestPCIAddress *get_pci_info(char *guid, Error *errp[static 1])
 {
     HDEVINFO dev_info;
     SP_DEVINFO_DATA dev_info_data;
@@ -564,7 +566,7 @@ out:
     return pci;
 }
 
-static int get_disk_bus_type(HANDLE vol_h, Error **errp)
+static int get_disk_bus_type(HANDLE vol_h, Error *errp[static 1])
 {
     STORAGE_PROPERTY_QUERY query;
     STORAGE_DEVICE_DESCRIPTOR *dev_desc, buf;
@@ -588,7 +590,8 @@ static int get_disk_bus_type(HANDLE vol_h, Error **errp)
 /* VSS provider works with volumes, thus there is no difference if
  * the volume consist of spanned disks. Info about the first disk in the
  * volume is returned for the spanned disk group (LVM) */
-static GuestDiskAddressList *build_guest_disk_info(char *guid, Error **errp)
+static GuestDiskAddressList *build_guest_disk_info(char *guid,
+                                                   Error *errp[static 1])
 {
     GuestDiskAddressList *list = NULL;
     GuestDiskAddress *disk;
@@ -648,14 +651,16 @@ out_free:
 
 #else
 
-static GuestDiskAddressList *build_guest_disk_info(char *guid, Error **errp)
+static GuestDiskAddressList *build_guest_disk_info(char *guid,
+                                                   Error *errp[static 1])
 {
     return NULL;
 }
 
 #endif /* CONFIG_QGA_NTDDSCSI */
 
-static GuestFilesystemInfo *build_guest_fsinfo(char *guid, Error **errp)
+static GuestFilesystemInfo *build_guest_fsinfo(char *guid,
+                                               Error *errp[static 1])
 {
     DWORD info_size;
     char mnt, *mnt_point;
@@ -703,7 +708,7 @@ free:
     return fs;
 }
 
-GuestFilesystemInfoList *qmp_guest_get_fsinfo(Error **errp)
+GuestFilesystemInfoList *qmp_guest_get_fsinfo(Error *errp[static 1])
 {
     HANDLE vol_h;
     GuestFilesystemInfoList *new, *ret = NULL;
@@ -737,7 +742,7 @@ GuestFilesystemInfoList *qmp_guest_get_fsinfo(Error **errp)
 /*
  * Return status of freeze/thaw
  */
-GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error **errp)
+GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error *errp[static 1])
 {
     if (!vss_initialized()) {
         error_setg(errp, QERR_UNSUPPORTED);
@@ -755,7 +760,7 @@ GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error **errp)
  * Freeze local file systems using Volume Shadow-copy Service.
  * The frozen state is limited for up to 10 seconds by VSS.
  */
-int64_t qmp_guest_fsfreeze_freeze(Error **errp)
+int64_t qmp_guest_fsfreeze_freeze(Error *errp[static 1])
 {
     int i;
 
@@ -788,7 +793,7 @@ error:
 
 int64_t qmp_guest_fsfreeze_freeze_list(bool has_mountpoints,
                                        strList *mountpoints,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 
@@ -798,7 +803,7 @@ int64_t qmp_guest_fsfreeze_freeze_list(bool has_mountpoints,
 /*
  * Thaw local file systems using Volume Shadow-copy Service.
  */
-int64_t qmp_guest_fsfreeze_thaw(Error **errp)
+int64_t qmp_guest_fsfreeze_thaw(Error *errp[static 1])
 {
     int i;
 
@@ -838,7 +843,7 @@ static void guest_fsfreeze_cleanup(void)
  * areas.
  */
 GuestFilesystemTrimResponse *
-qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error **errp)
+qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error *errp[static 1])
 {
     GuestFilesystemTrimResponse *resp;
     HANDLE handle;
@@ -940,7 +945,7 @@ typedef enum {
     GUEST_SUSPEND_MODE_RAM
 } GuestSuspendMode;
 
-static void check_suspend_mode(GuestSuspendMode mode, Error **errp)
+static void check_suspend_mode(GuestSuspendMode mode, Error *errp[static 1])
 {
     SYSTEM_POWER_CAPABILITIES sys_pwr_caps;
     Error *local_err = NULL;
@@ -987,7 +992,7 @@ static DWORD WINAPI do_suspend(LPVOID opaque)
     return ret;
 }
 
-void qmp_guest_suspend_disk(Error **errp)
+void qmp_guest_suspend_disk(Error *errp[static 1])
 {
     Error *local_err = NULL;
     GuestSuspendMode *mode = g_new(GuestSuspendMode, 1);
@@ -1003,7 +1008,7 @@ void qmp_guest_suspend_disk(Error **errp)
     }
 }
 
-void qmp_guest_suspend_ram(Error **errp)
+void qmp_guest_suspend_ram(Error *errp[static 1])
 {
     Error *local_err = NULL;
     GuestSuspendMode *mode = g_new(GuestSuspendMode, 1);
@@ -1019,12 +1024,12 @@ void qmp_guest_suspend_ram(Error **errp)
     }
 }
 
-void qmp_guest_suspend_hybrid(Error **errp)
+void qmp_guest_suspend_hybrid(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 }
 
-static IP_ADAPTER_ADDRESSES *guest_get_adapters_addresses(Error **errp)
+static IP_ADAPTER_ADDRESSES *guest_get_adapters_addresses(Error *errp[static 1])
 {
     IP_ADAPTER_ADDRESSES *adptr_addrs = NULL;
     ULONG adptr_addrs_len = 0;
@@ -1058,7 +1063,7 @@ static char *guest_wctomb_dup(WCHAR *wstr)
 }
 
 static char *guest_addr_to_str(IP_ADAPTER_UNICAST_ADDRESS *ip_addr,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     char addr_str[INET6_ADDRSTRLEN + INET_ADDRSTRLEN];
     DWORD len;
@@ -1145,7 +1150,7 @@ out:
 }
 #endif
 
-GuestNetworkInterfaceList *qmp_guest_network_get_interfaces(Error **errp)
+GuestNetworkInterfaceList *qmp_guest_network_get_interfaces(Error *errp[static 1])
 {
     IP_ADAPTER_ADDRESSES *adptr_addrs, *addr;
     IP_ADAPTER_UNICAST_ADDRESS *ip_addr = NULL;
@@ -1238,7 +1243,7 @@ out:
     return head;
 }
 
-int64_t qmp_guest_get_time(Error **errp)
+int64_t qmp_guest_get_time(Error *errp[static 1])
 {
     SYSTEMTIME ts = {0};
     FILETIME tf;
@@ -1258,7 +1263,7 @@ int64_t qmp_guest_get_time(Error **errp)
                 - W32_FT_OFFSET) * 100;
 }
 
-void qmp_guest_set_time(bool has_time, int64_t time_ns, Error **errp)
+void qmp_guest_set_time(bool has_time, int64_t time_ns, Error *errp[static 1])
 {
     SYSTEMTIME ts;
     FILETIME tf;
@@ -1302,7 +1307,7 @@ void qmp_guest_set_time(bool has_time, int64_t time_ns, Error **errp)
     }
 }
 
-GuestLogicalProcessorList *qmp_guest_get_vcpus(Error **errp)
+GuestLogicalProcessorList *qmp_guest_get_vcpus(Error *errp[static 1])
 {
     PSYSTEM_LOGICAL_PROCESSOR_INFORMATION pslpi, ptr;
     DWORD length;
@@ -1372,7 +1377,8 @@ GuestLogicalProcessorList *qmp_guest_get_vcpus(Error **errp)
     return NULL;
 }
 
-int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus, Error **errp)
+int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus,
+                            Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return -1;
@@ -1425,7 +1431,7 @@ get_net_error_message(gint error)
 void qmp_guest_set_user_password(const char *username,
                                  const char *password,
                                  bool crypted,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     NET_API_STATUS nas;
     char *rawpasswddata = NULL;
@@ -1477,20 +1483,21 @@ done:
     g_free(rawpasswddata);
 }
 
-GuestMemoryBlockList *qmp_guest_get_memory_blocks(Error **errp)
+GuestMemoryBlockList *qmp_guest_get_memory_blocks(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
 }
 
 GuestMemoryBlockResponseList *
-qmp_guest_set_memory_blocks(GuestMemoryBlockList *mem_blks, Error **errp)
+qmp_guest_set_memory_blocks(GuestMemoryBlockList *mem_blks,
+                            Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
 }
 
-GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error **errp)
+GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
@@ -1556,7 +1563,7 @@ typedef struct _GA_WTSINFOA {
 
 } GA_WTSINFOA;
 
-GuestUserList *qmp_guest_get_users(Error **err)
+GuestUserList *qmp_guest_get_users(Error *err[static 1])
 {
 #if (_WIN32_WINNT >= 0x0600)
 #define QGA_NANOSECONDS 10000000

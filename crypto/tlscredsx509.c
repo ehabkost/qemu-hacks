@@ -37,7 +37,7 @@ qcrypto_tls_creds_check_cert_times(gnutls_x509_crt_t cert,
                                    const char *certFile,
                                    bool isServer,
                                    bool isCA,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     time_t now = time(NULL);
 
@@ -86,7 +86,7 @@ qcrypto_tls_creds_check_cert_basic_constraints(QCryptoTLSCredsX509 *creds,
                                                const char *certFile,
                                                bool isServer,
                                                bool isCA,
-                                               Error **errp)
+                                               Error *errp[static 1])
 {
     int status;
 
@@ -138,7 +138,7 @@ qcrypto_tls_creds_check_cert_key_usage(QCryptoTLSCredsX509 *creds,
                                        gnutls_x509_crt_t cert,
                                        const char *certFile,
                                        bool isCA,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     int status;
     unsigned int usage = 0;
@@ -197,7 +197,7 @@ qcrypto_tls_creds_check_cert_key_purpose(QCryptoTLSCredsX509 *creds,
                                          gnutls_x509_crt_t cert,
                                          const char *certFile,
                                          bool isServer,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     int status;
     size_t i;
@@ -291,7 +291,7 @@ qcrypto_tls_creds_check_cert(QCryptoTLSCredsX509 *creds,
                              const char *certFile,
                              bool isServer,
                              bool isCA,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     if (qcrypto_tls_creds_check_cert_times(cert, certFile,
                                            isServer, isCA,
@@ -332,7 +332,7 @@ qcrypto_tls_creds_check_cert_pair(gnutls_x509_crt_t cert,
                                   size_t ncacerts,
                                   const char *cacertFile,
                                   bool isServer,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     unsigned int status;
 
@@ -384,7 +384,7 @@ static gnutls_x509_crt_t
 qcrypto_tls_creds_load_cert(QCryptoTLSCredsX509 *creds,
                             const char *certFile,
                             bool isServer,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     gnutls_datum_t data;
     gnutls_x509_crt_t cert = NULL;
@@ -441,7 +441,7 @@ qcrypto_tls_creds_load_ca_cert_list(QCryptoTLSCredsX509 *creds,
                                     gnutls_x509_crt_t *certs,
                                     unsigned int certMax,
                                     size_t *ncerts,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     gnutls_datum_t data;
     char *buf = NULL;
@@ -485,7 +485,7 @@ qcrypto_tls_creds_x509_sanity_check(QCryptoTLSCredsX509 *creds,
                                     bool isServer,
                                     const char *cacertFile,
                                     const char *certFile,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     gnutls_x509_crt_t cert = NULL;
     gnutls_x509_crt_t cacerts[MAX_CERTS];
@@ -549,7 +549,7 @@ qcrypto_tls_creds_x509_sanity_check(QCryptoTLSCredsX509 *creds,
 
 static int
 qcrypto_tls_creds_x509_load(QCryptoTLSCredsX509 *creds,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     char *cacert = NULL, *cacrl = NULL, *cert = NULL,
         *key = NULL, *dhparams = NULL;
@@ -697,7 +697,7 @@ qcrypto_tls_creds_x509_unload(QCryptoTLSCredsX509 *creds)
 
 static void
 qcrypto_tls_creds_x509_load(QCryptoTLSCredsX509 *creds G_GNUC_UNUSED,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     error_setg(errp, "TLS credentials support requires GNUTLS");
 }
@@ -716,7 +716,7 @@ qcrypto_tls_creds_x509_unload(QCryptoTLSCredsX509 *creds G_GNUC_UNUSED)
 static void
 qcrypto_tls_creds_x509_prop_set_loaded(Object *obj,
                                        bool value,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QCryptoTLSCredsX509 *creds = QCRYPTO_TLS_CREDS_X509(obj);
 
@@ -733,7 +733,7 @@ qcrypto_tls_creds_x509_prop_set_loaded(Object *obj,
 
 static bool
 qcrypto_tls_creds_x509_prop_get_loaded(Object *obj,
-                                       Error **errp G_GNUC_UNUSED)
+                                       Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCredsX509 *creds = QCRYPTO_TLS_CREDS_X509(obj);
 
@@ -746,7 +746,7 @@ qcrypto_tls_creds_x509_prop_get_loaded(Object *obj,
 
 static bool
 qcrypto_tls_creds_x509_prop_get_loaded(Object *obj G_GNUC_UNUSED,
-                                       Error **errp G_GNUC_UNUSED)
+                                       Error *errp[static 1] G_GNUC_UNUSED)
 {
     return false;
 }
@@ -758,7 +758,7 @@ qcrypto_tls_creds_x509_prop_get_loaded(Object *obj G_GNUC_UNUSED,
 static void
 qcrypto_tls_creds_x509_prop_set_sanity(Object *obj,
                                        bool value,
-                                       Error **errp G_GNUC_UNUSED)
+                                       Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCredsX509 *creds = QCRYPTO_TLS_CREDS_X509(obj);
 
@@ -769,7 +769,7 @@ qcrypto_tls_creds_x509_prop_set_sanity(Object *obj,
 static void
 qcrypto_tls_creds_x509_prop_set_passwordid(Object *obj,
                                            const char *value,
-                                           Error **errp G_GNUC_UNUSED)
+                                           Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCredsX509 *creds = QCRYPTO_TLS_CREDS_X509(obj);
 
@@ -779,7 +779,7 @@ qcrypto_tls_creds_x509_prop_set_passwordid(Object *obj,
 
 static char *
 qcrypto_tls_creds_x509_prop_get_passwordid(Object *obj,
-                                           Error **errp G_GNUC_UNUSED)
+                                           Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCredsX509 *creds = QCRYPTO_TLS_CREDS_X509(obj);
 
@@ -789,7 +789,7 @@ qcrypto_tls_creds_x509_prop_get_passwordid(Object *obj,
 
 static bool
 qcrypto_tls_creds_x509_prop_get_sanity(Object *obj,
-                                       Error **errp G_GNUC_UNUSED)
+                                       Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCredsX509 *creds = QCRYPTO_TLS_CREDS_X509(obj);
 
@@ -798,7 +798,7 @@ qcrypto_tls_creds_x509_prop_get_sanity(Object *obj,
 
 
 static void
-qcrypto_tls_creds_x509_complete(UserCreatable *uc, Error **errp)
+qcrypto_tls_creds_x509_complete(UserCreatable *uc, Error *errp[static 1])
 {
     object_property_set_bool(OBJECT(uc), true, "loaded", errp);
 }

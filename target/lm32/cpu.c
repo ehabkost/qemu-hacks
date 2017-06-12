@@ -139,7 +139,7 @@ static void lm32_cpu_disas_set_info(CPUState *cpu, disassemble_info *info)
     info->print_insn = print_insn_lm32;
 }
 
-static void lm32_cpu_realizefn(DeviceState *dev, Error **errp)
+static void lm32_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     LM32CPUClass *lcc = LM32_CPU_GET_CLASS(dev);

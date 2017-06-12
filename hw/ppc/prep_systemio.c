@@ -239,7 +239,7 @@ static const MemoryRegionOps ppc_parity_error_ops = {
     },
 };
 
-static void prep_systemio_realize(DeviceState *dev, Error **errp)
+static void prep_systemio_realize(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isa = ISA_DEVICE(dev);
     PrepSystemIoState *s = PREP_SYSTEMIO(dev);

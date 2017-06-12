@@ -560,7 +560,7 @@ static void virtio_net_set_queues(VirtIONet *n)
 static void virtio_net_set_multiqueue(VirtIONet *n, int multiqueue);
 
 static uint64_t virtio_net_get_features(VirtIODevice *vdev, uint64_t features,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     VirtIONet *n = VIRTIO_NET(vdev);
     NetClientState *nc = qemu_get_queue(n->nic);
@@ -1897,7 +1897,7 @@ void virtio_net_set_netclient_name(VirtIONet *n, const char *name,
     n->netclient_type = g_strdup(type);
 }
 
-static void virtio_net_device_realize(DeviceState *dev, Error **errp)
+static void virtio_net_device_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIONet *n = VIRTIO_NET(dev);
@@ -1996,7 +1996,8 @@ static void virtio_net_device_realize(DeviceState *dev, Error **errp)
     n->qdev = dev;
 }
 
-static void virtio_net_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_net_device_unrealize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIONet *n = VIRTIO_NET(dev);

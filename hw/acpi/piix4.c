@@ -372,7 +372,7 @@ static void piix4_pm_powerdown_req(Notifier *n, void *opaque)
 }
 
 static void piix4_device_plug_cb(HotplugHandler *hotplug_dev,
-                                 DeviceState *dev, Error **errp)
+                                 DeviceState *dev, Error *errp[static 1])
 {
     PIIX4PMState *s = PIIX4_PM(hotplug_dev);
 
@@ -402,7 +402,8 @@ static void piix4_device_plug_cb(HotplugHandler *hotplug_dev,
 }
 
 static void piix4_device_unplug_request_cb(HotplugHandler *hotplug_dev,
-                                           DeviceState *dev, Error **errp)
+                                           DeviceState *dev,
+                                           Error *errp[static 1])
 {
     PIIX4PMState *s = PIIX4_PM(hotplug_dev);
 
@@ -425,7 +426,7 @@ static void piix4_device_unplug_request_cb(HotplugHandler *hotplug_dev,
 }
 
 static void piix4_device_unplug_cb(HotplugHandler *hotplug_dev,
-                                   DeviceState *dev, Error **errp)
+                                   DeviceState *dev, Error *errp[static 1])
 {
     PIIX4PMState *s = PIIX4_PM(hotplug_dev);
 
@@ -493,7 +494,7 @@ static void piix4_pm_add_propeties(PIIX4PMState *s)
                                   &s->io_base, IGNORE_ERRORS);
 }
 
-static void piix4_pm_realize(PCIDevice *dev, Error **errp)
+static void piix4_pm_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PIIX4PMState *s = PIIX4_PM(dev);
     uint8_t *pci_conf;
@@ -613,14 +614,15 @@ static const MemoryRegionOps piix4_gpe_ops = {
 };
 
 
-static bool piix4_get_cpu_hotplug_legacy(Object *obj, Error **errp)
+static bool piix4_get_cpu_hotplug_legacy(Object *obj, Error *errp[static 1])
 {
     PIIX4PMState *s = PIIX4_PM(obj);
 
     return s->cpu_hotplug_legacy;
 }
 
-static void piix4_set_cpu_hotplug_legacy(Object *obj, bool value, Error **errp)
+static void piix4_set_cpu_hotplug_legacy(Object *obj, bool value,
+                                         Error *errp[static 1])
 {
     PIIX4PMState *s = PIIX4_PM(obj);
 

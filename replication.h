@@ -143,7 +143,7 @@ void replication_remove(ReplicationState *rs);
  *
  * Note: the caller of the function MUST make sure vm stopped
  */
-void replication_start_all(ReplicationMode mode, Error **errp);
+void replication_start_all(ReplicationMode mode, Error *errp[static 1]);
 
 /**
  * replication_do_checkpoint_all:
@@ -151,7 +151,7 @@ void replication_start_all(ReplicationMode mode, Error **errp);
  *
  * This interface is called after all VM state is transferred to Secondary QEMU
  */
-void replication_do_checkpoint_all(Error **errp);
+void replication_do_checkpoint_all(Error *errp[static 1]);
 
 /**
  * replication_get_error_all:
@@ -159,7 +159,7 @@ void replication_do_checkpoint_all(Error **errp);
  *
  * This interface is called to check if error occurred during replication
  */
-void replication_get_error_all(Error **errp);
+void replication_get_error_all(Error *errp[static 1]);
 
 /**
  * replication_stop_all:
@@ -169,6 +169,6 @@ void replication_get_error_all(Error **errp);
  * It is called on failover. The vm should be stopped before calling it, if you
  * use this API to shutdown the guest, or other things except failover
  */
-void replication_stop_all(bool failover, Error **errp);
+void replication_stop_all(bool failover, Error *errp[static 1]);
 
 #endif /* REPLICATION_H */

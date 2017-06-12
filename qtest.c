@@ -669,7 +669,8 @@ static int qtest_init_accel(MachineState *ms)
     return 0;
 }
 
-void qtest_init(const char *qtest_chrdev, const char *qtest_log, Error **errp)
+void qtest_init(const char *qtest_chrdev, const char *qtest_log,
+                Error *errp[static 1])
 {
     Chardev *chr;
 

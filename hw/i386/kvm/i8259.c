@@ -115,7 +115,7 @@ static void kvm_pic_set_irq(void *opaque, int irq, int level)
     apic_report_irq_delivered(delivered);
 }
 
-static void kvm_pic_realize(DeviceState *dev, Error **errp)
+static void kvm_pic_realize(DeviceState *dev, Error *errp[static 1])
 {
     PICCommonState *s = PIC_COMMON(dev);
     KVMPICClass *kpc = KVM_PIC_GET_CLASS(dev);

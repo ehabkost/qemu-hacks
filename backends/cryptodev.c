@@ -65,7 +65,7 @@ void cryptodev_backend_free_client(
 
 void cryptodev_backend_cleanup(
              CryptoDevBackend *backend,
-             Error **errp)
+             Error *errp[static 1])
 {
     CryptoDevBackendClass *bc =
                   CRYPTODEV_BACKEND_GET_CLASS(backend);
@@ -78,7 +78,7 @@ void cryptodev_backend_cleanup(
 int64_t cryptodev_backend_sym_create_session(
            CryptoDevBackend *backend,
            CryptoDevBackendSymSessionInfo *sess_info,
-           uint32_t queue_index, Error **errp)
+           uint32_t queue_index, Error *errp[static 1])
 {
     CryptoDevBackendClass *bc =
                       CRYPTODEV_BACKEND_GET_CLASS(backend);
@@ -93,7 +93,7 @@ int64_t cryptodev_backend_sym_create_session(
 int cryptodev_backend_sym_close_session(
            CryptoDevBackend *backend,
            uint64_t session_id,
-           uint32_t queue_index, Error **errp)
+           uint32_t queue_index, Error *errp[static 1])
 {
     CryptoDevBackendClass *bc =
                       CRYPTODEV_BACKEND_GET_CLASS(backend);
@@ -108,7 +108,7 @@ int cryptodev_backend_sym_close_session(
 static int cryptodev_backend_sym_operation(
                  CryptoDevBackend *backend,
                  CryptoDevBackendSymOpInfo *op_info,
-                 uint32_t queue_index, Error **errp)
+                 uint32_t queue_index, Error *errp[static 1])
 {
     CryptoDevBackendClass *bc =
                       CRYPTODEV_BACKEND_GET_CLASS(backend);
@@ -123,7 +123,7 @@ static int cryptodev_backend_sym_operation(
 int cryptodev_backend_crypto_operation(
                  CryptoDevBackend *backend,
                  void *opaque,
-                 uint32_t queue_index, Error **errp)
+                 uint32_t queue_index, Error *errp[static 1])
 {
     VirtIOCryptoReq *req = opaque;
 
@@ -144,7 +144,7 @@ int cryptodev_backend_crypto_operation(
 
 static void
 cryptodev_backend_get_queues(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     CryptoDevBackend *backend = CRYPTODEV_BACKEND(obj);
     uint32_t value = backend->conf.peers.queues;
@@ -154,7 +154,7 @@ cryptodev_backend_get_queues(Object *obj, Visitor *v, const char *name,
 
 static void
 cryptodev_backend_set_queues(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     CryptoDevBackend *backend = CRYPTODEV_BACKEND(obj);
     Error *local_err = NULL;
@@ -175,7 +175,7 @@ out:
 }
 
 static void
-cryptodev_backend_complete(UserCreatable *uc, Error **errp)
+cryptodev_backend_complete(UserCreatable *uc, Error *errp[static 1])
 {
     CryptoDevBackend *backend = CRYPTODEV_BACKEND(uc);
     CryptoDevBackendClass *bc = CRYPTODEV_BACKEND_GET_CLASS(uc);
@@ -215,7 +215,7 @@ bool cryptodev_backend_is_ready(CryptoDevBackend *backend)
 }
 
 static bool
-cryptodev_backend_can_be_deleted(UserCreatable *uc, Error **errp)
+cryptodev_backend_can_be_deleted(UserCreatable *uc, Error *errp[static 1])
 {
     return !cryptodev_backend_is_used(CRYPTODEV_BACKEND(uc));
 }

@@ -62,7 +62,7 @@ typedef struct TAPState {
 } TAPState;
 
 static void launch_script(const char *setup_script, const char *ifname,
-                          int fd, Error **errp);
+                          int fd, Error *errp[static 1]);
 
 static void tap_send(void *opaque);
 static void tap_writable(void *opaque);
@@ -397,7 +397,7 @@ static TAPState *net_tap_fd_init(NetClientState *peer,
 }
 
 static void launch_script(const char *setup_script, const char *ifname,
-                          int fd, Error **errp)
+                          int fd, Error *errp[static 1])
 {
     int pid, status;
     char *args[3];
@@ -472,7 +472,7 @@ static int recv_fd(int c)
 }
 
 static int net_bridge_run_helper(const char *helper, const char *bridge,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     sigset_t oldmask, mask;
     int pid, status;
@@ -573,7 +573,7 @@ static int net_bridge_run_helper(const char *helper, const char *bridge,
 }
 
 int net_init_bridge(const Netdev *netdev, const char *name,
-                    NetClientState *peer, Error **errp)
+                    NetClientState *peer, Error *errp[static 1])
 {
     const NetdevBridgeOptions *bridge;
     const char *helper, *br;
@@ -603,7 +603,8 @@ int net_init_bridge(const Netdev *netdev, const char *name,
 
 static int net_tap_init(const NetdevTapOptions *tap, int *vnet_hdr,
                         const char *setup_script, char *ifname,
-                        size_t ifname_sz, int mq_required, Error **errp)
+                        size_t ifname_sz, int mq_required,
+                        Error *errp[static 1])
 {
     int fd, vnet_hdr_required;
 
@@ -640,7 +641,7 @@ static void net_init_tap_one(const NetdevTapOptions *tap, NetClientState *peer,
                              const char *model, const char *name,
                              const char *ifname, const char *script,
                              const char *downscript, const char *vhostfdname,
-                             int vnet_hdr, int fd, Error **errp)
+                             int vnet_hdr, int fd, Error *errp[static 1])
 {
     Error *err = NULL;
     TAPState *s = net_tap_fd_init(peer, model, name, fd, vnet_hdr);
@@ -736,7 +737,7 @@ static int get_fds(char *str, char *fds[], int max)
 }
 
 int net_init_tap(const Netdev *netdev, const char *name,
-                 NetClientState *peer, Error **errp)
+                 NetClientState *peer, Error *errp[static 1])
 {
     const NetdevTapOptions *tap;
     int fd, vnet_hdr = 0, i = 0, queues;

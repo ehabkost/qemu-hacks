@@ -153,7 +153,7 @@ static int qcrypto_cipher_encrypt_aes(QCryptoCipher *cipher,
                                       const void *in,
                                       void *out,
                                       size_t len,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
 
@@ -187,7 +187,7 @@ static int qcrypto_cipher_decrypt_aes(QCryptoCipher *cipher,
                                       const void *in,
                                       void *out,
                                       size_t len,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
 
@@ -218,7 +218,7 @@ static int qcrypto_cipher_decrypt_aes(QCryptoCipher *cipher,
 
 static int qcrypto_cipher_setiv_aes(QCryptoCipher *cipher,
                                      const uint8_t *iv, size_t niv,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
     if (niv != AES_BLOCK_SIZE) {
@@ -237,7 +237,7 @@ static int qcrypto_cipher_setiv_aes(QCryptoCipher *cipher,
 
 static int qcrypto_cipher_init_aes(QCryptoCipher *cipher,
                                    const uint8_t *key, size_t nkey,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt;
 
@@ -315,7 +315,7 @@ static int qcrypto_cipher_encrypt_des_rfb(QCryptoCipher *cipher,
                                           const void *in,
                                           void *out,
                                           size_t len,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
     size_t i;
@@ -340,7 +340,7 @@ static int qcrypto_cipher_decrypt_des_rfb(QCryptoCipher *cipher,
                                           const void *in,
                                           void *out,
                                           size_t len,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
     size_t i;
@@ -363,7 +363,7 @@ static int qcrypto_cipher_decrypt_des_rfb(QCryptoCipher *cipher,
 
 static int qcrypto_cipher_setiv_des_rfb(QCryptoCipher *cipher,
                                         const uint8_t *iv, size_t niv,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     error_setg(errp, "Setting IV is not supported");
     return -1;
@@ -372,7 +372,7 @@ static int qcrypto_cipher_setiv_des_rfb(QCryptoCipher *cipher,
 
 static int qcrypto_cipher_init_des_rfb(QCryptoCipher *cipher,
                                        const uint8_t *key, size_t nkey,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt;
 
@@ -429,7 +429,7 @@ bool qcrypto_cipher_supports(QCryptoCipherAlgorithm alg,
 QCryptoCipher *qcrypto_cipher_new(QCryptoCipherAlgorithm alg,
                                   QCryptoCipherMode mode,
                                   const uint8_t *key, size_t nkey,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     QCryptoCipher *cipher;
 
@@ -497,7 +497,7 @@ int qcrypto_cipher_encrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
 
@@ -515,7 +515,7 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
 
@@ -531,7 +531,7 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
 
 int qcrypto_cipher_setiv(QCryptoCipher *cipher,
                          const uint8_t *iv, size_t niv,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     QCryptoCipherBuiltin *ctxt = cipher->opaque;
 

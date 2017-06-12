@@ -279,7 +279,7 @@ static NetClientInfo net_pci_pcnet_info = {
     .link_status_changed = pcnet_set_link_status,
 };
 
-static void pci_pcnet_realize(PCIDevice *pci_dev, Error **errp)
+static void pci_pcnet_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     PCIPCNetState *d = PCI_PCNET(pci_dev);
     PCNetState *s = &d->state;

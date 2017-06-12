@@ -373,7 +373,7 @@ static void input_linux_event(void *opaque)
     }
 }
 
-static void input_linux_complete(UserCreatable *uc, Error **errp)
+static void input_linux_complete(UserCreatable *uc, Error *errp[static 1])
 {
     InputLinux *il = INPUT_LINUX(uc);
     uint8_t evtmap, relmap, absmap;
@@ -474,7 +474,7 @@ static void input_linux_instance_finalize(Object *obj)
     g_free(il->evdev);
 }
 
-static char *input_linux_get_evdev(Object *obj, Error **errp)
+static char *input_linux_get_evdev(Object *obj, Error *errp[static 1])
 {
     InputLinux *il = INPUT_LINUX(obj);
 
@@ -482,7 +482,7 @@ static char *input_linux_get_evdev(Object *obj, Error **errp)
 }
 
 static void input_linux_set_evdev(Object *obj, const char *value,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     InputLinux *il = INPUT_LINUX(obj);
 
@@ -493,7 +493,7 @@ static void input_linux_set_evdev(Object *obj, const char *value,
     il->evdev = g_strdup(value);
 }
 
-static bool input_linux_get_grab_all(Object *obj, Error **errp)
+static bool input_linux_get_grab_all(Object *obj, Error *errp[static 1])
 {
     InputLinux *il = INPUT_LINUX(obj);
 
@@ -501,14 +501,14 @@ static bool input_linux_get_grab_all(Object *obj, Error **errp)
 }
 
 static void input_linux_set_grab_all(Object *obj, bool value,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     InputLinux *il = INPUT_LINUX(obj);
 
     il->grab_all = value;
 }
 
-static bool input_linux_get_repeat(Object *obj, Error **errp)
+static bool input_linux_get_repeat(Object *obj, Error *errp[static 1])
 {
     InputLinux *il = INPUT_LINUX(obj);
 
@@ -516,7 +516,7 @@ static bool input_linux_get_repeat(Object *obj, Error **errp)
 }
 
 static void input_linux_set_repeat(Object *obj, bool value,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     InputLinux *il = INPUT_LINUX(obj);
 

@@ -340,7 +340,7 @@ static const GraphicHwOps ssd0323_ops = {
     .gfx_update  = ssd0323_update_display,
 };
 
-static void ssd0323_realize(SSISlave *d, Error **errp)
+static void ssd0323_realize(SSISlave *d, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(d);
     ssd0323_state *s = FROM_SSI_SLAVE(ssd0323_state, d);

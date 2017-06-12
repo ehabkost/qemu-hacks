@@ -114,7 +114,7 @@ static void char_fd_finalize(Object *obj)
     qemu_chr_be_event(chr, CHR_EVENT_CLOSED);
 }
 
-int qmp_chardev_open_file_source(char *src, int flags, Error **errp)
+int qmp_chardev_open_file_source(char *src, int flags, Error *errp[static 1])
 {
     int fd = -1;
 

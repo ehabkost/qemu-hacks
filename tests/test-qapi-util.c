@@ -75,12 +75,12 @@ static void test_parse_qapi_name(void)
     g_assert(ret == -1);
 }
 
-static void successfn(Error **errp)
+static void successfn(Error *errp[static 1])
 {
     g_assert(!ERR_IS_SET(errp));
 }
 
-static void fail1(Error **errp)
+static void fail1(Error *errp[static 1])
 {
     g_assert(!ERR_IS_SET(errp));
 
@@ -89,7 +89,7 @@ static void fail1(Error **errp)
     g_assert(ERR_IS_SET(errp));
 }
 
-static void fail2(Error **errp)
+static void fail2(Error *errp[static 1])
 {
     g_assert(!ERR_IS_SET(errp));
 
@@ -98,7 +98,7 @@ static void fail2(Error **errp)
     g_assert(ERR_IS_SET(errp));
 }
 
-static void multifn(Error **errp)
+static void multifn(Error *errp[static 1])
 {
     Error *err1 = NULL, *err2 = NULL;
     successfn(&err1);
@@ -119,7 +119,7 @@ static void multifn(Error **errp)
     error_propagate(errp, err1);
 }
 
-static void test_propagate(void (*fn)(Error **), Error **errp)
+static void test_propagate(void (*fn)(Error **), Error *errp[static 1])
 {
     bool failed;
     Error *local_err = NULL;

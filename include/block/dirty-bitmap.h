@@ -7,19 +7,19 @@
 BdrvDirtyBitmap *bdrv_create_dirty_bitmap(BlockDriverState *bs,
                                           uint32_t granularity,
                                           const char *name,
-                                          Error **errp);
+                                          Error *errp[static 1]);
 void bdrv_create_meta_dirty_bitmap(BdrvDirtyBitmap *bitmap,
                                    int chunk_size);
 void bdrv_release_meta_dirty_bitmap(BdrvDirtyBitmap *bitmap);
 int bdrv_dirty_bitmap_create_successor(BlockDriverState *bs,
                                        BdrvDirtyBitmap *bitmap,
-                                       Error **errp);
+                                       Error *errp[static 1]);
 BdrvDirtyBitmap *bdrv_dirty_bitmap_abdicate(BlockDriverState *bs,
                                             BdrvDirtyBitmap *bitmap,
-                                            Error **errp);
+                                            Error *errp[static 1]);
 BdrvDirtyBitmap *bdrv_reclaim_dirty_bitmap(BlockDriverState *bs,
                                            BdrvDirtyBitmap *bitmap,
-                                           Error **errp);
+                                           Error *errp[static 1]);
 BdrvDirtyBitmap *bdrv_find_dirty_bitmap(BlockDriverState *bs,
                                         const char *name);
 void bdrv_dirty_bitmap_make_anon(BdrvDirtyBitmap *bitmap);

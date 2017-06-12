@@ -203,7 +203,7 @@ void gicv3_init_irqs_and_mmio(GICv3State *s, qemu_irq_handler handler,
     sysbus_init_mmio(sbd, &s->iomem_redist);
 }
 
-static void arm_gicv3_common_realize(DeviceState *dev, Error **errp)
+static void arm_gicv3_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     GICv3State *s = ARM_GICV3_COMMON(dev);
     int i;

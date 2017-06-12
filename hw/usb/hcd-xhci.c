@@ -3330,7 +3330,7 @@ static void usb_xhci_init(XHCIState *xhci)
     }
 }
 
-static void usb_xhci_realize(struct PCIDevice *dev, Error **errp)
+static void usb_xhci_realize(struct PCIDevice *dev, Error *errp[static 1])
 {
     int i, ret;
     Error *err = NULL;

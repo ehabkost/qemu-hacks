@@ -213,7 +213,7 @@ struct QCryptoBlockLUKS {
 static int qcrypto_block_luks_cipher_name_lookup(const char *name,
                                                  QCryptoCipherMode mode,
                                                  uint32_t key_bytes,
-                                                 Error **errp)
+                                                 Error *errp[static 1])
 {
     const QCryptoBlockLUKSCipherNameMap *map =
         qcrypto_block_luks_cipher_name_map;
@@ -242,7 +242,7 @@ static int qcrypto_block_luks_cipher_name_lookup(const char *name,
 
 static const char *
 qcrypto_block_luks_cipher_alg_lookup(QCryptoCipherAlgorithm alg,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     const QCryptoBlockLUKSCipherNameMap *map =
         qcrypto_block_luks_cipher_name_map;
@@ -267,7 +267,7 @@ static int qcrypto_block_luks_name_lookup(const char *name,
                                           const char *const *map,
                                           size_t maplen,
                                           const char *type,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     size_t i;
     for (i = 0; i < maplen; i++) {
@@ -333,7 +333,7 @@ qcrypto_block_luks_has_format(const uint8_t *buf,
 static QCryptoCipherAlgorithm
 qcrypto_block_luks_essiv_cipher(QCryptoCipherAlgorithm cipher,
                                 QCryptoHashAlgorithm hash,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     size_t digestlen = qcrypto_hash_digest_len(hash);
     size_t keylen = qcrypto_cipher_get_key_len(cipher);
@@ -428,7 +428,7 @@ qcrypto_block_luks_load_key(QCryptoBlock *block,
                             size_t masterkeylen,
                             QCryptoBlockReadFunc readfunc,
                             void *opaque,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     QCryptoBlockLUKS *luks = block->opaque;
     uint8_t *splitkey;
@@ -593,7 +593,7 @@ qcrypto_block_luks_find_key(QCryptoBlock *block,
                             size_t *masterkeylen,
                             QCryptoBlockReadFunc readfunc,
                             void *opaque,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     QCryptoBlockLUKS *luks = block->opaque;
     size_t i;
@@ -641,7 +641,7 @@ qcrypto_block_luks_open(QCryptoBlock *block,
                         QCryptoBlockReadFunc readfunc,
                         void *opaque,
                         unsigned int flags,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     QCryptoBlockLUKS *luks;
     Error *local_err = NULL;
@@ -888,7 +888,7 @@ qcrypto_block_luks_create(QCryptoBlock *block,
                           QCryptoBlockInitFunc initfunc,
                           QCryptoBlockWriteFunc writefunc,
                           void *opaque,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     QCryptoBlockLUKS *luks;
     QCryptoBlockCreateOptionsLUKS luks_opts;
@@ -1348,7 +1348,7 @@ qcrypto_block_luks_create(QCryptoBlock *block,
 
 static int qcrypto_block_luks_get_info(QCryptoBlock *block,
                                        QCryptoBlockInfo *info,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QCryptoBlockLUKS *luks = block->opaque;
     QCryptoBlockInfoLUKSSlot *slot;
@@ -1402,7 +1402,7 @@ qcrypto_block_luks_decrypt(QCryptoBlock *block,
                            uint64_t startsector,
                            uint8_t *buf,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     return qcrypto_block_decrypt_helper(block->cipher,
                                         block->niv, block->ivgen,
@@ -1416,7 +1416,7 @@ qcrypto_block_luks_encrypt(QCryptoBlock *block,
                            uint64_t startsector,
                            uint8_t *buf,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     return qcrypto_block_encrypt_helper(block->cipher,
                                         block->niv, block->ivgen,

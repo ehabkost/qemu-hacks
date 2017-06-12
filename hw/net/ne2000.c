@@ -718,7 +718,7 @@ static NetClientInfo net_ne2000_info = {
     .receive = ne2000_receive,
 };
 
-static void pci_ne2000_realize(PCIDevice *pci_dev, Error **errp)
+static void pci_ne2000_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     PCINE2000State *d = DO_UPCAST(PCINE2000State, dev, pci_dev);
     NE2000State *s;

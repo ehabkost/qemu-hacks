@@ -39,6 +39,6 @@ typedef struct FDChardev {
 #define FD_CHARDEV(obj) OBJECT_CHECK(FDChardev, (obj), TYPE_CHARDEV_FD)
 
 void qemu_chr_open_fd(Chardev *chr, int fd_in, int fd_out);
-int qmp_chardev_open_file_source(char *src, int flags, Error **errp);
+int qmp_chardev_open_file_source(char *src, int flags, Error *errp[static 1]);
 
 #endif /* CHAR_FD_H */

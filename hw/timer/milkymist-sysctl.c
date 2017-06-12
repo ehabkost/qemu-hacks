@@ -289,7 +289,7 @@ static void milkymist_sysctl_init(Object *obj)
     sysbus_init_mmio(dev, &s->regs_region);
 }
 
-static void milkymist_sysctl_realize(DeviceState *dev, Error **errp)
+static void milkymist_sysctl_realize(DeviceState *dev, Error *errp[static 1])
 {
     MilkymistSysctlState *s = MILKYMIST_SYSCTL(dev);
 

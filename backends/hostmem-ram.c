@@ -18,7 +18,7 @@
 
 
 static void
-ram_backend_memory_alloc(HostMemoryBackend *backend, Error **errp)
+ram_backend_memory_alloc(HostMemoryBackend *backend, Error *errp[static 1])
 {
     char *path;
 

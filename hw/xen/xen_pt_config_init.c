@@ -1891,7 +1891,7 @@ static uint8_t find_cap_offset(XenPCIPassthroughState *s, uint8_t cap)
 
 static void xen_pt_config_reg_init(XenPCIPassthroughState *s,
                                    XenPTRegGroup *reg_grp, XenPTRegInfo *reg,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     XenPTReg *reg_entry;
     uint32_t data = 0;
@@ -1985,7 +1985,7 @@ static void xen_pt_config_reg_init(XenPCIPassthroughState *s,
     QLIST_INSERT_HEAD(&reg_grp->reg_tbl_list, reg_entry, entries);
 }
 
-void xen_pt_config_init(XenPCIPassthroughState *s, Error **errp)
+void xen_pt_config_init(XenPCIPassthroughState *s, Error *errp[static 1])
 {
     int i, rc;
     Error *err = NULL;

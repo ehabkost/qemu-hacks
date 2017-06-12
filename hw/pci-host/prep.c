@@ -213,7 +213,7 @@ static void raven_change_gpio(void *opaque, int n, int level)
     s->contiguous_map = level;
 }
 
-static void raven_pcihost_realizefn(DeviceState *d, Error **errp)
+static void raven_pcihost_realizefn(DeviceState *d, Error *errp[static 1])
 {
     SysBusDevice *dev = SYS_BUS_DEVICE(d);
     PCIHostState *h = PCI_HOST_BRIDGE(dev);
@@ -294,7 +294,7 @@ static void raven_pcihost_initfn(Object *obj)
     qdev_prop_set_bit(pci_dev, "multifunction", false);
 }
 
-static void raven_realize(PCIDevice *d, Error **errp)
+static void raven_realize(PCIDevice *d, Error *errp[static 1])
 {
     RavenPCIState *s = RAVEN_PCI_DEVICE(d);
     char *filename;

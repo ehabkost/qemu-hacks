@@ -223,7 +223,7 @@ static void raw_attach_aio_context(BlockDriverState *bs,
     }
 }
 
-static void raw_probe_alignment(BlockDriverState *bs, Error **errp)
+static void raw_probe_alignment(BlockDriverState *bs, Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     DWORD sectorsPerCluster, freeClusters, totalClusters, count;
@@ -274,7 +274,7 @@ static void raw_parse_flags(int flags, bool use_aio, int *access_flags,
 }
 
 static void raw_parse_filename(const char *filename, QDict *options,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     bdrv_parse_filename_strip_prefix(filename, "file:", options);
 }
@@ -297,7 +297,7 @@ static QemuOptsList raw_runtime_opts = {
     },
 };
 
-static bool get_aio_option(QemuOpts *opts, int flags, Error **errp)
+static bool get_aio_option(QemuOpts *opts, int flags, Error *errp[static 1])
 {
     BlockdevAioOptions aio, aio_default;
 
@@ -318,7 +318,7 @@ static bool get_aio_option(QemuOpts *opts, int flags, Error **errp)
 }
 
 static int raw_open(BlockDriverState *bs, QDict *options, int flags,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     int access_flags;
@@ -461,7 +461,8 @@ static void raw_close(BlockDriverState *bs)
     }
 }
 
-static int raw_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int raw_truncate(BlockDriverState *bs, int64_t offset,
+                        Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     LONG low, high;
@@ -544,7 +545,8 @@ static int64_t raw_get_allocated_file_size(BlockDriverState *bs)
     return st.st_size;
 }
 
-static int raw_create(const char *filename, QemuOpts *opts, Error **errp)
+static int raw_create(const char *filename, QemuOpts *opts,
+                      Error *errp[static 1])
 {
     int fd;
     int64_t total_size = 0;
@@ -664,13 +666,13 @@ static int hdev_probe_device(const char *filename)
 }
 
 static void hdev_parse_filename(const char *filename, QDict *options,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     bdrv_parse_filename_strip_prefix(filename, "host_device:", options);
 }
 
 static int hdev_open(BlockDriverState *bs, QDict *options, int flags,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     int access_flags, create_flags;

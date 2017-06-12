@@ -875,7 +875,7 @@ static const MemoryRegionOps apic_io_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void apic_realize(DeviceState *dev, Error **errp)
+static void apic_realize(DeviceState *dev, Error *errp[static 1])
 {
     APICCommonState *s = APIC(dev);
 
@@ -894,7 +894,7 @@ static void apic_realize(DeviceState *dev, Error **errp)
     msi_nonbroken = true;
 }
 
-static void apic_unrealize(DeviceState *dev, Error **errp)
+static void apic_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     APICCommonState *s = APIC(dev);
 

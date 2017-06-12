@@ -119,7 +119,7 @@ static void mips_cpu_disas_set_info(CPUState *s, disassemble_info *info) {
 #endif
 }
 
-static void mips_cpu_realizefn(DeviceState *dev, Error **errp)
+static void mips_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     MIPSCPUClass *mcc = MIPS_CPU_GET_CLASS(dev);

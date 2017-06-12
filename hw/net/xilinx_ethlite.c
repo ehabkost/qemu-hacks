@@ -227,7 +227,7 @@ static NetClientInfo net_xilinx_ethlite_info = {
     .receive = eth_rx,
 };
 
-static void xilinx_ethlite_realize(DeviceState *dev, Error **errp)
+static void xilinx_ethlite_realize(DeviceState *dev, Error *errp[static 1])
 {
     struct xlx_ethlite *s = XILINX_ETHLITE(dev);
 

@@ -35,7 +35,8 @@ static void parse_json(JSONMessageParser *parser, GQueue *tokens)
     s->result = json_parser_parse_err(tokens, s->ap, &s->err);
 }
 
-QObject *qobject_from_jsonv(const char *string, va_list *ap, Error **errp)
+QObject *qobject_from_jsonv(const char *string, va_list *ap,
+                            Error *errp[static 1])
 {
     JSONParsingState state = {};
 
@@ -50,7 +51,7 @@ QObject *qobject_from_jsonv(const char *string, va_list *ap, Error **errp)
     return state.result;
 }
 
-QObject *qobject_from_json(const char *string, Error **errp)
+QObject *qobject_from_json(const char *string, Error *errp[static 1])
 {
     return qobject_from_jsonv(string, NULL, errp);
 }

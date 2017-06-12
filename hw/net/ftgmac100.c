@@ -918,7 +918,7 @@ static NetClientInfo net_ftgmac100_info = {
     .link_status_changed = ftgmac100_set_link,
 };
 
-static void ftgmac100_realize(DeviceState *dev, Error **errp)
+static void ftgmac100_realize(DeviceState *dev, Error *errp[static 1])
 {
     FTGMAC100State *s = FTGMAC100(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

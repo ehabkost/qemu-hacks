@@ -496,7 +496,7 @@ static int protocol_client_auth_sasl_mechname_len(VncState *vs, uint8_t *data, s
 static char *
 vnc_socket_ip_addr_string(QIOChannelSocket *ioc,
                           bool local,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     SocketAddress *addr;
     char *ret;

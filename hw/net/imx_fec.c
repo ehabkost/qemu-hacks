@@ -1158,7 +1158,7 @@ static NetClientInfo imx_eth_net_info = {
 };
 
 
-static void imx_eth_realize(DeviceState *dev, Error **errp)
+static void imx_eth_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMXFECState *s = IMX_FEC(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

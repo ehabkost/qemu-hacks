@@ -33,24 +33,26 @@ int socket_set_fast_reuse(int fd);
 typedef void NonBlockingConnectHandler(int fd, Error *err, void *opaque);
 
 int inet_ai_family_from_address(InetSocketAddress *addr,
-                                Error **errp);
-int inet_parse(InetSocketAddress *addr, const char *str, Error **errp);
-int inet_connect(const char *str, Error **errp);
+                                Error *errp[static 1]);
+int inet_parse(InetSocketAddress *addr, const char *str,
+	       Error *errp[static 1]);
+int inet_connect(const char *str, Error *errp[static 1]);
 int inet_connect_saddr(InetSocketAddress *saddr,
                        NonBlockingConnectHandler *callback, void *opaque,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 NetworkAddressFamily inet_netfamily(int family);
 
-int unix_listen(const char *path, char *ostr, int olen, Error **errp);
-int unix_connect(const char *path, Error **errp);
+int unix_listen(const char *path, char *ostr, int olen, Error *errp[static 1]);
+int unix_connect(const char *path, Error *errp[static 1]);
 
-SocketAddress *socket_parse(const char *str, Error **errp);
+SocketAddress *socket_parse(const char *str, Error *errp[static 1]);
 int socket_connect(SocketAddress *addr, NonBlockingConnectHandler *callback,
-                   void *opaque, Error **errp);
-int socket_listen(SocketAddress *addr, Error **errp);
-void socket_listen_cleanup(int fd, Error **errp);
-int socket_dgram(SocketAddress *remote, SocketAddress *local, Error **errp);
+                   void *opaque, Error *errp[static 1]);
+int socket_listen(SocketAddress *addr, Error *errp[static 1]);
+void socket_listen_cleanup(int fd, Error *errp[static 1]);
+int socket_dgram(SocketAddress *remote, SocketAddress *local,
+		 Error *errp[static 1]);
 
 /* Old, ipv4 only bits.  Don't use for new code. */
 int parse_host_port(struct sockaddr_in *saddr, const char *str);
@@ -73,7 +75,7 @@ int socket_init(void);
 SocketAddress *
 socket_sockaddr_to_address(struct sockaddr_storage *sa,
                            socklen_t salen,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 /**
  * socket_local_address:
@@ -88,7 +90,7 @@ socket_sockaddr_to_address(struct sockaddr_storage *sa,
  *
  * Returns: the socket address struct, or NULL on error
  */
-SocketAddress *socket_local_address(int fd, Error **errp);
+SocketAddress *socket_local_address(int fd, Error *errp[static 1]);
 
 /**
  * socket_remote_address:
@@ -103,7 +105,7 @@ SocketAddress *socket_local_address(int fd, Error **errp);
  *
  * Returns: the socket address struct, or NULL on error
  */
-SocketAddress *socket_remote_address(int fd, Error **errp);
+SocketAddress *socket_remote_address(int fd, Error *errp[static 1]);
 
 /**
  * socket_address_to_string:
@@ -118,7 +120,8 @@ SocketAddress *socket_remote_address(int fd, Error **errp);
  *
  * Returns: the socket address in string format, or NULL on error
  */
-char *socket_address_to_string(struct SocketAddress *addr, Error **errp);
+char *socket_address_to_string(struct SocketAddress *addr,
+			       Error *errp[static 1]);
 
 /**
  * socket_address_flatten:

@@ -48,7 +48,7 @@ static int qio_dns_resolver_lookup_sync_inet(QIODNSResolver *resolver,
                                              SocketAddress *addr,
                                              size_t *naddrs,
                                              SocketAddress ***addrs,
-                                             Error **errp)
+                                             Error *errp[static 1])
 {
     struct addrinfo ai, *res, *e;
     InetSocketAddress *iaddr = &addr->u.inet;
@@ -131,7 +131,7 @@ static int qio_dns_resolver_lookup_sync_nop(QIODNSResolver *resolver,
                                             SocketAddress *addr,
                                             size_t *naddrs,
                                             SocketAddress ***addrs,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     *naddrs = 1;
     *addrs = g_new0(SocketAddress *, 1);
@@ -145,7 +145,7 @@ int qio_dns_resolver_lookup_sync(QIODNSResolver *resolver,
                                  SocketAddress *addr,
                                  size_t *naddrs,
                                  SocketAddress ***addrs,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     switch (addr->type) {
     case SOCKET_ADDRESS_TYPE_INET:

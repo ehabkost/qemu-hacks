@@ -360,7 +360,7 @@ static const MemoryRegionOps gic_ops[] = {
     }
 };
 
-static void arm_gic_realize(DeviceState *dev, Error **errp)
+static void arm_gic_realize(DeviceState *dev, Error *errp[static 1])
 {
     /* Device instance realize function for the GIC sysbus device */
     GICv3State *s = ARM_GICV3(dev);

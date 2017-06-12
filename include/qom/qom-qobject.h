@@ -26,7 +26,7 @@
  * an error occurs.
  */
 struct QObject *object_property_get_qobject(Object *obj, const char *name,
-                                            Error **errp);
+                                            Error *errp[static 1]);
 
 /**
  * object_property_set_qobject:
@@ -38,6 +38,6 @@ struct QObject *object_property_get_qobject(Object *obj, const char *name,
  * Writes a property to a object.
  */
 void object_property_set_qobject(Object *obj, struct QObject *qobj,
-                                 const char *name, Error **errp);
+                                 const char *name, Error *errp[static 1]);
 
 #endif

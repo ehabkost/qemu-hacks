@@ -15,7 +15,7 @@
 #ifndef QEMU_MIGRATION_SNAPSHOT_H
 #define QEMU_MIGRATION_SNAPSHOT_H
 
-int save_snapshot(const char *name, Error **errp);
-int load_snapshot(const char *name, Error **errp);
+int save_snapshot(const char *name, Error *errp[static 1]);
+int load_snapshot(const char *name, Error *errp[static 1]);
 
 #endif

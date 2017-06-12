@@ -58,7 +58,7 @@ static void generic_loader_reset(void *opaque)
     }
 }
 
-static void generic_loader_realize(DeviceState *dev, Error **errp)
+static void generic_loader_realize(DeviceState *dev, Error *errp[static 1])
 {
     GenericLoaderState *s = GENERIC_LOADER(dev);
     hwaddr entry;
@@ -170,7 +170,7 @@ static void generic_loader_realize(DeviceState *dev, Error **errp)
     }
 }
 
-static void generic_loader_unrealize(DeviceState *dev, Error **errp)
+static void generic_loader_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     qemu_unregister_reset(generic_loader_reset, dev);
 }

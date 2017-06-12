@@ -138,7 +138,7 @@ static const char *blk_root_get_name(BdrvChild *child)
  *
  * If an error is returned, the VM cannot be allowed to be resumed.
  */
-static void blk_root_activate(BdrvChild *child, Error **errp)
+static void blk_root_activate(BdrvChild *child, Error *errp[static 1])
 {
     BlockBackend *blk = child->opaque;
 
@@ -238,7 +238,7 @@ BlockBackend *blk_new(uint64_t perm, uint64_t shared_perm)
  * @flags.
  */
 BlockBackend *blk_new_open(const char *filename, const char *reference,
-                           QDict *options, int flags, Error **errp)
+                           QDict *options, int flags, Error *errp[static 1])
 {
     BlockBackend *blk;
     BlockDriverState *bs;
@@ -428,7 +428,8 @@ BlockDriverState *bdrv_first(BdrvNextIterator *it)
  * Returns true on success and false on failure. In the latter case, an Error
  * object is returned through @errp.
  */
-bool monitor_add_blk(BlockBackend *blk, const char *name, Error **errp)
+bool monitor_add_blk(BlockBackend *blk, const char *name,
+                     Error *errp[static 1])
 {
     assert(!blk->name);
     assert(name && name[0]);
@@ -608,7 +609,8 @@ void blk_remove_bs(BlockBackend *blk)
 /*
  * Associates a new BlockDriverState with @blk.
  */
-int blk_insert_bs(BlockBackend *blk, BlockDriverState *bs, Error **errp)
+int blk_insert_bs(BlockBackend *blk, BlockDriverState *bs,
+                  Error *errp[static 1])
 {
     blk->root = bdrv_root_attach_child(bs, "root", &child_root,
                                        blk->perm, blk->shared_perm, blk, errp);
@@ -630,7 +632,7 @@ int blk_insert_bs(BlockBackend *blk, BlockDriverState *bs, Error **errp)
  * Sets the permission bitmasks that the user of the BlockBackend needs.
  */
 int blk_set_perm(BlockBackend *blk, uint64_t perm, uint64_t shared_perm,
-                 Error **errp)
+                 Error *errp[static 1])
 {
     int ret;
 
@@ -789,7 +791,8 @@ void blk_set_dev_ops(BlockBackend *blk, const BlockDevOps *ops,
  *
  * Also send DEVICE_TRAY_MOVED events as appropriate.
  */
-void blk_dev_change_media_cb(BlockBackend *blk, bool load, Error **errp)
+void blk_dev_change_media_cb(BlockBackend *blk, bool load,
+                             Error *errp[static 1])
 {
     if (blk->dev_ops && blk->dev_ops->change_media_cb) {
         bool tray_was_open, tray_is_open;
@@ -1524,7 +1527,7 @@ void blk_set_enable_write_cache(BlockBackend *blk, bool wce)
     blk->enable_write_cache = wce;
 }
 
-void blk_invalidate_cache(BlockBackend *blk, Error **errp)
+void blk_invalidate_cache(BlockBackend *blk, Error *errp[static 1])
 {
     BlockDriverState *bs = blk_bs(blk);
 
@@ -1620,7 +1623,8 @@ void *blk_blockalign(BlockBackend *blk, size_t size)
     return qemu_blockalign(blk ? blk_bs(blk) : NULL, size);
 }
 
-bool blk_op_is_blocked(BlockBackend *blk, BlockOpType op, Error **errp)
+bool blk_op_is_blocked(BlockBackend *blk, BlockOpType op,
+                       Error *errp[static 1])
 {
     BlockDriverState *bs = blk_bs(blk);
 
@@ -1770,7 +1774,7 @@ int blk_pwrite_compressed(BlockBackend *blk, int64_t offset, const void *buf,
                    BDRV_REQ_WRITE_COMPRESSED);
 }
 
-int blk_truncate(BlockBackend *blk, int64_t offset, Error **errp)
+int blk_truncate(BlockBackend *blk, int64_t offset, Error *errp[static 1])
 {
     if (!blk_is_available(blk)) {
         error_setg(errp, "No medium inserted");

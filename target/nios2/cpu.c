@@ -92,7 +92,7 @@ Nios2CPU *cpu_nios2_init(const char *cpu_model)
     return cpu;
 }
 
-static void nios2_cpu_realizefn(DeviceState *dev, Error **errp)
+static void nios2_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     Nios2CPUClass *ncc = NIOS2_CPU_GET_CLASS(dev);

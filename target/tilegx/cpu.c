@@ -86,7 +86,7 @@ static void tilegx_cpu_reset(CPUState *s)
     memset(env, 0, offsetof(CPUTLGState, end_reset_fields));
 }
 
-static void tilegx_cpu_realizefn(DeviceState *dev, Error **errp)
+static void tilegx_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     TileGXCPUClass *tcc = TILEGX_CPU_GET_CLASS(dev);

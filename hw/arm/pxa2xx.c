@@ -1965,7 +1965,7 @@ static void pxa2xx_fir_instance_init(Object *obj)
     sysbus_init_irq(sbd, &s->tx_dma);
 }
 
-static void pxa2xx_fir_realize(DeviceState *dev, Error **errp)
+static void pxa2xx_fir_realize(DeviceState *dev, Error *errp[static 1])
 {
     PXA2xxFIrState *s = PXA2XX_FIR(dev);
 

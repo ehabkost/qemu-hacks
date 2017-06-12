@@ -105,7 +105,7 @@ void bdrv_write_threshold_set(BlockDriverState *bs, uint64_t threshold_bytes)
 
 void qmp_block_set_write_threshold(const char *node_name,
                                    uint64_t threshold_bytes,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     BlockDriverState *bs;
     AioContext *aio_context;

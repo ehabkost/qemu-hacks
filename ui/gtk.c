@@ -1744,7 +1744,7 @@ static Chardev *vcs[MAX_VCS];
 static void gd_vc_open(Chardev *chr,
                        ChardevBackend *backend,
                        bool *be_opened,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     if (nb_vcs == MAX_VCS) {
         error_setg(errp, "Maximum number of consoles reached");

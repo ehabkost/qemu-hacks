@@ -31,7 +31,7 @@
 /* --------------------------------- */
 
 static char *idebus_get_fw_dev_path(DeviceState *dev);
-static void idebus_unrealize(BusState *qdev, Error **errp);
+static void idebus_unrealize(BusState *qdev, Error *errp[static 1]);
 
 static Property ide_props[] = {
     DEFINE_PROP_UINT32("unit", IDEDevice, unit, -1),
@@ -46,7 +46,7 @@ static void ide_bus_class_init(ObjectClass *klass, void *data)
     k->unrealize = idebus_unrealize;
 }
 
-static void idebus_unrealize(BusState *bus, Error **errp)
+static void idebus_unrealize(BusState *bus, Error *errp[static 1])
 {
     IDEBus *ibus = IDE_BUS(bus);
 
@@ -225,7 +225,7 @@ static int ide_dev_initfn(IDEDevice *dev, IDEDriveKind kind)
 }
 
 static void ide_dev_get_bootindex(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     IDEDevice *d = IDE_DEVICE(obj);
 
@@ -233,7 +233,7 @@ static void ide_dev_get_bootindex(Object *obj, Visitor *v, const char *name,
 }
 
 static void ide_dev_set_bootindex(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     IDEDevice *d = IDE_DEVICE(obj);
     int32_t boot_index;

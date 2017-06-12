@@ -415,7 +415,7 @@ static void bdrv_qed_drain(BlockDriverState *bs)
 }
 
 static int bdrv_qed_do_open(BlockDriverState *bs, QDict *options, int flags,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     BDRVQEDState *s = bs->opaque;
     QEDHeader le_header;
@@ -550,7 +550,7 @@ out:
 }
 
 static int bdrv_qed_open(BlockDriverState *bs, QDict *options, int flags,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     bs->file = bdrv_open_child(NULL, options, "file", bs, &child_file,
                                false, errp);
@@ -561,7 +561,8 @@ static int bdrv_qed_open(BlockDriverState *bs, QDict *options, int flags,
     return bdrv_qed_do_open(bs, options, flags, errp);
 }
 
-static void bdrv_qed_refresh_limits(BlockDriverState *bs, Error **errp)
+static void bdrv_qed_refresh_limits(BlockDriverState *bs,
+                                    Error *errp[static 1])
 {
     BDRVQEDState *s = bs->opaque;
 
@@ -571,7 +572,8 @@ static void bdrv_qed_refresh_limits(BlockDriverState *bs, Error **errp)
 /* We have nothing to do for QED reopen, stubs just return
  * success */
 static int bdrv_qed_reopen_prepare(BDRVReopenState *state,
-                                   BlockReopenQueue *queue, Error **errp)
+                                   BlockReopenQueue *queue,
+                                   Error *errp[static 1])
 {
     return 0;
 }
@@ -598,7 +600,7 @@ static void bdrv_qed_close(BlockDriverState *bs)
 static int qed_create(const char *filename, uint32_t cluster_size,
                       uint64_t image_size, uint32_t table_size,
                       const char *backing_file, const char *backing_fmt,
-                      QemuOpts *opts, Error **errp)
+                      QemuOpts *opts, Error *errp[static 1])
 {
     QEDHeader header = {
         .magic = QED_MAGIC,
@@ -673,7 +675,8 @@ out:
     return ret;
 }
 
-static int bdrv_qed_create(const char *filename, QemuOpts *opts, Error **errp)
+static int bdrv_qed_create(const char *filename, QemuOpts *opts,
+                           Error *errp[static 1])
 {
     uint64_t image_size = 0;
     uint32_t cluster_size = QED_DEFAULT_CLUSTER_SIZE;
@@ -1517,7 +1520,8 @@ static int coroutine_fn bdrv_qed_co_pwrite_zeroes(BlockDriverState *bs,
     return cb.ret;
 }
 
-static int bdrv_qed_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int bdrv_qed_truncate(BlockDriverState *bs, int64_t offset,
+                             Error *errp[static 1])
 {
     BDRVQEDState *s = bs->opaque;
     uint64_t old_image_size;
@@ -1634,7 +1638,8 @@ static int bdrv_qed_change_backing_file(BlockDriverState *bs,
     return ret;
 }
 
-static void bdrv_qed_invalidate_cache(BlockDriverState *bs, Error **errp)
+static void bdrv_qed_invalidate_cache(BlockDriverState *bs,
+                                      Error *errp[static 1])
 {
     BDRVQEDState *s = bs->opaque;
     Error *local_err = NULL;

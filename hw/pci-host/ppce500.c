@@ -417,7 +417,7 @@ static const VMStateDescription vmstate_ppce500_pci = {
 
 #include "exec/address-spaces.h"
 
-static void e500_pcihost_bridge_realize(PCIDevice *d, Error **errp)
+static void e500_pcihost_bridge_realize(PCIDevice *d, Error *errp[static 1])
 {
     PPCE500PCIBridgeState *b = PPC_E500_PCI_BRIDGE(d);
     PPCE500CCSRState *ccsr = CCSR(container_get(qdev_get_machine(),

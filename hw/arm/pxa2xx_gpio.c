@@ -294,7 +294,7 @@ static void pxa2xx_gpio_initfn(Object *obj)
     sysbus_init_irq(sbd, &s->irqX);
 }
 
-static void pxa2xx_gpio_realize(DeviceState *dev, Error **errp)
+static void pxa2xx_gpio_realize(DeviceState *dev, Error *errp[static 1])
 {
     PXA2xxGPIOInfo *s = PXA2XX_GPIO(dev);
 

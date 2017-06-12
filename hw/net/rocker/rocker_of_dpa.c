@@ -2450,7 +2450,7 @@ static void of_dpa_flow_fill(void *cookie, void *value, void *user_data)
 RockerOfDpaFlowList *qmp_query_rocker_of_dpa_flows(const char *name,
                                                    bool has_tbl_id,
                                                    uint32_t tbl_id,
-                                                   Error **errp)
+                                                   Error *errp[static 1])
 {
     struct rocker *r;
     struct world *w;

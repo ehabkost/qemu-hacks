@@ -180,7 +180,7 @@ int qio_dns_resolver_lookup_sync(QIODNSResolver *resolver,
                                  SocketAddress *addr,
                                  size_t *naddrs,
                                  SocketAddress ***addrs,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 
 /**
  * qio_dns_resolver_lookup_async:

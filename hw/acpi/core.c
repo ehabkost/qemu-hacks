@@ -99,7 +99,7 @@ static int acpi_checksum(const uint8_t *data, int len)
 static void acpi_table_install(const char unsigned *blob, size_t bloblen,
                                bool has_header,
                                const struct AcpiTableOptions *hdrs,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     size_t body_start;
     const char unsigned *hdr_src;
@@ -229,7 +229,7 @@ static void acpi_table_install(const char unsigned *blob, size_t bloblen,
                                       ACPI_TABLE_PFX_SIZE, acpi_payload_size);
 }
 
-void acpi_table_add(const QemuOpts *opts, Error **errp)
+void acpi_table_add(const QemuOpts *opts, Error *errp[static 1])
 {
     AcpiTableOptions *hdrs = NULL;
     Error *err = NULL;
@@ -303,7 +303,7 @@ out:
 
 static bool acpi_table_builtin = false;
 
-void acpi_table_add_builtin(const QemuOpts *opts, Error **errp)
+void acpi_table_add_builtin(const QemuOpts *opts, Error *errp[static 1])
 {
     acpi_table_builtin = true;
     acpi_table_add(opts, errp);

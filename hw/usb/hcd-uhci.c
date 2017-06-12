@@ -1206,7 +1206,7 @@ static USBPortOps uhci_port_ops = {
 static USBBusOps uhci_bus_ops = {
 };
 
-static void usb_uhci_common_realize(PCIDevice *dev, Error **errp)
+static void usb_uhci_common_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(dev);
     UHCIPCIDeviceClass *u = container_of(pc, UHCIPCIDeviceClass, parent_class);
@@ -1252,7 +1252,7 @@ static void usb_uhci_common_realize(PCIDevice *dev, Error **errp)
     pci_register_bar(&s->dev, 4, PCI_BASE_ADDRESS_SPACE_IO, &s->io_bar);
 }
 
-static void usb_uhci_vt82c686b_realize(PCIDevice *dev, Error **errp)
+static void usb_uhci_vt82c686b_realize(PCIDevice *dev, Error *errp[static 1])
 {
     UHCIState *s = UHCI(dev);
     uint8_t *pci_conf = s->dev.config;

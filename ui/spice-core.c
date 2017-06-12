@@ -517,7 +517,7 @@ static QemuOptsList qemu_spice_opts = {
     },
 };
 
-SpiceInfo *qmp_query_spice(Error **errp)
+SpiceInfo *qmp_query_spice(Error *errp[static 1])
 {
     QemuOpts *opts = QTAILQ_FIRST(&qemu_spice_opts.head);
     int port, tls_port;
@@ -605,7 +605,7 @@ int qemu_spice_migrate_info(const char *hostname, int port, int tls_port,
 }
 
 static int add_channel(void *opaque, const char *name, const char *value,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     int security = 0;
     int rc;

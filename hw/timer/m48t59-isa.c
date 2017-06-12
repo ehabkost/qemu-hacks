@@ -110,7 +110,7 @@ static void m48t59_reset_isa(DeviceState *d)
     m48t59_reset_common(NVRAM);
 }
 
-static void m48t59_isa_realize(DeviceState *dev, Error **errp)
+static void m48t59_isa_realize(DeviceState *dev, Error *errp[static 1])
 {
     M48txxISADeviceClass *u = M48TXX_ISA_GET_CLASS(dev);
     ISADevice *isadev = ISA_DEVICE(dev);

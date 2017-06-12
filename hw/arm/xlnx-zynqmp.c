@@ -94,7 +94,7 @@ static inline int arm_gic_ppi_index(int cpu_nr, int ppi_index)
 }
 
 static void xlnx_zynqmp_create_rpu(XlnxZynqMPState *s, const char *boot_cpu,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     int i;
 
@@ -179,7 +179,7 @@ static void xlnx_zynqmp_init(Object *obj)
     qdev_set_parent_bus(DEVICE(&s->dpdma), sysbus_get_default());
 }
 
-static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
+static void xlnx_zynqmp_realize(DeviceState *dev, Error *errp[static 1])
 {
     XlnxZynqMPState *s = XLNX_ZYNQMP(dev);
     MemoryRegion *system_memory = get_system_memory();

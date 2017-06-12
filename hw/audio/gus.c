@@ -234,7 +234,7 @@ static const MemoryRegionPortio gus_portio_list2[] = {
     PORTIO_END_OF_LIST (),
 };
 
-static void gus_realizefn (DeviceState *dev, Error **errp)
+static void gus_realizefn (DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *d = ISA_DEVICE(dev);
     GUSState *s = GUS (dev);

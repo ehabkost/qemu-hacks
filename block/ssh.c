@@ -193,7 +193,8 @@ sftp_error_report(BDRVSSHState *s, const char *fs, ...)
     error_printf("\n");
 }
 
-static int parse_uri(const char *filename, QDict *options, Error **errp)
+static int parse_uri(const char *filename, QDict *options,
+                     Error *errp[static 1])
 {
     URI *uri = NULL;
     QueryParams *qp;
@@ -258,7 +259,8 @@ static int parse_uri(const char *filename, QDict *options, Error **errp)
     return -EINVAL;
 }
 
-static bool ssh_has_filename_options_conflict(QDict *options, Error **errp)
+static bool ssh_has_filename_options_conflict(QDict *options,
+                                              Error *errp[static 1])
 {
     const QDictEntry *qe;
 
@@ -280,7 +282,7 @@ static bool ssh_has_filename_options_conflict(QDict *options, Error **errp)
 }
 
 static void ssh_parse_filename(const char *filename, QDict *options,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     if (ssh_has_filename_options_conflict(options, errp)) {
         return;
@@ -290,7 +292,8 @@ static void ssh_parse_filename(const char *filename, QDict *options,
 }
 
 static int check_host_key_knownhosts(BDRVSSHState *s,
-                                     const char *host, int port, Error **errp)
+                                     const char *host, int port,
+                                     Error *errp[static 1])
 {
     const char *home;
     char *knh_file = NULL;
@@ -408,7 +411,8 @@ static int compare_fingerprint(const unsigned char *fingerprint, size_t len,
 
 static int
 check_host_key_hash(BDRVSSHState *s, const char *hash,
-                    int hash_type, size_t fingerprint_len, Error **errp)
+                    int hash_type, size_t fingerprint_len,
+                    Error *errp[static 1])
 {
     const char *fingerprint;
 
@@ -429,7 +433,7 @@ check_host_key_hash(BDRVSSHState *s, const char *hash,
 }
 
 static int check_host_key(BDRVSSHState *s, const char *host, int port,
-                          const char *host_key_check, Error **errp)
+                          const char *host_key_check, Error *errp[static 1])
 {
     /* host_key_check=no */
     if (strcmp(host_key_check, "no") == 0) {
@@ -457,7 +461,8 @@ static int check_host_key(BDRVSSHState *s, const char *host, int port,
     return -EINVAL;
 }
 
-static int authenticate(BDRVSSHState *s, const char *user, Error **errp)
+static int authenticate(BDRVSSHState *s, const char *user,
+                        Error *errp[static 1])
 {
     int r, ret;
     const char *userauthlist;
@@ -562,7 +567,7 @@ static QemuOptsList ssh_runtime_opts = {
 
 static bool ssh_process_legacy_socket_options(QDict *output_opts,
                                               QemuOpts *legacy_opts,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     const char *host = qemu_opt_get(legacy_opts, "host");
     const char *port = qemu_opt_get(legacy_opts, "port");
@@ -580,7 +585,7 @@ static bool ssh_process_legacy_socket_options(QDict *output_opts,
     return true;
 }
 
-static InetSocketAddress *ssh_config(QDict *options, Error **errp)
+static InetSocketAddress *ssh_config(QDict *options, Error *errp[static 1])
 {
     InetSocketAddress *inet = NULL;
     QDict *addr = NULL;
@@ -620,7 +625,8 @@ out:
 }
 
 static int connect_to_ssh(BDRVSSHState *s, QDict *options,
-                          int ssh_flags, int creat_mode, Error **errp)
+                          int ssh_flags, int creat_mode,
+                          Error *errp[static 1])
 {
     int r, ret;
     QemuOpts *opts = NULL;
@@ -764,7 +770,7 @@ static int connect_to_ssh(BDRVSSHState *s, QDict *options,
 }
 
 static int ssh_file_open(BlockDriverState *bs, QDict *options, int bdrv_flags,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     BDRVSSHState *s = bs->opaque;
     int ret;
@@ -810,7 +816,8 @@ static QemuOptsList ssh_create_opts = {
     }
 };
 
-static int ssh_create(const char *filename, QemuOpts *opts, Error **errp)
+static int ssh_create(const char *filename, QemuOpts *opts,
+                      Error *errp[static 1])
 {
     int r, ret;
     int64_t total_size = 0;

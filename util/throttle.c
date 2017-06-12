@@ -287,7 +287,7 @@ bool throttle_enabled(ThrottleConfig *cfg)
  * @ret: true if valid else false
  * @errp: error object
  */
-bool throttle_is_valid(ThrottleConfig *cfg, Error **errp)
+bool throttle_is_valid(ThrottleConfig *cfg, Error *errp[static 1])
 {
     int i;
     bool bps_flag, ops_flag;

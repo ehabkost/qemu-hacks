@@ -104,7 +104,7 @@ static void xilinx_pcie_set_irq(void *opaque, int irq_num, int level)
        0);
 }
 
-static void xilinx_pcie_host_realize(DeviceState *dev, Error **errp)
+static void xilinx_pcie_host_realize(DeviceState *dev, Error *errp[static 1])
 {
     PCIHostState *pci = PCI_HOST_BRIDGE(dev);
     XilinxPCIEHost *s = XILINX_PCIE_HOST(dev);

@@ -197,7 +197,7 @@ static void kvm_openpic_init(Object *obj)
                           "kvm-openpic", 0x40000);
 }
 
-static void kvm_openpic_realize(DeviceState *dev, Error **errp)
+static void kvm_openpic_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *d = SYS_BUS_DEVICE(dev);
     KVMOpenPICState *opp = KVM_OPENPIC(dev);

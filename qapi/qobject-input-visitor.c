@@ -158,7 +158,7 @@ static QObject *qobject_input_try_get_object(QObjectInputVisitor *qiv,
 
 static QObject *qobject_input_get_object(QObjectInputVisitor *qiv,
                                          const char *name,
-                                         bool consume, Error **errp)
+                                         bool consume, Error *errp[static 1])
 {
     QObject *obj = qobject_input_try_get_object(qiv, name, consume);
 
@@ -170,7 +170,7 @@ static QObject *qobject_input_get_object(QObjectInputVisitor *qiv,
 
 static const char *qobject_input_get_keyval(QObjectInputVisitor *qiv,
                                             const char *name,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     QObject *qobj;
     QString *qstr;
@@ -232,7 +232,7 @@ static const QListEntry *qobject_input_push(QObjectInputVisitor *qiv,
 }
 
 
-static void qobject_input_check_struct(Visitor *v, Error **errp)
+static void qobject_input_check_struct(Visitor *v, Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     StackObject *tos = QSLIST_FIRST(&qiv->stack);
@@ -268,7 +268,7 @@ static void qobject_input_pop(Visitor *v, void **obj)
 }
 
 static void qobject_input_start_struct(Visitor *v, const char *name, void **obj,
-                                       size_t size, Error **errp)
+                                       size_t size, Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -304,7 +304,7 @@ static void qobject_input_end_struct(Visitor *v, void **obj)
 
 static void qobject_input_start_list(Visitor *v, const char *name,
                                      GenericList **list, size_t size,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -343,7 +343,7 @@ static GenericList *qobject_input_next_list(Visitor *v, GenericList *tail,
     return tail->next;
 }
 
-static void qobject_input_check_list(Visitor *v, Error **errp)
+static void qobject_input_check_list(Visitor *v, Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     StackObject *tos = QSLIST_FIRST(&qiv->stack);
@@ -367,7 +367,8 @@ static void qobject_input_end_list(Visitor *v, void **obj)
 
 static void qobject_input_start_alternate(Visitor *v, const char *name,
                                           GenericAlternate **obj, size_t size,
-                                          bool promote_int, Error **errp)
+                                          bool promote_int,
+                                          Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, false, errp);
@@ -384,7 +385,7 @@ static void qobject_input_start_alternate(Visitor *v, const char *name,
 }
 
 static void qobject_input_type_int64(Visitor *v, const char *name, int64_t *obj,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -405,7 +406,8 @@ static void qobject_input_type_int64(Visitor *v, const char *name, int64_t *obj,
 
 
 static void qobject_input_type_int64_keyval(Visitor *v, const char *name,
-                                            int64_t *obj, Error **errp)
+                                            int64_t *obj,
+                                            Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     const char *str = qobject_input_get_keyval(qiv, name, errp);
@@ -422,7 +424,7 @@ static void qobject_input_type_int64_keyval(Visitor *v, const char *name,
 }
 
 static void qobject_input_type_uint64(Visitor *v, const char *name,
-                                      uint64_t *obj, Error **errp)
+                                      uint64_t *obj, Error *errp[static 1])
 {
     /* FIXME: qobject_to_qint mishandles values over INT64_MAX */
     QObjectInputVisitor *qiv = to_qiv(v);
@@ -443,7 +445,8 @@ static void qobject_input_type_uint64(Visitor *v, const char *name,
 }
 
 static void qobject_input_type_uint64_keyval(Visitor *v, const char *name,
-                                             uint64_t *obj, Error **errp)
+                                             uint64_t *obj,
+                                             Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     const char *str = qobject_input_get_keyval(qiv, name, errp);
@@ -460,7 +463,7 @@ static void qobject_input_type_uint64_keyval(Visitor *v, const char *name,
 }
 
 static void qobject_input_type_bool(Visitor *v, const char *name, bool *obj,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -480,7 +483,7 @@ static void qobject_input_type_bool(Visitor *v, const char *name, bool *obj,
 }
 
 static void qobject_input_type_bool_keyval(Visitor *v, const char *name,
-                                           bool *obj, Error **errp)
+                                           bool *obj, Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     const char *str = qobject_input_get_keyval(qiv, name, errp);
@@ -500,7 +503,7 @@ static void qobject_input_type_bool_keyval(Visitor *v, const char *name,
 }
 
 static void qobject_input_type_str(Visitor *v, const char *name, char **obj,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -521,7 +524,7 @@ static void qobject_input_type_str(Visitor *v, const char *name, char **obj,
 }
 
 static void qobject_input_type_str_keyval(Visitor *v, const char *name,
-                                          char **obj, Error **errp)
+                                          char **obj, Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     const char *str = qobject_input_get_keyval(qiv, name, errp);
@@ -530,7 +533,7 @@ static void qobject_input_type_str_keyval(Visitor *v, const char *name,
 }
 
 static void qobject_input_type_number(Visitor *v, const char *name, double *obj,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -557,7 +560,8 @@ static void qobject_input_type_number(Visitor *v, const char *name, double *obj,
 }
 
 static void qobject_input_type_number_keyval(Visitor *v, const char *name,
-                                             double *obj, Error **errp)
+                                             double *obj,
+                                             Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     const char *str = qobject_input_get_keyval(qiv, name, errp);
@@ -577,7 +581,7 @@ static void qobject_input_type_number_keyval(Visitor *v, const char *name,
 }
 
 static void qobject_input_type_any(Visitor *v, const char *name, QObject **obj,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -591,7 +595,8 @@ static void qobject_input_type_any(Visitor *v, const char *name, QObject **obj,
     *obj = qobj;
 }
 
-static void qobject_input_type_null(Visitor *v, const char *name, Error **errp)
+static void qobject_input_type_null(Visitor *v, const char *name,
+                                    Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     QObject *qobj = qobject_input_get_object(qiv, name, true, errp);
@@ -607,7 +612,8 @@ static void qobject_input_type_null(Visitor *v, const char *name, Error **errp)
 }
 
 static void qobject_input_type_size_keyval(Visitor *v, const char *name,
-                                           uint64_t *obj, Error **errp)
+                                           uint64_t *obj,
+                                           Error *errp[static 1])
 {
     QObjectInputVisitor *qiv = to_qiv(v);
     const char *str = qobject_input_get_keyval(qiv, name, errp);
@@ -712,7 +718,7 @@ Visitor *qobject_input_visitor_new_keyval(QObject *obj)
 
 Visitor *qobject_input_visitor_new_str(const char *str,
                                        const char *implied_key,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     bool is_json = str[0] == '{';
     QObject *obj;

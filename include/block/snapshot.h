@@ -52,7 +52,7 @@ bool bdrv_snapshot_find_by_id_and_name(BlockDriverState *bs,
                                        const char *id,
                                        const char *name,
                                        QEMUSnapshotInfo *sn_info,
-                                       Error **errp);
+                                       Error *errp[static 1]);
 int bdrv_can_snapshot(BlockDriverState *bs);
 int bdrv_snapshot_create(BlockDriverState *bs,
                          QEMUSnapshotInfo *sn_info);
@@ -61,19 +61,19 @@ int bdrv_snapshot_goto(BlockDriverState *bs,
 int bdrv_snapshot_delete(BlockDriverState *bs,
                          const char *snapshot_id,
                          const char *name,
-                         Error **errp);
+                         Error *errp[static 1]);
 int bdrv_snapshot_delete_by_id_or_name(BlockDriverState *bs,
                                        const char *id_or_name,
-                                       Error **errp);
+                                       Error *errp[static 1]);
 int bdrv_snapshot_list(BlockDriverState *bs,
                        QEMUSnapshotInfo **psn_info);
 int bdrv_snapshot_load_tmp(BlockDriverState *bs,
                            const char *snapshot_id,
                            const char *name,
-                           Error **errp);
+                           Error *errp[static 1]);
 int bdrv_snapshot_load_tmp_by_id_or_name(BlockDriverState *bs,
                                          const char *id_or_name,
-                                         Error **errp);
+                                         Error *errp[static 1]);
 
 
 /* Group operations. All block drivers are involved.
@@ -82,7 +82,7 @@ int bdrv_snapshot_load_tmp_by_id_or_name(BlockDriverState *bs,
 
 bool bdrv_all_can_snapshot(BlockDriverState **first_bad_bs);
 int bdrv_all_delete_snapshot(const char *name, BlockDriverState **first_bsd_bs,
-                             Error **err);
+                             Error *err[static 1]);
 int bdrv_all_goto_snapshot(const char *name, BlockDriverState **first_bsd_bs);
 int bdrv_all_find_snapshot(const char *name, BlockDriverState **first_bad_bs);
 int bdrv_all_create_snapshot(QEMUSnapshotInfo *sn,

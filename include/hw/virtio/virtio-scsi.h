@@ -141,9 +141,9 @@ void virtio_scsi_common_realize(DeviceState *dev,
                                 VirtIOHandleOutput ctrl,
                                 VirtIOHandleOutput evt,
                                 VirtIOHandleOutput cmd,
-                                Error **errp);
+                                Error *errp[static 1]);
 
-void virtio_scsi_common_unrealize(DeviceState *dev, Error **errp);
+void virtio_scsi_common_unrealize(DeviceState *dev, Error *errp[static 1]);
 bool virtio_scsi_handle_event_vq(VirtIOSCSI *s, VirtQueue *vq);
 bool virtio_scsi_handle_cmd_vq(VirtIOSCSI *s, VirtQueue *vq);
 bool virtio_scsi_handle_ctrl_vq(VirtIOSCSI *s, VirtQueue *vq);
@@ -152,7 +152,7 @@ void virtio_scsi_free_req(VirtIOSCSIReq *req);
 void virtio_scsi_push_event(VirtIOSCSI *s, SCSIDevice *dev,
                             uint32_t event, uint32_t reason);
 
-void virtio_scsi_dataplane_setup(VirtIOSCSI *s, Error **errp);
+void virtio_scsi_dataplane_setup(VirtIOSCSI *s, Error *errp[static 1]);
 int virtio_scsi_dataplane_start(VirtIODevice *s);
 void virtio_scsi_dataplane_stop(VirtIODevice *s);
 

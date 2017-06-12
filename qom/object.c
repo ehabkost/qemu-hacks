@@ -414,7 +414,8 @@ static void object_property_del_all(Object *obj)
     g_hash_table_unref(obj->properties);
 }
 
-static void object_property_del_child(Object *obj, Object *child, Error **errp)
+static void object_property_del_child(Object *obj, Object *child,
+                                      Error *errp[static 1])
 {
     ObjectProperty *prop;
     GHashTableIter iter;
@@ -498,7 +499,7 @@ Object *object_new(const char *typename)
 Object *object_new_with_props(const char *typename,
                               Object *parent,
                               const char *id,
-                              Error **errp,
+                              Error *errp[static 1],
                               ...)
 {
     va_list vargs;
@@ -562,7 +563,7 @@ Object *object_new_with_propv(const char *typename,
 
 
 int object_set_props(Object *obj,
-                     Error **errp,
+                     Error *errp[static 1],
                      ...)
 {
     va_list vargs;
@@ -909,7 +910,7 @@ object_property_add(Object *obj, const char *name, const char *type,
                     ObjectPropertyAccessor *get,
                     ObjectPropertyAccessor *set,
                     ObjectPropertyRelease *release,
-                    void *opaque, Error **errp)
+                    void *opaque, Error *errp[static 1])
 {
     ObjectProperty *prop;
     size_t name_len = strlen(name);
@@ -963,7 +964,7 @@ object_class_property_add(ObjectClass *klass,
                           ObjectPropertyAccessor *set,
                           ObjectPropertyRelease *release,
                           void *opaque,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     ObjectProperty *prop;
 
@@ -990,7 +991,7 @@ object_class_property_add(ObjectClass *klass,
 }
 
 ObjectProperty *object_property_find(Object *obj, const char *name,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     ObjectProperty *prop;
     ObjectClass *klass = object_get_class(obj);
@@ -1030,7 +1031,7 @@ ObjectProperty *object_property_iter_next(ObjectPropertyIterator *iter)
 }
 
 ObjectProperty *object_class_property_find(ObjectClass *klass, const char *name,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     ObjectProperty *prop;
     ObjectClass *parent_klass;
@@ -1050,7 +1051,7 @@ ObjectProperty *object_class_property_find(ObjectClass *klass, const char *name,
     return prop;
 }
 
-void object_property_del(Object *obj, const char *name, Error **errp)
+void object_property_del(Object *obj, const char *name, Error *errp[static 1])
 {
     ObjectProperty *prop = g_hash_table_lookup(obj->properties, name);
 
@@ -1066,7 +1067,7 @@ void object_property_del(Object *obj, const char *name, Error **errp)
 }
 
 void object_property_get(Object *obj, Visitor *v, const char *name,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     ObjectProperty *prop = object_property_find(obj, name, errp);
     if (prop == NULL) {
@@ -1081,7 +1082,7 @@ void object_property_get(Object *obj, Visitor *v, const char *name,
 }
 
 void object_property_set(Object *obj, Visitor *v, const char *name,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     ObjectProperty *prop = object_property_find(obj, name, errp);
     if (prop == NULL) {
@@ -1096,7 +1097,7 @@ void object_property_set(Object *obj, Visitor *v, const char *name,
 }
 
 void object_property_set_str(Object *obj, const char *value,
-                             const char *name, Error **errp)
+                             const char *name, Error *errp[static 1])
 {
     QString *qstr = qstring_from_str(value);
     object_property_set_qobject(obj, QOBJECT(qstr), name, errp);
@@ -1105,7 +1106,7 @@ void object_property_set_str(Object *obj, const char *value,
 }
 
 char *object_property_get_str(Object *obj, const char *name,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     QObject *ret = object_property_get_qobject(obj, name, errp);
     QString *qstring;
@@ -1127,7 +1128,7 @@ char *object_property_get_str(Object *obj, const char *name,
 }
 
 void object_property_set_link(Object *obj, Object *value,
-                              const char *name, Error **errp)
+                              const char *name, Error *errp[static 1])
 {
     if (value) {
         gchar *path = object_get_canonical_path(value);
@@ -1139,7 +1140,7 @@ void object_property_set_link(Object *obj, Object *value,
 }
 
 Object *object_property_get_link(Object *obj, const char *name,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     char *str = object_property_get_str(obj, name, errp);
     Object *target = NULL;
@@ -1157,7 +1158,7 @@ Object *object_property_get_link(Object *obj, const char *name,
 }
 
 void object_property_set_bool(Object *obj, bool value,
-                              const char *name, Error **errp)
+                              const char *name, Error *errp[static 1])
 {
     QBool *qbool = qbool_from_bool(value);
     object_property_set_qobject(obj, QOBJECT(qbool), name, errp);
@@ -1166,7 +1167,7 @@ void object_property_set_bool(Object *obj, bool value,
 }
 
 bool object_property_get_bool(Object *obj, const char *name,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     QObject *ret = object_property_get_qobject(obj, name, errp);
     QBool *qbool;
@@ -1188,7 +1189,7 @@ bool object_property_get_bool(Object *obj, const char *name,
 }
 
 void object_property_set_int(Object *obj, int64_t value,
-                             const char *name, Error **errp)
+                             const char *name, Error *errp[static 1])
 {
     QInt *qint = qint_from_int(value);
     object_property_set_qobject(obj, QOBJECT(qint), name, errp);
@@ -1197,7 +1198,7 @@ void object_property_set_int(Object *obj, int64_t value,
 }
 
 int64_t object_property_get_int(Object *obj, const char *name,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     QObject *ret = object_property_get_qobject(obj, name, errp);
     QInt *qint;
@@ -1225,7 +1226,7 @@ typedef struct EnumProperty {
 } EnumProperty;
 
 int object_property_get_enum(Object *obj, const char *name,
-                             const char *typename, Error **errp)
+                             const char *typename, Error *errp[static 1])
 {
     Visitor *v;
     char *str;
@@ -1264,7 +1265,7 @@ int object_property_get_enum(Object *obj, const char *name,
 }
 
 void object_property_get_uint16List(Object *obj, const char *name,
-                                    uint16List **list, Error **errp)
+                                    uint16List **list, Error *errp[static 1])
 {
     Visitor *v;
     char *str;
@@ -1285,7 +1286,7 @@ out:
 }
 
 void object_property_parse(Object *obj, const char *string,
-                           const char *name, Error **errp)
+                           const char *name, Error *errp[static 1])
 {
     Visitor *v = string_input_visitor_new(string);
     object_property_set(obj, v, name, errp);
@@ -1293,7 +1294,7 @@ void object_property_parse(Object *obj, const char *string,
 }
 
 char *object_property_print(Object *obj, const char *name, bool human,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     Visitor *v;
     char *string = NULL;
@@ -1311,7 +1312,8 @@ out:
     return string;
 }
 
-const char *object_property_get_type(Object *obj, const char *name, Error **errp)
+const char *object_property_get_type(Object *obj, const char *name,
+                                     Error *errp[static 1])
 {
     ObjectProperty *prop = object_property_find(obj, name, errp);
     if (prop == NULL) {
@@ -1339,7 +1341,7 @@ Object *object_get_objects_root(void)
 
 static void object_get_child_property(Object *obj, Visitor *v,
                                       const char *name, void *opaque,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     Object *child = opaque;
     gchar *path;
@@ -1367,7 +1369,7 @@ static void object_finalize_child_property(Object *obj, const char *name,
 }
 
 void object_property_add_child(Object *obj, const char *name,
-                               Object *child, Error **errp)
+                               Object *child, Error *errp[static 1])
 {
     Error *local_err = NULL;
     gchar *type;
@@ -1396,7 +1398,7 @@ out:
 }
 
 void object_property_allow_set_link(Object *obj, const char *name,
-                                    Object *val, Error **errp)
+                                    Object *val, Error *errp[static 1])
 {
     /* Allow the link to be set, always */
 }
@@ -1409,7 +1411,7 @@ typedef struct {
 
 static void object_get_link_property(Object *obj, Visitor *v,
                                      const char *name, void *opaque,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     LinkProperty *lprop = opaque;
     Object **child = lprop->child;
@@ -1435,7 +1437,7 @@ static void object_get_link_property(Object *obj, Visitor *v,
  * Returns: The matched object or NULL on path lookup failures.
  */
 static Object *object_resolve_link(Object *obj, const char *name,
-                                   const char *path, Error **errp)
+                                   const char *path, Error *errp[static 1])
 {
     const char *type;
     gchar *target_type;
@@ -1467,7 +1469,7 @@ static Object *object_resolve_link(Object *obj, const char *name,
 
 static void object_set_link_property(Object *obj, Visitor *v,
                                      const char *name, void *opaque,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     Error *local_err = NULL;
     LinkProperty *prop = opaque;
@@ -1522,7 +1524,7 @@ void object_property_add_link(Object *obj, const char *name,
                               void (*check)(Object *, const char *,
                                             Object *, Error **),
                               ObjectPropertyLinkFlags flags,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     Error *local_err = NULL;
     LinkProperty *prop = g_malloc(sizeof(*prop));
@@ -1554,7 +1556,7 @@ out:
 }
 
 void object_property_add_const_link(Object *obj, const char *name,
-                                    Object *target, Error **errp)
+                                    Object *target, Error *errp[static 1])
 {
     char *link_type;
     ObjectProperty *op;
@@ -1731,7 +1733,7 @@ typedef struct StringProperty
 } StringProperty;
 
 static void property_get_str(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     StringProperty *prop = opaque;
     char *value;
@@ -1748,7 +1750,7 @@ static void property_get_str(Object *obj, Visitor *v, const char *name,
 }
 
 static void property_set_str(Object *obj, Visitor *v, const char *name,
-                             void *opaque, Error **errp)
+                             void *opaque, Error *errp[static 1])
 {
     StringProperty *prop = opaque;
     char *value;
@@ -1772,7 +1774,7 @@ static void property_release_str(Object *obj, const char *name,
 void object_property_add_str(Object *obj, const char *name,
                            char *(*get)(Object *, Error **),
                            void (*set)(Object *, const char *, Error **),
-                           Error **errp)
+                           Error *errp[static 1])
 {
     StringProperty *prop = g_malloc0(sizeof(*prop));
 
@@ -1793,7 +1795,7 @@ void object_class_property_add_str(ObjectClass *klass, const char *name,
                                    char *(*get)(Object *, Error **),
                                    void (*set)(Object *, const char *,
                                                Error **),
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     StringProperty *prop = g_malloc0(sizeof(*prop));
 
@@ -1817,7 +1819,7 @@ typedef struct BoolProperty
 } BoolProperty;
 
 static void property_get_bool(Object *obj, Visitor *v, const char *name,
-                              void *opaque, Error **errp)
+                              void *opaque, Error *errp[static 1])
 {
     BoolProperty *prop = opaque;
     bool value;
@@ -1833,7 +1835,7 @@ static void property_get_bool(Object *obj, Visitor *v, const char *name,
 }
 
 static void property_set_bool(Object *obj, Visitor *v, const char *name,
-                              void *opaque, Error **errp)
+                              void *opaque, Error *errp[static 1])
 {
     BoolProperty *prop = opaque;
     bool value;
@@ -1856,7 +1858,7 @@ static void property_release_bool(Object *obj, const char *name,
 void object_property_add_bool(Object *obj, const char *name,
                               bool (*get)(Object *, Error **),
                               void (*set)(Object *, bool, Error **),
-                              Error **errp)
+                              Error *errp[static 1])
 {
     BoolProperty *prop = g_malloc0(sizeof(*prop));
 
@@ -1876,7 +1878,7 @@ void object_property_add_bool(Object *obj, const char *name,
 void object_class_property_add_bool(ObjectClass *klass, const char *name,
                                     bool (*get)(Object *, Error **),
                                     void (*set)(Object *, bool, Error **),
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     BoolProperty *prop = g_malloc0(sizeof(*prop));
 
@@ -1894,7 +1896,7 @@ void object_class_property_add_bool(ObjectClass *klass, const char *name,
 }
 
 static void property_get_enum(Object *obj, Visitor *v, const char *name,
-                              void *opaque, Error **errp)
+                              void *opaque, Error *errp[static 1])
 {
     EnumProperty *prop = opaque;
     int value;
@@ -1910,7 +1912,7 @@ static void property_get_enum(Object *obj, Visitor *v, const char *name,
 }
 
 static void property_set_enum(Object *obj, Visitor *v, const char *name,
-                              void *opaque, Error **errp)
+                              void *opaque, Error *errp[static 1])
 {
     EnumProperty *prop = opaque;
     int value;
@@ -1934,7 +1936,7 @@ void object_property_add_enum(Object *obj, const char *name,
                               const char * const *strings,
                               int (*get)(Object *, Error **),
                               void (*set)(Object *, int, Error **),
-                              Error **errp)
+                              Error *errp[static 1])
 {
     EnumProperty *prop = g_malloc(sizeof(*prop));
 
@@ -1957,7 +1959,7 @@ void object_class_property_add_enum(ObjectClass *klass, const char *name,
                                     const char * const *strings,
                                     int (*get)(Object *, Error **),
                                     void (*set)(Object *, int, Error **),
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     EnumProperty *prop = g_malloc(sizeof(*prop));
 
@@ -1980,7 +1982,7 @@ typedef struct TMProperty {
 } TMProperty;
 
 static void property_get_tm(Object *obj, Visitor *v, const char *name,
-                            void *opaque, Error **errp)
+                            void *opaque, Error *errp[static 1])
 {
     TMProperty *prop = opaque;
     Error *err = NULL;
@@ -2036,7 +2038,7 @@ static void property_release_tm(Object *obj, const char *name,
 
 void object_property_add_tm(Object *obj, const char *name,
                             void (*get)(Object *, struct tm *, Error **),
-                            Error **errp)
+                            Error *errp[static 1])
 {
     TMProperty *prop = g_malloc0(sizeof(*prop));
 
@@ -2053,7 +2055,7 @@ void object_property_add_tm(Object *obj, const char *name,
 
 void object_class_property_add_tm(ObjectClass *klass, const char *name,
                                   void (*get)(Object *, struct tm *, Error **),
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     TMProperty *prop = g_malloc0(sizeof(*prop));
 
@@ -2068,90 +2070,94 @@ void object_class_property_add_tm(ObjectClass *klass, const char *name,
     }
 }
 
-static char *qdev_get_type(Object *obj, Error **errp)
+static char *qdev_get_type(Object *obj, Error *errp[static 1])
 {
     return g_strdup(object_get_typename(obj));
 }
 
 static void property_get_uint8_ptr(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     uint8_t value = *(uint8_t *)opaque;
     visit_type_uint8(v, name, &value, errp);
 }
 
 static void property_get_uint16_ptr(Object *obj, Visitor *v, const char *name,
-                                    void *opaque, Error **errp)
+                                    void *opaque, Error *errp[static 1])
 {
     uint16_t value = *(uint16_t *)opaque;
     visit_type_uint16(v, name, &value, errp);
 }
 
 static void property_get_uint32_ptr(Object *obj, Visitor *v, const char *name,
-                                    void *opaque, Error **errp)
+                                    void *opaque, Error *errp[static 1])
 {
     uint32_t value = *(uint32_t *)opaque;
     visit_type_uint32(v, name, &value, errp);
 }
 
 static void property_get_uint64_ptr(Object *obj, Visitor *v, const char *name,
-                                    void *opaque, Error **errp)
+                                    void *opaque, Error *errp[static 1])
 {
     uint64_t value = *(uint64_t *)opaque;
     visit_type_uint64(v, name, &value, errp);
 }
 
 void object_property_add_uint8_ptr(Object *obj, const char *name,
-                                   const uint8_t *v, Error **errp)
+                                   const uint8_t *v, Error *errp[static 1])
 {
     object_property_add(obj, name, "uint8", property_get_uint8_ptr,
                         NULL, NULL, (void *)v, errp);
 }
 
 void object_class_property_add_uint8_ptr(ObjectClass *klass, const char *name,
-                                         const uint8_t *v, Error **errp)
+                                         const uint8_t *v,
+                                         Error *errp[static 1])
 {
     object_class_property_add(klass, name, "uint8", property_get_uint8_ptr,
                               NULL, NULL, (void *)v, errp);
 }
 
 void object_property_add_uint16_ptr(Object *obj, const char *name,
-                                    const uint16_t *v, Error **errp)
+                                    const uint16_t *v, Error *errp[static 1])
 {
     object_property_add(obj, name, "uint16", property_get_uint16_ptr,
                         NULL, NULL, (void *)v, errp);
 }
 
 void object_class_property_add_uint16_ptr(ObjectClass *klass, const char *name,
-                                          const uint16_t *v, Error **errp)
+                                          const uint16_t *v,
+                                          Error *errp[static 1])
 {
     object_class_property_add(klass, name, "uint16", property_get_uint16_ptr,
                               NULL, NULL, (void *)v, errp);
 }
 
 void object_property_add_uint32_ptr(Object *obj, const char *name,
-                                    const uint32_t *v, Error **errp)
+                                    const uint32_t *v, Error *errp[static 1])
 {
     object_property_add(obj, name, "uint32", property_get_uint32_ptr,
                         NULL, NULL, (void *)v, errp);
 }
 
 void object_class_property_add_uint32_ptr(ObjectClass *klass, const char *name,
-                                          const uint32_t *v, Error **errp)
+                                          const uint32_t *v,
+                                          Error *errp[static 1])
 {
     object_class_property_add(klass, name, "uint32", property_get_uint32_ptr,
                               NULL, NULL, (void *)v, errp);
 }
 
 void object_property_add_uint64_ptr(Object *obj, const char *name,
-                                    const uint64_t *v, Error **errp)
+                                    const uint64_t *v, Error *errp[static 1])
 {
     object_property_add(obj, name, "uint64", property_get_uint64_ptr,
                         NULL, NULL, (void *)v, errp);
 }
 
 void object_class_property_add_uint64_ptr(ObjectClass *klass, const char *name,
-                                          const uint64_t *v, Error **errp)
+                                          const uint64_t *v,
+                                          Error *errp[static 1])
 {
     object_class_property_add(klass, name, "uint64", property_get_uint64_ptr,
                               NULL, NULL, (void *)v, errp);
@@ -2163,7 +2169,7 @@ typedef struct {
 } AliasProperty;
 
 static void property_get_alias(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     AliasProperty *prop = opaque;
 
@@ -2171,7 +2177,7 @@ static void property_get_alias(Object *obj, Visitor *v, const char *name,
 }
 
 static void property_set_alias(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     AliasProperty *prop = opaque;
 
@@ -2196,7 +2202,7 @@ static void property_release_alias(Object *obj, const char *name, void *opaque)
 
 void object_property_add_alias(Object *obj, const char *name,
                                Object *target_obj, const char *target_name,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     AliasProperty *prop;
     ObjectProperty *op;
@@ -2241,7 +2247,8 @@ out:
 }
 
 void object_property_set_description(Object *obj, const char *name,
-                                     const char *description, Error **errp)
+                                     const char *description,
+                                     Error *errp[static 1])
 {
     ObjectProperty *op;
 
@@ -2257,7 +2264,7 @@ void object_property_set_description(Object *obj, const char *name,
 void object_class_property_set_description(ObjectClass *klass,
                                            const char *name,
                                            const char *description,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     ObjectProperty *op;
 

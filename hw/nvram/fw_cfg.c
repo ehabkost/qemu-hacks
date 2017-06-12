@@ -1034,7 +1034,7 @@ static const TypeInfo fw_cfg_info = {
     .class_init    = fw_cfg_class_init,
 };
 
-static void fw_cfg_file_slots_allocate(FWCfgState *s, Error **errp)
+static void fw_cfg_file_slots_allocate(FWCfgState *s, Error *errp[static 1])
 {
     uint16_t file_slots_max;
 
@@ -1069,7 +1069,7 @@ static Property fw_cfg_io_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void fw_cfg_io_realize(DeviceState *dev, Error **errp)
+static void fw_cfg_io_realize(DeviceState *dev, Error *errp[static 1])
 {
     FWCfgIoState *s = FW_CFG_IO(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
@@ -1119,7 +1119,7 @@ static Property fw_cfg_mem_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void fw_cfg_mem_realize(DeviceState *dev, Error **errp)
+static void fw_cfg_mem_realize(DeviceState *dev, Error *errp[static 1])
 {
     FWCfgMemState *s = FW_CFG_MEM(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

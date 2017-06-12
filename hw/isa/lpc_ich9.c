@@ -638,7 +638,7 @@ Object *ich9_lpc_find(void)
 }
 
 static void ich9_lpc_get_sci_int(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     ICH9LPCState *lpc = ICH9_LPC_DEVICE(obj);
     uint32_t value = lpc->sci_gsi;
@@ -669,7 +669,7 @@ static void ich9_lpc_initfn(Object *obj)
     ich9_lpc_add_properties(lpc);
 }
 
-static void ich9_lpc_realize(PCIDevice *d, Error **errp)
+static void ich9_lpc_realize(PCIDevice *d, Error *errp[static 1])
 {
     ICH9LPCState *lpc = ICH9_LPC_DEVICE(d);
     DeviceState *dev = DEVICE(d);

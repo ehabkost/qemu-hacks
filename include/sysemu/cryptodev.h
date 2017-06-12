@@ -244,7 +244,7 @@ void cryptodev_backend_free_client(
  */
 void cryptodev_backend_cleanup(
            CryptoDevBackend *backend,
-           Error **errp);
+           Error *errp[static 1]);
 
 /**
  * cryptodev_backend_sym_create_session:
@@ -260,7 +260,7 @@ void cryptodev_backend_cleanup(
 int64_t cryptodev_backend_sym_create_session(
            CryptoDevBackend *backend,
            CryptoDevBackendSymSessionInfo *sess_info,
-           uint32_t queue_index, Error **errp);
+           uint32_t queue_index, Error *errp[static 1]);
 
 /**
  * cryptodev_backend_sym_close_session:
@@ -277,7 +277,7 @@ int64_t cryptodev_backend_sym_create_session(
 int cryptodev_backend_sym_close_session(
            CryptoDevBackend *backend,
            uint64_t session_id,
-           uint32_t queue_index, Error **errp);
+           uint32_t queue_index, Error *errp[static 1]);
 
 /**
  * cryptodev_backend_crypto_operation:
@@ -295,7 +295,7 @@ int cryptodev_backend_sym_close_session(
 int cryptodev_backend_crypto_operation(
                  CryptoDevBackend *backend,
                  void *opaque,
-                 uint32_t queue_index, Error **errp);
+                 uint32_t queue_index, Error *errp[static 1]);
 
 /**
  * cryptodev_backend_set_used:

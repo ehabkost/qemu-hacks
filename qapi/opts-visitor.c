@@ -126,7 +126,7 @@ opts_visitor_insert(GHashTable *unprocessed_opts, const QemuOpt *opt)
 
 static void
 opts_start_struct(Visitor *v, const char *name, void **obj,
-                  size_t size, Error **errp)
+                  size_t size, Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
     const QemuOpt *opt;
@@ -158,7 +158,7 @@ opts_start_struct(Visitor *v, const char *name, void **obj,
 
 
 static void
-opts_check_struct(Visitor *v, Error **errp)
+opts_check_struct(Visitor *v, Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
     GHashTableIter iter;
@@ -200,7 +200,8 @@ opts_end_struct(Visitor *v, void **obj)
 
 
 static GQueue *
-lookup_distinct(const OptsVisitor *ov, const char *name, Error **errp)
+lookup_distinct(const OptsVisitor *ov, const char *name,
+                Error *errp[static 1])
 {
     GQueue *list;
 
@@ -214,7 +215,7 @@ lookup_distinct(const OptsVisitor *ov, const char *name, Error **errp)
 
 static void
 opts_start_list(Visitor *v, const char *name, GenericList **list, size_t size,
-                Error **errp)
+                Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
 
@@ -273,7 +274,7 @@ opts_next_list(Visitor *v, GenericList *tail, size_t size)
 
 
 static void
-opts_check_list(Visitor *v, Error **errp)
+opts_check_list(Visitor *v, Error *errp[static 1])
 {
     /*
      * Unvisited list elements will be reported later when checking
@@ -296,7 +297,7 @@ opts_end_list(Visitor *v, void **obj)
 
 
 static const QemuOpt *
-lookup_scalar(const OptsVisitor *ov, const char *name, Error **errp)
+lookup_scalar(const OptsVisitor *ov, const char *name, Error *errp[static 1])
 {
     if (ov->list_mode == LM_NONE) {
         GQueue *list;
@@ -324,7 +325,7 @@ processed(OptsVisitor *ov, const char *name)
 
 
 static void
-opts_type_str(Visitor *v, const char *name, char **obj, Error **errp)
+opts_type_str(Visitor *v, const char *name, char **obj, Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
     const QemuOpt *opt;
@@ -346,7 +347,7 @@ opts_type_str(Visitor *v, const char *name, char **obj, Error **errp)
 
 /* mimics qemu-option.c::parse_option_bool() */
 static void
-opts_type_bool(Visitor *v, const char *name, bool *obj, Error **errp)
+opts_type_bool(Visitor *v, const char *name, bool *obj, Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
     const QemuOpt *opt;
@@ -379,7 +380,8 @@ opts_type_bool(Visitor *v, const char *name, bool *obj, Error **errp)
 
 
 static void
-opts_type_int64(Visitor *v, const char *name, int64_t *obj, Error **errp)
+opts_type_int64(Visitor *v, const char *name, int64_t *obj,
+                Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
     const QemuOpt *opt;
@@ -435,7 +437,8 @@ opts_type_int64(Visitor *v, const char *name, int64_t *obj, Error **errp)
 
 
 static void
-opts_type_uint64(Visitor *v, const char *name, uint64_t *obj, Error **errp)
+opts_type_uint64(Visitor *v, const char *name, uint64_t *obj,
+                 Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
     const QemuOpt *opt;
@@ -487,7 +490,8 @@ opts_type_uint64(Visitor *v, const char *name, uint64_t *obj, Error **errp)
 
 
 static void
-opts_type_size(Visitor *v, const char *name, uint64_t *obj, Error **errp)
+opts_type_size(Visitor *v, const char *name, uint64_t *obj,
+               Error *errp[static 1])
 {
     OptsVisitor *ov = to_ov(v);
     const QemuOpt *opt;

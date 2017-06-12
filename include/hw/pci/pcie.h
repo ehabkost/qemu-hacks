@@ -131,7 +131,8 @@ void pcie_dev_ser_num_init(PCIDevice *dev, uint16_t offset, uint64_t ser_num);
 void pcie_ats_init(PCIDevice *dev, uint16_t offset);
 
 void pcie_cap_slot_hotplug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
-                              Error **errp);
+                              Error *errp[static 1]);
 void pcie_cap_slot_hot_unplug_request_cb(HotplugHandler *hotplug_dev,
-                                         DeviceState *dev, Error **errp);
+                                         DeviceState *dev,
+                                         Error *errp[static 1]);
 #endif /* QEMU_PCIE_H */

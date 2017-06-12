@@ -221,14 +221,14 @@ static uint32_t entity_sense(sPAPRDRConnector *drc, sPAPRDREntitySense *state)
 }
 
 static void prop_get_index(Object *obj, Visitor *v, const char *name,
-                           void *opaque, Error **errp)
+                           void *opaque, Error *errp[static 1])
 {
     sPAPRDRConnector *drc = SPAPR_DR_CONNECTOR(obj);
     uint32_t value = spapr_drc_index(drc);
     visit_type_uint32(v, name, &value, errp);
 }
 
-static char *prop_get_name(Object *obj, Error **errp)
+static char *prop_get_name(Object *obj, Error *errp[static 1])
 {
     sPAPRDRConnector *drc = SPAPR_DR_CONNECTOR(obj);
     sPAPRDRConnectorClass *drck = SPAPR_DR_CONNECTOR_GET_CLASS(drc);
@@ -236,7 +236,7 @@ static char *prop_get_name(Object *obj, Error **errp)
 }
 
 static void prop_get_fdt(Object *obj, Visitor *v, const char *name,
-                         void *opaque, Error **errp)
+                         void *opaque, Error *errp[static 1])
 {
     sPAPRDRConnector *drc = SPAPR_DR_CONNECTOR(obj);
     int fdt_offset_next, fdt_offset, fdt_depth;
@@ -306,7 +306,7 @@ static void prop_get_fdt(Object *obj, Visitor *v, const char *name,
 }
 
 static void attach(sPAPRDRConnector *drc, DeviceState *d, void *fdt,
-                   int fdt_start_offset, bool coldplug, Error **errp)
+                   int fdt_start_offset, bool coldplug, Error *errp[static 1])
 {
     trace_spapr_drc_attach(spapr_drc_index(drc));
 
@@ -357,7 +357,8 @@ static void attach(sPAPRDRConnector *drc, DeviceState *d, void *fdt,
                              NULL, 0, IGNORE_ERRORS);
 }
 
-static void detach(sPAPRDRConnector *drc, DeviceState *d, Error **errp)
+static void detach(sPAPRDRConnector *drc, DeviceState *d,
+                   Error *errp[static 1])
 {
     trace_spapr_drc_detach(spapr_drc_index(drc));
 
@@ -527,7 +528,7 @@ static const VMStateDescription vmstate_spapr_drc = {
     }
 };
 
-static void realize(DeviceState *d, Error **errp)
+static void realize(DeviceState *d, Error *errp[static 1])
 {
     sPAPRDRConnector *drc = SPAPR_DR_CONNECTOR(d);
     Object *root_container;
@@ -559,7 +560,7 @@ static void realize(DeviceState *d, Error **errp)
     trace_spapr_drc_realize_complete(spapr_drc_index(drc));
 }
 
-static void unrealize(DeviceState *d, Error **errp)
+static void unrealize(DeviceState *d, Error *errp[static 1])
 {
     sPAPRDRConnector *drc = SPAPR_DR_CONNECTOR(d);
     Object *root_container;

@@ -730,7 +730,7 @@ exit:
  * If read-only, we must replay the log in RAM (or refuse to open
  * a dirty VHDX file read-only) */
 int vhdx_parse_log(BlockDriverState *bs, BDRVVHDXState *s, bool *flushed,
-                   Error **errp)
+                   Error *errp[static 1])
 {
     int ret = 0;
     VHDXHeader *hdr;

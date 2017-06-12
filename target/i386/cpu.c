@@ -1575,7 +1575,8 @@ static void max_x86_cpu_class_init(ObjectClass *oc, void *data)
     dc->props = max_x86_cpu_properties;
 }
 
-static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp);
+static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def,
+			     Error *errp[static 1]);
 
 static void max_x86_cpu_initfn(Object *obj)
 {
@@ -1678,7 +1679,7 @@ static void report_unavailable_features(FeatureWord w, uint32_t mask)
 
 static void x86_cpuid_version_get_family(Object *obj, Visitor *v,
                                          const char *name, void *opaque,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1693,7 +1694,7 @@ static void x86_cpuid_version_get_family(Object *obj, Visitor *v,
 
 static void x86_cpuid_version_set_family(Object *obj, Visitor *v,
                                          const char *name, void *opaque,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1721,7 +1722,7 @@ static void x86_cpuid_version_set_family(Object *obj, Visitor *v,
 
 static void x86_cpuid_version_get_model(Object *obj, Visitor *v,
                                         const char *name, void *opaque,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1734,7 +1735,7 @@ static void x86_cpuid_version_get_model(Object *obj, Visitor *v,
 
 static void x86_cpuid_version_set_model(Object *obj, Visitor *v,
                                         const char *name, void *opaque,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1758,7 +1759,7 @@ static void x86_cpuid_version_set_model(Object *obj, Visitor *v,
 
 static void x86_cpuid_version_get_stepping(Object *obj, Visitor *v,
                                            const char *name, void *opaque,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1770,7 +1771,7 @@ static void x86_cpuid_version_get_stepping(Object *obj, Visitor *v,
 
 static void x86_cpuid_version_set_stepping(Object *obj, Visitor *v,
                                            const char *name, void *opaque,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1792,7 +1793,7 @@ static void x86_cpuid_version_set_stepping(Object *obj, Visitor *v,
     env->cpuid_version |= value & 0xf;
 }
 
-static char *x86_cpuid_get_vendor(Object *obj, Error **errp)
+static char *x86_cpuid_get_vendor(Object *obj, Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1805,7 +1806,7 @@ static char *x86_cpuid_get_vendor(Object *obj, Error **errp)
 }
 
 static void x86_cpuid_set_vendor(Object *obj, const char *value,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1826,7 +1827,7 @@ static void x86_cpuid_set_vendor(Object *obj, const char *value,
     }
 }
 
-static char *x86_cpuid_get_model_id(Object *obj, Error **errp)
+static char *x86_cpuid_get_model_id(Object *obj, Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1842,7 +1843,7 @@ static char *x86_cpuid_get_model_id(Object *obj, Error **errp)
 }
 
 static void x86_cpuid_set_model_id(Object *obj, const char *model_id,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     CPUX86State *env = &cpu->env;
@@ -1864,7 +1865,7 @@ static void x86_cpuid_set_model_id(Object *obj, const char *model_id,
 }
 
 static void x86_cpuid_get_tsc_freq(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     int64_t value;
@@ -1874,7 +1875,7 @@ static void x86_cpuid_get_tsc_freq(Object *obj, Visitor *v, const char *name,
 }
 
 static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     const int64_t min = 0;
@@ -1897,7 +1898,7 @@ static void x86_cpuid_set_tsc_freq(Object *obj, Visitor *v, const char *name,
 /* Generic getter for "feature-words" and "filtered-features" properties */
 static void x86_cpu_get_feature_words(Object *obj, Visitor *v,
                                       const char *name, void *opaque,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     uint32_t *array = (uint32_t *)opaque;
     FeatureWord w;
@@ -1924,7 +1925,7 @@ static void x86_cpu_get_feature_words(Object *obj, Visitor *v,
 }
 
 static void x86_get_hv_spinlocks(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     int64_t value = cpu->hyperv_spinlock_attempts;
@@ -1933,7 +1934,7 @@ static void x86_get_hv_spinlocks(Object *obj, Visitor *v, const char *name,
 }
 
 static void x86_set_hv_spinlocks(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     const int64_t min = 0xFFF;
     const int64_t max = UINT_MAX;
@@ -2007,7 +2008,7 @@ static gint compare_string(gconstpointer a, gconstpointer b)
 /* Parse "+feature,-feature,feature=foo" CPU feature string
  */
 static void x86_cpu_parse_featurestr(const char *typename, char *features,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     char *featurestr; /* Single 'key=value" string being parsed */
     static bool cpu_globals_initialized;
@@ -2095,7 +2096,7 @@ static void x86_cpu_parse_featurestr(const char *typename, char *features,
     }
 }
 
-static void x86_cpu_expand_features(X86CPU *cpu, Error **errp);
+static void x86_cpu_expand_features(X86CPU *cpu, Error *errp[static 1]);
 static int x86_cpu_filter_features(X86CPU *cpu);
 
 /* Check for missing features that may prevent the CPU class from
@@ -2252,7 +2253,7 @@ static void x86_cpu_definition_entry(gpointer data, gpointer user_data)
     *cpu_list = entry;
 }
 
-CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
+CpuDefinitionInfoList *arch_query_cpu_definitions(Error *errp[static 1])
 {
     CpuDefinitionInfoList *cpu_list = NULL;
     GSList *list = get_sorted_cpu_model_list();
@@ -2305,7 +2306,8 @@ static void x86_cpu_apply_props(X86CPU *cpu, PropValue *props)
 
 /* Load data from X86CPUDefinition into a X86CPU object
  */
-static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
+static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def,
+                             Error *errp[static 1])
 {
     CPUX86State *env = &cpu->env;
     const char *vendor;
@@ -2456,7 +2458,8 @@ static void x86_cpu_to_dict_full(X86CPU *cpu, QDict *props)
     }
 }
 
-static void object_apply_props(Object *obj, QDict *props, Error **errp)
+static void object_apply_props(Object *obj, QDict *props,
+                               Error *errp[static 1])
 {
     const QDictEntry *prop;
     Error *err = NULL;
@@ -2473,7 +2476,8 @@ static void object_apply_props(Object *obj, QDict *props, Error **errp)
 }
 
 /* Create X86CPU object according to model+props specification */
-static X86CPU *x86_cpu_from_model(const char *model, QDict *props, Error **errp)
+static X86CPU *x86_cpu_from_model(const char *model, QDict *props,
+                                  Error *errp[static 1])
 {
     X86CPU *xc = NULL;
     X86CPUClass *xcc;
@@ -3178,7 +3182,7 @@ APICCommonClass *apic_get_class(void)
     return APIC_COMMON_CLASS(object_class_by_name(apic_type));
 }
 
-static void x86_cpu_apic_create(X86CPU *cpu, Error **errp)
+static void x86_cpu_apic_create(X86CPU *cpu, Error *errp[static 1])
 {
     APICCommonState *apic;
     ObjectClass *apic_class = OBJECT_CLASS(apic_get_class());
@@ -3196,7 +3200,7 @@ static void x86_cpu_apic_create(X86CPU *cpu, Error **errp)
     apic->apicbase = APIC_DEFAULT_ADDRESS | MSR_IA32_APICBASE_ENABLE;
 }
 
-static void x86_cpu_apic_realize(X86CPU *cpu, Error **errp)
+static void x86_cpu_apic_realize(X86CPU *cpu, Error *errp[static 1])
 {
     APICCommonState *apic;
     static bool apic_mmio_map_once;
@@ -3234,7 +3238,7 @@ static void x86_cpu_machine_done(Notifier *n, void *unused)
     }
 }
 #else
-static void x86_cpu_apic_realize(X86CPU *cpu, Error **errp)
+static void x86_cpu_apic_realize(X86CPU *cpu, Error *errp[static 1])
 {
 }
 #endif
@@ -3360,7 +3364,7 @@ static void x86_cpu_enable_xsave_components(X86CPU *cpu)
 /* Expand CPU configuration data, based on configured features
  * and host/accelerator capabilities when appropriate.
  */
-static void x86_cpu_expand_features(X86CPU *cpu, Error **errp)
+static void x86_cpu_expand_features(X86CPU *cpu, Error *errp[static 1])
 {
     CPUX86State *env = &cpu->env;
     FeatureWord w;
@@ -3473,7 +3477,7 @@ static int x86_cpu_filter_features(X86CPU *cpu)
 #define IS_AMD_CPU(env) ((env)->cpuid_vendor1 == CPUID_VENDOR_AMD_1 && \
                          (env)->cpuid_vendor2 == CPUID_VENDOR_AMD_2 && \
                          (env)->cpuid_vendor3 == CPUID_VENDOR_AMD_3)
-static void x86_cpu_realizefn(DeviceState *dev, Error **errp)
+static void x86_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     X86CPU *cpu = X86_CPU(dev);
@@ -3670,7 +3674,7 @@ out:
     }
 }
 
-static void x86_cpu_unrealizefn(DeviceState *dev, Error **errp)
+static void x86_cpu_unrealizefn(DeviceState *dev, Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(dev);
     X86CPUClass *xcc = X86_CPU_GET_CLASS(dev);
@@ -3697,7 +3701,7 @@ typedef struct BitProperty {
 } BitProperty;
 
 static void x86_cpu_get_bit_prop(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     X86CPU *cpu = X86_CPU(obj);
     BitProperty *fp = opaque;
@@ -3707,7 +3711,7 @@ static void x86_cpu_get_bit_prop(Object *obj, Visitor *v, const char *name,
 }
 
 static void x86_cpu_set_bit_prop(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     X86CPU *cpu = X86_CPU(obj);
@@ -3815,7 +3819,7 @@ static GuestPanicInformation *x86_cpu_get_crash_info(CPUState *cs)
 }
 static void x86_cpu_get_crash_info_qom(Object *obj, Visitor *v,
                                        const char *name, void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     CPUState *cs = CPU(obj);
     GuestPanicInformation *panic_info;

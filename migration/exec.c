@@ -27,7 +27,8 @@
 #include "trace.h"
 
 
-void exec_start_outgoing_migration(MigrationState *s, const char *command, Error **errp)
+void exec_start_outgoing_migration(MigrationState *s, const char *command,
+                                   Error *errp[static 1])
 {
     QIOChannel *ioc;
     const char *argv[] = { "/bin/sh", "-c", command, NULL };
@@ -54,7 +55,7 @@ static gboolean exec_accept_incoming_migration(QIOChannel *ioc,
     return FALSE; /* unregister */
 }
 
-void exec_start_incoming_migration(const char *command, Error **errp)
+void exec_start_incoming_migration(const char *command, Error *errp[static 1])
 {
     QIOChannel *ioc;
     const char *argv[] = { "/bin/sh", "-c", command, NULL };

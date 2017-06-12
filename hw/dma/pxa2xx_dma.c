@@ -467,7 +467,7 @@ static void pxa2xx_dma_init(Object *obj)
     sysbus_init_irq(sbd, &s->irq);
 }
 
-static void pxa2xx_dma_realize(DeviceState *dev, Error **errp)
+static void pxa2xx_dma_realize(DeviceState *dev, Error *errp[static 1])
 {
     PXA2xxDMAState *s = PXA2XX_DMA(dev);
     int i;

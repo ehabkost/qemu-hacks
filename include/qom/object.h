@@ -913,16 +913,16 @@ ObjectProperty *object_property_add(Object *obj, const char *name,
                                     ObjectPropertyAccessor *get,
                                     ObjectPropertyAccessor *set,
                                     ObjectPropertyRelease *release,
-                                    void *opaque, Error **errp);
+                                    void *opaque, Error *errp[static 1]);
 
-void object_property_del(Object *obj, const char *name, Error **errp);
+void object_property_del(Object *obj, const char *name, Error *errp[static 1]);
 
 ObjectProperty *object_class_property_add(ObjectClass *klass, const char *name,
                                           const char *type,
                                           ObjectPropertyAccessor *get,
                                           ObjectPropertyAccessor *set,
                                           ObjectPropertyRelease *release,
-                                          void *opaque, Error **errp);
+                                          void *opaque, Error *errp[static 1]);
 
 /**
  * object_property_find:
@@ -933,9 +933,9 @@ ObjectProperty *object_class_property_add(ObjectClass *klass, const char *name,
  * Look up a property for an object and return its #ObjectProperty if found.
  */
 ObjectProperty *object_property_find(Object *obj, const char *name,
-                                     Error **errp);
+                                     Error *errp[static 1]);
 ObjectProperty *object_class_property_find(ObjectClass *klass, const char *name,
-                                           Error **errp);
+                                           Error *errp[static 1]);
 
 typedef struct ObjectPropertyIterator {
     ObjectClass *nextclass;
@@ -997,7 +997,7 @@ void object_unparent(Object *obj);
  * Reads a property from a object.
  */
 void object_property_get(Object *obj, Visitor *v, const char *name,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * object_property_set_str:
@@ -1008,7 +1008,7 @@ void object_property_get(Object *obj, Visitor *v, const char *name,
  * Writes a string value to a property.
  */
 void object_property_set_str(Object *obj, const char *value,
-                             const char *name, Error **errp);
+                             const char *name, Error *errp[static 1]);
 
 /**
  * object_property_get_str:
@@ -1021,7 +1021,7 @@ void object_property_set_str(Object *obj, const char *value,
  * The caller should free the string.
  */
 char *object_property_get_str(Object *obj, const char *name,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 /**
  * object_property_set_link:
@@ -1032,7 +1032,7 @@ char *object_property_get_str(Object *obj, const char *name,
  * Writes an object's canonical path to a property.
  */
 void object_property_set_link(Object *obj, Object *value,
-                              const char *name, Error **errp);
+                              const char *name, Error *errp[static 1]);
 
 /**
  * object_property_get_link:
@@ -1045,7 +1045,7 @@ void object_property_set_link(Object *obj, Object *value,
  * string or not a valid object path).
  */
 Object *object_property_get_link(Object *obj, const char *name,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 
 /**
  * object_property_set_bool:
@@ -1056,7 +1056,7 @@ Object *object_property_get_link(Object *obj, const char *name,
  * Writes a bool value to a property.
  */
 void object_property_set_bool(Object *obj, bool value,
-                              const char *name, Error **errp);
+                              const char *name, Error *errp[static 1]);
 
 /**
  * object_property_get_bool:
@@ -1068,7 +1068,7 @@ void object_property_set_bool(Object *obj, bool value,
  * an error occurs (including when the property value is not a bool).
  */
 bool object_property_get_bool(Object *obj, const char *name,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 /**
  * object_property_set_int:
@@ -1079,7 +1079,7 @@ bool object_property_get_bool(Object *obj, const char *name,
  * Writes an integer value to a property.
  */
 void object_property_set_int(Object *obj, int64_t value,
-                             const char *name, Error **errp);
+                             const char *name, Error *errp[static 1]);
 
 /**
  * object_property_get_int:
@@ -1091,7 +1091,7 @@ void object_property_set_int(Object *obj, int64_t value,
  * an error occurs (including when the property value is not an integer).
  */
 int64_t object_property_get_int(Object *obj, const char *name,
-                                Error **errp);
+                                Error *errp[static 1]);
 
 /**
  * object_property_get_enum:
@@ -1105,7 +1105,7 @@ int64_t object_property_get_int(Object *obj, const char *name,
  * an enum).
  */
 int object_property_get_enum(Object *obj, const char *name,
-                             const char *typename, Error **errp);
+                             const char *typename, Error *errp[static 1]);
 
 /**
  * object_property_get_uint16List:
@@ -1119,7 +1119,7 @@ int object_property_get_enum(Object *obj, const char *name,
  * an list of integers).
  */
 void object_property_get_uint16List(Object *obj, const char *name,
-                                    uint16List **list, Error **errp);
+                                    uint16List **list, Error *errp[static 1]);
 
 /**
  * object_property_set:
@@ -1133,7 +1133,7 @@ void object_property_get_uint16List(Object *obj, const char *name,
  * Writes a property to a object.
  */
 void object_property_set(Object *obj, Visitor *v, const char *name,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * object_property_parse:
@@ -1145,7 +1145,7 @@ void object_property_set(Object *obj, Visitor *v, const char *name,
  * Parses a string and writes the result into a property of an object.
  */
 void object_property_parse(Object *obj, const char *string,
-                           const char *name, Error **errp);
+                           const char *name, Error *errp[static 1]);
 
 /**
  * object_property_print:
@@ -1158,7 +1158,7 @@ void object_property_parse(Object *obj, const char *string,
  * caller shall free the string.
  */
 char *object_property_print(Object *obj, const char *name, bool human,
-                            Error **errp);
+                            Error *errp[static 1]);
 
 /**
  * object_property_get_type:
@@ -1169,7 +1169,7 @@ char *object_property_print(Object *obj, const char *name, bool human,
  * Returns:  The type name of the property.
  */
 const char *object_property_get_type(Object *obj, const char *name,
-                                     Error **errp);
+                                     Error *errp[static 1]);
 
 /**
  * object_get_root:
@@ -1282,7 +1282,7 @@ Object *object_resolve_path_component(Object *parent, const gchar *part);
  * The child object itself can be retrieved using object_property_get_link().
  */
 void object_property_add_child(Object *obj, const char *name,
-                               Object *child, Error **errp);
+                               Object *child, Error *errp[static 1]);
 
 typedef enum {
     /* Unref the link pointer when the property is deleted */
@@ -1332,7 +1332,7 @@ void object_property_add_link(Object *obj, const char *name,
                               void (*check)(Object *obj, const char *name,
                                             Object *val, Error **errp),
                               ObjectPropertyLinkFlags flags,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 /**
  * object_property_add_str:
@@ -1349,13 +1349,13 @@ void object_property_add_link(Object *obj, const char *name,
 void object_property_add_str(Object *obj, const char *name,
                              char *(*get)(Object *, Error **),
                              void (*set)(Object *, const char *, Error **),
-                             Error **errp);
+                             Error *errp[static 1]);
 
 void object_class_property_add_str(ObjectClass *klass, const char *name,
                                    char *(*get)(Object *, Error **),
                                    void (*set)(Object *, const char *,
                                                Error **),
-                                   Error **errp);
+                                   Error *errp[static 1]);
 
 /**
  * object_property_add_bool:
@@ -1371,12 +1371,12 @@ void object_class_property_add_str(ObjectClass *klass, const char *name,
 void object_property_add_bool(Object *obj, const char *name,
                               bool (*get)(Object *, Error **),
                               void (*set)(Object *, bool, Error **),
-                              Error **errp);
+                              Error *errp[static 1]);
 
 void object_class_property_add_bool(ObjectClass *klass, const char *name,
                                     bool (*get)(Object *, Error **),
                                     void (*set)(Object *, bool, Error **),
-                                    Error **errp);
+                                    Error *errp[static 1]);
 
 /**
  * object_property_add_enum:
@@ -1395,14 +1395,14 @@ void object_property_add_enum(Object *obj, const char *name,
                               const char * const *strings,
                               int (*get)(Object *, Error **),
                               void (*set)(Object *, int, Error **),
-                              Error **errp);
+                              Error *errp[static 1]);
 
 void object_class_property_add_enum(ObjectClass *klass, const char *name,
                                     const char *typename,
                                     const char * const *strings,
                                     int (*get)(Object *, Error **),
                                     void (*set)(Object *, int, Error **),
-                                    Error **errp);
+                                    Error *errp[static 1]);
 
 /**
  * object_property_add_tm:
@@ -1416,11 +1416,11 @@ void object_class_property_add_enum(ObjectClass *klass, const char *name,
  */
 void object_property_add_tm(Object *obj, const char *name,
                             void (*get)(Object *, struct tm *, Error **),
-                            Error **errp);
+                            Error *errp[static 1]);
 
 void object_class_property_add_tm(ObjectClass *klass, const char *name,
                                   void (*get)(Object *, struct tm *, Error **),
-                                  Error **errp);
+                                  Error *errp[static 1]);
 
 /**
  * object_property_add_uint8_ptr:
@@ -1433,9 +1433,10 @@ void object_class_property_add_tm(ObjectClass *klass, const char *name,
  * property of type 'uint8'.
  */
 void object_property_add_uint8_ptr(Object *obj, const char *name,
-                                   const uint8_t *v, Error **errp);
+                                   const uint8_t *v, Error *errp[static 1]);
 void object_class_property_add_uint8_ptr(ObjectClass *klass, const char *name,
-                                         const uint8_t *v, Error **errp);
+                                         const uint8_t *v,
+                                         Error *errp[static 1]);
 
 /**
  * object_property_add_uint16_ptr:
@@ -1448,9 +1449,10 @@ void object_class_property_add_uint8_ptr(ObjectClass *klass, const char *name,
  * property of type 'uint16'.
  */
 void object_property_add_uint16_ptr(Object *obj, const char *name,
-                                    const uint16_t *v, Error **errp);
+                                    const uint16_t *v, Error *errp[static 1]);
 void object_class_property_add_uint16_ptr(ObjectClass *klass, const char *name,
-                                          const uint16_t *v, Error **errp);
+                                          const uint16_t *v,
+                                          Error *errp[static 1]);
 
 /**
  * object_property_add_uint32_ptr:
@@ -1463,9 +1465,10 @@ void object_class_property_add_uint16_ptr(ObjectClass *klass, const char *name,
  * property of type 'uint32'.
  */
 void object_property_add_uint32_ptr(Object *obj, const char *name,
-                                    const uint32_t *v, Error **errp);
+                                    const uint32_t *v, Error *errp[static 1]);
 void object_class_property_add_uint32_ptr(ObjectClass *klass, const char *name,
-                                          const uint32_t *v, Error **errp);
+                                          const uint32_t *v,
+                                          Error *errp[static 1]);
 
 /**
  * object_property_add_uint64_ptr:
@@ -1478,9 +1481,10 @@ void object_class_property_add_uint32_ptr(ObjectClass *klass, const char *name,
  * property of type 'uint64'.
  */
 void object_property_add_uint64_ptr(Object *obj, const char *name,
-                                    const uint64_t *v, Error **Errp);
+                                    const uint64_t *v, Error *Errp[static 1]);
 void object_class_property_add_uint64_ptr(ObjectClass *klass, const char *name,
-                                          const uint64_t *v, Error **Errp);
+                                          const uint64_t *v,
+                                          Error *Errp[static 1]);
 
 /**
  * object_property_add_alias:
@@ -1500,7 +1504,7 @@ void object_class_property_add_uint64_ptr(ObjectClass *klass, const char *name,
  */
 void object_property_add_alias(Object *obj, const char *name,
                                Object *target_obj, const char *target_name,
-                               Error **errp);
+                               Error *errp[static 1]);
 
 /**
  * object_property_add_const_link:
@@ -1518,7 +1522,7 @@ void object_property_add_alias(Object *obj, const char *name,
  * taking a reference.
  */
 void object_property_add_const_link(Object *obj, const char *name,
-                                    Object *target, Error **errp);
+                                    Object *target, Error *errp[static 1]);
 
 /**
  * object_property_set_description:
@@ -1531,10 +1535,11 @@ void object_property_add_const_link(Object *obj, const char *name,
  *
  */
 void object_property_set_description(Object *obj, const char *name,
-                                     const char *description, Error **errp);
+                                     const char *description,
+                                     Error *errp[static 1]);
 void object_class_property_set_description(ObjectClass *klass, const char *name,
                                            const char *description,
-                                           Error **errp);
+                                           Error *errp[static 1]);
 
 /**
  * object_child_foreach:

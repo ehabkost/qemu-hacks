@@ -37,7 +37,7 @@ static const MemoryRegionOps xen_apic_io_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void xen_apic_realize(DeviceState *dev, Error **errp)
+static void xen_apic_realize(DeviceState *dev, Error *errp[static 1])
 {
     APICCommonState *s = APIC_COMMON(dev);
 

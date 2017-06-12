@@ -896,7 +896,7 @@ out:
     return ret;
 }
 
-int64_t ga_get_fd_handle(GAState *s, Error **errp)
+int64_t ga_get_fd_handle(GAState *s, Error *errp[static 1])
 {
     int64_t handle;
 

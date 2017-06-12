@@ -160,7 +160,7 @@ static void ccw_init(MachineState *machine)
 }
 
 static void s390_cpu_plug(HotplugHandler *hotplug_dev,
-                        DeviceState *dev, Error **errp)
+                        DeviceState *dev, Error *errp[static 1])
 {
     gchar *name;
     S390CPU *cpu = S390_CPU(dev);
@@ -173,7 +173,7 @@ static void s390_cpu_plug(HotplugHandler *hotplug_dev,
 }
 
 static void s390_machine_device_plug(HotplugHandler *hotplug_dev,
-                                     DeviceState *dev, Error **errp)
+                                     DeviceState *dev, Error *errp[static 1])
 {
     if (object_dynamic_cast(OBJECT(dev), TYPE_CPU)) {
         s390_cpu_plug(hotplug_dev, dev, errp);
@@ -189,7 +189,7 @@ static HotplugHandler *s390_get_hotplug_handler(MachineState *machine,
     return NULL;
 }
 
-static void s390_hot_add_cpu(const int64_t id, Error **errp)
+static void s390_hot_add_cpu(const int64_t id, Error *errp[static 1])
 {
     MachineState *machine = MACHINE(qdev_get_machine());
 
@@ -221,7 +221,8 @@ static void ccw_machine_class_init(ObjectClass *oc, void *data)
     nc->nmi_monitor_handler = s390_nmi;
 }
 
-static inline bool machine_get_aes_key_wrap(Object *obj, Error **errp)
+static inline bool machine_get_aes_key_wrap(Object *obj,
+                                            Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
 
@@ -229,14 +230,15 @@ static inline bool machine_get_aes_key_wrap(Object *obj, Error **errp)
 }
 
 static inline void machine_set_aes_key_wrap(Object *obj, bool value,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
 
     ms->aes_key_wrap = value;
 }
 
-static inline bool machine_get_dea_key_wrap(Object *obj, Error **errp)
+static inline bool machine_get_dea_key_wrap(Object *obj,
+                                            Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
 
@@ -244,7 +246,7 @@ static inline bool machine_get_dea_key_wrap(Object *obj, Error **errp)
 }
 
 static inline void machine_set_dea_key_wrap(Object *obj, bool value,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
 
@@ -283,14 +285,15 @@ bool cpu_model_allowed(void)
     return true;
 }
 
-static char *machine_get_loadparm(Object *obj, Error **errp)
+static char *machine_get_loadparm(Object *obj, Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
 
     return g_memdup(ms->loadparm, sizeof(ms->loadparm));
 }
 
-static void machine_set_loadparm(Object *obj, const char *val, Error **errp)
+static void machine_set_loadparm(Object *obj, const char *val,
+                                 Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
     int i;
@@ -312,7 +315,7 @@ static void machine_set_loadparm(Object *obj, const char *val, Error **errp)
         ms->loadparm[i] = ' '; /* pad right with spaces */
     }
 }
-static inline bool machine_get_squash_mcss(Object *obj, Error **errp)
+static inline bool machine_get_squash_mcss(Object *obj, Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
 
@@ -320,7 +323,7 @@ static inline bool machine_get_squash_mcss(Object *obj, Error **errp)
 }
 
 static inline void machine_set_squash_mcss(Object *obj, bool value,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     S390CcwMachineState *ms = S390_CCW_MACHINE(obj);
 

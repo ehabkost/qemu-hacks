@@ -657,7 +657,7 @@ static void cs4231a_initfn (Object *obj)
                            "cs4231a", 4);
 }
 
-static void cs4231a_realizefn (DeviceState *dev, Error **errp)
+static void cs4231a_realizefn (DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *d = ISA_DEVICE (dev);
     CSState *s = CS4231A (dev);

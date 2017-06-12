@@ -511,7 +511,7 @@ static void scsi_generic_reset(DeviceState *dev)
     scsi_device_purge_requests(s, SENSE_CODE(RESET));
 }
 
-static void scsi_generic_realize(SCSIDevice *s, Error **errp)
+static void scsi_generic_realize(SCSIDevice *s, Error *errp[static 1])
 {
     int rc;
     int sg_version;

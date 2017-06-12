@@ -1057,7 +1057,8 @@ typedef struct VFIOIGDQuirk {
  * of the IGD device.
  */
 int vfio_pci_igd_opregion_init(VFIOPCIDevice *vdev,
-                               struct vfio_region_info *info, Error **errp)
+                               struct vfio_region_info *info,
+                               Error *errp[static 1])
 {
     int ret;
 
@@ -1174,7 +1175,8 @@ static int vfio_pci_igd_host_init(VFIOPCIDevice *vdev,
  * to handle if the user has created it for us, which they might want to do
  * to enable multifunction so we don't occupy the whole PCI slot.
  */
-static void vfio_pci_igd_lpc_bridge_realize(PCIDevice *pdev, Error **errp)
+static void vfio_pci_igd_lpc_bridge_realize(PCIDevice *pdev,
+                                            Error *errp[static 1])
 {
     if (pdev->devfn != PCI_DEVFN(0x1f, 0)) {
         error_setg(errp, "VFIO dummy ISA/LPC bridge must have address 1f.0");

@@ -50,7 +50,7 @@ extern char **environ;
 #endif
 #endif
 
-static void ga_wait_child(pid_t pid, int *status, Error **errp)
+static void ga_wait_child(pid_t pid, int *status, Error *errp[static 1])
 {
     pid_t rpid;
 
@@ -69,7 +69,8 @@ static void ga_wait_child(pid_t pid, int *status, Error **errp)
     g_assert(rpid == pid);
 }
 
-void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
+void qmp_guest_shutdown(bool has_mode, const char *mode,
+                        Error *errp[static 1])
 {
     const char *shutdown_flag;
     pid_t pid;
@@ -122,7 +123,7 @@ void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
     /* succeeded */
 }
 
-int64_t qmp_guest_get_time(Error **errp)
+int64_t qmp_guest_get_time(Error *errp[static 1])
 {
    int ret;
    qemu_timeval tq;
@@ -136,7 +137,7 @@ int64_t qmp_guest_get_time(Error **errp)
    return tq.tv_sec * 1000000000LL + tq.tv_usec * 1000;
 }
 
-void qmp_guest_set_time(bool has_time, int64_t time_ns, Error **errp)
+void qmp_guest_set_time(bool has_time, int64_t time_ns, Error *errp[static 1])
 {
     int ret;
     int status;
@@ -224,7 +225,7 @@ static struct {
     .filehandles = QTAILQ_HEAD_INITIALIZER(guest_file_state.filehandles),
 };
 
-static int64_t guest_file_handle_add(FILE *fh, Error **errp)
+static int64_t guest_file_handle_add(FILE *fh, Error *errp[static 1])
 {
     GuestFileHandle *gfh;
     int64_t handle;
@@ -242,7 +243,8 @@ static int64_t guest_file_handle_add(FILE *fh, Error **errp)
     return handle;
 }
 
-static GuestFileHandle *guest_file_handle_find(int64_t id, Error **errp)
+static GuestFileHandle *guest_file_handle_find(int64_t id,
+                                               Error *errp[static 1])
 {
     GuestFileHandle *gfh;
 
@@ -283,7 +285,7 @@ static const struct {
 };
 
 static int
-find_open_flag(const char *mode_str, Error **errp)
+find_open_flag(const char *mode_str, Error *errp[static 1])
 {
     unsigned mode;
 
@@ -311,7 +313,7 @@ find_open_flag(const char *mode_str, Error **errp)
                                S_IROTH | S_IWOTH)
 
 static FILE *
-safe_open_or_create(const char *path, const char *mode, Error **errp)
+safe_open_or_create(const char *path, const char *mode, Error *errp[static 1])
 {
     Error *local_err = NULL;
     int oflag;
@@ -383,7 +385,7 @@ safe_open_or_create(const char *path, const char *mode, Error **errp)
 }
 
 int64_t qmp_guest_file_open(const char *path, bool has_mode, const char *mode,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     FILE *fh;
     Error *local_err = NULL;
@@ -414,7 +416,7 @@ int64_t qmp_guest_file_open(const char *path, bool has_mode, const char *mode,
     return handle;
 }
 
-void qmp_guest_file_close(int64_t handle, Error **errp)
+void qmp_guest_file_close(int64_t handle, Error *errp[static 1])
 {
     GuestFileHandle *gfh = guest_file_handle_find(handle, errp);
     int ret;
@@ -435,7 +437,8 @@ void qmp_guest_file_close(int64_t handle, Error **errp)
 }
 
 struct GuestFileRead *qmp_guest_file_read(int64_t handle, bool has_count,
-                                          int64_t count, Error **errp)
+                                          int64_t count,
+                                          Error *errp[static 1])
 {
     GuestFileHandle *gfh = guest_file_handle_find(handle, errp);
     GuestFileRead *read_data = NULL;
@@ -490,7 +493,7 @@ struct GuestFileRead *qmp_guest_file_read(int64_t handle, bool has_count,
 
 GuestFileWrite *qmp_guest_file_write(int64_t handle, const char *buf_b64,
                                      bool has_count, int64_t count,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     GuestFileWrite *write_data = NULL;
     guchar *buf;
@@ -546,7 +549,7 @@ GuestFileWrite *qmp_guest_file_write(int64_t handle, const char *buf_b64,
 
 struct GuestFileSeek *qmp_guest_file_seek(int64_t handle, int64_t offset,
                                           GuestFileWhence *whence_code,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     GuestFileHandle *gfh = guest_file_handle_find(handle, errp);
     GuestFileSeek *seek_data = NULL;
@@ -585,7 +588,7 @@ struct GuestFileSeek *qmp_guest_file_seek(int64_t handle, int64_t offset,
     return seek_data;
 }
 
-void qmp_guest_file_flush(int64_t handle, Error **errp)
+void qmp_guest_file_flush(int64_t handle, Error *errp[static 1])
 {
     GuestFileHandle *gfh = guest_file_handle_find(handle, errp);
     FILE *fh;
@@ -660,7 +663,8 @@ static int dev_major_minor(const char *devpath,
 /*
  * Walk the mount table and build a list of local file systems
  */
-static void build_fs_mount_list_from_mtab(FsMountList *mounts, Error **errp)
+static void build_fs_mount_list_from_mtab(FsMountList *mounts,
+                                          Error *errp[static 1])
 {
     struct mntent *ment;
     FsMount *mount;
@@ -725,7 +729,7 @@ static void decode_mntname(char *name, int len)
     }
 }
 
-static void build_fs_mount_list(FsMountList *mounts, Error **errp)
+static void build_fs_mount_list(FsMountList *mounts, Error *errp[static 1])
 {
     FsMount *mount;
     char const *mountinfo = "/proc/self/mountinfo";
@@ -786,7 +790,8 @@ static void build_fs_mount_list(FsMountList *mounts, Error **errp)
 
 #if defined(CONFIG_FSFREEZE)
 
-static char *get_pci_driver(char const *syspath, int pathlen, Error **errp)
+static char *get_pci_driver(char const *syspath, int pathlen,
+                            Error *errp[static 1])
 {
     char *path;
     char *dpath;
@@ -816,7 +821,8 @@ static int compare_uint(const void *_a, const void *_b)
 
 /* Walk the specified sysfs and build a sorted list of host or ata numbers */
 static int build_hosts(char const *syspath, char const *host, bool ata,
-                       unsigned int *hosts, int hosts_max, Error **errp)
+                       unsigned int *hosts, int hosts_max,
+                       Error *errp[static 1])
 {
     char *path;
     DIR *dir;
@@ -853,7 +859,7 @@ static int build_hosts(char const *syspath, char const *host, bool ata,
 /* Store disk device info specified by @sysfs into @fs */
 static void build_guest_fsinfo_for_real_device(char const *syspath,
                                                GuestFilesystemInfo *fs,
-                                               Error **errp)
+                                               Error *errp[static 1])
 {
     unsigned int pci[4], host, hosts[8], tgt[3];
     int i, nhosts = 0, pcilen;
@@ -981,13 +987,13 @@ cleanup:
 
 static void build_guest_fsinfo_for_device(char const *devpath,
                                           GuestFilesystemInfo *fs,
-                                          Error **errp);
+                                          Error *errp[static 1]);
 
 /* Store a list of slave devices of virtual volume specified by @syspath into
  * @fs */
 static void build_guest_fsinfo_for_virtual_device(char const *syspath,
                                                   GuestFilesystemInfo *fs,
-                                                  Error **errp)
+                                                  Error *errp[static 1])
 {
     DIR *dir;
     char *dirpath;
@@ -1034,7 +1040,7 @@ static void build_guest_fsinfo_for_virtual_device(char const *syspath,
 /* Dispatch to functions for virtual/real device */
 static void build_guest_fsinfo_for_device(char const *devpath,
                                           GuestFilesystemInfo *fs,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     char *syspath = realpath(devpath, NULL);
 
@@ -1060,7 +1066,7 @@ static void build_guest_fsinfo_for_device(char const *devpath,
 
 /* Return a list of the disk device(s)' info which @mount lies on */
 static GuestFilesystemInfo *build_guest_fsinfo(struct FsMount *mount,
-                                               Error **errp)
+                                               Error *errp[static 1])
 {
     GuestFilesystemInfo *fs = g_malloc0(sizeof(*fs));
     char *devpath = g_strdup_printf("/sys/dev/block/%u:%u",
@@ -1074,7 +1080,7 @@ static GuestFilesystemInfo *build_guest_fsinfo(struct FsMount *mount,
     return fs;
 }
 
-GuestFilesystemInfoList *qmp_guest_get_fsinfo(Error **errp)
+GuestFilesystemInfoList *qmp_guest_get_fsinfo(Error *errp[static 1])
 {
     FsMountList mounts;
     struct FsMount *mount;
@@ -1171,7 +1177,7 @@ static void execute_fsfreeze_hook(FsfreezeHookArg arg, Error **errp)
 /*
  * Return status of freeze/thaw
  */
-GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error **errp)
+GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error *errp[static 1])
 {
     if (ga_is_frozen(ga_state)) {
         return GUEST_FSFREEZE_STATUS_FROZEN;
@@ -1180,7 +1186,7 @@ GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error **errp)
     return GUEST_FSFREEZE_STATUS_THAWED;
 }
 
-int64_t qmp_guest_fsfreeze_freeze(Error **errp)
+int64_t qmp_guest_fsfreeze_freeze(Error *errp[static 1])
 {
     return qmp_guest_fsfreeze_freeze_list(false, NULL, errp);
 }
@@ -1191,7 +1197,7 @@ int64_t qmp_guest_fsfreeze_freeze(Error **errp)
  */
 int64_t qmp_guest_fsfreeze_freeze_list(bool has_mountpoints,
                                        strList *mountpoints,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     int ret = 0, i = 0;
     strList *list;
@@ -1273,7 +1279,7 @@ error:
 /*
  * Walk list of frozen file systems in the guest, and thaw them.
  */
-int64_t qmp_guest_fsfreeze_thaw(Error **errp)
+int64_t qmp_guest_fsfreeze_thaw(Error *errp[static 1])
 {
     int ret;
     FsMountList mounts;
@@ -1346,7 +1352,7 @@ static void guest_fsfreeze_cleanup(void)
  * Walk list of mounted file systems in the guest, and trim them.
  */
 GuestFilesystemTrimResponse *
-qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error **errp)
+qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error *errp[static 1])
 {
     GuestFilesystemTrimResponse *response;
     GuestFilesystemTrimResultList *list;
@@ -1424,7 +1430,7 @@ qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error **errp)
 #define SUSPEND_NOT_SUPPORTED 1
 
 static void bios_supports_mode(const char *pmutils_bin, const char *pmutils_arg,
-                               const char *sysfile_str, Error **errp)
+                               const char *sysfile_str, Error *errp[static 1])
 {
     char *pmutils_path;
     pid_t pid;
@@ -1506,7 +1512,7 @@ out:
 }
 
 static void guest_suspend(const char *pmutils_bin, const char *sysfile_str,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     char *pmutils_path;
     pid_t pid;
@@ -1571,7 +1577,7 @@ out:
     g_free(pmutils_path);
 }
 
-void qmp_guest_suspend_disk(Error **errp)
+void qmp_guest_suspend_disk(Error *errp[static 1])
 {
     bios_supports_mode("pm-is-supported", "--hibernate", "disk", errp);
     if (ERR_IS_SET(errp)) {
@@ -1581,7 +1587,7 @@ void qmp_guest_suspend_disk(Error **errp)
     guest_suspend("pm-hibernate", "disk", errp);
 }
 
-void qmp_guest_suspend_ram(Error **errp)
+void qmp_guest_suspend_ram(Error *errp[static 1])
 {
     bios_supports_mode("pm-is-supported", "--suspend", "mem", errp);
     if (ERR_IS_SET(errp)) {
@@ -1591,7 +1597,7 @@ void qmp_guest_suspend_ram(Error **errp)
     guest_suspend("pm-suspend", "mem", errp);
 }
 
-void qmp_guest_suspend_hybrid(Error **errp)
+void qmp_guest_suspend_hybrid(Error *errp[static 1])
 {
     bios_supports_mode("pm-is-supported", "--suspend-hybrid", NULL,
                        errp);
@@ -1618,7 +1624,7 @@ guest_find_interface(GuestNetworkInterfaceList *head,
 /*
  * Build information about guest interfaces
  */
-GuestNetworkInterfaceList *qmp_guest_network_get_interfaces(Error **errp)
+GuestNetworkInterfaceList *qmp_guest_network_get_interfaces(Error *errp[static 1])
 {
     GuestNetworkInterfaceList *head = NULL, *cur_item = NULL;
     struct ifaddrs *ifap, *ifa;
@@ -1764,7 +1770,8 @@ error:
 
 #define SYSCONF_EXACT(name, errp) sysconf_exact((name), #name, (errp))
 
-static long sysconf_exact(int name, const char *name_str, Error **errp)
+static long sysconf_exact(int name, const char *name_str,
+                          Error *errp[static 1])
 {
     long ret;
 
@@ -1796,7 +1803,7 @@ static long sysconf_exact(int name, const char *name_str, Error **errp)
  * Written members remain unmodified on error.
  */
 static void transfer_vcpu(GuestLogicalProcessor *vcpu, bool sys2vcpu,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     char *dirpath;
     int dirfd;
@@ -1853,7 +1860,7 @@ static void transfer_vcpu(GuestLogicalProcessor *vcpu, bool sys2vcpu,
     g_free(dirpath);
 }
 
-GuestLogicalProcessorList *qmp_guest_get_vcpus(Error **errp)
+GuestLogicalProcessorList *qmp_guest_get_vcpus(Error *errp[static 1])
 {
     int64_t current;
     GuestLogicalProcessorList *head, **link;
@@ -1892,7 +1899,8 @@ GuestLogicalProcessorList *qmp_guest_get_vcpus(Error **errp)
     return NULL;
 }
 
-int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus, Error **errp)
+int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus,
+                            Error *errp[static 1])
 {
     int64_t processed;
     Error *local_err = NULL;
@@ -1921,7 +1929,7 @@ int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus, Error **errp)
 void qmp_guest_set_user_password(const char *username,
                                  const char *password,
                                  bool crypted,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     char *passwd_path = NULL;
     pid_t pid;
@@ -2022,7 +2030,7 @@ out:
 }
 
 static void ga_read_sysfs_file(int dirfd, const char *pathname, char *buf,
-                               int size, Error **errp)
+                               int size, Error *errp[static 1])
 {
     int fd;
     int res;
@@ -2044,7 +2052,8 @@ static void ga_read_sysfs_file(int dirfd, const char *pathname, char *buf,
 }
 
 static void ga_write_sysfs_file(int dirfd, const char *pathname,
-                                const char *buf, int size, Error **errp)
+                                const char *buf, int size,
+                                Error *errp[static 1])
 {
     int fd;
 
@@ -2079,7 +2088,7 @@ static void ga_write_sysfs_file(int dirfd, const char *pathname,
  */
 static void transfer_memory_block(GuestMemoryBlock *mem_blk, bool sys2memblk,
                                   GuestMemoryBlockResponse *result,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     char *dirpath;
     int dirfd;
@@ -2200,7 +2209,7 @@ out1:
     }
 }
 
-GuestMemoryBlockList *qmp_guest_get_memory_blocks(Error **errp)
+GuestMemoryBlockList *qmp_guest_get_memory_blocks(Error *errp[static 1])
 {
     GuestMemoryBlockList *head, **link;
     Error *local_err = NULL;
@@ -2265,7 +2274,8 @@ GuestMemoryBlockList *qmp_guest_get_memory_blocks(Error **errp)
 }
 
 GuestMemoryBlockResponseList *
-qmp_guest_set_memory_blocks(GuestMemoryBlockList *mem_blks, Error **errp)
+qmp_guest_set_memory_blocks(GuestMemoryBlockList *mem_blks,
+                            Error *errp[static 1])
 {
     GuestMemoryBlockResponseList *head, **link;
     Error *local_err = NULL;
@@ -2299,7 +2309,7 @@ err:
     return NULL;
 }
 
-GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error **errp)
+GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error *errp[static 1])
 {
     char *dirpath;
     int dirfd;
@@ -2333,34 +2343,35 @@ GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error **errp)
 
 #else /* defined(__linux__) */
 
-void qmp_guest_suspend_disk(Error **errp)
+void qmp_guest_suspend_disk(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 }
 
-void qmp_guest_suspend_ram(Error **errp)
+void qmp_guest_suspend_ram(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 }
 
-void qmp_guest_suspend_hybrid(Error **errp)
+void qmp_guest_suspend_hybrid(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 }
 
-GuestNetworkInterfaceList *qmp_guest_network_get_interfaces(Error **errp)
-{
-    error_setg(errp, QERR_UNSUPPORTED);
-    return NULL;
-}
-
-GuestLogicalProcessorList *qmp_guest_get_vcpus(Error **errp)
+GuestNetworkInterfaceList *qmp_guest_network_get_interfaces(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
 }
 
-int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus, Error **errp)
+GuestLogicalProcessorList *qmp_guest_get_vcpus(Error *errp[static 1])
+{
+    error_setg(errp, QERR_UNSUPPORTED);
+    return NULL;
+}
+
+int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus,
+                            Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return -1;
@@ -2369,25 +2380,26 @@ int64_t qmp_guest_set_vcpus(GuestLogicalProcessorList *vcpus, Error **errp)
 void qmp_guest_set_user_password(const char *username,
                                  const char *password,
                                  bool crypted,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 }
 
-GuestMemoryBlockList *qmp_guest_get_memory_blocks(Error **errp)
+GuestMemoryBlockList *qmp_guest_get_memory_blocks(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
 }
 
 GuestMemoryBlockResponseList *
-qmp_guest_set_memory_blocks(GuestMemoryBlockList *mem_blks, Error **errp)
+qmp_guest_set_memory_blocks(GuestMemoryBlockList *mem_blks,
+                            Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
 }
 
-GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error **errp)
+GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
@@ -2397,20 +2409,20 @@ GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error **errp)
 
 #if !defined(CONFIG_FSFREEZE)
 
-GuestFilesystemInfoList *qmp_guest_get_fsinfo(Error **errp)
+GuestFilesystemInfoList *qmp_guest_get_fsinfo(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
 }
 
-GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error **errp)
+GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 
     return 0;
 }
 
-int64_t qmp_guest_fsfreeze_freeze(Error **errp)
+int64_t qmp_guest_fsfreeze_freeze(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 
@@ -2419,14 +2431,14 @@ int64_t qmp_guest_fsfreeze_freeze(Error **errp)
 
 int64_t qmp_guest_fsfreeze_freeze_list(bool has_mountpoints,
                                        strList *mountpoints,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 
     return 0;
 }
 
-int64_t qmp_guest_fsfreeze_thaw(Error **errp)
+int64_t qmp_guest_fsfreeze_thaw(Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 
@@ -2436,7 +2448,7 @@ int64_t qmp_guest_fsfreeze_thaw(Error **errp)
 
 #if !defined(CONFIG_FSTRIM)
 GuestFilesystemTrimResponse *
-qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error **errp)
+qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
     return NULL;
@@ -2501,7 +2513,7 @@ static double ga_get_login_time(struct utmpx *user_info)
     return seconds + useconds;
 }
 
-GuestUserList *qmp_guest_get_users(Error **err)
+GuestUserList *qmp_guest_get_users(Error *err[static 1])
 {
     GHashTable *cache = NULL;
     GuestUserList *head = NULL, *cur_item = NULL;

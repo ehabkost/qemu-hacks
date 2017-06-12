@@ -69,7 +69,7 @@ static QemuOptsList raw_create_opts = {
 };
 
 static int raw_read_options(QDict *options, BlockDriverState *bs,
-    BDRVRawState *s, Error **errp)
+    BDRVRawState *s, Error *errp[static 1])
 {
     QemuOpts *opts = NULL;
     int64_t real_size = 0;
@@ -134,7 +134,7 @@ end:
 }
 
 static int raw_reopen_prepare(BDRVReopenState *reopen_state,
-                              BlockReopenQueue *queue, Error **errp)
+                              BlockReopenQueue *queue, Error *errp[static 1])
 {
     assert(reopen_state != NULL);
     assert(reopen_state->bs != NULL);
@@ -315,7 +315,7 @@ static int raw_get_info(BlockDriverState *bs, BlockDriverInfo *bdi)
     return bdrv_get_info(bs->file->bs, bdi);
 }
 
-static void raw_refresh_limits(BlockDriverState *bs, Error **errp)
+static void raw_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     if (bs->probed) {
         /* To make it easier to protect the first sector, any probed
@@ -325,7 +325,8 @@ static void raw_refresh_limits(BlockDriverState *bs, Error **errp)
     }
 }
 
-static int raw_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int raw_truncate(BlockDriverState *bs, int64_t offset,
+                        Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
 
@@ -373,13 +374,14 @@ static int raw_has_zero_init(BlockDriverState *bs)
     return bdrv_has_zero_init(bs->file->bs);
 }
 
-static int raw_create(const char *filename, QemuOpts *opts, Error **errp)
+static int raw_create(const char *filename, QemuOpts *opts,
+                      Error *errp[static 1])
 {
     return bdrv_create_file(filename, opts, errp);
 }
 
 static int raw_open(BlockDriverState *bs, QDict *options, int flags,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     int ret;

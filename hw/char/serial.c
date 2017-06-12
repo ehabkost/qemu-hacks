@@ -884,7 +884,7 @@ static void serial_reset(void *opaque)
     s->msr &= ~UART_MSR_ANY_DELTA;
 }
 
-void serial_realize_core(SerialState *s, Error **errp)
+void serial_realize_core(SerialState *s, Error *errp[static 1])
 {
     if (!qemu_chr_fe_get_driver(&s->chr)) {
         error_setg(errp, "Can't create serial device, empty char device");

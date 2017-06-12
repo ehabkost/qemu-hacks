@@ -6,7 +6,7 @@
 #include "qapi/opts-visitor.h"
 #include "qemu/config-file.h"
 
-void user_creatable_complete(Object *obj, Error **errp)
+void user_creatable_complete(Object *obj, Error *errp[static 1])
 {
 
     UserCreatableClass *ucc;
@@ -23,7 +23,7 @@ void user_creatable_complete(Object *obj, Error **errp)
     }
 }
 
-bool user_creatable_can_be_deleted(UserCreatable *uc, Error **errp)
+bool user_creatable_can_be_deleted(UserCreatable *uc, Error *errp[static 1])
 {
 
     UserCreatableClass *ucc = USER_CREATABLE_GET_CLASS(uc);
@@ -37,7 +37,7 @@ bool user_creatable_can_be_deleted(UserCreatable *uc, Error **errp)
 
 Object *user_creatable_add_type(const char *type, const char *id,
                                 const QDict *qdict,
-                                Visitor *v, Error **errp)
+                                Visitor *v, Error *errp[static 1])
 {
     Object *obj;
     ObjectClass *klass;
@@ -109,7 +109,7 @@ out:
 }
 
 
-Object *user_creatable_add_opts(QemuOpts *opts, Error **errp)
+Object *user_creatable_add_opts(QemuOpts *opts, Error *errp[static 1])
 {
     Visitor *v;
     QDict *pdict;
@@ -143,7 +143,8 @@ Object *user_creatable_add_opts(QemuOpts *opts, Error **errp)
 }
 
 
-int user_creatable_add_opts_foreach(void *opaque, QemuOpts *opts, Error **errp)
+int user_creatable_add_opts_foreach(void *opaque, QemuOpts *opts,
+                                    Error *errp[static 1])
 {
     bool (*type_predicate)(const char *) = opaque;
     Object *obj = NULL;
@@ -166,7 +167,7 @@ int user_creatable_add_opts_foreach(void *opaque, QemuOpts *opts, Error **errp)
 }
 
 
-void user_creatable_del(const char *id, Error **errp)
+void user_creatable_del(const char *id, Error *errp[static 1])
 {
     Object *container;
     Object *obj;

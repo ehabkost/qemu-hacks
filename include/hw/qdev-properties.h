@@ -187,7 +187,7 @@ void qdev_prop_set_string(DeviceState *dev, const char *name, const char *value)
 void qdev_prop_set_chr(DeviceState *dev, const char *name, Chardev *value);
 void qdev_prop_set_netdev(DeviceState *dev, const char *name, NetClientState *value);
 void qdev_prop_set_drive(DeviceState *dev, const char *name,
-                         BlockBackend *value, Error **errp);
+                         BlockBackend *value, Error *errp[static 1]);
 void qdev_prop_set_macaddr(DeviceState *dev, const char *name,
                            const uint8_t *value);
 void qdev_prop_set_enum(DeviceState *dev, const char *name, int value);
@@ -211,7 +211,8 @@ void error_set_from_qdev_prop_error(Error **errp, int ret, DeviceState *dev,
  * On error, store error in @errp.  Static properties access data in a struct.
  * The type of the QOM property is derived from prop->info.
  */
-void qdev_property_add_static(DeviceState *dev, Property *prop, Error **errp);
+void qdev_property_add_static(DeviceState *dev, Property *prop,
+			      Error *errp[static 1]);
 
 void qdev_alias_all_properties(DeviceState *target, Object *source);
 
@@ -226,7 +227,7 @@ void qdev_alias_all_properties(DeviceState *target, Object *source);
  * a friendly format identifying both the device and the property.
  */
 void qdev_prop_set_after_realize(DeviceState *dev, const char *name,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 
 /**
  * qdev_prop_allow_set_link_before_realize:
@@ -236,6 +237,7 @@ void qdev_prop_set_after_realize(DeviceState *dev, const char *name,
  * object_property_add_link().
  */
 void qdev_prop_allow_set_link_before_realize(Object *obj, const char *name,
-                                             Object *val, Error **errp);
+                                             Object *val,
+                                             Error *errp[static 1]);
 
 #endif

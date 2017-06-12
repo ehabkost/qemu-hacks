@@ -123,7 +123,7 @@ static int ioapic_dispatch_post_load(void *opaque, int version_id)
     return 0;
 }
 
-static void ioapic_common_realize(DeviceState *dev, Error **errp)
+static void ioapic_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     IOAPICCommonState *s = IOAPIC_COMMON(dev);
     IOAPICCommonClass *info;

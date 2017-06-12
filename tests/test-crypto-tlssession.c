@@ -61,7 +61,7 @@ static ssize_t testRead(char *buf, size_t len, void *opaque)
 
 static QCryptoTLSCreds *test_tls_creds_create(QCryptoTLSCredsEndpoint endpoint,
                                               const char *certdir,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     Error *err = NULL;
     Object *parent = object_get_objects_root();

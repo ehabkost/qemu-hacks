@@ -66,7 +66,7 @@ static void fsl_imx31_init(Object *obj)
     }
 }
 
-static void fsl_imx31_realize(DeviceState *dev, Error **errp)
+static void fsl_imx31_realize(DeviceState *dev, Error *errp[static 1])
 {
     FslIMX31State *s = FSL_IMX31(dev);
     uint16_t i;

@@ -459,7 +459,7 @@ static const uint8_t irq_to_xivr[] = {
     PSIHB_XSCOM_XIVR_EXT,
 };
 
-static void pnv_psi_realize(DeviceState *dev, Error **errp)
+static void pnv_psi_realize(DeviceState *dev, Error *errp[static 1])
 {
     PnvPsi *psi = PNV_PSI(dev);
     ICSState *ics = &psi->ics;

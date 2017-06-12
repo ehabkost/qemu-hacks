@@ -2240,7 +2240,8 @@ static void scsi_disk_resize_cb(void *opaque)
     }
 }
 
-static void scsi_cd_change_media_cb(void *opaque, bool load, Error **errp)
+static void scsi_cd_change_media_cb(void *opaque, bool load,
+                                    Error *errp[static 1])
 {
     SCSIDiskState *s = opaque;
 
@@ -2303,7 +2304,7 @@ static void scsi_disk_unit_attention_reported(SCSIDevice *dev)
     }
 }
 
-static void scsi_realize(SCSIDevice *dev, Error **errp)
+static void scsi_realize(SCSIDevice *dev, Error *errp[static 1])
 {
     SCSIDiskState *s = DO_UPCAST(SCSIDiskState, qdev, dev);
 
@@ -2361,7 +2362,7 @@ static void scsi_realize(SCSIDevice *dev, Error **errp)
     blk_iostatus_enable(s->qdev.conf.blk);
 }
 
-static void scsi_hd_realize(SCSIDevice *dev, Error **errp)
+static void scsi_hd_realize(SCSIDevice *dev, Error *errp[static 1])
 {
     SCSIDiskState *s = DO_UPCAST(SCSIDiskState, qdev, dev);
     /* can happen for devices without drive. The error message for missing
@@ -2378,7 +2379,7 @@ static void scsi_hd_realize(SCSIDevice *dev, Error **errp)
     scsi_realize(&s->qdev, errp);
 }
 
-static void scsi_cd_realize(SCSIDevice *dev, Error **errp)
+static void scsi_cd_realize(SCSIDevice *dev, Error *errp[static 1])
 {
     SCSIDiskState *s = DO_UPCAST(SCSIDiskState, qdev, dev);
 
@@ -2395,7 +2396,7 @@ static void scsi_cd_realize(SCSIDevice *dev, Error **errp)
     scsi_realize(&s->qdev, errp);
 }
 
-static void scsi_disk_realize(SCSIDevice *dev, Error **errp)
+static void scsi_disk_realize(SCSIDevice *dev, Error *errp[static 1])
 {
     DriveInfo *dinfo;
     Error *local_err = NULL;
@@ -2540,7 +2541,7 @@ static int get_device_type(SCSIDiskState *s)
     return 0;
 }
 
-static void scsi_block_realize(SCSIDevice *dev, Error **errp)
+static void scsi_block_realize(SCSIDevice *dev, Error *errp[static 1])
 {
     SCSIDiskState *s = DO_UPCAST(SCSIDiskState, qdev, dev);
     int sg_version;

@@ -589,7 +589,7 @@ static const TypeInfo dscm1xxxx_type_info = {
     .class_init = dscm1xxxx_class_init,
 };
 
-static void microdrive_realize(DeviceState *dev, Error **errp)
+static void microdrive_realize(DeviceState *dev, Error *errp[static 1])
 {
     MicroDriveState *md = MICRODRIVE(dev);
 

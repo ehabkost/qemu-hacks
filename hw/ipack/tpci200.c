@@ -573,7 +573,7 @@ static const MemoryRegionOps tpci200_las3_ops = {
     }
 };
 
-static void tpci200_realize(PCIDevice *pci_dev, Error **errp)
+static void tpci200_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     TPCI200State *s = TPCI200(pci_dev);
     uint8_t *c = s->dev.config;

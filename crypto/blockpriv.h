@@ -82,7 +82,7 @@ int qcrypto_block_decrypt_helper(QCryptoCipher *cipher,
                                  uint64_t startsector,
                                  uint8_t *buf,
                                  size_t len,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 
 int qcrypto_block_encrypt_helper(QCryptoCipher *cipher,
                                  size_t niv,
@@ -91,6 +91,6 @@ int qcrypto_block_encrypt_helper(QCryptoCipher *cipher,
                                  uint64_t startsector,
                                  uint8_t *buf,
                                  size_t len,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 
 #endif /* QCRYPTO_BLOCKPRIV_H */

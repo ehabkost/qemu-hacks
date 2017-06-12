@@ -470,7 +470,7 @@ static void fd_revalidate(FDrive *drv)
     }
 }
 
-static void fd_change_cb(void *opaque, bool load, Error **errp)
+static void fd_change_cb(void *opaque, bool load, Error *errp[static 1])
 {
     FDrive *drive = opaque;
 
@@ -2520,7 +2520,7 @@ static void fdctrl_result_timer(void *opaque)
 
 /* Init functions */
 static void fdctrl_connect_drives(FDCtrl *fdctrl, DeviceState *fdc_dev,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     unsigned int i;
     FDrive *drive;
@@ -2630,7 +2630,7 @@ void sun4m_fdctrl_init(qemu_irq irq, hwaddr io_base,
 }
 
 static void fdctrl_realize_common(DeviceState *dev, FDCtrl *fdctrl,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     int i, j;
     static int command_tables_inited = 0;
@@ -2679,7 +2679,7 @@ static const MemoryRegionPortio fdc_portio_list[] = {
     PORTIO_END_OF_LIST(),
 };
 
-static void isabus_fdc_realize(DeviceState *dev, Error **errp)
+static void isabus_fdc_realize(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     FDCtrlISABus *isa = ISA_FDC(dev);
@@ -2742,7 +2742,7 @@ static void sysbus_fdc_common_initfn(Object *obj)
     qdev_init_gpio_in(dev, fdctrl_handle_tc, 1);
 }
 
-static void sysbus_fdc_common_realize(DeviceState *dev, Error **errp)
+static void sysbus_fdc_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     FDCtrlSysBus *sys = SYSBUS_FDC(dev);
     FDCtrl *fdctrl = &sys->state;

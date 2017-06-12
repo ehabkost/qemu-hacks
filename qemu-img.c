@@ -350,7 +350,7 @@ static BlockBackend *img_open_file(const char *filename,
 
 static int img_add_key_secrets(void *opaque,
                                const char *name, const char *value,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     QDict *options = opaque;
 
@@ -884,7 +884,7 @@ static void common_block_job_cb(void *opaque, int ret)
     }
 }
 
-static void run_block_job(BlockJob *job, Error **errp)
+static void run_block_job(BlockJob *job, Error *errp[static 1])
 {
     AioContext *aio_context = blk_get_aio_context(job->blk);
 

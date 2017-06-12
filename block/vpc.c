@@ -185,7 +185,7 @@ static int vpc_probe(const uint8_t *buf, int buf_size, const char *filename)
 }
 
 static void vpc_parse_options(BlockDriverState *bs, QemuOpts *opts,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     BDRVVPCState *s = bs->opaque;
     const char *size_calc;
@@ -204,7 +204,7 @@ static void vpc_parse_options(BlockDriverState *bs, QemuOpts *opts,
 }
 
 static int vpc_open(BlockDriverState *bs, QDict *options, int flags,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     BDRVVPCState *s = bs->opaque;
     int i;
@@ -452,7 +452,7 @@ fail:
 }
 
 static int vpc_reopen_prepare(BDRVReopenState *state,
-                              BlockReopenQueue *queue, Error **errp)
+                              BlockReopenQueue *queue, Error *errp[static 1])
 {
     return 0;
 }
@@ -851,7 +851,7 @@ static int create_dynamic_disk(BlockBackend *blk, uint8_t *buf,
 }
 
 static int create_fixed_disk(BlockBackend *blk, uint8_t *buf,
-                             int64_t total_size, Error **errp)
+                             int64_t total_size, Error *errp[static 1])
 {
     int ret;
 
@@ -872,7 +872,8 @@ static int create_fixed_disk(BlockBackend *blk, uint8_t *buf,
     return ret;
 }
 
-static int vpc_create(const char *filename, QemuOpts *opts, Error **errp)
+static int vpc_create(const char *filename, QemuOpts *opts,
+                      Error *errp[static 1])
 {
     uint8_t buf[1024];
     VHDFooter *footer = (VHDFooter *) buf;

@@ -393,7 +393,7 @@ static void co_schedule_bh_cb(void *opaque)
     }
 }
 
-AioContext *aio_context_new(Error **errp)
+AioContext *aio_context_new(Error *errp[static 1])
 {
     int ret;
     AioContext *ctx;

@@ -252,7 +252,7 @@ static void kvm_pit_vm_state_change(void *opaque, int running,
     }
 }
 
-static void kvm_pit_realizefn(DeviceState *dev, Error **errp)
+static void kvm_pit_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     PITCommonState *pit = PIT_COMMON(dev);
     KVMPITClass *kpc = KVM_PIT_GET_CLASS(dev);

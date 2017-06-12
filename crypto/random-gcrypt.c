@@ -26,10 +26,10 @@
 
 int qcrypto_random_bytes(uint8_t *buf,
                          size_t buflen,
-                         Error **errp G_GNUC_UNUSED)
+                         Error *errp[static 1] G_GNUC_UNUSED)
 {
     gcry_randomize(buf, buflen, GCRY_STRONG_RANDOM);
     return 0;
 }
 
-int qcrypto_random_init(Error **errp G_GNUC_UNUSED) { return 0; }
+int qcrypto_random_init(Error *errp[static 1] G_GNUC_UNUSED) { return 0; }

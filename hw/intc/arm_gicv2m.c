@@ -128,7 +128,7 @@ static const MemoryRegionOps gicv2m_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void gicv2m_realize(DeviceState *dev, Error **errp)
+static void gicv2m_realize(DeviceState *dev, Error *errp[static 1])
 {
     ARMGICv2mState *s = ARM_GICV2M(dev);
     int i;

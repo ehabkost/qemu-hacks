@@ -45,7 +45,8 @@ typedef struct {
 #define WIN_CHARDEV(obj) OBJECT_CHECK(WinChardev, (obj), TYPE_CHARDEV_WIN)
 
 void win_chr_set_file(Chardev *chr, HANDLE file, bool keep_open);
-int win_chr_serial_init(Chardev *chr, const char *filename, Error **errp);
+int win_chr_serial_init(Chardev *chr, const char *filename,
+			Error *errp[static 1]);
 int win_chr_pipe_poll(void *opaque);
 
 #endif /* CHAR_WIN_H */

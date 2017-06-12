@@ -26,7 +26,7 @@ struct CharBackend {
  *
  * Returns: false on error.
  */
-bool qemu_chr_fe_init(CharBackend *b, Chardev *s, Error **errp);
+bool qemu_chr_fe_init(CharBackend *b, Chardev *s, Error *errp[static 1]);
 
 /**
  * @qemu_chr_fe_deinit:
@@ -102,7 +102,7 @@ void qemu_chr_fe_disconnect(CharBackend *be);
  * Wait for characted backend to be connected, return < 0 on error or
  * if no assicated Chardev.
  */
-int qemu_chr_fe_wait_connected(CharBackend *be, Error **errp);
+int qemu_chr_fe_wait_connected(CharBackend *be, Error *errp[static 1]);
 
 /**
  * @qemu_chr_fe_set_echo:

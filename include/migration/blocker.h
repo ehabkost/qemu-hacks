@@ -23,7 +23,7 @@
  *
  * @returns - 0 on success, -EBUSY/-EACCES on failure, with errp set.
  */
-int migrate_add_blocker(Error *reason, Error **errp);
+int migrate_add_blocker(Error *reason, Error *errp[static 1]);
 
 /**
  * @migrate_del_blocker - remove a blocking error from migration

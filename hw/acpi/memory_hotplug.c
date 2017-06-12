@@ -236,7 +236,7 @@ void acpi_memory_hotplug_init(MemoryRegion *as, Object *owner,
  */
 static MemStatus *
 acpi_memory_slot_status(MemHotplugState *mem_st,
-                        DeviceState *dev, Error **errp)
+                        DeviceState *dev, Error *errp[static 1])
 {
     Error *local_err = NULL;
     int slot = object_property_get_int(OBJECT(dev), PC_DIMM_SLOT_PROP,
@@ -260,7 +260,7 @@ acpi_memory_slot_status(MemHotplugState *mem_st,
 }
 
 void acpi_memory_plug_cb(HotplugHandler *hotplug_dev, MemHotplugState *mem_st,
-                         DeviceState *dev, Error **errp)
+                         DeviceState *dev, Error *errp[static 1])
 {
     MemStatus *mdev;
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
@@ -284,7 +284,7 @@ void acpi_memory_plug_cb(HotplugHandler *hotplug_dev, MemHotplugState *mem_st,
 
 void acpi_memory_unplug_request_cb(HotplugHandler *hotplug_dev,
                                    MemHotplugState *mem_st,
-                                   DeviceState *dev, Error **errp)
+                                   DeviceState *dev, Error *errp[static 1])
 {
     MemStatus *mdev;
 
@@ -298,7 +298,7 @@ void acpi_memory_unplug_request_cb(HotplugHandler *hotplug_dev,
 }
 
 void acpi_memory_unplug_cb(MemHotplugState *mem_st,
-                           DeviceState *dev, Error **errp)
+                           DeviceState *dev, Error *errp[static 1])
 {
     MemStatus *mdev;
 

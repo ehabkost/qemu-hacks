@@ -50,7 +50,7 @@ ssize_t qio_channel_readv_full(QIOChannel *ioc,
                                size_t niov,
                                int **fds,
                                size_t *nfds,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     QIOChannelClass *klass = QIO_CHANNEL_GET_CLASS(ioc);
 
@@ -70,7 +70,7 @@ ssize_t qio_channel_writev_full(QIOChannel *ioc,
                                 size_t niov,
                                 int *fds,
                                 size_t nfds,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     QIOChannelClass *klass = QIO_CHANNEL_GET_CLASS(ioc);
 
@@ -88,7 +88,7 @@ ssize_t qio_channel_writev_full(QIOChannel *ioc,
 ssize_t qio_channel_readv(QIOChannel *ioc,
                           const struct iovec *iov,
                           size_t niov,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     return qio_channel_readv_full(ioc, iov, niov, NULL, NULL, errp);
 }
@@ -97,7 +97,7 @@ ssize_t qio_channel_readv(QIOChannel *ioc,
 ssize_t qio_channel_writev(QIOChannel *ioc,
                            const struct iovec *iov,
                            size_t niov,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     return qio_channel_writev_full(ioc, iov, niov, NULL, 0, errp);
 }
@@ -106,7 +106,7 @@ ssize_t qio_channel_writev(QIOChannel *ioc,
 ssize_t qio_channel_read(QIOChannel *ioc,
                          char *buf,
                          size_t buflen,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     struct iovec iov = { .iov_base = buf, .iov_len = buflen };
     return qio_channel_readv_full(ioc, &iov, 1, NULL, NULL, errp);
@@ -116,7 +116,7 @@ ssize_t qio_channel_read(QIOChannel *ioc,
 ssize_t qio_channel_write(QIOChannel *ioc,
                           const char *buf,
                           size_t buflen,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     struct iovec iov = { .iov_base = (char *)buf, .iov_len = buflen };
     return qio_channel_writev_full(ioc, &iov, 1, NULL, 0, errp);
@@ -125,7 +125,7 @@ ssize_t qio_channel_write(QIOChannel *ioc,
 
 int qio_channel_set_blocking(QIOChannel *ioc,
                               bool enabled,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     QIOChannelClass *klass = QIO_CHANNEL_GET_CLASS(ioc);
     return klass->io_set_blocking(ioc, enabled, errp);
@@ -133,7 +133,7 @@ int qio_channel_set_blocking(QIOChannel *ioc,
 
 
 int qio_channel_close(QIOChannel *ioc,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     QIOChannelClass *klass = QIO_CHANNEL_GET_CLASS(ioc);
     return klass->io_close(ioc, errp);
@@ -187,7 +187,7 @@ guint qio_channel_add_watch(QIOChannel *ioc,
 
 int qio_channel_shutdown(QIOChannel *ioc,
                          QIOChannelShutdown how,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     QIOChannelClass *klass = QIO_CHANNEL_GET_CLASS(ioc);
 
@@ -225,7 +225,7 @@ void qio_channel_set_cork(QIOChannel *ioc,
 off_t qio_channel_io_seek(QIOChannel *ioc,
                           off_t offset,
                           int whence,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     QIOChannelClass *klass = QIO_CHANNEL_GET_CLASS(ioc);
 

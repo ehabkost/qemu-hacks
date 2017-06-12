@@ -376,7 +376,7 @@ static NetClientInfo net_etsec_info = {
     .link_status_changed = etsec_set_link_status,
 };
 
-static void etsec_realize(DeviceState *dev, Error **errp)
+static void etsec_realize(DeviceState *dev, Error *errp[static 1])
 {
     eTSEC        *etsec = ETSEC_COMMON(dev);
 

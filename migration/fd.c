@@ -25,7 +25,8 @@
 #include "trace.h"
 
 
-void fd_start_outgoing_migration(MigrationState *s, const char *fdname, Error **errp)
+void fd_start_outgoing_migration(MigrationState *s, const char *fdname,
+                                 Error *errp[static 1])
 {
     QIOChannel *ioc;
     int fd = monitor_get_fd(cur_mon, fdname, errp);
@@ -54,7 +55,7 @@ static gboolean fd_accept_incoming_migration(QIOChannel *ioc,
     return FALSE; /* unregister */
 }
 
-void fd_start_incoming_migration(const char *infd, Error **errp)
+void fd_start_incoming_migration(const char *infd, Error *errp[static 1])
 {
     QIOChannel *ioc;
     int fd;

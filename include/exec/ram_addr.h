@@ -64,18 +64,20 @@ long qemu_getrampagesize(void);
 unsigned long last_ram_page(void);
 RAMBlock *qemu_ram_alloc_from_file(ram_addr_t size, MemoryRegion *mr,
                                    bool share, const char *mem_path,
-                                   Error **errp);
+                                   Error *errp[static 1]);
 RAMBlock *qemu_ram_alloc_from_ptr(ram_addr_t size, void *host,
-                                  MemoryRegion *mr, Error **errp);
-RAMBlock *qemu_ram_alloc(ram_addr_t size, MemoryRegion *mr, Error **errp);
+                                  MemoryRegion *mr, Error *errp[static 1]);
+RAMBlock *qemu_ram_alloc(ram_addr_t size, MemoryRegion *mr,
+			 Error *errp[static 1]);
 RAMBlock *qemu_ram_alloc_resizeable(ram_addr_t size, ram_addr_t max_size,
                                     void (*resized)(const char*,
                                                     uint64_t length,
                                                     void *host),
-                                    MemoryRegion *mr, Error **errp);
+                                    MemoryRegion *mr, Error *errp[static 1]);
 void qemu_ram_free(RAMBlock *block);
 
-int qemu_ram_resize(RAMBlock *block, ram_addr_t newsize, Error **errp);
+int qemu_ram_resize(RAMBlock *block, ram_addr_t newsize,
+		    Error *errp[static 1]);
 
 #define DIRTY_CLIENTS_ALL     ((1 << DIRTY_MEMORY_NUM) - 1)
 #define DIRTY_CLIENTS_NOCODE  (DIRTY_CLIENTS_ALL & ~(1 << DIRTY_MEMORY_CODE))

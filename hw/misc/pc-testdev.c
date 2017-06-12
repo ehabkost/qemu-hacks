@@ -155,7 +155,7 @@ static const MemoryRegionOps test_iomem_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void testdev_realizefn(DeviceState *d, Error **errp)
+static void testdev_realizefn(DeviceState *d, Error *errp[static 1])
 {
     ISADevice *isa = ISA_DEVICE(d);
     PCTestdev *dev = TESTDEV(d);

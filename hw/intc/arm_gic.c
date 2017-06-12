@@ -1397,7 +1397,7 @@ void gic_init_irqs_and_distributor(GICState *s)
     gic_init_irqs_and_mmio(s, gic_set_irq, gic_ops);
 }
 
-static void arm_gic_realize(DeviceState *dev, Error **errp)
+static void arm_gic_realize(DeviceState *dev, Error *errp[static 1])
 {
     /* Device instance realize function for the GIC sysbus device */
     int i;

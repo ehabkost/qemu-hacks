@@ -112,19 +112,20 @@ TPMVersion tpm_backend_get_tpm_version(TPMBackend *s)
     return k->ops->get_tpm_version(s);
 }
 
-static bool tpm_backend_prop_get_opened(Object *obj, Error **errp)
+static bool tpm_backend_prop_get_opened(Object *obj, Error *errp[static 1])
 {
     TPMBackend *s = TPM_BACKEND(obj);
 
     return s->opened;
 }
 
-void tpm_backend_open(TPMBackend *s, Error **errp)
+void tpm_backend_open(TPMBackend *s, Error *errp[static 1])
 {
     object_property_set_bool(OBJECT(s), true, "opened", errp);
 }
 
-static void tpm_backend_prop_set_opened(Object *obj, bool value, Error **errp)
+static void tpm_backend_prop_set_opened(Object *obj, bool value,
+                                        Error *errp[static 1])
 {
     TPMBackend *s = TPM_BACKEND(obj);
     TPMBackendClass *k = TPM_BACKEND_GET_CLASS(s);

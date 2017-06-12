@@ -869,7 +869,7 @@ static void dp8393x_instance_init(Object *obj)
     sysbus_init_irq(sbd, &s->irq);
 }
 
-static void dp8393x_realize(DeviceState *dev, Error **errp)
+static void dp8393x_realize(DeviceState *dev, Error *errp[static 1])
 {
     dp8393xState *s = DP8393X(dev);
     int i, checksum;

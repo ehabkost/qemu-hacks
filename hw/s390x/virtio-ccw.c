@@ -675,7 +675,8 @@ static void virtio_sch_disable_cb(SubchDev *sch)
     dev->revision = -1;
 }
 
-static void virtio_ccw_device_realize(VirtioCcwDevice *dev, Error **errp)
+static void virtio_ccw_device_realize(VirtioCcwDevice *dev,
+                                      Error *errp[static 1])
 {
     VirtIOCCWDeviceClass *k = VIRTIO_CCW_DEVICE_GET_CLASS(dev);
     CcwDevice *ccw_dev = CCW_DEVICE(dev);
@@ -752,7 +753,8 @@ static int virtio_ccw_exit(VirtioCcwDevice *dev)
     return 0;
 }
 
-static void virtio_ccw_net_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_net_realize(VirtioCcwDevice *ccw_dev,
+                                   Error *errp[static 1])
 {
     DeviceState *qdev = DEVICE(ccw_dev);
     VirtIONetCcw *dev = VIRTIO_NET_CCW(ccw_dev);
@@ -774,7 +776,8 @@ static void virtio_ccw_net_instance_init(Object *obj)
                               "bootindex", &error_abort);
 }
 
-static void virtio_ccw_blk_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_blk_realize(VirtioCcwDevice *ccw_dev,
+                                   Error *errp[static 1])
 {
     VirtIOBlkCcw *dev = VIRTIO_BLK_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -795,7 +798,8 @@ static void virtio_ccw_blk_instance_init(Object *obj)
                               "bootindex", &error_abort);
 }
 
-static void virtio_ccw_serial_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_serial_realize(VirtioCcwDevice *ccw_dev,
+                                      Error *errp[static 1])
 {
     VirtioSerialCcw *dev = VIRTIO_SERIAL_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -825,7 +829,8 @@ static void virtio_ccw_serial_instance_init(Object *obj)
                                 TYPE_VIRTIO_SERIAL);
 }
 
-static void virtio_ccw_balloon_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_balloon_realize(VirtioCcwDevice *ccw_dev,
+                                       Error *errp[static 1])
 {
     VirtIOBalloonCcw *dev = VIRTIO_BALLOON_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -847,7 +852,8 @@ static void virtio_ccw_balloon_instance_init(Object *obj)
                               "guest-stats-polling-interval", &error_abort);
 }
 
-static void virtio_ccw_scsi_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_scsi_realize(VirtioCcwDevice *ccw_dev,
+                                    Error *errp[static 1])
 {
     VirtIOSCSICcw *dev = VIRTIO_SCSI_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -879,7 +885,8 @@ static void virtio_ccw_scsi_instance_init(Object *obj)
 }
 
 #ifdef CONFIG_VHOST_SCSI
-static void vhost_ccw_scsi_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void vhost_ccw_scsi_realize(VirtioCcwDevice *ccw_dev,
+                                   Error *errp[static 1])
 {
     VHostSCSICcw *dev = VHOST_SCSI_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -897,7 +904,8 @@ static void vhost_ccw_scsi_instance_init(Object *obj)
 }
 #endif
 
-static void virtio_ccw_rng_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_rng_realize(VirtioCcwDevice *ccw_dev,
+                                   Error *errp[static 1])
 {
     VirtIORNGCcw *dev = VIRTIO_RNG_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -913,7 +921,8 @@ static void virtio_ccw_rng_realize(VirtioCcwDevice *ccw_dev, Error **errp)
                              IGNORE_ERRORS);
 }
 
-static void virtio_ccw_crypto_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_crypto_realize(VirtioCcwDevice *ccw_dev,
+                                      Error *errp[static 1])
 {
     VirtIOCryptoCcw *dev = VIRTIO_CRYPTO_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -1316,7 +1325,7 @@ static int virtio_ccw_load_config(DeviceState *d, QEMUFile *f)
     return 0;
 }
 
-static void virtio_ccw_pre_plugged(DeviceState *d, Error **errp)
+static void virtio_ccw_pre_plugged(DeviceState *d, Error *errp[static 1])
 {
    VirtioCcwDevice *dev = VIRTIO_CCW_DEVICE(d);
    VirtIODevice *vdev = virtio_bus_get_device(&dev->bus);
@@ -1327,7 +1336,7 @@ static void virtio_ccw_pre_plugged(DeviceState *d, Error **errp)
 }
 
 /* This is called by virtio-bus just after the device is plugged. */
-static void virtio_ccw_device_plugged(DeviceState *d, Error **errp)
+static void virtio_ccw_device_plugged(DeviceState *d, Error *errp[static 1])
 {
     VirtioCcwDevice *dev = VIRTIO_CCW_DEVICE(d);
     VirtIODevice *vdev = virtio_bus_get_device(&dev->bus);
@@ -1615,7 +1624,7 @@ static const TypeInfo virtio_ccw_crypto = {
     .class_init    = virtio_ccw_crypto_class_init,
 };
 
-static void virtio_ccw_busdev_realize(DeviceState *dev, Error **errp)
+static void virtio_ccw_busdev_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtioCcwDevice *_dev = (VirtioCcwDevice *)dev;
 
@@ -1632,7 +1641,7 @@ static int virtio_ccw_busdev_exit(DeviceState *dev)
 }
 
 static void virtio_ccw_busdev_unplug(HotplugHandler *hotplug_dev,
-                                     DeviceState *dev, Error **errp)
+                                     DeviceState *dev, Error *errp[static 1])
 {
     VirtioCcwDevice *_dev = to_virtio_ccw_dev_fast(dev);
 
@@ -1708,7 +1717,8 @@ static Property virtio_ccw_9p_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_ccw_9p_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void virtio_ccw_9p_realize(VirtioCcwDevice *ccw_dev,
+                                  Error *errp[static 1])
 {
     V9fsCCWState *dev = VIRTIO_9P_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -1754,7 +1764,8 @@ static Property vhost_vsock_ccw_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void vhost_vsock_ccw_realize(VirtioCcwDevice *ccw_dev, Error **errp)
+static void vhost_vsock_ccw_realize(VirtioCcwDevice *ccw_dev,
+                                    Error *errp[static 1])
 {
     VHostVSockCCWState *dev = VHOST_VSOCK_CCW(ccw_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);

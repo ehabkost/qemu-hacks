@@ -163,7 +163,8 @@ static void vmgenid_update_guest(VmGenIdState *vms)
     }
 }
 
-static void vmgenid_set_guid(Object *obj, const char *value, Error **errp)
+static void vmgenid_set_guid(Object *obj, const char *value,
+                             Error *errp[static 1])
 {
     VmGenIdState *vms = VMGENID(obj);
 
@@ -212,7 +213,7 @@ static Property vmgenid_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void vmgenid_realize(DeviceState *dev, Error **errp)
+static void vmgenid_realize(DeviceState *dev, Error *errp[static 1])
 {
     VmGenIdState *vms = VMGENID(dev);
 
@@ -264,7 +265,7 @@ static void vmgenid_register_types(void)
 
 type_init(vmgenid_register_types)
 
-GuidInfo *qmp_query_vm_generation_id(Error **errp)
+GuidInfo *qmp_query_vm_generation_id(Error *errp[static 1])
 {
     GuidInfo *info;
     VmGenIdState *vms;

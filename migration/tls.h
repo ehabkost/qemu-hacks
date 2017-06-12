@@ -25,10 +25,10 @@
 
 void migration_tls_channel_process_incoming(MigrationState *s,
                                             QIOChannel *ioc,
-                                            Error **errp);
+                                            Error *errp[static 1]);
 
 void migration_tls_channel_connect(MigrationState *s,
                                    QIOChannel *ioc,
                                    const char *hostname,
-                                   Error **errp);
+                                   Error *errp[static 1]);
 #endif

@@ -999,7 +999,7 @@ static void nvic_systick_trigger(void *opaque, int n, int level)
     }
 }
 
-static void armv7m_nvic_realize(DeviceState *dev, Error **errp)
+static void armv7m_nvic_realize(DeviceState *dev, Error *errp[static 1])
 {
     NVICState *s = NVIC(dev);
     SysBusDevice *systick_sbd;

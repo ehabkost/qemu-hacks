@@ -339,7 +339,7 @@ static void *edu_fact_thread(void *opaque)
     return NULL;
 }
 
-static void pci_edu_realize(PCIDevice *pdev, Error **errp)
+static void pci_edu_realize(PCIDevice *pdev, Error *errp[static 1])
 {
     EduState *edu = DO_UPCAST(EduState, pdev, pdev);
     uint8_t *pci_conf = pdev->config;
@@ -379,7 +379,7 @@ static void pci_edu_uninit(PCIDevice *pdev)
 }
 
 static void edu_obj_uint64(Object *obj, Visitor *v, const char *name,
-                           void *opaque, Error **errp)
+                           void *opaque, Error *errp[static 1])
 {
     uint64_t *val = opaque;
 

@@ -41,5 +41,5 @@ static inline uint64_t blk_mig_bytes_total(void)
 }
 #endif /* CONFIG_LIVE_BLOCK_MIGRATION */
 
-void migrate_set_block_enabled(bool value, Error **errp);
+void migrate_set_block_enabled(bool value, Error *errp[static 1]);
 #endif /* MIGRATION_BLOCK_H */

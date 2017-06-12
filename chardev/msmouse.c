@@ -156,7 +156,7 @@ static QemuInputHandler msmouse_handler = {
 static void msmouse_chr_open(Chardev *chr,
                              ChardevBackend *backend,
                              bool *be_opened,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     MouseChardev *mouse = MOUSE_CHARDEV(chr);
 

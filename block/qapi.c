@@ -35,7 +35,8 @@
 #include "qemu/cutils.h"
 
 BlockDeviceInfo *bdrv_block_device_info(BlockBackend *blk,
-                                        BlockDriverState *bs, Error **errp)
+                                        BlockDriverState *bs,
+                                        Error *errp[static 1])
 {
     ImageInfo **p_image_info;
     BlockDriverState *bs0;
@@ -152,7 +153,7 @@ BlockDeviceInfo *bdrv_block_device_info(BlockBackend *blk,
  */
 int bdrv_query_snapshot_info_list(BlockDriverState *bs,
                                   SnapshotInfoList **p_list,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     int i, sn_count;
     QEMUSnapshotInfo *sn_tab = NULL;
@@ -224,7 +225,7 @@ int bdrv_query_snapshot_info_list(BlockDriverState *bs,
  */
 void bdrv_query_image_info(BlockDriverState *bs,
                            ImageInfo **p_info,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     int64_t size;
     const char *backing_filename;
@@ -318,7 +319,7 @@ out:
 
 /* @p_info will be set only on success. */
 static void bdrv_query_info(BlockBackend *blk, BlockInfo **p_info,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     BlockInfo *info = g_malloc0(sizeof(*info));
     BlockDriverState *bs = blk_bs(blk);
@@ -456,7 +457,7 @@ static BlockStats *bdrv_query_bds_stats(const BlockDriverState *bs,
     return s;
 }
 
-BlockInfoList *qmp_query_block(Error **errp)
+BlockInfoList *qmp_query_block(Error *errp[static 1])
 {
     BlockInfoList *head = NULL, **p_next = &head;
     BlockBackend *blk;
@@ -479,7 +480,7 @@ BlockInfoList *qmp_query_block(Error **errp)
 
 BlockStatsList *qmp_query_blockstats(bool has_query_nodes,
                                      bool query_nodes,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     BlockStatsList *head = NULL, **p_next = &head;
     BlockBackend *blk;

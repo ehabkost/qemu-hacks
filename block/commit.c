@@ -216,7 +216,8 @@ out:
     block_job_defer_to_main_loop(&s->common, commit_complete, data);
 }
 
-static void commit_set_speed(BlockJob *job, int64_t speed, Error **errp)
+static void commit_set_speed(BlockJob *job, int64_t speed,
+                             Error *errp[static 1])
 {
     CommitBlockJob *s = container_of(job, CommitBlockJob, common);
 
@@ -284,7 +285,7 @@ static BlockDriver bdrv_commit_top = {
 void commit_start(const char *job_id, BlockDriverState *bs,
                   BlockDriverState *base, BlockDriverState *top, int64_t speed,
                   BlockdevOnError on_error, const char *backing_file_str,
-                  const char *filter_node_name, Error **errp)
+                  const char *filter_node_name, Error *errp[static 1])
 {
     CommitBlockJob *s;
     BlockReopenQueue *reopen_queue = NULL;

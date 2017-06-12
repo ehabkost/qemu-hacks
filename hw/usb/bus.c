@@ -13,7 +13,7 @@ static void usb_bus_dev_print(Monitor *mon, DeviceState *qdev, int indent);
 
 static char *usb_get_dev_path(DeviceState *dev);
 static char *usb_get_fw_dev_path(DeviceState *qdev);
-static void usb_qdev_unrealize(DeviceState *qdev, Error **errp);
+static void usb_qdev_unrealize(DeviceState *qdev, Error *errp[static 1]);
 
 static Property usb_props[] = {
     DEFINE_PROP_STRING("port", USBDevice, port_path),
@@ -117,7 +117,7 @@ USBBus *usb_bus_find(int busnr)
     return NULL;
 }
 
-static void usb_device_realize(USBDevice *dev, Error **errp)
+static void usb_device_realize(USBDevice *dev, Error *errp[static 1])
 {
     USBDeviceClass *klass = USB_DEVICE_GET_CLASS(dev);
 
@@ -135,7 +135,7 @@ USBDevice *usb_device_find_device(USBDevice *dev, uint8_t addr)
     return NULL;
 }
 
-static void usb_device_unrealize(USBDevice *dev, Error **errp)
+static void usb_device_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     USBDeviceClass *klass = USB_DEVICE_GET_CLASS(dev);
 
@@ -243,7 +243,7 @@ void usb_device_free_streams(USBDevice *dev, USBEndpoint **eps, int nr_eps)
     }
 }
 
-static void usb_qdev_realize(DeviceState *qdev, Error **errp)
+static void usb_qdev_realize(DeviceState *qdev, Error *errp[static 1])
 {
     USBDevice *dev = USB_DEVICE(qdev);
 
@@ -273,7 +273,7 @@ static void usb_qdev_realize(DeviceState *qdev, Error **errp)
     }
 }
 
-static void usb_qdev_unrealize(DeviceState *qdev, Error **errp)
+static void usb_qdev_unrealize(DeviceState *qdev, Error *errp[static 1])
 {
     USBDevice *dev = USB_DEVICE(qdev);
     USBDescString *s, *next;
@@ -324,7 +324,7 @@ USBDevice *usb_create(USBBus *bus, const char *name)
 }
 
 static USBDevice *usb_try_create_simple(USBBus *bus, const char *name,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     USBDevice *dev;
 
@@ -369,7 +369,7 @@ void usb_register_port(USBBus *bus, USBPort *port, void *opaque, int index,
 void usb_register_companion(const char *masterbus, USBPort *ports[],
                             uint32_t portcount, uint32_t firstport,
                             void *opaque, USBPortOps *ops, int speedmask,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     USBBus *bus;
     int i;
@@ -419,7 +419,7 @@ void usb_unregister_port(USBBus *bus, USBPort *port)
     bus->nfree--;
 }
 
-void usb_claim_port(USBDevice *dev, Error **errp)
+void usb_claim_port(USBDevice *dev, Error *errp[static 1])
 {
     USBBus *bus = usb_bus_from_device(dev);
     USBPort *port;
@@ -501,7 +501,7 @@ static void usb_mask_to_str(char *dest, size_t size,
     }
 }
 
-void usb_check_attach(USBDevice *dev, Error **errp)
+void usb_check_attach(USBDevice *dev, Error *errp[static 1])
 {
     USBBus *bus = usb_bus_from_device(dev);
     USBPort *port = dev->port;
@@ -524,7 +524,7 @@ void usb_check_attach(USBDevice *dev, Error **errp)
     }
 }
 
-void usb_device_attach(USBDevice *dev, Error **errp)
+void usb_device_attach(USBDevice *dev, Error *errp[static 1])
 {
     USBPort *port = dev->port;
 
@@ -736,14 +736,14 @@ USBDevice *usbdevice_create(const char *cmdline)
     return dev;
 }
 
-static bool usb_get_attached(Object *obj, Error **errp)
+static bool usb_get_attached(Object *obj, Error *errp[static 1])
 {
     USBDevice *dev = USB_DEVICE(obj);
 
     return dev->attached;
 }
 
-static void usb_set_attached(Object *obj, bool value, Error **errp)
+static void usb_set_attached(Object *obj, bool value, Error *errp[static 1])
 {
     USBDevice *dev = USB_DEVICE(obj);
 

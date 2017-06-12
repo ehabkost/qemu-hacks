@@ -29,7 +29,7 @@ ssize_t nbd_wr_syncv(QIOChannel *ioc,
                      size_t niov,
                      size_t length,
                      bool do_read,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     ssize_t done = 0;
     struct iovec *local_iov = g_new(struct iovec, niov);

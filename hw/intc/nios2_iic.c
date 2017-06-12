@@ -62,7 +62,7 @@ static void altera_iic_init(Object *obj)
     sysbus_init_irq(SYS_BUS_DEVICE(obj), &pv->parent_irq);
 }
 
-static void altera_iic_realize(DeviceState *dev, Error **errp)
+static void altera_iic_realize(DeviceState *dev, Error *errp[static 1])
 {
     struct AlteraIIC *pv = ALTERA_IIC(dev);
     Error *err = NULL;

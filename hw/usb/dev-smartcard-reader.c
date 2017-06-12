@@ -1166,7 +1166,7 @@ static void ccid_handle_data(USBDevice *dev, USBPacket *p)
     }
 }
 
-static void ccid_unrealize(USBDevice *dev, Error **errp)
+static void ccid_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     USBCCIDState *s = USB_CCID_DEV(dev);
 
@@ -1329,7 +1329,7 @@ static int ccid_card_init(DeviceState *qdev)
     return ret;
 }
 
-static void ccid_realize(USBDevice *dev, Error **errp)
+static void ccid_realize(USBDevice *dev, Error *errp[static 1])
 {
     USBCCIDState *s = USB_CCID_DEV(dev);
 

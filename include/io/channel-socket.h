@@ -76,7 +76,7 @@ qio_channel_socket_new(void);
  */
 QIOChannelSocket *
 qio_channel_socket_new_fd(int fd,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 
 /**
@@ -92,7 +92,7 @@ qio_channel_socket_new_fd(int fd,
  */
 int qio_channel_socket_connect_sync(QIOChannelSocket *ioc,
                                     SocketAddress *addr,
-                                    Error **errp);
+                                    Error *errp[static 1]);
 
 /**
  * qio_channel_socket_connect_async:
@@ -129,7 +129,7 @@ void qio_channel_socket_connect_async(QIOChannelSocket *ioc,
  */
 int qio_channel_socket_listen_sync(QIOChannelSocket *ioc,
                                    SocketAddress *addr,
-                                   Error **errp);
+                                   Error *errp[static 1]);
 
 /**
  * qio_channel_socket_listen_async:
@@ -169,7 +169,7 @@ void qio_channel_socket_listen_async(QIOChannelSocket *ioc,
 int qio_channel_socket_dgram_sync(QIOChannelSocket *ioc,
                                   SocketAddress *localAddr,
                                   SocketAddress *remoteAddr,
-                                  Error **errp);
+                                  Error *errp[static 1]);
 
 /**
  * qio_channel_socket_dgram_async:
@@ -212,7 +212,7 @@ void qio_channel_socket_dgram_async(QIOChannelSocket *ioc,
  */
 SocketAddress *
 qio_channel_socket_get_local_address(QIOChannelSocket *ioc,
-                                     Error **errp);
+                                     Error *errp[static 1]);
 
 /**
  * qio_channel_socket_get_remote_address:
@@ -229,7 +229,7 @@ qio_channel_socket_get_local_address(QIOChannelSocket *ioc,
  */
 SocketAddress *
 qio_channel_socket_get_remote_address(QIOChannelSocket *ioc,
-                                      Error **errp);
+                                      Error *errp[static 1]);
 
 
 /**
@@ -245,7 +245,7 @@ qio_channel_socket_get_remote_address(QIOChannelSocket *ioc,
  */
 QIOChannelSocket *
 qio_channel_socket_accept(QIOChannelSocket *ioc,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 
 #endif /* QIO_CHANNEL_SOCKET_H */

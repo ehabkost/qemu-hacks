@@ -589,14 +589,14 @@ static const struct SCSIBusInfo usb_msd_scsi_info_bot = {
     .load_request = usb_msd_load_request,
 };
 
-static void usb_msd_unrealize_storage(USBDevice *dev, Error **errp)
+static void usb_msd_unrealize_storage(USBDevice *dev, Error *errp[static 1])
 {
     MSDState *s = USB_STORAGE_DEV(dev);
 
     object_unref(OBJECT(&s->bus));
 }
 
-static void usb_msd_realize_storage(USBDevice *dev, Error **errp)
+static void usb_msd_realize_storage(USBDevice *dev, Error *errp[static 1])
 {
     MSDState *s = USB_STORAGE_DEV(dev);
     BlockBackend *blk = s->conf.blk;
@@ -646,14 +646,14 @@ static void usb_msd_realize_storage(USBDevice *dev, Error **errp)
     s->scsi_dev = scsi_dev;
 }
 
-static void usb_msd_unrealize_bot(USBDevice *dev, Error **errp)
+static void usb_msd_unrealize_bot(USBDevice *dev, Error *errp[static 1])
 {
     MSDState *s = USB_STORAGE_DEV(dev);
 
     object_unref(OBJECT(&s->bus));
 }
 
-static void usb_msd_realize_bot(USBDevice *dev, Error **errp)
+static void usb_msd_realize_bot(USBDevice *dev, Error *errp[static 1])
 {
     MSDState *s = USB_STORAGE_DEV(dev);
     DeviceState *d = DEVICE(dev);
@@ -778,7 +778,7 @@ static void usb_msd_class_initfn_storage(ObjectClass *klass, void *data)
 }
 
 static void usb_msd_get_bootindex(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     USBDevice *dev = USB_DEVICE(obj);
     MSDState *s = USB_STORAGE_DEV(dev);
@@ -787,7 +787,7 @@ static void usb_msd_get_bootindex(Object *obj, Visitor *v, const char *name,
 }
 
 static void usb_msd_set_bootindex(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     USBDevice *dev = USB_DEVICE(obj);
     MSDState *s = USB_STORAGE_DEV(dev);

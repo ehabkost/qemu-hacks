@@ -36,7 +36,7 @@ struct HostMemoryBackendFile {
 };
 
 static void
-file_backend_memory_alloc(HostMemoryBackend *backend, Error **errp)
+file_backend_memory_alloc(HostMemoryBackend *backend, Error *errp[static 1])
 {
     HostMemoryBackendFile *fb = MEMORY_BACKEND_FILE(backend);
 
@@ -64,14 +64,14 @@ file_backend_memory_alloc(HostMemoryBackend *backend, Error **errp)
 #endif
 }
 
-static char *get_mem_path(Object *o, Error **errp)
+static char *get_mem_path(Object *o, Error *errp[static 1])
 {
     HostMemoryBackendFile *fb = MEMORY_BACKEND_FILE(o);
 
     return g_strdup(fb->mem_path);
 }
 
-static void set_mem_path(Object *o, const char *str, Error **errp)
+static void set_mem_path(Object *o, const char *str, Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(o);
     HostMemoryBackendFile *fb = MEMORY_BACKEND_FILE(o);
@@ -84,14 +84,15 @@ static void set_mem_path(Object *o, const char *str, Error **errp)
     fb->mem_path = g_strdup(str);
 }
 
-static bool file_memory_backend_get_share(Object *o, Error **errp)
+static bool file_memory_backend_get_share(Object *o, Error *errp[static 1])
 {
     HostMemoryBackendFile *fb = MEMORY_BACKEND_FILE(o);
 
     return fb->share;
 }
 
-static void file_memory_backend_set_share(Object *o, bool value, Error **errp)
+static void file_memory_backend_set_share(Object *o, bool value,
+                                          Error *errp[static 1])
 {
     HostMemoryBackend *backend = MEMORY_BACKEND(o);
     HostMemoryBackendFile *fb = MEMORY_BACKEND_FILE(o);

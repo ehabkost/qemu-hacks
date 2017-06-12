@@ -55,7 +55,7 @@ static QemuOptsList runtime_opts = {
 };
 
 static int null_file_open(BlockDriverState *bs, QDict *options, int flags,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     QemuOpts *opts;
     BDRVNullState *s = bs->opaque;
@@ -199,7 +199,7 @@ static BlockAIOCB *null_aio_flush(BlockDriverState *bs,
 }
 
 static int null_reopen_prepare(BDRVReopenState *reopen_state,
-                               BlockReopenQueue *queue, Error **errp)
+                               BlockReopenQueue *queue, Error *errp[static 1])
 {
     return 0;
 }

@@ -51,7 +51,7 @@ static void vga_isa_reset(DeviceState *dev)
     vga_common_reset(s);
 }
 
-static void vga_isa_realizefn(DeviceState *dev, Error **errp)
+static void vga_isa_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     ISAVGAState *d = ISA_VGA(dev);

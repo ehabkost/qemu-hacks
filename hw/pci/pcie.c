@@ -300,7 +300,8 @@ static void pcie_cap_slot_event(PCIDevice *dev, PCIExpressHotPlugEvent event)
 
 static void pcie_cap_slot_hotplug_common(PCIDevice *hotplug_dev,
                                          DeviceState *dev,
-                                         uint8_t **exp_cap, Error **errp)
+                                         uint8_t **exp_cap,
+                                         Error *errp[static 1])
 {
     *exp_cap = hotplug_dev->config + hotplug_dev->exp.exp_cap;
     uint16_t sltsta = pci_get_word(*exp_cap + PCI_EXP_SLTSTA);
@@ -315,7 +316,7 @@ static void pcie_cap_slot_hotplug_common(PCIDevice *hotplug_dev,
 }
 
 void pcie_cap_slot_hotplug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     uint8_t *exp_cap;
     PCIDevice *pci_dev = PCI_DEVICE(dev);
@@ -349,7 +350,8 @@ static void pcie_unplug_device(PCIBus *bus, PCIDevice *dev, void *opaque)
 }
 
 void pcie_cap_slot_hot_unplug_request_cb(HotplugHandler *hotplug_dev,
-                                         DeviceState *dev, Error **errp)
+                                         DeviceState *dev,
+                                         Error *errp[static 1])
 {
     uint8_t *exp_cap;
     PCIDevice *pci_dev = PCI_DEVICE(dev);

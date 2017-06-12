@@ -127,7 +127,7 @@ static size_t
 qio_channel_websock_extract_headers(char *buffer,
                                     QIOChannelWebsockHTTPHeader *hdrs,
                                     size_t nhdrsalloc,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     char *nl, *sep, *tmp;
     size_t nhdrs = 0;
@@ -252,7 +252,7 @@ qio_channel_websock_find_header(QIOChannelWebsockHTTPHeader *hdrs,
 
 static int qio_channel_websock_handshake_send_response(QIOChannelWebsock *ioc,
                                                        const char *key,
-                                                       Error **errp)
+                                                       Error *errp[static 1])
 {
     char combined_key[QIO_CHANNEL_WEBSOCK_CLIENT_KEY_LEN +
                       QIO_CHANNEL_WEBSOCK_GUID_LEN + 1];
@@ -287,7 +287,7 @@ static int qio_channel_websock_handshake_send_response(QIOChannelWebsock *ioc,
 
 static int qio_channel_websock_handshake_process(QIOChannelWebsock *ioc,
                                                  char *buffer,
-                                                 Error **errp)
+                                                 Error *errp[static 1])
 {
     QIOChannelWebsockHTTPHeader hdrs[32];
     size_t nhdrs = G_N_ELEMENTS(hdrs);
@@ -373,7 +373,7 @@ static int qio_channel_websock_handshake_process(QIOChannelWebsock *ioc,
 }
 
 static int qio_channel_websock_handshake_read(QIOChannelWebsock *ioc,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     char *handshake_end;
     ssize_t ret;
@@ -520,7 +520,7 @@ static void qio_channel_websock_encode(QIOChannelWebsock *ioc)
 
 
 static ssize_t qio_channel_websock_decode_header(QIOChannelWebsock *ioc,
-                                                 Error **errp)
+                                                 Error *errp[static 1])
 {
     unsigned char opcode, fin, has_mask;
     size_t header_size;
@@ -594,7 +594,7 @@ static ssize_t qio_channel_websock_decode_header(QIOChannelWebsock *ioc,
 
 
 static ssize_t qio_channel_websock_decode_payload(QIOChannelWebsock *ioc,
-                                                  Error **errp)
+                                                  Error *errp[static 1])
 {
     size_t i;
     size_t payload_len;
@@ -699,7 +699,7 @@ static void qio_channel_websock_finalize(Object *obj)
 
 
 static ssize_t qio_channel_websock_read_wire(QIOChannelWebsock *ioc,
-                                             Error **errp)
+                                             Error *errp[static 1])
 {
     ssize_t ret;
 
@@ -744,7 +744,7 @@ static ssize_t qio_channel_websock_read_wire(QIOChannelWebsock *ioc,
 
 
 static ssize_t qio_channel_websock_write_wire(QIOChannelWebsock *ioc,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     ssize_t ret;
     ssize_t done = 0;
@@ -848,7 +848,7 @@ static ssize_t qio_channel_websock_readv(QIOChannel *ioc,
                                          size_t niov,
                                          int **fds,
                                          size_t *nfds,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QIOChannelWebsock *wioc = QIO_CHANNEL_WEBSOCK(ioc);
     size_t i;
@@ -894,7 +894,7 @@ static ssize_t qio_channel_websock_writev(QIOChannel *ioc,
                                           size_t niov,
                                           int *fds,
                                           size_t nfds,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     QIOChannelWebsock *wioc = QIO_CHANNEL_WEBSOCK(ioc);
     size_t i;
@@ -947,7 +947,7 @@ static ssize_t qio_channel_websock_writev(QIOChannel *ioc,
 
 static int qio_channel_websock_set_blocking(QIOChannel *ioc,
                                             bool enabled,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     QIOChannelWebsock *wioc = QIO_CHANNEL_WEBSOCK(ioc);
 
@@ -973,7 +973,7 @@ static void qio_channel_websock_set_cork(QIOChannel *ioc,
 
 static int qio_channel_websock_shutdown(QIOChannel *ioc,
                                         QIOChannelShutdown how,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     QIOChannelWebsock *tioc = QIO_CHANNEL_WEBSOCK(ioc);
 
@@ -981,7 +981,7 @@ static int qio_channel_websock_shutdown(QIOChannel *ioc,
 }
 
 static int qio_channel_websock_close(QIOChannel *ioc,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QIOChannelWebsock *wioc = QIO_CHANNEL_WEBSOCK(ioc);
 

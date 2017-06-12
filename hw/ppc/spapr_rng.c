@@ -112,7 +112,7 @@ static void spapr_rng_instance_init(Object *obj)
                                     IGNORE_ERRORS);
 }
 
-static void spapr_rng_realize(DeviceState *dev, Error **errp)
+static void spapr_rng_realize(DeviceState *dev, Error *errp[static 1])
 {
 
     sPAPRRngState *rngstate = SPAPR_RNG(dev);

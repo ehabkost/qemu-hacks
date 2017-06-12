@@ -44,7 +44,7 @@ qcrypto_block_qcow_has_format(const uint8_t *buf G_GNUC_UNUSED,
 static int
 qcrypto_block_qcow_init(QCryptoBlock *block,
                         const char *keysecret,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     char *password;
     int ret;
@@ -97,7 +97,7 @@ qcrypto_block_qcow_open(QCryptoBlock *block,
                         QCryptoBlockReadFunc readfunc G_GNUC_UNUSED,
                         void *opaque G_GNUC_UNUSED,
                         unsigned int flags,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     if (flags & QCRYPTO_BLOCK_OPEN_NO_IO) {
         return 0;
@@ -119,7 +119,7 @@ qcrypto_block_qcow_create(QCryptoBlock *block,
                           QCryptoBlockInitFunc initfunc G_GNUC_UNUSED,
                           QCryptoBlockWriteFunc writefunc G_GNUC_UNUSED,
                           void *opaque G_GNUC_UNUSED,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     if (!options->u.qcow.key_secret) {
         error_setg(errp, "Parameter 'key-secret' is required for cipher");
@@ -141,7 +141,7 @@ qcrypto_block_qcow_decrypt(QCryptoBlock *block,
                            uint64_t startsector,
                            uint8_t *buf,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     return qcrypto_block_decrypt_helper(block->cipher,
                                         block->niv, block->ivgen,
@@ -155,7 +155,7 @@ qcrypto_block_qcow_encrypt(QCryptoBlock *block,
                            uint64_t startsector,
                            uint8_t *buf,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     return qcrypto_block_encrypt_helper(block->cipher,
                                         block->niv, block->ivgen,

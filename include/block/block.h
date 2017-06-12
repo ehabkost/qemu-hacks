@@ -236,16 +236,17 @@ void bdrv_init_with_whitelist(void);
 bool bdrv_uses_whitelist(void);
 BlockDriver *bdrv_find_protocol(const char *filename,
                                 bool allow_protocol_prefix,
-                                Error **errp);
+                                Error *errp[static 1]);
 BlockDriver *bdrv_find_format(const char *format_name);
 int bdrv_create(BlockDriver *drv, const char* filename,
-                QemuOpts *opts, Error **errp);
-int bdrv_create_file(const char *filename, QemuOpts *opts, Error **errp);
+                QemuOpts *opts, Error *errp[static 1]);
+int bdrv_create_file(const char *filename, QemuOpts *opts,
+		     Error *errp[static 1]);
 BlockDriverState *bdrv_new(void);
 void bdrv_append(BlockDriverState *bs_new, BlockDriverState *bs_top,
-                 Error **errp);
+                 Error *errp[static 1]);
 void bdrv_replace_node(BlockDriverState *from, BlockDriverState *to,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 int bdrv_parse_cache_mode(const char *mode, int *flags, bool *writethrough);
 int bdrv_parse_discard_flags(const char *mode, int *flags);
@@ -253,22 +254,23 @@ BdrvChild *bdrv_open_child(const char *filename,
                            QDict *options, const char *bdref_key,
                            BlockDriverState* parent,
                            const BdrvChildRole *child_role,
-                           bool allow_none, Error **errp);
+                           bool allow_none, Error *errp[static 1]);
 void bdrv_set_backing_hd(BlockDriverState *bs, BlockDriverState *backing_hd,
-                         Error **errp);
+                         Error *errp[static 1]);
 int bdrv_open_backing_file(BlockDriverState *bs, QDict *parent_options,
-                           const char *bdref_key, Error **errp);
+                           const char *bdref_key, Error *errp[static 1]);
 BlockDriverState *bdrv_open(const char *filename, const char *reference,
-                            QDict *options, int flags, Error **errp);
+                            QDict *options, int flags, Error *errp[static 1]);
 BlockDriverState *bdrv_new_open_driver(BlockDriver *drv, const char *node_name,
-                                       int flags, Error **errp);
+                                       int flags, Error *errp[static 1]);
 BlockReopenQueue *bdrv_reopen_queue(BlockReopenQueue *bs_queue,
                                     BlockDriverState *bs,
                                     QDict *options, int flags);
-int bdrv_reopen_multiple(AioContext *ctx, BlockReopenQueue *bs_queue, Error **errp);
-int bdrv_reopen(BlockDriverState *bs, int bdrv_flags, Error **errp);
+int bdrv_reopen_multiple(AioContext *ctx, BlockReopenQueue *bs_queue,
+			 Error *errp[static 1]);
+int bdrv_reopen(BlockDriverState *bs, int bdrv_flags, Error *errp[static 1]);
 int bdrv_reopen_prepare(BDRVReopenState *reopen_state,
-                        BlockReopenQueue *queue, Error **errp);
+                        BlockReopenQueue *queue, Error *errp[static 1]);
 void bdrv_reopen_commit(BDRVReopenState *reopen_state);
 void bdrv_reopen_abort(BDRVReopenState *reopen_state);
 int bdrv_read(BdrvChild *child, int64_t sector_num,
@@ -300,12 +302,12 @@ BlockDriverState *bdrv_find_backing_image(BlockDriverState *bs,
     const char *backing_file);
 int bdrv_get_backing_file_depth(BlockDriverState *bs);
 void bdrv_refresh_filename(BlockDriverState *bs);
-int bdrv_truncate(BdrvChild *child, int64_t offset, Error **errp);
+int bdrv_truncate(BdrvChild *child, int64_t offset, Error *errp[static 1]);
 int64_t bdrv_nb_sectors(BlockDriverState *bs);
 int64_t bdrv_getlength(BlockDriverState *bs);
 int64_t bdrv_get_allocated_file_size(BlockDriverState *bs);
 void bdrv_get_geometry(BlockDriverState *bs, uint64_t *nb_sectors_ptr);
-void bdrv_refresh_limits(BlockDriverState *bs, Error **errp);
+void bdrv_refresh_limits(BlockDriverState *bs, Error *errp[static 1]);
 int bdrv_commit(BlockDriverState *bs);
 int bdrv_change_backing_file(BlockDriverState *bs,
     const char *backing_file, const char *backing_fmt);
@@ -350,7 +352,8 @@ bool bdrv_is_first_non_filter(BlockDriverState *candidate);
 
 /* check if a named node can be replaced when doing drive-mirror */
 BlockDriverState *check_to_replace_node(BlockDriverState *parent_bs,
-                                        const char *node_name, Error **errp);
+                                        const char *node_name,
+                                        Error *errp[static 1]);
 
 /* async block I/O */
 BlockAIOCB *bdrv_aio_readv(BdrvChild *child, int64_t sector_num,
@@ -368,8 +371,8 @@ void bdrv_aio_cancel_async(BlockAIOCB *acb);
 int bdrv_co_ioctl(BlockDriverState *bs, int req, void *buf);
 
 /* Invalidate any cached metadata used by image formats */
-void bdrv_invalidate_cache(BlockDriverState *bs, Error **errp);
-void bdrv_invalidate_cache_all(Error **errp);
+void bdrv_invalidate_cache(BlockDriverState *bs, Error *errp[static 1]);
+void bdrv_invalidate_cache_all(Error *errp[static 1]);
 int bdrv_inactivate_all(void);
 
 /* Ensure contents are flushed to disk.  */
@@ -439,8 +442,10 @@ int bdrv_is_allocated_above(BlockDriverState *top, BlockDriverState *base,
 
 bool bdrv_is_read_only(BlockDriverState *bs);
 bool bdrv_is_writable(BlockDriverState *bs);
-int bdrv_can_set_read_only(BlockDriverState *bs, bool read_only, Error **errp);
-int bdrv_set_read_only(BlockDriverState *bs, bool read_only, Error **errp);
+int bdrv_can_set_read_only(BlockDriverState *bs, bool read_only,
+			   Error *errp[static 1]);
+int bdrv_set_read_only(BlockDriverState *bs, bool read_only,
+		       Error *errp[static 1]);
 bool bdrv_is_sg(BlockDriverState *bs);
 bool bdrv_is_inserted(BlockDriverState *bs);
 int bdrv_media_changed(BlockDriverState *bs);
@@ -448,10 +453,10 @@ void bdrv_lock_medium(BlockDriverState *bs, bool locked);
 void bdrv_eject(BlockDriverState *bs, bool eject_flag);
 const char *bdrv_get_format_name(BlockDriverState *bs);
 BlockDriverState *bdrv_find_node(const char *node_name);
-BlockDeviceInfoList *bdrv_named_nodes_list(Error **errp);
+BlockDeviceInfoList *bdrv_named_nodes_list(Error *errp[static 1]);
 BlockDriverState *bdrv_lookup_bs(const char *device,
                                  const char *node_name,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 bool bdrv_chain_contains(BlockDriverState *top, BlockDriverState *base);
 BlockDriverState *bdrv_next_node(BlockDriverState *bs);
 
@@ -471,7 +476,8 @@ BlockDriverState *bdrv_next_monitor_owned(BlockDriverState *bs);
 bool bdrv_is_encrypted(BlockDriverState *bs);
 bool bdrv_key_required(BlockDriverState *bs);
 int bdrv_set_key(BlockDriverState *bs, const char *key);
-void bdrv_add_key(BlockDriverState *bs, const char *key, Error **errp);
+void bdrv_add_key(BlockDriverState *bs, const char *key,
+		  Error *errp[static 1]);
 void bdrv_iterate_format(void (*it)(void *opaque, const char *name),
                          void *opaque);
 const char *bdrv_get_node_name(const BlockDriverState *bs);
@@ -493,11 +499,12 @@ const char *bdrv_get_encrypted_filename(BlockDriverState *bs);
 void bdrv_get_backing_filename(BlockDriverState *bs,
                                char *filename, int filename_size);
 void bdrv_get_full_backing_filename(BlockDriverState *bs,
-                                    char *dest, size_t sz, Error **errp);
+                                    char *dest, size_t sz,
+                                    Error *errp[static 1]);
 void bdrv_get_full_backing_filename_from_filename(const char *backed,
                                                   const char *backing,
                                                   char *dest, size_t sz,
-                                                  Error **errp);
+                                                  Error *errp[static 1]);
 
 int path_has_protocol(const char *path);
 int path_is_absolute(const char *path);
@@ -516,7 +523,7 @@ int bdrv_load_vmstate(BlockDriverState *bs, uint8_t *buf,
 void bdrv_img_create(const char *filename, const char *fmt,
                      const char *base_filename, const char *base_fmt,
                      char *options, uint64_t img_size, int flags,
-                     bool quiet, Error **errp);
+                     bool quiet, Error *errp[static 1]);
 
 /* Returns the alignment in bytes that is required so that no bounce buffer
  * is required throughout the stack */
@@ -539,9 +546,10 @@ BdrvChild *bdrv_attach_child(BlockDriverState *parent_bs,
                              BlockDriverState *child_bs,
                              const char *child_name,
                              const BdrvChildRole *child_role,
-                             Error **errp);
+                             Error *errp[static 1]);
 
-bool bdrv_op_is_blocked(BlockDriverState *bs, BlockOpType op, Error **errp);
+bool bdrv_op_is_blocked(BlockDriverState *bs, BlockOpType op,
+			Error *errp[static 1]);
 void bdrv_op_block(BlockDriverState *bs, BlockOpType op, Error *reason);
 void bdrv_op_unblock(BlockDriverState *bs, BlockOpType op, Error *reason);
 void bdrv_op_block_all(BlockDriverState *bs, Error *reason);
@@ -626,7 +634,8 @@ void bdrv_drained_begin(BlockDriverState *bs);
 void bdrv_drained_end(BlockDriverState *bs);
 
 void bdrv_add_child(BlockDriverState *parent, BlockDriverState *child,
-                    Error **errp);
-void bdrv_del_child(BlockDriverState *parent, BdrvChild *child, Error **errp);
+                    Error *errp[static 1]);
+void bdrv_del_child(BlockDriverState *parent, BdrvChild *child,
+		    Error *errp[static 1]);
 
 #endif

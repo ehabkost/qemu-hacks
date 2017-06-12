@@ -11,7 +11,7 @@ void pause_all_vcpus(void);
 void cpu_stop_current(void);
 void cpu_ticks_init(void);
 
-void configure_icount(QemuOpts *opts, Error **errp);
+void configure_icount(QemuOpts *opts, Error *errp[static 1]);
 extern int use_icount;
 extern int icount_align_option;
 
@@ -40,6 +40,6 @@ extern int smp_threads;
 
 void list_cpus(FILE *f, fprintf_function cpu_fprintf, const char *optarg);
 
-void qemu_tcg_configure(QemuOpts *opts, Error **errp);
+void qemu_tcg_configure(QemuOpts *opts, Error *errp[static 1]);
 
 #endif

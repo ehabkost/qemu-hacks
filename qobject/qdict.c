@@ -732,7 +732,7 @@ static void qdict_split_flat_key(const char *key, char **prefix,
  *
  * Returns: 1 if a valid list, 0 if a dict, -1 on error
  */
-static int qdict_is_list(QDict *maybe_list, Error **errp)
+static int qdict_is_list(QDict *maybe_list, Error *errp[static 1])
 {
     const QDictEntry *ent;
     ssize_t len = 0;
@@ -825,7 +825,7 @@ static int qdict_is_list(QDict *maybe_list, Error **errp)
  * Returns: either a QDict or QList for the nested data structure, or NULL
  * on error
  */
-QObject *qdict_crumple(const QDict *src, Error **errp)
+QObject *qdict_crumple(const QDict *src, Error *errp[static 1])
 {
     const QDictEntry *ent;
     QDict *two_level, *multi_level = NULL;

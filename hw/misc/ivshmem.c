@@ -439,7 +439,7 @@ static void resize_peers(IVShmemState *s, int nb_peers)
 }
 
 static void ivshmem_add_kvm_msi_virq(IVShmemState *s, int vector,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     PCIDevice *pdev = PCI_DEVICE(s);
     int ret;
@@ -457,7 +457,8 @@ static void ivshmem_add_kvm_msi_virq(IVShmemState *s, int vector,
     s->msi_vectors[vector].pdev = pdev;
 }
 
-static void setup_interrupt(IVShmemState *s, int vector, Error **errp)
+static void setup_interrupt(IVShmemState *s, int vector,
+                            Error *errp[static 1])
 {
     EventNotifier *n = &s->peers[s->vm_id].eventfds[vector];
     bool with_irqfd = kvm_msi_via_irqfd_enabled() &&
@@ -487,7 +488,7 @@ static void setup_interrupt(IVShmemState *s, int vector, Error **errp)
     }
 }
 
-static void process_msg_shmem(IVShmemState *s, int fd, Error **errp)
+static void process_msg_shmem(IVShmemState *s, int fd, Error *errp[static 1])
 {
     struct stat buf;
     size_t size;
@@ -533,7 +534,7 @@ static void process_msg_shmem(IVShmemState *s, int fd, Error **errp)
 }
 
 static void process_msg_disconnect(IVShmemState *s, uint16_t posn,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     IVSHMEM_DPRINTF("posn %d has gone away\n", posn);
     if (posn >= s->nb_peers || posn == s->vm_id) {
@@ -544,7 +545,7 @@ static void process_msg_disconnect(IVShmemState *s, uint16_t posn,
 }
 
 static void process_msg_connect(IVShmemState *s, uint16_t posn, int fd,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     Peer *peer = &s->peers[posn];
     int vector;
@@ -575,7 +576,8 @@ static void process_msg_connect(IVShmemState *s, uint16_t posn, int fd,
     }
 }
 
-static void process_msg(IVShmemState *s, int64_t msg, int fd, Error **errp)
+static void process_msg(IVShmemState *s, int64_t msg, int fd,
+                        Error *errp[static 1])
 {
     IVSHMEM_DPRINTF("posn is %" PRId64 ", fd is %d\n", msg, fd);
 
@@ -633,7 +635,8 @@ static void ivshmem_read(void *opaque, const uint8_t *buf, int size)
     }
 }
 
-static int64_t ivshmem_recv_msg(IVShmemState *s, int *pfd, Error **errp)
+static int64_t ivshmem_recv_msg(IVShmemState *s, int *pfd,
+                                Error *errp[static 1])
 {
     int64_t msg;
     int n, ret;
@@ -653,7 +656,7 @@ static int64_t ivshmem_recv_msg(IVShmemState *s, int *pfd, Error **errp)
     return msg;
 }
 
-static void ivshmem_recv_setup(IVShmemState *s, Error **errp)
+static void ivshmem_recv_setup(IVShmemState *s, Error *errp[static 1])
 {
     Error *err = NULL;
     int64_t msg;
@@ -747,7 +750,7 @@ static void ivshmem_reset(DeviceState *d)
     }
 }
 
-static int ivshmem_setup_interrupts(IVShmemState *s, Error **errp)
+static int ivshmem_setup_interrupts(IVShmemState *s, Error *errp[static 1])
 {
     /* allocate QEMU callback data for receiving interrupts */
     s->msi_vectors = g_malloc0(s->vectors * sizeof(MSIVector));
@@ -831,7 +834,7 @@ static void ivshmem_write_config(PCIDevice *pdev, uint32_t address,
     }
 }
 
-static void ivshmem_common_realize(PCIDevice *dev, Error **errp)
+static void ivshmem_common_realize(PCIDevice *dev, Error *errp[static 1])
 {
     IVShmemState *s = IVSHMEM_COMMON(dev);
     uint8_t *pci_conf;
@@ -1006,7 +1009,7 @@ static const TypeInfo ivshmem_common_info = {
 };
 
 static void ivshmem_check_memdev_is_busy(Object *obj, const char *name,
-                                         Object *val, Error **errp)
+                                         Object *val, Error *errp[static 1])
 {
     if (host_memory_backend_is_mapped(MEMORY_BACKEND(val))) {
         char *path = object_get_canonical_path_component(val);
@@ -1048,7 +1051,7 @@ static void ivshmem_plain_init(Object *obj)
     s->not_legacy_32bit = 1;
 }
 
-static void ivshmem_plain_realize(PCIDevice *dev, Error **errp)
+static void ivshmem_plain_realize(PCIDevice *dev, Error *errp[static 1])
 {
     IVShmemState *s = IVSHMEM_COMMON(dev);
 
@@ -1120,7 +1123,7 @@ static void ivshmem_doorbell_init(Object *obj)
     s->not_legacy_32bit = 1;
 }
 
-static void ivshmem_doorbell_realize(PCIDevice *dev, Error **errp)
+static void ivshmem_doorbell_realize(PCIDevice *dev, Error *errp[static 1])
 {
     IVShmemState *s = IVSHMEM_COMMON(dev);
 
@@ -1244,7 +1247,7 @@ static void desugar_shm(IVShmemState *s)
     s->hostmem = MEMORY_BACKEND(obj);
 }
 
-static void ivshmem_realize(PCIDevice *dev, Error **errp)
+static void ivshmem_realize(PCIDevice *dev, Error *errp[static 1])
 {
     IVShmemState *s = IVSHMEM_COMMON(dev);
 

@@ -156,7 +156,7 @@ void colo_do_failover(MigrationState *s)
 
 void qmp_xen_set_replication(bool enable, bool primary,
                              bool has_failover, bool failover,
-                             Error **errp)
+                             Error *errp[static 1])
 {
 #ifdef CONFIG_REPLICATION
     ReplicationMode mode = primary ?
@@ -182,7 +182,7 @@ void qmp_xen_set_replication(bool enable, bool primary,
 #endif
 }
 
-ReplicationStatus *qmp_query_xen_replication_status(Error **errp)
+ReplicationStatus *qmp_query_xen_replication_status(Error *errp[static 1])
 {
 #ifdef CONFIG_REPLICATION
     Error *err = NULL;
@@ -204,7 +204,7 @@ ReplicationStatus *qmp_query_xen_replication_status(Error **errp)
 #endif
 }
 
-void qmp_xen_colo_do_checkpoint(Error **errp)
+void qmp_xen_colo_do_checkpoint(Error *errp[static 1])
 {
 #ifdef CONFIG_REPLICATION
     replication_do_checkpoint_all(errp);
@@ -214,7 +214,7 @@ void qmp_xen_colo_do_checkpoint(Error **errp)
 }
 
 static void colo_send_message(QEMUFile *f, COLOMessage msg,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     int ret;
 
@@ -233,7 +233,7 @@ static void colo_send_message(QEMUFile *f, COLOMessage msg,
 }
 
 static void colo_send_message_value(QEMUFile *f, COLOMessage msg,
-                                    uint64_t value, Error **errp)
+                                    uint64_t value, Error *errp[static 1])
 {
     int ret;
 
@@ -251,7 +251,7 @@ static void colo_send_message_value(QEMUFile *f, COLOMessage msg,
     }
 }
 
-static COLOMessage colo_receive_message(QEMUFile *f, Error **errp)
+static COLOMessage colo_receive_message(QEMUFile *f, Error *errp[static 1])
 {
     COLOMessage msg;
     int ret;
@@ -271,7 +271,7 @@ static COLOMessage colo_receive_message(QEMUFile *f, Error **errp)
 }
 
 static void colo_receive_check_message(QEMUFile *f, COLOMessage expect_msg,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     COLOMessage msg;
     Error *local_err = NULL;
@@ -288,7 +288,7 @@ static void colo_receive_check_message(QEMUFile *f, COLOMessage expect_msg,
 }
 
 static uint64_t colo_receive_message_value(QEMUFile *f, uint32_t expect_msg,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     uint64_t value;
     int ret;
@@ -505,7 +505,7 @@ void migrate_start_colo_process(MigrationState *s)
 }
 
 static void colo_wait_handle_message(QEMUFile *f, int *checkpoint_request,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     COLOMessage msg;
     Error *local_err = NULL;

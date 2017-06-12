@@ -36,7 +36,7 @@ static const MemoryRegionOps debug_exit_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void debug_exit_realizefn(DeviceState *d, Error **errp)
+static void debug_exit_realizefn(DeviceState *d, Error *errp[static 1])
 {
     ISADevice *dev = ISA_DEVICE(d);
     ISADebugExitState *isa = ISA_DEBUG_EXIT_DEVICE(d);

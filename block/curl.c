@@ -564,7 +564,7 @@ static void curl_clean_state(CURLState *s)
 }
 
 static void curl_parse_filename(const char *filename, QDict *options,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     qdict_put_str(options, CURL_BLOCK_OPT_URL, filename);
 }
@@ -674,7 +674,7 @@ static QemuOptsList runtime_opts = {
 
 
 static int curl_open(BlockDriverState *bs, QDict *options, int flags,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     BDRVCURLState *s = bs->opaque;
     CURLState *state = NULL;

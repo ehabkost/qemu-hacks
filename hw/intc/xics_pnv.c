@@ -159,7 +159,7 @@ static const MemoryRegionOps pnv_icp_ops = {
     },
 };
 
-static void pnv_icp_realize(DeviceState *dev, Error **errp)
+static void pnv_icp_realize(DeviceState *dev, Error *errp[static 1])
 {
     PnvICPState *icp = PNV_ICP(dev);
 

@@ -604,7 +604,7 @@ static void arm_sysctl_init(Object *obj)
     qdev_init_gpio_out(dev, &s->pl110_mux_ctrl, 1);
 }
 
-static void arm_sysctl_realize(DeviceState *d, Error **errp)
+static void arm_sysctl_realize(DeviceState *d, Error *errp[static 1])
 {
     arm_sysctl_state *s = ARM_SYSCTL(d);
 

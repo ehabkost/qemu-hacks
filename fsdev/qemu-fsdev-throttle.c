@@ -29,7 +29,8 @@ static void fsdev_throttle_write_timer_cb(void *opaque)
     qemu_co_enter_next(&fst->throttled_reqs[true]);
 }
 
-void fsdev_throttle_parse_opts(QemuOpts *opts, FsThrottle *fst, Error **errp)
+void fsdev_throttle_parse_opts(QemuOpts *opts, FsThrottle *fst,
+                               Error *errp[static 1])
 {
     throttle_config_init(&fst->cfg);
     fst->cfg.buckets[THROTTLE_BPS_TOTAL].avg =

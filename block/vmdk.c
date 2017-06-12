@@ -335,7 +335,7 @@ static int vmdk_is_cid_valid(BlockDriverState *bs)
 
 /* We have nothing to do for VMDK reopen, stubs just return success */
 static int vmdk_reopen_prepare(BDRVReopenState *state,
-                               BlockReopenQueue *queue, Error **errp)
+                               BlockReopenQueue *queue, Error *errp[static 1])
 {
     assert(state != NULL);
     assert(state->bs != NULL);
@@ -387,7 +387,7 @@ static int vmdk_add_extent(BlockDriverState *bs,
                            uint32_t l1_size,
                            int l2_size, uint64_t cluster_sectors,
                            VmdkExtent **new_extent,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     VmdkExtent *extent;
     BDRVVmdkState *s = bs->opaque;
@@ -441,7 +441,7 @@ static int vmdk_add_extent(BlockDriverState *bs,
 }
 
 static int vmdk_init_tables(BlockDriverState *bs, VmdkExtent *extent,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     int ret;
     size_t l1_size;
@@ -501,7 +501,7 @@ static int vmdk_init_tables(BlockDriverState *bs, VmdkExtent *extent,
 
 static int vmdk_open_vmfs_sparse(BlockDriverState *bs,
                                  BdrvChild *file,
-                                 int flags, Error **errp)
+                                 int flags, Error *errp[static 1])
 {
     int ret;
     uint32_t magic;
@@ -536,9 +536,10 @@ static int vmdk_open_vmfs_sparse(BlockDriverState *bs,
 }
 
 static int vmdk_open_desc_file(BlockDriverState *bs, int flags, char *buf,
-                               QDict *options, Error **errp);
+                               QDict *options, Error *errp[static 1]);
 
-static char *vmdk_read_desc(BdrvChild *file, uint64_t desc_offset, Error **errp)
+static char *vmdk_read_desc(BdrvChild *file, uint64_t desc_offset,
+                            Error *errp[static 1])
 {
     int64_t size;
     char *buf;
@@ -574,7 +575,7 @@ static char *vmdk_read_desc(BdrvChild *file, uint64_t desc_offset, Error **errp)
 
 static int vmdk_open_vmdk4(BlockDriverState *bs,
                            BdrvChild *file,
-                           int flags, QDict *options, Error **errp)
+                           int flags, QDict *options, Error *errp[static 1])
 {
     int ret;
     uint32_t magic;
@@ -755,7 +756,7 @@ static int vmdk_parse_description(const char *desc, const char *opt_name,
 
 /* Open an extent file and append to bs array */
 static int vmdk_open_sparse(BlockDriverState *bs, BdrvChild *file, int flags,
-                            char *buf, QDict *options, Error **errp)
+                            char *buf, QDict *options, Error *errp[static 1])
 {
     uint32_t magic;
 
@@ -787,7 +788,7 @@ static const char *next_line(const char *s)
 
 static int vmdk_parse_extents(const char *desc, BlockDriverState *bs,
                               const char *desc_file_path, QDict *options,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     int ret;
     int matches;
@@ -906,7 +907,7 @@ invalid:
 }
 
 static int vmdk_open_desc_file(BlockDriverState *bs, int flags, char *buf,
-                               QDict *options, Error **errp)
+                               QDict *options, Error *errp[static 1])
 {
     int ret;
     char ct[128];
@@ -935,7 +936,7 @@ exit:
 }
 
 static int vmdk_open(BlockDriverState *bs, QDict *options, int flags,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     char *buf;
     int ret;
@@ -1002,7 +1003,7 @@ fail:
 }
 
 
-static void vmdk_refresh_limits(BlockDriverState *bs, Error **errp)
+static void vmdk_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     BDRVVmdkState *s = bs->opaque;
     int i;
@@ -1686,7 +1687,7 @@ static int coroutine_fn vmdk_co_pwrite_zeroes(BlockDriverState *bs,
 
 static int vmdk_create_extent(const char *filename, int64_t filesize,
                               bool flat, bool compress, bool zeroed_grain,
-                              QemuOpts *opts, Error **errp)
+                              QemuOpts *opts, Error *errp[static 1])
 {
     int ret, i;
     BlockBackend *blk = NULL;
@@ -1818,7 +1819,8 @@ exit:
 }
 
 static int filename_decompose(const char *filename, char *path, char *prefix,
-                              char *postfix, size_t buf_len, Error **errp)
+                              char *postfix, size_t buf_len,
+                              Error *errp[static 1])
 {
     const char *p, *q;
 
@@ -1857,7 +1859,8 @@ static int filename_decompose(const char *filename, char *path, char *prefix,
     return VMDK_OK;
 }
 
-static int vmdk_create(const char *filename, QemuOpts *opts, Error **errp)
+static int vmdk_create(const char *filename, QemuOpts *opts,
+                       Error *errp[static 1])
 {
     int idx = 0;
     BlockBackend *new_blk = NULL;

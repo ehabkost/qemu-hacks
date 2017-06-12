@@ -133,7 +133,7 @@ static const VMStateDescription vmstate_ads7846 = {
     }
 };
 
-static void ads7846_realize(SSISlave *d, Error **errp)
+static void ads7846_realize(SSISlave *d, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(d);
     ADS7846State *s = FROM_SSI_SLAVE(ADS7846State, d);

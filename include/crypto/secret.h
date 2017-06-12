@@ -137,10 +137,10 @@ struct QCryptoSecretClass {
 extern int qcrypto_secret_lookup(const char *secretid,
                                  uint8_t **data,
                                  size_t *datalen,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 extern char *qcrypto_secret_lookup_as_utf8(const char *secretid,
-                                           Error **errp);
+                                           Error *errp[static 1]);
 extern char *qcrypto_secret_lookup_as_base64(const char *secretid,
-                                             Error **errp);
+                                             Error *errp[static 1]);
 
 #endif /* QCRYPTO_SECRET_H */

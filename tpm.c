@@ -182,7 +182,7 @@ static int configure_tpm(QemuOpts *opts)
     return 0;
 }
 
-static int tpm_init_tpmdev(void *dummy, QemuOpts *opts, Error **errp)
+static int tpm_init_tpmdev(void *dummy, QemuOpts *opts, Error *errp[static 1])
 {
     return configure_tpm(opts);
 }
@@ -283,7 +283,7 @@ static TPMInfo *qmp_query_tpm_inst(TPMBackend *drv)
  * Walk the list of active TPM backends and collect information about them
  * following the schema description in qapi-schema.json.
  */
-TPMInfoList *qmp_query_tpm(Error **errp)
+TPMInfoList *qmp_query_tpm(Error *errp[static 1])
 {
     TPMBackend *drv;
     TPMInfoList *info, *head = NULL, *cur_item = NULL;
@@ -306,7 +306,7 @@ TPMInfoList *qmp_query_tpm(Error **errp)
     return head;
 }
 
-TpmTypeList *qmp_query_tpm_types(Error **errp)
+TpmTypeList *qmp_query_tpm_types(Error *errp[static 1])
 {
     unsigned int i = 0;
     TpmTypeList *head = NULL, *prev = NULL, *cur_item;
@@ -330,7 +330,7 @@ TpmTypeList *qmp_query_tpm_types(Error **errp)
     return head;
 }
 
-TpmModelList *qmp_query_tpm_models(Error **errp)
+TpmModelList *qmp_query_tpm_models(Error *errp[static 1])
 {
     unsigned int i = 0;
     TpmModelList *head = NULL, *prev = NULL, *cur_item;

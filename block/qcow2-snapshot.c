@@ -588,7 +588,7 @@ fail:
 int qcow2_snapshot_delete(BlockDriverState *bs,
                           const char *snapshot_id,
                           const char *name,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     QCowSnapshot sn;
@@ -683,7 +683,7 @@ int qcow2_snapshot_list(BlockDriverState *bs, QEMUSnapshotInfo **psn_tab)
 int qcow2_snapshot_load_tmp(BlockDriverState *bs,
                             const char *snapshot_id,
                             const char *name,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     int i, snapshot_index;
     BDRVQcow2State *s = bs->opaque;

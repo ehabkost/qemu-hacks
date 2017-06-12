@@ -261,7 +261,8 @@ static int boot_device2nibble(char boot_device)
     return 0;
 }
 
-static void set_boot_dev(ISADevice *s, const char *boot_device, Error **errp)
+static void set_boot_dev(ISADevice *s, const char *boot_device,
+                         Error *errp[static 1])
 {
 #define PC_MAX_BOOT_DEVICES 3
     int nbds, bds[3] = { 0, };
@@ -284,7 +285,8 @@ static void set_boot_dev(ISADevice *s, const char *boot_device, Error **errp)
     rtc_set_memory(s, 0x38, (bds[2] << 4) | (fd_bootchk ? 0x0 : 0x1));
 }
 
-static void pc_boot_set(void *opaque, const char *boot_device, Error **errp)
+static void pc_boot_set(void *opaque, const char *boot_device,
+                        Error *errp[static 1])
 {
     set_boot_dev(opaque, boot_device, errp);
 }
@@ -578,7 +580,7 @@ static void port92_initfn(Object *obj)
     qdev_init_gpio_out_named(DEVICE(obj), &s->a20_out, PORT92_A20_LINE, 1);
 }
 
-static void port92_realizefn(DeviceState *dev, Error **errp)
+static void port92_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     Port92State *s = PORT92(dev);
@@ -1092,7 +1094,8 @@ void pc_acpi_smi_interrupt(void *opaque, int irq, int level)
     }
 }
 
-static void pc_new_cpu(const char *typename, int64_t apic_id, Error **errp)
+static void pc_new_cpu(const char *typename, int64_t apic_id,
+                       Error *errp[static 1])
 {
     Object *cpu = NULL;
     Error *local_err = NULL;
@@ -1106,7 +1109,7 @@ static void pc_new_cpu(const char *typename, int64_t apic_id, Error **errp)
     error_propagate(errp, local_err);
 }
 
-void pc_hot_add_cpu(const int64_t id, Error **errp)
+void pc_hot_add_cpu(const int64_t id, Error *errp[static 1])
 {
     ObjectClass *oc;
     MachineState *ms = MACHINE(qdev_get_machine());
@@ -1681,7 +1684,7 @@ void ioapic_init_gsi(GSIState *gsi_state, const char *parent_name)
 }
 
 static void pc_dimm_plug(HotplugHandler *hotplug_dev,
-                         DeviceState *dev, Error **errp)
+                         DeviceState *dev, Error *errp[static 1])
 {
     HotplugHandlerClass *hhc;
     Error *local_err = NULL;
@@ -1723,7 +1726,7 @@ out:
 }
 
 static void pc_dimm_unplug_request(HotplugHandler *hotplug_dev,
-                                   DeviceState *dev, Error **errp)
+                                   DeviceState *dev, Error *errp[static 1])
 {
     HotplugHandlerClass *hhc;
     Error *local_err = NULL;
@@ -1749,7 +1752,7 @@ out:
 }
 
 static void pc_dimm_unplug(HotplugHandler *hotplug_dev,
-                           DeviceState *dev, Error **errp)
+                           DeviceState *dev, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(hotplug_dev);
     PCDIMMDevice *dimm = PC_DIMM(dev);
@@ -1799,7 +1802,7 @@ static CPUArchId *pc_find_cpu_slot(MachineState *ms, uint32_t id, int *idx)
 }
 
 static void pc_cpu_plug(HotplugHandler *hotplug_dev,
-                        DeviceState *dev, Error **errp)
+                        DeviceState *dev, Error *errp[static 1])
 {
     CPUArchId *found_cpu;
     HotplugHandlerClass *hhc;
@@ -1830,7 +1833,7 @@ out:
     error_propagate(errp, local_err);
 }
 static void pc_cpu_unplug_request_cb(HotplugHandler *hotplug_dev,
-                                     DeviceState *dev, Error **errp)
+                                     DeviceState *dev, Error *errp[static 1])
 {
     int idx = -1;
     HotplugHandlerClass *hhc;
@@ -1858,7 +1861,7 @@ static void pc_cpu_unplug_request_cb(HotplugHandler *hotplug_dev,
 }
 
 static void pc_cpu_unplug_cb(HotplugHandler *hotplug_dev,
-                             DeviceState *dev, Error **errp)
+                             DeviceState *dev, Error *errp[static 1])
 {
     CPUArchId *found_cpu;
     HotplugHandlerClass *hhc;
@@ -1887,7 +1890,7 @@ static void pc_cpu_unplug_cb(HotplugHandler *hotplug_dev,
 }
 
 static void pc_cpu_pre_plug(HotplugHandler *hotplug_dev,
-                            DeviceState *dev, Error **errp)
+                            DeviceState *dev, Error *errp[static 1])
 {
     int idx;
     CPUState *cs;
@@ -1984,7 +1987,8 @@ static void pc_cpu_pre_plug(HotplugHandler *hotplug_dev,
 }
 
 static void pc_machine_device_pre_plug_cb(HotplugHandler *hotplug_dev,
-                                          DeviceState *dev, Error **errp)
+                                          DeviceState *dev,
+                                          Error *errp[static 1])
 {
     if (object_dynamic_cast(OBJECT(dev), TYPE_CPU)) {
         pc_cpu_pre_plug(hotplug_dev, dev, errp);
@@ -1992,7 +1996,7 @@ static void pc_machine_device_pre_plug_cb(HotplugHandler *hotplug_dev,
 }
 
 static void pc_machine_device_plug_cb(HotplugHandler *hotplug_dev,
-                                      DeviceState *dev, Error **errp)
+                                      DeviceState *dev, Error *errp[static 1])
 {
     if (object_dynamic_cast(OBJECT(dev), TYPE_PC_DIMM)) {
         pc_dimm_plug(hotplug_dev, dev, errp);
@@ -2002,7 +2006,8 @@ static void pc_machine_device_plug_cb(HotplugHandler *hotplug_dev,
 }
 
 static void pc_machine_device_unplug_request_cb(HotplugHandler *hotplug_dev,
-                                                DeviceState *dev, Error **errp)
+                                                DeviceState *dev,
+                                                Error *errp[static 1])
 {
     if (object_dynamic_cast(OBJECT(dev), TYPE_PC_DIMM)) {
         pc_dimm_unplug_request(hotplug_dev, dev, errp);
@@ -2015,7 +2020,8 @@ static void pc_machine_device_unplug_request_cb(HotplugHandler *hotplug_dev,
 }
 
 static void pc_machine_device_unplug_cb(HotplugHandler *hotplug_dev,
-                                        DeviceState *dev, Error **errp)
+                                        DeviceState *dev,
+                                        Error *errp[static 1])
 {
     if (object_dynamic_cast(OBJECT(dev), TYPE_PC_DIMM)) {
         pc_dimm_unplug(hotplug_dev, dev, errp);
@@ -2044,7 +2050,7 @@ static HotplugHandler *pc_get_hotpug_handler(MachineState *machine,
 static void
 pc_machine_get_hotplug_memory_region_size(Object *obj, Visitor *v,
                                           const char *name, void *opaque,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
     int64_t value = memory_region_size(&pcms->hotplug_memory.mr);
@@ -2054,7 +2060,7 @@ pc_machine_get_hotplug_memory_region_size(Object *obj, Visitor *v,
 
 static void pc_machine_get_max_ram_below_4g(Object *obj, Visitor *v,
                                             const char *name, void *opaque,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
     uint64_t value = pcms->max_ram_below_4g;
@@ -2064,7 +2070,7 @@ static void pc_machine_get_max_ram_below_4g(Object *obj, Visitor *v,
 
 static void pc_machine_set_max_ram_below_4g(Object *obj, Visitor *v,
                                             const char *name, void *opaque,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
     Error *error = NULL;
@@ -2093,7 +2099,7 @@ static void pc_machine_set_max_ram_below_4g(Object *obj, Visitor *v,
 }
 
 static void pc_machine_get_vmport(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
     OnOffAuto vmport = pcms->vmport;
@@ -2102,7 +2108,7 @@ static void pc_machine_get_vmport(Object *obj, Visitor *v, const char *name,
 }
 
 static void pc_machine_set_vmport(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
@@ -2135,7 +2141,7 @@ bool pc_machine_is_smm_enabled(PCMachineState *pcms)
 }
 
 static void pc_machine_get_smm(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
     OnOffAuto smm = pcms->smm;
@@ -2144,63 +2150,66 @@ static void pc_machine_get_smm(Object *obj, Visitor *v, const char *name,
 }
 
 static void pc_machine_set_smm(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     visit_type_OnOffAuto(v, name, &pcms->smm, errp);
 }
 
-static bool pc_machine_get_nvdimm(Object *obj, Error **errp)
+static bool pc_machine_get_nvdimm(Object *obj, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     return pcms->acpi_nvdimm_state.is_enabled;
 }
 
-static void pc_machine_set_nvdimm(Object *obj, bool value, Error **errp)
+static void pc_machine_set_nvdimm(Object *obj, bool value,
+                                  Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     pcms->acpi_nvdimm_state.is_enabled = value;
 }
 
-static bool pc_machine_get_smbus(Object *obj, Error **errp)
+static bool pc_machine_get_smbus(Object *obj, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     return pcms->smbus;
 }
 
-static void pc_machine_set_smbus(Object *obj, bool value, Error **errp)
+static void pc_machine_set_smbus(Object *obj, bool value,
+                                 Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     pcms->smbus = value;
 }
 
-static bool pc_machine_get_sata(Object *obj, Error **errp)
+static bool pc_machine_get_sata(Object *obj, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     return pcms->sata;
 }
 
-static void pc_machine_set_sata(Object *obj, bool value, Error **errp)
+static void pc_machine_set_sata(Object *obj, bool value,
+                                Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     pcms->sata = value;
 }
 
-static bool pc_machine_get_pit(Object *obj, Error **errp)
+static bool pc_machine_get_pit(Object *obj, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
     return pcms->pit;
 }
 
-static void pc_machine_set_pit(Object *obj, bool value, Error **errp)
+static void pc_machine_set_pit(Object *obj, bool value, Error *errp[static 1])
 {
     PCMachineState *pcms = PC_MACHINE(obj);
 
@@ -2294,7 +2303,7 @@ static const CPUArchIdList *pc_possible_cpu_arch_ids(MachineState *ms)
     return ms->possible_cpus;
 }
 
-static void x86_nmi(NMIState *n, int cpu_index, Error **errp)
+static void x86_nmi(NMIState *n, int cpu_index, Error *errp[static 1])
 {
     /* cpu index isn't used */
     CPUState *cs;

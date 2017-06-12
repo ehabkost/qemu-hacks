@@ -366,7 +366,7 @@ static void bcm2835_dma_reset(DeviceState *dev)
     }
 }
 
-static void bcm2835_dma_realize(DeviceState *dev, Error **errp)
+static void bcm2835_dma_realize(DeviceState *dev, Error *errp[static 1])
 {
     BCM2835DMAState *s = BCM2835_DMA(dev);
     Error *err = NULL;

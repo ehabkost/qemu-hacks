@@ -632,7 +632,7 @@ Nvram *m48t59_init(qemu_irq IRQ, hwaddr mem_base,
     return NULL;
 }
 
-void m48t59_realize_common(M48t59State *s, Error **errp)
+void m48t59_realize_common(M48t59State *s, Error *errp[static 1])
 {
     s->buffer = g_malloc0(s->size);
     if (s->model == 59) {
@@ -658,7 +658,7 @@ static void m48t59_init1(Object *obj)
     memory_region_init_io(&d->io, obj, &m48t59_io_ops, s, "m48t59", 4);
 }
 
-static void m48t59_realize(DeviceState *dev, Error **errp)
+static void m48t59_realize(DeviceState *dev, Error *errp[static 1])
 {
     M48txxSysBusState *d = M48TXX_SYS_BUS(dev);
     M48t59State *s = &d->state;

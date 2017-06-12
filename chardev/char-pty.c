@@ -243,7 +243,7 @@ static void char_pty_finalize(Object *obj)
 static void char_pty_open(Chardev *chr,
                           ChardevBackend *backend,
                           bool *be_opened,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     PtyChardev *s;
     int master_fd, slave_fd;

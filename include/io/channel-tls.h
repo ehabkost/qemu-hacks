@@ -78,7 +78,7 @@ QIOChannelTLS *
 qio_channel_tls_new_server(QIOChannel *master,
                            QCryptoTLSCreds *creds,
                            const char *aclname,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 /**
  * qio_channel_tls_new_client:
@@ -108,7 +108,7 @@ QIOChannelTLS *
 qio_channel_tls_new_client(QIOChannel *master,
                            QCryptoTLSCreds *creds,
                            const char *hostname,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 /**
  * qio_channel_tls_handshake:

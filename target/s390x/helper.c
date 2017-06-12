@@ -68,7 +68,7 @@ void s390x_cpu_timer(void *opaque)
 }
 #endif
 
-S390CPU *cpu_s390x_create(const char *cpu_model, Error **errp)
+S390CPU *cpu_s390x_create(const char *cpu_model, Error *errp[static 1])
 {
     static bool features_parsed;
     char *name, *features;
@@ -104,7 +104,8 @@ S390CPU *cpu_s390x_create(const char *cpu_model, Error **errp)
     return S390_CPU(CPU(object_new(typename)));
 }
 
-S390CPU *s390x_new_cpu(const char *cpu_model, int64_t id, Error **errp)
+S390CPU *s390x_new_cpu(const char *cpu_model, int64_t id,
+                       Error *errp[static 1])
 {
     S390CPU *cpu;
     Error *err = NULL;

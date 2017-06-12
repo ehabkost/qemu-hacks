@@ -415,7 +415,7 @@ static void spapr_vio_busdev_reset(DeviceState *qdev)
     }
 }
 
-static void spapr_vio_busdev_realize(DeviceState *qdev, Error **errp)
+static void spapr_vio_busdev_realize(DeviceState *qdev, Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(qdev_get_machine());
     VIOsPAPRDevice *dev = (VIOsPAPRDevice *)qdev;

@@ -1585,7 +1585,7 @@ static void e1000_write_config(PCIDevice *pci_dev, uint32_t address,
     }
 }
 
-static void pci_e1000_realize(PCIDevice *pci_dev, Error **errp)
+static void pci_e1000_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(pci_dev);
     E1000State *d = E1000(pci_dev);

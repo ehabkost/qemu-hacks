@@ -100,7 +100,7 @@
 
 static ICSState *spapr_ics_create(sPAPRMachineState *spapr,
                                   const char *type_ics,
-                                  int nr_irqs, Error **errp)
+                                  int nr_irqs, Error *errp[static 1])
 {
     Error *local_err = NULL;
     Object *obj;
@@ -124,7 +124,8 @@ error:
     return NULL;
 }
 
-static void xics_system_init(MachineState *machine, int nr_irqs, Error **errp)
+static void xics_system_init(MachineState *machine, int nr_irqs,
+                             Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(machine);
 
@@ -1230,7 +1231,7 @@ void spapr_free_hpt(sPAPRMachineState *spapr)
 }
 
 static void spapr_reallocate_hpt(sPAPRMachineState *spapr, int shift,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     long rc;
 
@@ -1402,7 +1403,7 @@ static void spapr_rtc_create(sPAPRMachineState *spapr)
 }
 
 /* Returns whether we want to use VGA or not */
-static bool spapr_vga_init(PCIBus *pci_bus, Error **errp)
+static bool spapr_vga_init(PCIBus *pci_bus, Error *errp[static 1])
 {
     switch (vga_interface_type) {
     case VGA_NONE:
@@ -1874,7 +1875,7 @@ static SaveVMHandlers savevm_htab_handlers = {
 };
 
 static void spapr_boot_set(void *opaque, const char *boot_device,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     MachineState *machine = MACHINE(qdev_get_machine());
     machine->boot_order = g_strdup(boot_device);
@@ -1921,7 +1922,8 @@ static void spapr_create_lmb_dr_connectors(sPAPRMachineState *spapr)
  * to SPAPR_MEMORY_BLOCK_SIZE(256MB), then refuse to start the guest
  * since we can't support such unaligned sizes with DRCONF_MEMORY.
  */
-static void spapr_validate_node_memory(MachineState *machine, Error **errp)
+static void spapr_validate_node_memory(MachineState *machine,
+                                       Error *errp[static 1])
 {
     int i;
 
@@ -2444,14 +2446,15 @@ static char *spapr_get_fw_dev_path(FWPathProvider *p, BusState *bus,
     return NULL;
 }
 
-static char *spapr_get_kvm_type(Object *obj, Error **errp)
+static char *spapr_get_kvm_type(Object *obj, Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(obj);
 
     return g_strdup(spapr->kvm_type);
 }
 
-static void spapr_set_kvm_type(Object *obj, const char *value, Error **errp)
+static void spapr_set_kvm_type(Object *obj, const char *value,
+                               Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(obj);
 
@@ -2459,7 +2462,8 @@ static void spapr_set_kvm_type(Object *obj, const char *value, Error **errp)
     spapr->kvm_type = g_strdup(value);
 }
 
-static bool spapr_get_modern_hotplug_events(Object *obj, Error **errp)
+static bool spapr_get_modern_hotplug_events(Object *obj,
+                                            Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(obj);
 
@@ -2467,7 +2471,7 @@ static bool spapr_get_modern_hotplug_events(Object *obj, Error **errp)
 }
 
 static void spapr_set_modern_hotplug_events(Object *obj, bool value,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(obj);
 
@@ -2510,7 +2514,7 @@ void spapr_do_system_reset_on_cpu(CPUState *cs, run_on_cpu_data arg)
     ppc_cpu_do_system_reset(cs);
 }
 
-static void spapr_nmi(NMIState *n, int cpu_index, Error **errp)
+static void spapr_nmi(NMIState *n, int cpu_index, Error *errp[static 1])
 {
     CPUState *cs;
 
@@ -2521,7 +2525,7 @@ static void spapr_nmi(NMIState *n, int cpu_index, Error **errp)
 
 static void spapr_add_lmbs(DeviceState *dev, uint64_t addr_start, uint64_t size,
                            uint32_t node, bool dedicated_hp_event_source,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     sPAPRDRConnector *drc;
     sPAPRDRConnectorClass *drck;
@@ -2567,7 +2571,7 @@ static void spapr_add_lmbs(DeviceState *dev, uint64_t addr_start, uint64_t size,
 }
 
 static void spapr_memory_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                              uint32_t node, Error **errp)
+                              uint32_t node, Error *errp[static 1])
 {
     Error *local_err = NULL;
     sPAPRMachineState *ms = SPAPR_MACHINE(hotplug_dev);
@@ -2598,7 +2602,7 @@ out:
 }
 
 static void spapr_memory_pre_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     PCDIMMDevice *dimm = PC_DIMM(dev);
     PCDIMMDeviceClass *ddc = PC_DIMM_GET_CLASS(dimm);
@@ -2716,7 +2720,7 @@ void spapr_lmb_release(DeviceState *dev)
 }
 
 static void spapr_memory_unplug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     sPAPRMachineState *ms = SPAPR_MACHINE(hotplug_dev);
     PCDIMMDevice *dimm = PC_DIMM(dev);
@@ -2728,7 +2732,8 @@ static void spapr_memory_unplug(HotplugHandler *hotplug_dev, DeviceState *dev,
 }
 
 static void spapr_memory_unplug_request(HotplugHandler *hotplug_dev,
-                                        DeviceState *dev, Error **errp)
+                                        DeviceState *dev,
+                                        Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(hotplug_dev);
     Error *local_err = NULL;
@@ -2796,7 +2801,7 @@ void *spapr_populate_hotplug_cpu_dt(CPUState *cs, int *fdt_offset,
 }
 
 static void spapr_core_unplug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     MachineState *ms = MACHINE(qdev_get_machine());
     CPUCore *cc = CPU_CORE(dev);
@@ -2818,7 +2823,7 @@ void spapr_core_release(DeviceState *dev)
 
 static
 void spapr_core_unplug_request(HotplugHandler *hotplug_dev, DeviceState *dev,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     int index;
     sPAPRDRConnector *drc;
@@ -2849,7 +2854,7 @@ void spapr_core_unplug_request(HotplugHandler *hotplug_dev, DeviceState *dev,
 }
 
 static void spapr_core_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(OBJECT(hotplug_dev));
     MachineClass *mc = MACHINE_GET_CLASS(spapr);
@@ -2910,7 +2915,7 @@ static void spapr_core_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
 }
 
 static void spapr_core_pre_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     MachineState *machine = MACHINE(OBJECT(hotplug_dev));
     MachineClass *mc = MACHINE_GET_CLASS(hotplug_dev);
@@ -2967,7 +2972,7 @@ out:
 }
 
 static void spapr_machine_device_plug(HotplugHandler *hotplug_dev,
-                                      DeviceState *dev, Error **errp)
+                                      DeviceState *dev, Error *errp[static 1])
 {
     sPAPRMachineClass *smc = SPAPR_MACHINE_GET_CLASS(qdev_get_machine());
 
@@ -3016,7 +3021,7 @@ static void spapr_machine_device_plug(HotplugHandler *hotplug_dev,
 }
 
 static void spapr_machine_device_unplug(HotplugHandler *hotplug_dev,
-                                      DeviceState *dev, Error **errp)
+                                      DeviceState *dev, Error *errp[static 1])
 {
     sPAPRMachineState *sms = SPAPR_MACHINE(qdev_get_machine());
     MachineClass *mc = MACHINE_GET_CLASS(qdev_get_machine());
@@ -3037,7 +3042,8 @@ static void spapr_machine_device_unplug(HotplugHandler *hotplug_dev,
 }
 
 static void spapr_machine_device_unplug_request(HotplugHandler *hotplug_dev,
-                                                DeviceState *dev, Error **errp)
+                                                DeviceState *dev,
+                                                Error *errp[static 1])
 {
     sPAPRMachineState *sms = SPAPR_MACHINE(qdev_get_machine());
     MachineClass *mc = MACHINE_GET_CLASS(qdev_get_machine());
@@ -3064,7 +3070,8 @@ static void spapr_machine_device_unplug_request(HotplugHandler *hotplug_dev,
 }
 
 static void spapr_machine_device_pre_plug(HotplugHandler *hotplug_dev,
-                                          DeviceState *dev, Error **errp)
+                                          DeviceState *dev,
+                                          Error *errp[static 1])
 {
     if (object_dynamic_cast(OBJECT(dev), TYPE_PC_DIMM)) {
         spapr_memory_pre_plug(hotplug_dev, dev, errp);
@@ -3137,7 +3144,8 @@ static const CPUArchIdList *spapr_possible_cpu_arch_ids(MachineState *machine)
 static void spapr_phb_placement(sPAPRMachineState *spapr, uint32_t index,
                                 uint64_t *buid, hwaddr *pio,
                                 hwaddr *mmio32, hwaddr *mmio64,
-                                unsigned n_dma, uint32_t *liobns, Error **errp)
+                                unsigned n_dma, uint32_t *liobns,
+                                Error *errp[static 1])
 {
     /*
      * New-style PHB window placement.
@@ -3417,7 +3425,8 @@ DEFINE_SPAPR_MACHINE(2_8, "2.8", false);
 static void phb_placement_2_7(sPAPRMachineState *spapr, uint32_t index,
                               uint64_t *buid, hwaddr *pio,
                               hwaddr *mmio32, hwaddr *mmio64,
-                              unsigned n_dma, uint32_t *liobns, Error **errp)
+                              unsigned n_dma, uint32_t *liobns,
+                              Error *errp[static 1])
 {
     /* Legacy PHB placement for pseries-2.7 and earlier machine types */
     const uint64_t base_buid = 0x800000020000000ULL;

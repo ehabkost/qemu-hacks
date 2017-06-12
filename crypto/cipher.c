@@ -96,7 +96,7 @@ static bool
 qcrypto_cipher_validate_key_length(QCryptoCipherAlgorithm alg,
                                    QCryptoCipherMode mode,
                                    size_t nkey,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     if ((unsigned)alg >= QCRYPTO_CIPHER_ALG__MAX) {
         error_setg(errp, "Cipher algorithm %d out of range",

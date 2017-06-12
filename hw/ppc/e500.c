@@ -706,7 +706,8 @@ static DeviceState *ppce500_init_mpic_qemu(PPCE500Params *params,
 }
 
 static DeviceState *ppce500_init_mpic_kvm(PPCE500Params *params,
-                                          qemu_irq **irqs, Error **errp)
+                                          qemu_irq **irqs,
+                                          Error *errp[static 1])
 {
     DeviceState *dev;
     CPUState *cs;

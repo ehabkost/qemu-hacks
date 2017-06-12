@@ -129,7 +129,8 @@ int load_elf(const char *filename, uint64_t (*translate_fn)(void *, uint64_t),
  * Inspect an ELF file's header. Read its full header contents into a
  * buffer and/or determine if the ELF is 64bit.
  */
-void load_elf_hdr(const char *filename, void *hdr, bool *is64, Error **errp);
+void load_elf_hdr(const char *filename, void *hdr, bool *is64,
+		  Error *errp[static 1]);
 
 int load_aout(const char *filename, hwaddr addr, int max_sz,
               int bswap_needed, hwaddr target_page_size);

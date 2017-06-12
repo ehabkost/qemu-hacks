@@ -107,7 +107,7 @@ static void pcibus_machine_done(Notifier *notifier, void *data)
     }
 }
 
-static void pci_bus_realize(BusState *qbus, Error **errp)
+static void pci_bus_realize(BusState *qbus, Error *errp[static 1])
 {
     PCIBus *bus = PCI_BUS(qbus);
 
@@ -117,7 +117,7 @@ static void pci_bus_realize(BusState *qbus, Error **errp)
     vmstate_register(NULL, -1, &vmstate_pcibus, bus);
 }
 
-static void pci_bus_unrealize(BusState *qbus, Error **errp)
+static void pci_bus_unrealize(BusState *qbus, Error *errp[static 1])
 {
     PCIBus *bus = PCI_BUS(qbus);
 
@@ -177,7 +177,8 @@ static const TypeInfo pcie_bus_info = {
 static PCIBus *pci_find_bus_nr(PCIBus *bus, int bus_num);
 static void pci_update_mappings(PCIDevice *d);
 static void pci_irq_handler(void *opaque, int irq_num, int level);
-static void pci_add_option_rom(PCIDevice *pdev, bool is_default_rom, Error **);
+static void pci_add_option_rom(PCIDevice *pdev, bool is_default_rom,
+			       Error *[static 1]);
 static void pci_del_option_rom(PCIDevice *pdev);
 
 static uint16_t pci_default_sub_vendor_id = PCI_SUBVENDOR_ID_REDHAT_QUMRANET;
@@ -798,7 +799,8 @@ static void pci_init_mask_bridge(PCIDevice *d)
                                PCI_PREF_RANGE_TYPE_MASK);
 }
 
-static void pci_init_multifunction(PCIBus *bus, PCIDevice *dev, Error **errp)
+static void pci_init_multifunction(PCIBus *bus, PCIDevice *dev,
+                                   Error *errp[static 1])
 {
     uint8_t slot = PCI_SLOT(dev->devfn);
     uint8_t func;
@@ -955,7 +957,7 @@ uint16_t pci_requester_id(PCIDevice *dev)
 /* -1 for devfn means auto assign */
 static PCIDevice *do_pci_register_device(PCIDevice *pci_dev, PCIBus *bus,
                                          const char *name, int devfn,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(pci_dev);
     PCIConfigReadFunc *config_read = pc->config_read;
@@ -1070,7 +1072,7 @@ static void pci_unregister_io_regions(PCIDevice *pci_dev)
     pci_unregister_vga(pci_dev);
 }
 
-static void pci_qdev_unrealize(DeviceState *dev, Error **errp)
+static void pci_qdev_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     PCIDevice *pci_dev = PCI_DEVICE(dev);
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(pci_dev);
@@ -1769,7 +1771,7 @@ static PciInfo *qmp_query_pci_bus(PCIBus *bus, int bus_num)
     return info;
 }
 
-PciInfoList *qmp_query_pci(Error **errp)
+PciInfoList *qmp_query_pci(Error *errp[static 1])
 {
     PciInfoList *info, *head = NULL, *cur_item = NULL;
     PCIHostState *host_bridge;
@@ -1977,7 +1979,7 @@ PCIDevice *pci_find_device(PCIBus *bus, int bus_num, uint8_t devfn)
     return bus->devices[devfn];
 }
 
-static void pci_qdev_realize(DeviceState *qdev, Error **errp)
+static void pci_qdev_realize(DeviceState *qdev, Error *errp[static 1])
 {
     PCIDevice *pci_dev = (PCIDevice *)qdev;
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(pci_dev);
@@ -2018,7 +2020,7 @@ static void pci_qdev_realize(DeviceState *qdev, Error **errp)
     }
 }
 
-static void pci_default_realize(PCIDevice *dev, Error **errp)
+static void pci_default_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(dev);
 
@@ -2168,7 +2170,7 @@ static void pci_patch_ids(PCIDevice *pdev, uint8_t *ptr, int size)
 
 /* Add an option rom for the device */
 static void pci_add_option_rom(PCIDevice *pdev, bool is_default_rom,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     int size;
     char *path;
@@ -2278,7 +2280,7 @@ int pci_add_capability(PCIDevice *pdev, uint8_t cap_id,
 
 int pci_add_capability2(PCIDevice *pdev, uint8_t cap_id,
                        uint8_t offset, uint8_t size,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     uint8_t *config;
     int i, overlapping_cap;

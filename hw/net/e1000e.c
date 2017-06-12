@@ -405,7 +405,7 @@ static void e1000e_write_config(PCIDevice *pci_dev, uint32_t address,
     }
 }
 
-static void e1000e_pci_realize(PCIDevice *pci_dev, Error **errp)
+static void e1000e_pci_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     static const uint16_t e1000e_pmrb_offset = 0x0C8;
     static const uint16_t e1000e_pcie_offset = 0x0E0;

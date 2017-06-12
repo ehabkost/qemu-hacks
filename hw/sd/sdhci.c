@@ -1274,7 +1274,7 @@ static Property sdhci_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void sdhci_pci_realize(PCIDevice *dev, Error **errp)
+static void sdhci_pci_realize(PCIDevice *dev, Error *errp[static 1])
 {
     SDHCIState *s = PCI_SDHCI(dev);
     dev->config[PCI_CLASS_PROG] = 0x01; /* Standard Host supported DMA */
@@ -1339,7 +1339,7 @@ static void sdhci_sysbus_finalize(Object *obj)
     sdhci_uninitfn(s);
 }
 
-static void sdhci_sysbus_realize(DeviceState *dev, Error ** errp)
+static void sdhci_sysbus_realize(DeviceState *dev, Error *errp[static 1])
 {
     SDHCIState *s = SYSBUS_SDHCI(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
