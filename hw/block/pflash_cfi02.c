@@ -598,7 +598,6 @@ static void pflash_cfi02_realize(DeviceState *dev, Error **errp)
     pflash_t *pfl = CFI_PFLASH02(dev);
     uint32_t chip_len;
     int ret;
-    Error *local_err = NULL;
 
     if (pfl->sector_len == 0) {
         error_setg(errp, "attribute \"sector-length\" not specified or zero.");
@@ -623,9 +622,8 @@ static void pflash_cfi02_realize(DeviceState *dev, Error **errp)
 
     memory_region_init_rom_device(&pfl->orig_mem, OBJECT(pfl), pfl->be ?
                                   &pflash_cfi02_ops_be : &pflash_cfi02_ops_le,
-                                  pfl, pfl->name, chip_len, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                                  pfl, pfl->name, chip_len, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

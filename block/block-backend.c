@@ -141,7 +141,6 @@ static const char *blk_root_get_name(BdrvChild *child)
 static void blk_root_activate(BdrvChild *child, Error **errp)
 {
     BlockBackend *blk = child->opaque;
-    Error *local_err = NULL;
 
     if (!blk->disable_perm) {
         return;
@@ -149,9 +148,8 @@ static void blk_root_activate(BdrvChild *child, Error **errp)
 
     blk->disable_perm = false;
 
-    blk_set_perm(blk, blk->perm, blk->shared_perm, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    blk_set_perm(blk, blk->perm, blk->shared_perm, errp);
+    if (ERR_IS_SET(errp)) {
         blk->disable_perm = true;
         return;
     }

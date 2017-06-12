@@ -250,7 +250,6 @@ static void s390x_cpu_set_id(Object *obj, Visitor *v, const char *name,
     DeviceState *dev = DEVICE(obj);
     const int64_t min = 0;
     const int64_t max = UINT32_MAX;
-    Error *err = NULL;
     int64_t value;
 
     if (dev->realized) {
@@ -259,9 +258,8 @@ static void s390x_cpu_set_id(Object *obj, Visitor *v, const char *name,
         return;
     }
 
-    visit_type_int(v, name, &value, &err);
-    if (err) {
-        error_propagate(errp, err);
+    visit_type_int(v, name, &value, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     if (value < min || value > max) {

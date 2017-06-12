@@ -175,16 +175,14 @@ static int set_property(void *opaque, const char *name, const char *value,
                         Error **errp)
 {
     Object *obj = opaque;
-    Error *err = NULL;
 
     if (strcmp(name, "driver") == 0)
         return 0;
     if (strcmp(name, "bus") == 0)
         return 0;
 
-    object_property_parse(obj, value, name, &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_parse(obj, value, name, errp);
+    if (ERR_IS_SET(errp)) {
         return -1;
     }
     return 0;

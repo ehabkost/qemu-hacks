@@ -483,7 +483,6 @@ static void usb_serial_event(void *opaque, int event)
 static void usb_serial_realize(USBDevice *dev, Error **errp)
 {
     USBSerialState *s = USB_SERIAL_DEV(dev);
-    Error *local_err = NULL;
     Chardev *chr = qemu_chr_fe_get_driver(&s->cs);
 
     usb_desc_create_serial(dev);
@@ -495,9 +494,8 @@ static void usb_serial_realize(USBDevice *dev, Error **errp)
         return;
     }
 
-    usb_check_attach(dev, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    usb_check_attach(dev, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

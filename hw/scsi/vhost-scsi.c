@@ -139,7 +139,6 @@ static void vhost_scsi_realize(DeviceState *dev, Error **errp)
 {
     VirtIOSCSICommon *vs = VIRTIO_SCSI_COMMON(dev);
     VHostSCSICommon *vsc = VHOST_SCSI_COMMON(dev);
-    Error *err = NULL;
     int vhostfd = -1;
     int ret;
 
@@ -167,17 +166,15 @@ static void vhost_scsi_realize(DeviceState *dev, Error **errp)
                                vhost_dummy_handle_output,
                                vhost_dummy_handle_output,
                                vhost_dummy_handle_output,
-                               &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+                               errp);
+    if (ERR_IS_SET(errp)) {
         goto close_fd;
     }
 
     error_setg(&vsc->migration_blocker,
                "vhost-scsi does not support migration");
-    migrate_add_blocker(vsc->migration_blocker, &err);
-    if (err) {
-        error_propagate(errp, err);
+    migrate_add_blocker(vsc->migration_blocker, errp);
+    if (ERR_IS_SET(errp)) {
         error_free(vsc->migration_blocker);
         goto close_fd;
     }

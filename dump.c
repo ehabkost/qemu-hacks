@@ -348,22 +348,19 @@ static void write_memory(DumpState *s, GuestPhysBlock *block, ram_addr_t start,
                          int64_t size, Error **errp)
 {
     int64_t i;
-    Error *local_err = NULL;
 
     for (i = 0; i < size / s->dump_info.page_size; i++) {
         write_data(s, block->host_addr + start + i * s->dump_info.page_size,
-                   s->dump_info.page_size, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+                   s->dump_info.page_size, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
 
     if ((size % s->dump_info.page_size) != 0) {
         write_data(s, block->host_addr + start + i * s->dump_info.page_size,
-                   size % s->dump_info.page_size, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+                   size % s->dump_info.page_size, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -437,7 +434,6 @@ static void write_elf_loads(DumpState *s, Error **errp)
     MemoryMapping *memory_mapping;
     uint32_t phdr_index = 1;
     uint32_t max_index;
-    Error *local_err = NULL;
 
     if (s->have_section) {
         max_index = s->sh_info;
@@ -451,14 +447,13 @@ static void write_elf_loads(DumpState *s, Error **errp)
                          s, &offset, &filesz);
         if (s->dump_info.d_class == ELFCLASS64) {
             write_elf64_load(s, memory_mapping, phdr_index++, offset,
-                             filesz, &local_err);
+                             filesz, errp);
         } else {
             write_elf32_load(s, memory_mapping, phdr_index++, offset,
-                             filesz, &local_err);
+                             filesz, errp);
         }
 
-        if (local_err) {
-            error_propagate(errp, local_err);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -471,101 +466,65 @@ static void write_elf_loads(DumpState *s, Error **errp)
 /* write elf header, PT_NOTE and elf note to vmcore. */
 static void dump_begin(DumpState *s, Error **errp)
 {
-    Error *local_err = NULL;
-
-    /*
-     * the vmcore's format is:
-     *   --------------
-     *   |  elf header |
-     *   --------------
-     *   |  PT_NOTE    |
-     *   --------------
-     *   |  PT_LOAD    |
-     *   --------------
-     *   |  ......     |
-     *   --------------
-     *   |  PT_LOAD    |
-     *   --------------
-     *   |  sec_hdr    |
-     *   --------------
-     *   |  elf note   |
-     *   --------------
-     *   |  memory     |
-     *   --------------
-     *
-     * we only know where the memory is saved after we write elf note into
-     * vmcore.
-     */
-
-    /* write elf header to vmcore */
     if (s->dump_info.d_class == ELFCLASS64) {
-        write_elf64_header(s, &local_err);
+        write_elf64_header(s, errp);
     } else {
-        write_elf32_header(s, &local_err);
+        write_elf32_header(s, errp);
     }
-    if (local_err) {
-        error_propagate(errp, local_err);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
     if (s->dump_info.d_class == ELFCLASS64) {
         /* write PT_NOTE to vmcore */
-        write_elf64_note(s, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        write_elf64_note(s, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
         /* write all PT_LOAD to vmcore */
-        write_elf_loads(s, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        write_elf_loads(s, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
         /* write section to vmcore */
         if (s->have_section) {
-            write_elf_section(s, 1, &local_err);
-            if (local_err) {
-                error_propagate(errp, local_err);
+            write_elf_section(s, 1, errp);
+            if (ERR_IS_SET(errp)) {
                 return;
             }
         }
 
         /* write notes to vmcore */
-        write_elf64_notes(fd_write_vmcore, s, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        write_elf64_notes(fd_write_vmcore, s, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     } else {
         /* write PT_NOTE to vmcore */
-        write_elf32_note(s, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        write_elf32_note(s, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
         /* write all PT_LOAD to vmcore */
-        write_elf_loads(s, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        write_elf_loads(s, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
         /* write section to vmcore */
         if (s->have_section) {
-            write_elf_section(s, 0, &local_err);
-            if (local_err) {
-                error_propagate(errp, local_err);
+            write_elf_section(s, 0, errp);
+            if (ERR_IS_SET(errp)) {
                 return;
             }
         }
 
         /* write notes to vmcore */
-        write_elf32_notes(fd_write_vmcore, s, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        write_elf32_notes(fd_write_vmcore, s, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -603,7 +562,6 @@ static void dump_iterate(DumpState *s, Error **errp)
 {
     GuestPhysBlock *block;
     int64_t size;
-    Error *local_err = NULL;
 
     do {
         block = s->next_block;
@@ -615,9 +573,8 @@ static void dump_iterate(DumpState *s, Error **errp)
                 size -= block->target_end - (s->begin + s->length);
             }
         }
-        write_memory(s, block, s->start, size, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        write_memory(s, block, s->start, size, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -626,11 +583,8 @@ static void dump_iterate(DumpState *s, Error **errp)
 
 static void create_vmcore(DumpState *s, Error **errp)
 {
-    Error *local_err = NULL;
-
-    dump_begin(s, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    dump_begin(s, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -725,7 +679,6 @@ static void create_header32(DumpState *s, Error **errp)
     uint32_t bitmap_blocks;
     uint32_t status = 0;
     uint64_t offset_note;
-    Error *local_err = NULL;
 
     /* write common header, the version of kdump-compressed format is 6th */
     size = sizeof(DiskDumpHeader32);
@@ -789,9 +742,8 @@ static void create_header32(DumpState *s, Error **errp)
     s->note_buf_offset = 0;
 
     /* use s->note_buf to store notes temporarily */
-    write_elf32_notes(buf_write_note, s, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    write_elf32_notes(buf_write_note, s, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
     if (write_buffer(s->fd, offset_note, s->note_buf,
@@ -825,7 +777,6 @@ static void create_header64(DumpState *s, Error **errp)
     uint32_t bitmap_blocks;
     uint32_t status = 0;
     uint64_t offset_note;
-    Error *local_err = NULL;
 
     /* write common header, the version of kdump-compressed format is 6th */
     size = sizeof(DiskDumpHeader64);
@@ -889,9 +840,8 @@ static void create_header64(DumpState *s, Error **errp)
     s->note_buf_offset = 0;
 
     /* use s->note_buf to store notes temporarily */
-    write_elf64_notes(buf_write_note, s, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    write_elf64_notes(buf_write_note, s, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -917,14 +867,11 @@ out:
 
 static void write_dump_header(DumpState *s, Error **errp)
 {
-     Error *local_err = NULL;
-
     if (s->dump_info.d_class == ELFCLASS32) {
-        create_header32(s, &local_err);
+        create_header32(s, errp);
     } else {
-        create_header64(s, &local_err);
+        create_header64(s, errp);
     }
-    error_propagate(errp, local_err);
 }
 
 static size_t dump_bitmap_get_bufsize(DumpState *s)
@@ -1359,7 +1306,6 @@ out:
 static void create_kdump_vmcore(DumpState *s, Error **errp)
 {
     int ret;
-    Error *local_err = NULL;
 
     /*
      * the kdump-compressed format is:
@@ -1389,21 +1335,18 @@ static void create_kdump_vmcore(DumpState *s, Error **errp)
         return;
     }
 
-    write_dump_header(s, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    write_dump_header(s, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
-    write_dump_bitmap(s, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    write_dump_bitmap(s, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
-    write_dump_pages(s, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    write_dump_pages(s, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1494,7 +1437,6 @@ static void dump_init(DumpState *s, int fd, bool has_format,
 {
     CPUState *cpu;
     int nr_cpus;
-    Error *err = NULL;
     int ret;
 
     s->has_format = has_format;
@@ -1565,9 +1507,8 @@ static void dump_init(DumpState *s, int fd, bool has_format,
 
     /* get memory mapping */
     if (paging) {
-        qemu_get_guest_memory_mapping(&s->list, &s->guest_phys_blocks, &err);
-        if (err != NULL) {
-            error_propagate(errp, err);
+        qemu_get_guest_memory_mapping(&s->list, &s->guest_phys_blocks, errp);
+        if (ERR_IS_SET(errp)) {
             goto cleanup;
         }
     } else {
@@ -1723,7 +1664,6 @@ void qmp_dump_guest_memory(bool paging, const char *file,
     const char *p;
     int fd = -1;
     DumpState *s;
-    Error *local_err = NULL;
     bool detach_p = false;
 
     if (runstate_check(RUN_STATE_INMIGRATE)) {
@@ -1801,9 +1741,8 @@ void qmp_dump_guest_memory(bool paging, const char *file,
     dump_state_prepare(s);
 
     dump_init(s, fd, has_format, format, paging, has_begin,
-              begin, length, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+              begin, length, errp);
+    if (ERR_IS_SET(errp)) {
         atomic_set(&s->status, DUMP_STATUS_FAILED);
         return;
     }

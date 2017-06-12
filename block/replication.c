@@ -313,7 +313,6 @@ static bool replication_recurse_is_first_non_filter(BlockDriverState *bs,
 
 static void secondary_do_checkpoint(BDRVReplicationState *s, Error **errp)
 {
-    Error *local_err = NULL;
     int ret;
 
     if (!s->secondary_disk->bs->job) {
@@ -321,9 +320,8 @@ static void secondary_do_checkpoint(BDRVReplicationState *s, Error **errp)
         return;
     }
 
-    backup_do_checkpoint(s->secondary_disk->bs->job, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    backup_do_checkpoint(s->secondary_disk->bs->job, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -347,7 +345,6 @@ static void reopen_backing_file(BlockDriverState *bs, bool writable,
     BlockReopenQueue *reopen_queue = NULL;
     int orig_hidden_flags, orig_secondary_flags;
     int new_hidden_flags, new_secondary_flags;
-    Error *local_err = NULL;
 
     if (writable) {
         orig_hidden_flags = s->orig_hidden_flags =
@@ -379,8 +376,7 @@ static void reopen_backing_file(BlockDriverState *bs, bool writable,
 
     if (reopen_queue) {
         bdrv_reopen_multiple(bdrv_get_aio_context(bs),
-                             reopen_queue, &local_err);
-        error_propagate(errp, local_err);
+                             reopen_queue, errp);
     }
 }
 

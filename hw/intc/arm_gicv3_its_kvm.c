@@ -56,16 +56,14 @@ static int kvm_its_send_msi(GICv3ITSState *s, uint32_t value, uint16_t devid)
 static void kvm_arm_its_realize(DeviceState *dev, Error **errp)
 {
     GICv3ITSState *s = ARM_GICV3_ITS_COMMON(dev);
-    Error *local_err = NULL;
 
     /*
      * Block migration of a KVM GICv3 ITS device: the API for saving and
      * restoring the state in the kernel is not yet available
      */
     error_setg(&s->migration_blocker, "vITS migration is not implemented");
-    migrate_add_blocker(s->migration_blocker, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    migrate_add_blocker(s->migration_blocker, errp);
+    if (ERR_IS_SET(errp)) {
         error_free(s->migration_blocker);
         return;
     }

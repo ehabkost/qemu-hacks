@@ -473,16 +473,14 @@ static void fd_revalidate(FDrive *drv)
 static void fd_change_cb(void *opaque, bool load, Error **errp)
 {
     FDrive *drive = opaque;
-    Error *local_err = NULL;
 
     if (!load) {
         blk_set_perm(drive->blk, 0, BLK_PERM_ALL, &error_abort);
     } else {
         blkconf_apply_backend_options(drive->conf,
                                       blk_is_read_only(drive->blk), false,
-                                      &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+                                      errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -2528,7 +2526,6 @@ static void fdctrl_connect_drives(FDCtrl *fdctrl, DeviceState *fdc_dev,
     FDrive *drive;
     DeviceState *dev;
     BlockBackend *blk;
-    Error *local_err = NULL;
 
     for (i = 0; i < MAX_FD; i++) {
         drive = &fdctrl->drives[i];
@@ -2550,17 +2547,15 @@ static void fdctrl_connect_drives(FDCtrl *fdctrl, DeviceState *fdc_dev,
         blk_ref(blk);
         blk_detach_dev(blk, fdc_dev);
         fdctrl->qdev_for_drives[i].blk = NULL;
-        qdev_prop_set_drive(dev, "drive", blk, &local_err);
+        qdev_prop_set_drive(dev, "drive", blk, errp);
         blk_unref(blk);
 
-        if (local_err) {
-            error_propagate(errp, local_err);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
-        object_property_set_bool(OBJECT(dev), true, "realized", &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        object_property_set_bool(OBJECT(dev), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -2689,7 +2684,6 @@ static void isabus_fdc_realize(DeviceState *dev, Error **errp)
     ISADevice *isadev = ISA_DEVICE(dev);
     FDCtrlISABus *isa = ISA_FDC(dev);
     FDCtrl *fdctrl = &isa->state;
-    Error *err = NULL;
 
     isa_register_portio_list(isadev, &fdctrl->portio_list,
                              isa->iobase, fdc_portio_list, fdctrl,
@@ -2703,9 +2697,8 @@ static void isabus_fdc_realize(DeviceState *dev, Error **errp)
     }
 
     qdev_set_legacy_instance_id(dev, isa->iobase, 2);
-    fdctrl_realize_common(dev, fdctrl, &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    fdctrl_realize_common(dev, fdctrl, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 }

@@ -1440,7 +1440,6 @@ static int bdrv_fill_options(QDict **options, const char *filename,
     bool protocol = *flags & BDRV_O_PROTOCOL;
     bool parse_filename = false;
     BlockDriver *drv = NULL;
-    Error *local_err = NULL;
 
     /*
      * Caution: while qdict_get_try_str() is fine, getting non-string
@@ -1505,9 +1504,8 @@ static int bdrv_fill_options(QDict **options, const char *filename,
 
     /* Driver-specific filename parsing */
     if (drv && drv->bdrv_parse_filename && parse_filename) {
-        drv->bdrv_parse_filename(filename, *options, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        drv->bdrv_parse_filename(filename, *options, errp);
+        if (ERR_IS_SET(errp)) {
             return -EINVAL;
         }
 
@@ -2119,7 +2117,6 @@ int bdrv_open_backing_file(BlockDriverState *bs, QDict *parent_options,
     BlockDriverState *backing_hd;
     QDict *options;
     QDict *tmp_parent_options = NULL;
-    Error *local_err = NULL;
 
     if (bs->backing != NULL) {
         goto free_exit;
@@ -2152,10 +2149,9 @@ int bdrv_open_backing_file(BlockDriverState *bs, QDict *parent_options,
         goto free_exit;
     } else {
         bdrv_get_full_backing_filename(bs, backing_filename, PATH_MAX,
-                                       &local_err);
-        if (local_err) {
+                                       errp);
+        if (ERR_IS_SET(errp)) {
             ret = -EINVAL;
-            error_propagate(errp, local_err);
             QDECREF(options);
             goto free_exit;
         }
@@ -2184,10 +2180,9 @@ int bdrv_open_backing_file(BlockDriverState *bs, QDict *parent_options,
 
     /* Hook up the backing file link; drop our reference, bs owns the
      * backing_hd reference now */
-    bdrv_set_backing_hd(bs, backing_hd, &local_err);
+    bdrv_set_backing_hd(bs, backing_hd, errp);
     bdrv_unref(backing_hd);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto free_exit;
     }
@@ -2292,7 +2287,6 @@ static BlockDriverState *bdrv_append_temp_snapshot(BlockDriverState *bs,
     int64_t total_size;
     QemuOpts *opts = NULL;
     BlockDriverState *bs_snapshot = NULL;
-    Error *local_err = NULL;
     int ret;
 
     /* if snapshot, we create a temporary backing file and open it
@@ -2339,9 +2333,8 @@ static BlockDriverState *bdrv_append_temp_snapshot(BlockDriverState *bs,
      * order to be able to return one, we have to increase
      * bs_snapshot's refcount here */
     bdrv_ref(bs_snapshot);
-    bdrv_append(bs_snapshot, bs, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    bdrv_append(bs_snapshot, bs, errp);
+    if (ERR_IS_SET(errp)) {
         bs_snapshot = NULL;
         goto out;
     }
@@ -3196,17 +3189,13 @@ out:
 void bdrv_append(BlockDriverState *bs_new, BlockDriverState *bs_top,
                  Error **errp)
 {
-    Error *local_err = NULL;
-
-    bdrv_set_backing_hd(bs_new, bs_top, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    bdrv_set_backing_hd(bs_new, bs_top, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
-    bdrv_replace_node(bs_top, bs_new, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    bdrv_replace_node(bs_top, bs_new, errp);
+    if (ERR_IS_SET(errp)) {
         bdrv_set_backing_hd(bs_new, NULL, &error_abort);
         goto out;
     }
@@ -4074,17 +4063,15 @@ void bdrv_invalidate_cache(BlockDriverState *bs, Error **errp)
 void bdrv_invalidate_cache_all(Error **errp)
 {
     BlockDriverState *bs;
-    Error *local_err = NULL;
     BdrvNextIterator it;
 
     for (bs = bdrv_first(&it); bs; bs = bdrv_next(&it)) {
         AioContext *aio_context = bdrv_get_aio_context(bs);
 
         aio_context_acquire(aio_context);
-        bdrv_invalidate_cache(bs, &local_err);
+        bdrv_invalidate_cache(bs, errp);
         aio_context_release(aio_context);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }

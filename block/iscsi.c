@@ -1747,7 +1747,6 @@ static int iscsi_open(BlockDriverState *bs, QDict *options, int flags,
     struct scsi_inquiry_supported_pages *inq_vpd;
     char *initiator_name = NULL;
     QemuOpts *opts;
-    Error *local_err = NULL;
     const char *transport_name, *portal, *target;
 #if LIBISCSI_API_VERSION >= (20160603)
     enum iscsi_transport_type transport;
@@ -1755,9 +1754,8 @@ static int iscsi_open(BlockDriverState *bs, QDict *options, int flags,
     int i, ret = 0, timeout = 0, lun;
 
     opts = qemu_opts_create(&runtime_opts, NULL, 0, &error_abort);
-    qemu_opts_absorb_qdict(opts, options, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_opts_absorb_qdict(opts, options, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto out;
     }
@@ -1811,9 +1809,8 @@ static int iscsi_open(BlockDriverState *bs, QDict *options, int flags,
     }
 
     /* check if we got CHAP username/password via the options */
-    apply_chap(iscsi, opts, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    apply_chap(iscsi, opts, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto out;
     }
@@ -1825,9 +1822,8 @@ static int iscsi_open(BlockDriverState *bs, QDict *options, int flags,
     }
 
     /* check if we got HEADER_DIGEST via the options */
-    apply_header_digest(iscsi, opts, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    apply_header_digest(iscsi, opts, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto out;
     }
@@ -1878,9 +1874,8 @@ static int iscsi_open(BlockDriverState *bs, QDict *options, int flags,
         goto out;
     }
 
-    iscsi_readcapacity_sync(iscsilun, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    iscsi_readcapacity_sync(iscsilun, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto out;
     }
@@ -2063,16 +2058,14 @@ static void iscsi_reopen_commit(BDRVReopenState *reopen_state)
 static int iscsi_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
 {
     IscsiLun *iscsilun = bs->opaque;
-    Error *local_err = NULL;
 
     if (iscsilun->type != TYPE_DISK) {
         error_setg(errp, "Cannot resize non-disk iSCSI devices");
         return -ENOTSUP;
     }
 
-    iscsi_readcapacity_sync(iscsilun, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    iscsi_readcapacity_sync(iscsilun, errp);
+    if (ERR_IS_SET(errp)) {
         return -EIO;
     }
 

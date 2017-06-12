@@ -52,17 +52,14 @@ void qemu_register_boot_set(QEMUBootSetHandler *func, void *opaque)
 
 void qemu_boot_set(const char *boot_order, Error **errp)
 {
-    Error *local_err = NULL;
-
     if (!boot_set_handler) {
         error_setg(errp, "no function defined to set boot device list for"
                          " this architecture");
         return;
     }
 
-    validate_bootdevices(boot_order, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    validate_bootdevices(boot_order, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -319,7 +316,6 @@ void device_add_bootindex_property(Object *obj, int32_t *bootindex,
                                    const char *name, const char *suffix,
                                    DeviceState *dev, Error **errp)
 {
-    Error *local_err = NULL;
     BootIndexProperty *prop = g_malloc0(sizeof(*prop));
 
     prop->bootindex = bootindex;
@@ -330,10 +326,9 @@ void device_add_bootindex_property(Object *obj, int32_t *bootindex,
                         device_get_bootindex,
                         device_set_bootindex,
                         property_release_bootindex,
-                        prop, &local_err);
+                        prop, errp);
 
-    if (local_err) {
-        error_propagate(errp, local_err);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
         return;
     }

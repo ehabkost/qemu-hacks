@@ -455,7 +455,6 @@ static NFSServer *nfs_config(QDict *options, Error **errp)
     QDict *addr = NULL;
     QObject *crumpled_addr = NULL;
     Visitor *iv = NULL;
-    Error *local_error = NULL;
 
     qdict_extract_subqdict(options, &addr, "server.");
     if (!qdict_size(addr)) {
@@ -476,9 +475,8 @@ static NFSServer *nfs_config(QDict *options, Error **errp)
      * they come from -drive, they're all QString.
      */
     iv = qobject_input_visitor_new(crumpled_addr);
-    visit_type_NFSServer(iv, NULL, &server, &local_error);
-    if (local_error) {
-        error_propagate(errp, local_error);
+    visit_type_NFSServer(iv, NULL, &server, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -495,14 +493,12 @@ static int64_t nfs_client_open(NFSClient *client, QDict *options,
 {
     int ret = -EINVAL;
     QemuOpts *opts = NULL;
-    Error *local_err = NULL;
     struct stat st;
     char *file = NULL, *strp = NULL;
 
     opts = qemu_opts_create(&runtime_opts, NULL, 0, &error_abort);
-    qemu_opts_absorb_qdict(opts, options, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_opts_absorb_qdict(opts, options, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto fail;
     }

@@ -495,12 +495,10 @@ static void kvm_arm_gic_realize(DeviceState *dev, Error **errp)
     int i;
     GICState *s = KVM_ARM_GIC(dev);
     KVMARMGICClass *kgc = KVM_ARM_GIC_GET_CLASS(s);
-    Error *local_err = NULL;
     int ret;
 
-    kgc->parent_realize(dev, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    kgc->parent_realize(dev, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -513,9 +511,8 @@ static void kvm_arm_gic_realize(DeviceState *dev, Error **errp)
     if (!kvm_arm_gic_can_save_restore(s)) {
         error_setg(&s->migration_blocker, "This operating system kernel does "
                                           "not support vGICv2 migration");
-        migrate_add_blocker(s->migration_blocker, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        migrate_add_blocker(s->migration_blocker, errp);
+        if (ERR_IS_SET(errp)) {
             error_free(s->migration_blocker);
             return;
         }

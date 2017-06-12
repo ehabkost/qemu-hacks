@@ -1151,7 +1151,6 @@ void migrate_del_blocker(Error *reason)
 
 void qmp_migrate_incoming(const char *uri, Error **errp)
 {
-    Error *local_err = NULL;
     static bool once = true;
 
     if (!deferred_incoming) {
@@ -1162,10 +1161,9 @@ void qmp_migrate_incoming(const char *uri, Error **errp)
         error_setg(errp, "The incoming migration has already been started");
     }
 
-    qemu_start_incoming_migration(uri, &local_err);
+    qemu_start_incoming_migration(uri, errp);
 
-    if (local_err) {
-        error_propagate(errp, local_err);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

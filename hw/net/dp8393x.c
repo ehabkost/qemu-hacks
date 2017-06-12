@@ -874,7 +874,6 @@ static void dp8393x_realize(DeviceState *dev, Error **errp)
     dp8393xState *s = DP8393X(dev);
     int i, checksum;
     uint8_t *prom;
-    Error *local_err = NULL;
 
     address_space_init(&s->as, s->dma_mr, "dp8393x");
     memory_region_init_io(&s->mmio, OBJECT(dev), &dp8393x_ops, s,
@@ -888,9 +887,8 @@ static void dp8393x_realize(DeviceState *dev, Error **errp)
     s->regs[SONIC_SR] = 0x0004; /* only revision recognized by Linux */
 
     memory_region_init_ram(&s->prom, OBJECT(dev),
-                           "dp8393x-prom", SONIC_PROM_SIZE, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                           "dp8393x-prom", SONIC_PROM_SIZE, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     memory_region_set_readonly(&s->prom, true);

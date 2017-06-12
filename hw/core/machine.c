@@ -91,12 +91,10 @@ static void machine_set_kvm_shadow_mem(Object *obj, Visitor *v,
                                        Error **errp)
 {
     MachineState *ms = MACHINE(obj);
-    Error *error = NULL;
     int64_t value;
 
-    visit_type_int(v, name, &value, &error);
-    if (error) {
-        error_propagate(errp, error);
+    visit_type_int(v, name, &value, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -193,12 +191,10 @@ static void machine_set_phandle_start(Object *obj, Visitor *v,
                                       Error **errp)
 {
     MachineState *ms = MACHINE(obj);
-    Error *error = NULL;
     int64_t value;
 
-    visit_type_int(v, name, &value, &error);
-    if (error) {
-        error_propagate(errp, error);
+    visit_type_int(v, name, &value, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

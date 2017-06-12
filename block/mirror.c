@@ -1127,7 +1127,6 @@ static void mirror_start_job(const char *job_id, BlockDriverState *bs,
     BlockDriverState *mirror_top_bs;
     bool target_graph_mod;
     bool target_is_backing;
-    Error *local_err = NULL;
     int ret;
 
     if (granularity == 0) {
@@ -1160,12 +1159,11 @@ static void mirror_start_job(const char *job_id, BlockDriverState *bs,
      * it alive until block_job_create() succeeds even if bs has no parent. */
     bdrv_ref(mirror_top_bs);
     bdrv_drained_begin(bs);
-    bdrv_append(mirror_top_bs, bs, &local_err);
+    bdrv_append(mirror_top_bs, bs, errp);
     bdrv_drained_end(bs);
 
-    if (local_err) {
+    if (ERR_IS_SET(errp)) {
         bdrv_unref(mirror_top_bs);
-        error_propagate(errp, local_err);
         return;
     }
 
@@ -1299,7 +1297,6 @@ void commit_active_start(const char *job_id, BlockDriverState *bs,
                          bool auto_complete, Error **errp)
 {
     int orig_base_flags;
-    Error *local_err = NULL;
 
     orig_base_flags = bdrv_get_flags(base);
 
@@ -1311,9 +1308,8 @@ void commit_active_start(const char *job_id, BlockDriverState *bs,
                      MIRROR_LEAVE_BACKING_CHAIN,
                      on_error, on_error, true, cb, opaque,
                      &commit_active_job_driver, false, base, auto_complete,
-                     filter_node_name, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                     filter_node_name, errp);
+    if (ERR_IS_SET(errp)) {
         goto error_restore_flags;
     }
 

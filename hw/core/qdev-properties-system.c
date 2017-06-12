@@ -43,7 +43,6 @@ static void set_pointer(Object *obj, Visitor *v, Property *prop,
                         const char *name, Error **errp)
 {
     DeviceState *dev = DEVICE(obj);
-    Error *local_err = NULL;
     void **ptr = qdev_get_prop_ptr(dev, prop);
     char *str;
 
@@ -52,9 +51,8 @@ static void set_pointer(Object *obj, Visitor *v, Property *prop,
         return;
     }
 
-    visit_type_str(v, name, &str, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_str(v, name, &str, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     if (!*str) {
@@ -185,7 +183,6 @@ static void set_chr(Object *obj, Visitor *v, const char *name, void *opaque,
                     Error **errp)
 {
     DeviceState *dev = DEVICE(obj);
-    Error *local_err = NULL;
     Property *prop = opaque;
     CharBackend *be = qdev_get_prop_ptr(dev, prop);
     Chardev *s;
@@ -196,9 +193,8 @@ static void set_chr(Object *obj, Visitor *v, const char *name, void *opaque,
         return;
     }
 
-    visit_type_str(v, name, &str, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_str(v, name, &str, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -257,7 +253,6 @@ static void set_netdev(Object *obj, Visitor *v, const char *name,
     NICPeers *peers_ptr = qdev_get_prop_ptr(dev, prop);
     NetClientState **ncs = peers_ptr->ncs;
     NetClientState *peers[MAX_QUEUE_NUM];
-    Error *local_err = NULL;
     int queues, err = 0, i = 0;
     char *str;
 
@@ -266,9 +261,8 @@ static void set_netdev(Object *obj, Visitor *v, const char *name,
         return;
     }
 
-    visit_type_str(v, name, &str, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_str(v, name, &str, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -361,7 +355,6 @@ static void set_vlan(Object *obj, Visitor *v, const char *name, void *opaque,
     Property *prop = opaque;
     NICPeers *peers_ptr = qdev_get_prop_ptr(dev, prop);
     NetClientState **ptr = &peers_ptr->ncs[0];
-    Error *local_err = NULL;
     int32_t id;
     NetClientState *hubport;
 
@@ -370,9 +363,8 @@ static void set_vlan(Object *obj, Visitor *v, const char *name, void *opaque,
         return;
     }
 
-    visit_type_int32(v, name, &id, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_int32(v, name, &id, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     if (id == -1) {

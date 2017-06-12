@@ -235,12 +235,10 @@ static void virtio_input_device_realize(DeviceState *dev, Error **errp)
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOInput *vinput = VIRTIO_INPUT(dev);
     VirtIOInputConfig *cfg;
-    Error *local_err = NULL;
 
     if (vic->realize) {
-        vic->realize(dev, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        vic->realize(dev, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -278,12 +276,10 @@ static void virtio_input_device_unrealize(DeviceState *dev, Error **errp)
 {
     VirtIOInputClass *vic = VIRTIO_INPUT_GET_CLASS(dev);
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
-    Error *local_err = NULL;
 
     if (vic->unrealize) {
-        vic->unrealize(dev, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        vic->unrealize(dev, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }

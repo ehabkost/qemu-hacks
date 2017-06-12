@@ -235,12 +235,10 @@ static void colo_send_message(QEMUFile *f, COLOMessage msg,
 static void colo_send_message_value(QEMUFile *f, COLOMessage msg,
                                     uint64_t value, Error **errp)
 {
-    Error *local_err = NULL;
     int ret;
 
-    colo_send_message(f, msg, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    colo_send_message(f, msg, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     qemu_put_be64(f, value);
@@ -292,13 +290,11 @@ static void colo_receive_check_message(QEMUFile *f, COLOMessage expect_msg,
 static uint64_t colo_receive_message_value(QEMUFile *f, uint32_t expect_msg,
                                            Error **errp)
 {
-    Error *local_err = NULL;
     uint64_t value;
     int ret;
 
-    colo_receive_check_message(f, expect_msg, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    colo_receive_check_message(f, expect_msg, errp);
+    if (ERR_IS_SET(errp)) {
         return 0;
     }
 

@@ -137,11 +137,9 @@ static void mb_cpu_realizefn(DeviceState *dev, Error **errp)
     CPUMBState *env = &cpu->env;
     uint8_t version_code = 0;
     int i = 0;
-    Error *local_err = NULL;
 
-    cpu_exec_realizefn(cs, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    cpu_exec_realizefn(cs, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

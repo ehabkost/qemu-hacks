@@ -216,7 +216,6 @@ static void pxb_dev_realize_common(PCIDevice *dev, bool pcie, Error **errp)
     DeviceState *ds, *bds = NULL;
     PCIBus *bus;
     const char *dev_name = NULL;
-    Error *local_err = NULL;
 
     if (pxb->numa_node != NUMA_NODE_UNASSIGNED &&
         pxb->numa_node >= nb_numa_nodes) {
@@ -246,9 +245,8 @@ static void pxb_dev_realize_common(PCIDevice *dev, bool pcie, Error **errp)
 
     PCI_HOST_BRIDGE(ds)->bus = bus;
 
-    pxb_register_bus(dev, bus, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    pxb_register_bus(dev, bus, errp);
+    if (ERR_IS_SET(errp)) {
         goto err_register_bus;
     }
 

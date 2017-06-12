@@ -1850,7 +1850,6 @@ static void usb_ohci_init(OHCIState *ohci, DeviceState *dev,
                           char *masterbus, uint32_t firstport,
                           AddressSpace *as, Error **errp)
 {
-    Error *err = NULL;
     int i;
 
     ohci->as = as;
@@ -1885,9 +1884,8 @@ static void usb_ohci_init(OHCIState *ohci, DeviceState *dev,
         usb_register_companion(masterbus, ports, num_ports,
                                firstport, ohci, &ohci_port_ops,
                                USB_SPEED_MASK_LOW | USB_SPEED_MASK_FULL,
-                               &err);
-        if (err) {
-            error_propagate(errp, err);
+                               errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     } else {
@@ -1944,7 +1942,6 @@ static void ohci_die(OHCIState *ohci)
 
 static void usb_ohci_realize_pci(PCIDevice *dev, Error **errp)
 {
-    Error *err = NULL;
     OHCIPCIState *ohci = PCI_OHCI(dev);
 
     dev->config[PCI_CLASS_PROG] = 0x10; /* OHCI */
@@ -1952,9 +1949,8 @@ static void usb_ohci_realize_pci(PCIDevice *dev, Error **errp)
 
     usb_ohci_init(&ohci->state, DEVICE(dev), ohci->num_ports, 0,
                   ohci->masterbus, ohci->firstport,
-                  pci_get_address_space(dev), &err);
-    if (err) {
-        error_propagate(errp, err);
+                  pci_get_address_space(dev), errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

@@ -586,7 +586,6 @@ static InetSocketAddress *ssh_config(QDict *options, Error **errp)
     QDict *addr = NULL;
     QObject *crumpled_addr = NULL;
     Visitor *iv = NULL;
-    Error *local_error = NULL;
 
     qdict_extract_subqdict(options, &addr, "server.");
     if (!qdict_size(addr)) {
@@ -608,9 +607,8 @@ static InetSocketAddress *ssh_config(QDict *options, Error **errp)
      * visitor expects the former.
      */
     iv = qobject_input_visitor_new(crumpled_addr);
-    visit_type_InetSocketAddress(iv, NULL, &inet, &local_error);
-    if (local_error) {
-        error_propagate(errp, local_error);
+    visit_type_InetSocketAddress(iv, NULL, &inet, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -626,15 +624,13 @@ static int connect_to_ssh(BDRVSSHState *s, QDict *options,
 {
     int r, ret;
     QemuOpts *opts = NULL;
-    Error *local_err = NULL;
     const char *user, *path, *host_key_check;
     long port = 0;
 
     opts = qemu_opts_create(&ssh_runtime_opts, NULL, 0, &error_abort);
-    qemu_opts_absorb_qdict(opts, options, &local_err);
-    if (local_err) {
+    qemu_opts_absorb_qdict(opts, options, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
-        error_propagate(errp, local_err);
         goto err;
     }
 

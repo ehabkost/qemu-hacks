@@ -684,14 +684,12 @@ static void kvm_arm_gicv3_realize(DeviceState *dev, Error **errp)
 {
     GICv3State *s = KVM_ARM_GICV3(dev);
     KVMARMGICv3Class *kgc = KVM_ARM_GICV3_GET_CLASS(s);
-    Error *local_err = NULL;
     int i;
 
     DPRINTF("kvm_arm_gicv3_realize\n");
 
-    kgc->parent_realize(dev, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    kgc->parent_realize(dev, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -744,9 +742,8 @@ static void kvm_arm_gicv3_realize(DeviceState *dev, Error **errp)
                                GICD_CTLR)) {
         error_setg(&s->migration_blocker, "This operating system kernel does "
                                           "not support vGICv3 migration");
-        migrate_add_blocker(s->migration_blocker, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        migrate_add_blocker(s->migration_blocker, errp);
+        if (ERR_IS_SET(errp)) {
             error_free(s->migration_blocker);
             return;
         }

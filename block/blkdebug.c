@@ -246,7 +246,6 @@ static int read_config(BDRVBlkdebugState *s, const char *filename,
     FILE *f = NULL;
     int ret;
     struct add_rule_data d;
-    Error *local_err = NULL;
 
     if (filename) {
         f = fopen(filename, "r");
@@ -263,26 +262,23 @@ static int read_config(BDRVBlkdebugState *s, const char *filename,
         }
     }
 
-    qemu_config_parse_qdict(options, config_groups, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_config_parse_qdict(options, config_groups, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto fail;
     }
 
     d.s = s;
     d.action = ACTION_INJECT_ERROR;
-    qemu_opts_foreach(&inject_error_opts, add_rule, &d, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_opts_foreach(&inject_error_opts, add_rule, &d, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto fail;
     }
 
     d.action = ACTION_SET_STATE;
-    qemu_opts_foreach(&set_state_opts, add_rule, &d, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_opts_foreach(&set_state_opts, add_rule, &d, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto fail;
     }

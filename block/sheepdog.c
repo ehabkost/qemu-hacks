@@ -553,7 +553,6 @@ static SocketAddress *sd_server_config(QDict *options, Error **errp)
     QObject *crumpled_server = NULL;
     Visitor *iv = NULL;
     SocketAddress *saddr = NULL;
-    Error *local_err = NULL;
 
     qdict_extract_subqdict(options, &server, "server.");
 
@@ -571,9 +570,8 @@ static SocketAddress *sd_server_config(QDict *options, Error **errp)
      * visitor expects the former.
      */
     iv = qobject_input_visitor_new(crumpled_server);
-    visit_type_SocketAddress(iv, NULL, &saddr, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_SocketAddress(iv, NULL, &saddr, errp);
+    if (ERR_IS_SET(errp)) {
         goto done;
     }
 
@@ -1197,17 +1195,15 @@ static void parse_vdiname(SheepdogConfig *cfg, const char *filename,
 static void sd_parse_filename(const char *filename, QDict *options,
                               Error **errp)
 {
-    Error *err = NULL;
     SheepdogConfig cfg;
     char buf[32];
 
     if (strstr(filename, "://")) {
-        sd_parse_uri(&cfg, filename, &err);
+        sd_parse_uri(&cfg, filename, errp);
     } else {
-        parse_vdiname(&cfg, filename, &err);
+        parse_vdiname(&cfg, filename, errp);
     }
-    if (err) {
-        error_propagate(errp, err);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1572,15 +1568,13 @@ static int sd_open(BlockDriverState *bs, QDict *options, int flags,
     uint64_t snap_id;
     char *buf = NULL;
     QemuOpts *opts;
-    Error *local_err = NULL;
 
     s->bs = bs;
     s->aio_context = bdrv_get_aio_context(bs);
 
     opts = qemu_opts_create(&runtime_opts, NULL, 0, &error_abort);
-    qemu_opts_absorb_qdict(opts, options, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_opts_absorb_qdict(opts, options, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto err_no_fd;
     }
@@ -1955,7 +1949,6 @@ static int parse_block_size_shift(BDRVSheepdogState *s, QemuOpts *opt)
 static int sd_create(const char *filename, QemuOpts *opts,
                      Error **errp)
 {
-    Error *err = NULL;
     int ret = 0;
     uint32_t vid = 0;
     char *backing_file = NULL;
@@ -1968,12 +1961,11 @@ static int sd_create(const char *filename, QemuOpts *opts,
     s = g_new0(BDRVSheepdogState, 1);
 
     if (strstr(filename, "://")) {
-        sd_parse_uri(&cfg, filename, &err);
+        sd_parse_uri(&cfg, filename, errp);
     } else {
-        parse_vdiname(&cfg, filename, &err);
+        parse_vdiname(&cfg, filename, errp);
     }
-    if (err) {
-        error_propagate(errp, err);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 

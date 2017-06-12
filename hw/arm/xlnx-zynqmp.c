@@ -96,7 +96,6 @@ static inline int arm_gic_ppi_index(int cpu_nr, int ppi_index)
 static void xlnx_zynqmp_create_rpu(XlnxZynqMPState *s, const char *boot_cpu,
                                    Error **errp)
 {
-    Error *err = NULL;
     int i;
 
     for (i = 0; i < XLNX_ZYNQMP_NUM_RPU_CPUS; i++) {
@@ -120,9 +119,8 @@ static void xlnx_zynqmp_create_rpu(XlnxZynqMPState *s, const char *boot_cpu,
         object_property_set_bool(OBJECT(&s->rpu_cpu[i]), true, "reset-hivecs",
                                  &error_abort);
         object_property_set_bool(OBJECT(&s->rpu_cpu[i]), true, "realized",
-                                 &err);
-        if (err) {
-            error_propagate(errp, err);
+                                 errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }

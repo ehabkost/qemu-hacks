@@ -1227,7 +1227,6 @@ typedef struct EnumProperty {
 int object_property_get_enum(Object *obj, const char *name,
                              const char *typename, Error **errp)
 {
-    Error *err = NULL;
     Visitor *v;
     char *str;
     int ret;
@@ -1248,9 +1247,8 @@ int object_property_get_enum(Object *obj, const char *name,
     enumprop = prop->opaque;
 
     v = string_output_visitor_new(false, &str);
-    object_property_get(obj, v, name, &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_get(obj, v, name, errp);
+    if (ERR_IS_SET(errp)) {
         visit_free(v);
         return 0;
     }
@@ -1268,14 +1266,12 @@ int object_property_get_enum(Object *obj, const char *name,
 void object_property_get_uint16List(Object *obj, const char *name,
                                     uint16List **list, Error **errp)
 {
-    Error *err = NULL;
     Visitor *v;
     char *str;
 
     v = string_output_visitor_new(false, &str);
-    object_property_get(obj, v, name, &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_get(obj, v, name, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
     visit_complete(v, &str);
@@ -1301,12 +1297,10 @@ char *object_property_print(Object *obj, const char *name, bool human,
 {
     Visitor *v;
     char *string = NULL;
-    Error *local_err = NULL;
 
     v = string_output_visitor_new(human, &string);
-    object_property_get(obj, v, name, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    object_property_get(obj, v, name, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -1758,11 +1752,9 @@ static void property_set_str(Object *obj, Visitor *v, const char *name,
 {
     StringProperty *prop = opaque;
     char *value;
-    Error *local_err = NULL;
 
-    visit_type_str(v, name, &value, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_str(v, name, &value, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1782,7 +1774,6 @@ void object_property_add_str(Object *obj, const char *name,
                            void (*set)(Object *, const char *, Error **),
                            Error **errp)
 {
-    Error *local_err = NULL;
     StringProperty *prop = g_malloc0(sizeof(*prop));
 
     prop->get = get;
@@ -1792,9 +1783,8 @@ void object_property_add_str(Object *obj, const char *name,
                         get ? property_get_str : NULL,
                         set ? property_set_str : NULL,
                         property_release_str,
-                        prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                        prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }
@@ -1805,7 +1795,6 @@ void object_class_property_add_str(ObjectClass *klass, const char *name,
                                                Error **),
                                    Error **errp)
 {
-    Error *local_err = NULL;
     StringProperty *prop = g_malloc0(sizeof(*prop));
 
     prop->get = get;
@@ -1815,9 +1804,8 @@ void object_class_property_add_str(ObjectClass *klass, const char *name,
                               get ? property_get_str : NULL,
                               set ? property_set_str : NULL,
                               property_release_str,
-                              prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                              prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }
@@ -1849,11 +1837,9 @@ static void property_set_bool(Object *obj, Visitor *v, const char *name,
 {
     BoolProperty *prop = opaque;
     bool value;
-    Error *local_err = NULL;
 
-    visit_type_bool(v, name, &value, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_bool(v, name, &value, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1872,7 +1858,6 @@ void object_property_add_bool(Object *obj, const char *name,
                               void (*set)(Object *, bool, Error **),
                               Error **errp)
 {
-    Error *local_err = NULL;
     BoolProperty *prop = g_malloc0(sizeof(*prop));
 
     prop->get = get;
@@ -1882,9 +1867,8 @@ void object_property_add_bool(Object *obj, const char *name,
                         get ? property_get_bool : NULL,
                         set ? property_set_bool : NULL,
                         property_release_bool,
-                        prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                        prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }
@@ -1894,7 +1878,6 @@ void object_class_property_add_bool(ObjectClass *klass, const char *name,
                                     void (*set)(Object *, bool, Error **),
                                     Error **errp)
 {
-    Error *local_err = NULL;
     BoolProperty *prop = g_malloc0(sizeof(*prop));
 
     prop->get = get;
@@ -1904,9 +1887,8 @@ void object_class_property_add_bool(ObjectClass *klass, const char *name,
                               get ? property_get_bool : NULL,
                               set ? property_set_bool : NULL,
                               property_release_bool,
-                              prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                              prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }
@@ -1932,11 +1914,9 @@ static void property_set_enum(Object *obj, Visitor *v, const char *name,
 {
     EnumProperty *prop = opaque;
     int value;
-    Error *err = NULL;
 
-    visit_type_enum(v, name, &value, prop->strings, &err);
-    if (err) {
-        error_propagate(errp, err);
+    visit_type_enum(v, name, &value, prop->strings, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     prop->set(obj, value, errp);
@@ -1956,7 +1936,6 @@ void object_property_add_enum(Object *obj, const char *name,
                               void (*set)(Object *, int, Error **),
                               Error **errp)
 {
-    Error *local_err = NULL;
     EnumProperty *prop = g_malloc(sizeof(*prop));
 
     prop->strings = strings;
@@ -1967,9 +1946,8 @@ void object_property_add_enum(Object *obj, const char *name,
                         get ? property_get_enum : NULL,
                         set ? property_set_enum : NULL,
                         property_release_enum,
-                        prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                        prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }
@@ -1981,7 +1959,6 @@ void object_class_property_add_enum(ObjectClass *klass, const char *name,
                                     void (*set)(Object *, int, Error **),
                                     Error **errp)
 {
-    Error *local_err = NULL;
     EnumProperty *prop = g_malloc(sizeof(*prop));
 
     prop->strings = strings;
@@ -1992,9 +1969,8 @@ void object_class_property_add_enum(ObjectClass *klass, const char *name,
                               get ? property_get_enum : NULL,
                               set ? property_set_enum : NULL,
                               property_release_enum,
-                              prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                              prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }
@@ -2062,7 +2038,6 @@ void object_property_add_tm(Object *obj, const char *name,
                             void (*get)(Object *, struct tm *, Error **),
                             Error **errp)
 {
-    Error *local_err = NULL;
     TMProperty *prop = g_malloc0(sizeof(*prop));
 
     prop->get = get;
@@ -2070,9 +2045,8 @@ void object_property_add_tm(Object *obj, const char *name,
     object_property_add(obj, name, "struct tm",
                         get ? property_get_tm : NULL, NULL,
                         property_release_tm,
-                        prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                        prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }
@@ -2081,7 +2055,6 @@ void object_class_property_add_tm(ObjectClass *klass, const char *name,
                                   void (*get)(Object *, struct tm *, Error **),
                                   Error **errp)
 {
-    Error *local_err = NULL;
     TMProperty *prop = g_malloc0(sizeof(*prop));
 
     prop->get = get;
@@ -2089,9 +2062,8 @@ void object_class_property_add_tm(ObjectClass *klass, const char *name,
     object_class_property_add(klass, name, "struct tm",
                               get ? property_get_tm : NULL, NULL,
                               property_release_tm,
-                              prop, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                              prop, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(prop);
     }
 }

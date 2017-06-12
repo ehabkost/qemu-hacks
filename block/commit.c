@@ -293,7 +293,6 @@ void commit_start(const char *job_id, BlockDriverState *bs,
     BlockDriverState *iter;
     BlockDriverState *overlay_bs;
     BlockDriverState *commit_top_bs = NULL;
-    Error *local_err = NULL;
     int ret;
 
     assert(top != bs);
@@ -328,9 +327,8 @@ void commit_start(const char *job_id, BlockDriverState *bs,
                                          orig_overlay_flags | BDRV_O_RDWR);
     }
     if (reopen_queue) {
-        bdrv_reopen_multiple(bdrv_get_aio_context(bs), reopen_queue, &local_err);
-        if (local_err != NULL) {
-            error_propagate(errp, local_err);
+        bdrv_reopen_multiple(bdrv_get_aio_context(bs), reopen_queue, errp);
+        if (ERR_IS_SET(errp)) {
             goto fail;
         }
     }
@@ -345,18 +343,16 @@ void commit_start(const char *job_id, BlockDriverState *bs,
     commit_top_bs->total_sectors = top->total_sectors;
     bdrv_set_aio_context(commit_top_bs, bdrv_get_aio_context(top));
 
-    bdrv_set_backing_hd(commit_top_bs, top, &local_err);
-    if (local_err) {
+    bdrv_set_backing_hd(commit_top_bs, top, errp);
+    if (ERR_IS_SET(errp)) {
         bdrv_unref(commit_top_bs);
         commit_top_bs = NULL;
-        error_propagate(errp, local_err);
         goto fail;
     }
-    bdrv_set_backing_hd(overlay_bs, commit_top_bs, &local_err);
-    if (local_err) {
+    bdrv_set_backing_hd(overlay_bs, commit_top_bs, errp);
+    if (ERR_IS_SET(errp)) {
         bdrv_unref(commit_top_bs);
         commit_top_bs = NULL;
-        error_propagate(errp, local_err);
         goto fail;
     }
 

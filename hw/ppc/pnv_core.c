@@ -113,7 +113,6 @@ static const MemoryRegionOps pnv_core_xscom_ops = {
 
 static void pnv_core_realize_child(Object *child, XICSFabric *xi, Error **errp)
 {
-    Error *local_err = NULL;
     CPUState *cs = CPU(child);
     PowerPCCPU *cpu = POWERPC_CPU(cs);
     Object *obj;
@@ -121,23 +120,20 @@ static void pnv_core_realize_child(Object *child, XICSFabric *xi, Error **errp)
     obj = object_new(TYPE_PNV_ICP);
     object_property_add_child(OBJECT(cpu), "icp", obj, IGNORE_ERRORS);
     object_property_add_const_link(obj, "xics", OBJECT(xi), &error_abort);
-    object_property_set_bool(obj, true, "realized", &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    object_property_set_bool(obj, true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
-    object_property_set_bool(child, true, "realized", &local_err);
-    if (local_err) {
+    object_property_set_bool(child, true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         object_unparent(obj);
-        error_propagate(errp, local_err);
         return;
     }
 
-    powernv_cpu_init(cpu, &local_err);
-    if (local_err) {
+    powernv_cpu_init(cpu, errp);
+    if (ERR_IS_SET(errp)) {
         object_unparent(obj);
-        error_propagate(errp, local_err);
         return;
     }
 

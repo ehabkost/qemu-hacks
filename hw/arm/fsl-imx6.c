@@ -123,7 +123,6 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
 {
     FslIMX6State *s = FSL_IMX6(dev);
     uint16_t i;
-    Error *err = NULL;
 
     for (i = 0; i < smp_cpus; i++) {
 
@@ -139,9 +138,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
                                      "start-powered-off", &error_abort);
         }
 
-        object_property_set_bool(OBJECT(&s->cpu[i]), true, "realized", &err);
-        if (err) {
-            error_propagate(errp, err);
+        object_property_set_bool(OBJECT(&s->cpu[i]), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -153,9 +151,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
                             FSL_IMX6_MAX_IRQ + GIC_INTERNAL, "num-irq",
                             &error_abort);
 
-    object_property_set_bool(OBJECT(&s->a9mpcore), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->a9mpcore), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_mmio_map(SYS_BUS_DEVICE(&s->a9mpcore), 0, FSL_IMX6_A9MPCORE_ADDR);
@@ -167,16 +164,14 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
                            qdev_get_gpio_in(DEVICE(&s->cpu[i]), ARM_CPU_FIQ));
     }
 
-    object_property_set_bool(OBJECT(&s->ccm), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->ccm), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_mmio_map(SYS_BUS_DEVICE(&s->ccm), 0, FSL_IMX6_CCM_ADDR);
 
-    object_property_set_bool(OBJECT(&s->src), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->src), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_mmio_map(SYS_BUS_DEVICE(&s->src), 0, FSL_IMX6_SRC_ADDR);
@@ -209,9 +204,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
             qdev_prop_set_chr(DEVICE(&s->uart[i]), "chardev", chr);
         }
 
-        object_property_set_bool(OBJECT(&s->uart[i]), true, "realized", &err);
-        if (err) {
-            error_propagate(errp, err);
+        object_property_set_bool(OBJECT(&s->uart[i]), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -223,9 +217,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
 
     s->gpt.ccm = IMX_CCM(&s->ccm);
 
-    object_property_set_bool(OBJECT(&s->gpt), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->gpt), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -246,9 +239,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
 
         s->epit[i].ccm = IMX_CCM(&s->ccm);
 
-        object_property_set_bool(OBJECT(&s->epit[i]), true, "realized", &err);
-        if (err) {
-            error_propagate(errp, err);
+        object_property_set_bool(OBJECT(&s->epit[i]), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -269,9 +261,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
             { FSL_IMX6_I2C3_ADDR, FSL_IMX6_I2C3_IRQ }
         };
 
-        object_property_set_bool(OBJECT(&s->i2c[i]), true, "realized", &err);
-        if (err) {
-            error_propagate(errp, err);
+        object_property_set_bool(OBJECT(&s->i2c[i]), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -329,9 +320,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
                                  &error_abort);
         object_property_set_bool(OBJECT(&s->gpio[i]), true, "has-upper-pin-irq",
                                  &error_abort);
-        object_property_set_bool(OBJECT(&s->gpio[i]), true, "realized", &err);
-        if (err) {
-            error_propagate(errp, err);
+        object_property_set_bool(OBJECT(&s->gpio[i]), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -356,9 +346,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
             { FSL_IMX6_uSDHC4_ADDR, FSL_IMX6_uSDHC4_IRQ },
         };
 
-        object_property_set_bool(OBJECT(&s->esdhc[i]), true, "realized", &err);
-        if (err) {
-            error_propagate(errp, err);
+        object_property_set_bool(OBJECT(&s->esdhc[i]), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
         sysbus_mmio_map(SYS_BUS_DEVICE(&s->esdhc[i]), 0, esdhc_table[i].addr);
@@ -381,9 +370,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
         };
 
         /* Initialize the SPI */
-        object_property_set_bool(OBJECT(&s->spi[i]), true, "realized", &err);
-        if (err) {
-            error_propagate(errp, err);
+        object_property_set_bool(OBJECT(&s->spi[i]), true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -393,9 +381,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
                                             spi_table[i].irq));
     }
 
-    object_property_set_bool(OBJECT(&s->eth), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->eth), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_mmio_map(SYS_BUS_DEVICE(&s->eth), 0, FSL_IMX6_ENET_ADDR);
@@ -408,9 +395,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
 
     /* ROM memory */
     memory_region_init_rom(&s->rom, NULL, "imx6.rom",
-                           FSL_IMX6_ROM_SIZE, &err);
-    if (err) {
-        error_propagate(errp, err);
+                           FSL_IMX6_ROM_SIZE, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     memory_region_add_subregion(get_system_memory(), FSL_IMX6_ROM_ADDR,
@@ -418,9 +404,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
 
     /* CAAM memory */
     memory_region_init_rom(&s->caam, NULL, "imx6.caam",
-                           FSL_IMX6_CAAM_MEM_SIZE, &err);
-    if (err) {
-        error_propagate(errp, err);
+                           FSL_IMX6_CAAM_MEM_SIZE, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     memory_region_add_subregion(get_system_memory(), FSL_IMX6_CAAM_MEM_ADDR,
@@ -428,9 +413,8 @@ static void fsl_imx6_realize(DeviceState *dev, Error **errp)
 
     /* OCRAM memory */
     memory_region_init_ram(&s->ocram, NULL, "imx6.ocram", FSL_IMX6_OCRAM_SIZE,
-                           &err);
-    if (err) {
-        error_propagate(errp, err);
+                           errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     memory_region_add_subregion(get_system_memory(), FSL_IMX6_OCRAM_ADDR,

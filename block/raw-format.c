@@ -71,7 +71,6 @@ static QemuOptsList raw_create_opts = {
 static int raw_read_options(QDict *options, BlockDriverState *bs,
     BDRVRawState *s, Error **errp)
 {
-    Error *local_err = NULL;
     QemuOpts *opts = NULL;
     int64_t real_size = 0;
     int ret;
@@ -83,9 +82,8 @@ static int raw_read_options(QDict *options, BlockDriverState *bs,
     }
 
     opts = qemu_opts_create(&raw_runtime_opts, NULL, 0, &error_abort);
-    qemu_opts_absorb_qdict(opts, options, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_opts_absorb_qdict(opts, options, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto end;
     }

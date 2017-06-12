@@ -351,13 +351,11 @@ static void output_type_enum(Visitor *v, const char *name, int *obj,
 static void input_type_enum(Visitor *v, const char *name, int *obj,
                             const char *const strings[], Error **errp)
 {
-    Error *local_err = NULL;
     int64_t value = 0;
     char *enum_str;
 
-    visit_type_str(v, name, &enum_str, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_str(v, name, &enum_str, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

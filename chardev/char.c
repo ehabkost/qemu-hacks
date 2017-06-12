@@ -559,7 +559,6 @@ help_string_append(const char *name, void *opaque)
 Chardev *qemu_chr_new_from_opts(QemuOpts *opts,
                                 Error **errp)
 {
-    Error *local_err = NULL;
     const ChardevClass *cc;
     Chardev *chr;
     int i;
@@ -610,9 +609,8 @@ Chardev *qemu_chr_new_from_opts(QemuOpts *opts,
 
     chr = NULL;
     if (cc->parse) {
-        cc->parse(opts, backend, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        cc->parse(opts, backend, errp);
+        if (ERR_IS_SET(errp)) {
             goto out;
         }
     } else {

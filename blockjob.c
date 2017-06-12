@@ -356,7 +356,6 @@ static int block_job_finish_sync(BlockJob *job,
                                  void (*finish)(BlockJob *, Error **errp),
                                  Error **errp)
 {
-    Error *local_err = NULL;
     int ret;
 
     assert(blk_bs(job->blk)->job == job);
@@ -364,10 +363,9 @@ static int block_job_finish_sync(BlockJob *job,
     block_job_ref(job);
 
     if (finish) {
-        finish(job, &local_err);
+        finish(job, errp);
     }
-    if (local_err) {
-        error_propagate(errp, local_err);
+    if (ERR_IS_SET(errp)) {
         block_job_unref(job);
         return -EBUSY;
     }
@@ -454,15 +452,12 @@ static void block_job_completed_txn_success(BlockJob *job)
 
 void block_job_set_speed(BlockJob *job, int64_t speed, Error **errp)
 {
-    Error *local_err = NULL;
-
     if (!job->driver->set_speed) {
         error_setg(errp, QERR_UNSUPPORTED);
         return;
     }
-    job->driver->set_speed(job, speed, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    job->driver->set_speed(job, speed, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

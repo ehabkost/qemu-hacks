@@ -8444,14 +8444,12 @@ static void powerpc_get_compat(Object *obj, Visitor *v, const char *name,
 static void powerpc_set_compat(Object *obj, Visitor *v, const char *name,
                                void *opaque, Error **errp)
 {
-    Error *error = NULL;
     char *value = NULL;
     Property *prop = opaque;
     uint32_t *max_compat = qdev_get_prop_ptr(DEVICE(obj), prop);
 
-    visit_type_str(v, name, &value, &error);
-    if (error) {
-        error_propagate(errp, error);
+    visit_type_str(v, name, &value, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -9825,7 +9823,6 @@ static void ppc_cpu_realizefn(DeviceState *dev, Error **errp)
     CPUState *cs = CPU(dev);
     PowerPCCPU *cpu = POWERPC_CPU(dev);
     PowerPCCPUClass *pcc = POWERPC_CPU_GET_CLASS(cpu);
-    Error *local_err = NULL;
 #if !defined(CONFIG_USER_ONLY)
     int max_smt = kvmppc_smt_threads();
 #endif
@@ -9844,9 +9841,8 @@ static void ppc_cpu_realizefn(DeviceState *dev, Error **errp)
     }
 #endif
 
-    cpu_exec_realizefn(cs, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    cpu_exec_realizefn(cs, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -9879,9 +9875,8 @@ static void ppc_cpu_realizefn(DeviceState *dev, Error **errp)
     }
 #endif
 
-    create_ppc_opcodes(cpu, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    create_ppc_opcodes(cpu, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     init_ppc_proc(cpu);
@@ -10074,13 +10069,11 @@ static void ppc_cpu_unrealizefn(DeviceState *dev, Error **errp)
     PowerPCCPU *cpu = POWERPC_CPU(dev);
     PowerPCCPUClass *pcc = POWERPC_CPU_GET_CLASS(cpu);
     CPUPPCState *env = &cpu->env;
-    Error *local_err = NULL;
     opc_handler_t **table, **table_2;
     int i, j, k;
 
-    pcc->parent_unrealize(dev, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    pcc->parent_unrealize(dev, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

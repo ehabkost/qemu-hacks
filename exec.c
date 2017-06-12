@@ -1860,7 +1860,6 @@ static void ram_block_add(RAMBlock *new_block, Error **errp)
     RAMBlock *block;
     RAMBlock *last_block = NULL;
     ram_addr_t old_ram_size, new_ram_size;
-    Error *err = NULL;
 
     old_ram_size = last_ram_page();
 
@@ -1870,9 +1869,8 @@ static void ram_block_add(RAMBlock *new_block, Error **errp)
     if (!new_block->host) {
         if (xen_enabled()) {
             xen_ram_alloc(new_block->offset, new_block->max_length,
-                          new_block->mr, &err);
-            if (err) {
-                error_propagate(errp, err);
+                          new_block->mr, errp);
+            if (ERR_IS_SET(errp)) {
                 qemu_mutex_unlock_ramlist();
                 return;
             }
@@ -1938,7 +1936,6 @@ RAMBlock *qemu_ram_alloc_from_file(ram_addr_t size, MemoryRegion *mr,
                                    Error **errp)
 {
     RAMBlock *new_block;
-    Error *local_err = NULL;
 
     if (xen_enabled()) {
         error_setg(errp, "-mem-path not supported with Xen");
@@ -1969,10 +1966,9 @@ RAMBlock *qemu_ram_alloc_from_file(ram_addr_t size, MemoryRegion *mr,
         return NULL;
     }
 
-    ram_block_add(new_block, &local_err);
-    if (local_err) {
+    ram_block_add(new_block, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(new_block);
-        error_propagate(errp, local_err);
         return NULL;
     }
     return new_block;
@@ -1988,7 +1984,6 @@ RAMBlock *qemu_ram_alloc_internal(ram_addr_t size, ram_addr_t max_size,
                                   MemoryRegion *mr, Error **errp)
 {
     RAMBlock *new_block;
-    Error *local_err = NULL;
 
     size = HOST_PAGE_ALIGN(size);
     max_size = HOST_PAGE_ALIGN(max_size);
@@ -2007,10 +2002,9 @@ RAMBlock *qemu_ram_alloc_internal(ram_addr_t size, ram_addr_t max_size,
     if (resizeable) {
         new_block->flags |= RAM_RESIZEABLE;
     }
-    ram_block_add(new_block, &local_err);
-    if (local_err) {
+    ram_block_add(new_block, errp);
+    if (ERR_IS_SET(errp)) {
         g_free(new_block);
-        error_propagate(errp, local_err);
         return NULL;
     }
     return new_block;

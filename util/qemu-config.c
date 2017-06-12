@@ -568,12 +568,10 @@ void qemu_config_parse_qdict(QDict *options, QemuOptsList **lists,
                              Error **errp)
 {
     int i;
-    Error *local_err = NULL;
 
     for (i = 0; lists[i]; i++) {
-        config_parse_qdict_section(options, lists[i], &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        config_parse_qdict_section(options, lists[i], errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }

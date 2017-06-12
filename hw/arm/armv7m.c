@@ -161,7 +161,6 @@ static void armv7m_realize(DeviceState *dev, Error **errp)
 {
     ARMv7MState *s = ARMV7M(dev);
     SysBusDevice *sbd;
-    Error *err = NULL;
     int i;
     char **cpustr;
     ObjectClass *oc;
@@ -186,10 +185,9 @@ static void armv7m_realize(DeviceState *dev, Error **errp)
 
     cc = CPU_CLASS(oc);
     typename = object_class_get_name(oc);
-    cc->parse_features(typename, cpustr[1], &err);
+    cc->parse_features(typename, cpustr[1], errp);
     g_strfreev(cpustr);
-    if (err) {
-        error_propagate(errp, err);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -201,16 +199,14 @@ static void armv7m_realize(DeviceState *dev, Error **errp)
 
     object_property_set_link(OBJECT(s->cpu), OBJECT(&s->container), "memory",
                              &error_abort);
-    object_property_set_bool(OBJECT(s->cpu), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(s->cpu), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
     /* Note that we must realize the NVIC after the CPU */
-    object_property_set_bool(OBJECT(&s->nvic), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->nvic), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -234,16 +230,14 @@ static void armv7m_realize(DeviceState *dev, Error **errp)
         Object *obj = OBJECT(&s->bitband[i]);
         SysBusDevice *sbd = SYS_BUS_DEVICE(&s->bitband[i]);
 
-        object_property_set_int(obj, bitband_input_addr[i], "base", &err);
-        if (err != NULL) {
-            error_propagate(errp, err);
+        object_property_set_int(obj, bitband_input_addr[i], "base", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
         object_property_set_link(obj, OBJECT(s->board_memory),
                                  "source-memory", &error_abort);
-        object_property_set_bool(obj, true, "realized", &err);
-        if (err != NULL) {
-            error_propagate(errp, err);
+        object_property_set_bool(obj, true, "realized", errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 

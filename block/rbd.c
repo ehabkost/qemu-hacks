@@ -346,7 +346,6 @@ static QemuOptsList runtime_opts = {
 
 static int qemu_rbd_create(const char *filename, QemuOpts *opts, Error **errp)
 {
-    Error *local_err = NULL;
     int64_t bytes = 0;
     int64_t objsize;
     int obj_order = 0;
@@ -378,10 +377,9 @@ static int qemu_rbd_create(const char *filename, QemuOpts *opts, Error **errp)
     }
 
     options = qdict_new();
-    qemu_rbd_parse_filename(filename, options, &local_err);
-    if (local_err) {
+    qemu_rbd_parse_filename(filename, options, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
-        error_propagate(errp, local_err);
         goto exit;
     }
 

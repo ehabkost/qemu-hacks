@@ -72,7 +72,6 @@ static void ga_wait_child(pid_t pid, int *status, Error **errp)
 void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
 {
     const char *shutdown_flag;
-    Error *local_err = NULL;
     pid_t pid;
     int status;
 
@@ -105,9 +104,8 @@ void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
         return;
     }
 
-    ga_wait_child(pid, &status, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    ga_wait_child(pid, &status, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -143,7 +141,6 @@ void qmp_guest_set_time(bool has_time, int64_t time_ns, Error **errp)
     int ret;
     int status;
     pid_t pid;
-    Error *local_err = NULL;
     struct timeval tv;
 
     /* If user has passed a time, validate and set it. */
@@ -192,9 +189,8 @@ void qmp_guest_set_time(bool has_time, int64_t time_ns, Error **errp)
         return;
     }
 
-    ga_wait_child(pid, &status, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    ga_wait_child(pid, &status, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1201,21 +1197,18 @@ int64_t qmp_guest_fsfreeze_freeze_list(bool has_mountpoints,
     strList *list;
     FsMountList mounts;
     struct FsMount *mount;
-    Error *local_err = NULL;
     int fd;
 
     slog("guest-fsfreeze called");
 
-    execute_fsfreeze_hook(FSFREEZE_HOOK_FREEZE, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    execute_fsfreeze_hook(FSFREEZE_HOOK_FREEZE, errp);
+    if (ERR_IS_SET(errp)) {
         return -1;
     }
 
     QTAILQ_INIT(&mounts);
-    build_fs_mount_list(&mounts, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    build_fs_mount_list(&mounts, errp);
+    if (ERR_IS_SET(errp)) {
         return -1;
     }
 
@@ -1286,12 +1279,10 @@ int64_t qmp_guest_fsfreeze_thaw(Error **errp)
     FsMountList mounts;
     FsMount *mount;
     int fd, i = 0, logged;
-    Error *local_err = NULL;
 
     QTAILQ_INIT(&mounts);
-    build_fs_mount_list(&mounts, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    build_fs_mount_list(&mounts, errp);
+    if (ERR_IS_SET(errp)) {
         return 0;
     }
 
@@ -1364,15 +1355,13 @@ qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error **errp)
     FsMountList mounts;
     struct FsMount *mount;
     int fd;
-    Error *local_err = NULL;
     struct fstrim_range r;
 
     slog("guest-fstrim called");
 
     QTAILQ_INIT(&mounts);
-    build_fs_mount_list(&mounts, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    build_fs_mount_list(&mounts, errp);
+    if (ERR_IS_SET(errp)) {
         return NULL;
     }
 
@@ -1437,7 +1426,6 @@ qmp_guest_fstrim(bool has_minimum, int64_t minimum, Error **errp)
 static void bios_supports_mode(const char *pmutils_bin, const char *pmutils_arg,
                                const char *sysfile_str, Error **errp)
 {
-    Error *local_err = NULL;
     char *pmutils_path;
     pid_t pid;
     int status;
@@ -1489,9 +1477,8 @@ static void bios_supports_mode(const char *pmutils_bin, const char *pmutils_arg,
         goto out;
     }
 
-    ga_wait_child(pid, &status, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    ga_wait_child(pid, &status, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -1521,7 +1508,6 @@ out:
 static void guest_suspend(const char *pmutils_bin, const char *sysfile_str,
                           Error **errp)
 {
-    Error *local_err = NULL;
     char *pmutils_path;
     pid_t pid;
     int status;
@@ -1566,9 +1552,8 @@ static void guest_suspend(const char *pmutils_bin, const char *sysfile_str,
         goto out;
     }
 
-    ga_wait_child(pid, &status, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    ga_wait_child(pid, &status, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -1588,11 +1573,8 @@ out:
 
 void qmp_guest_suspend_disk(Error **errp)
 {
-    Error *local_err = NULL;
-
-    bios_supports_mode("pm-is-supported", "--hibernate", "disk", &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    bios_supports_mode("pm-is-supported", "--hibernate", "disk", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1601,11 +1583,8 @@ void qmp_guest_suspend_disk(Error **errp)
 
 void qmp_guest_suspend_ram(Error **errp)
 {
-    Error *local_err = NULL;
-
-    bios_supports_mode("pm-is-supported", "--suspend", "mem", &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    bios_supports_mode("pm-is-supported", "--suspend", "mem", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1614,12 +1593,9 @@ void qmp_guest_suspend_ram(Error **errp)
 
 void qmp_guest_suspend_hybrid(Error **errp)
 {
-    Error *local_err = NULL;
-
     bios_supports_mode("pm-is-supported", "--suspend-hybrid", NULL,
-                       &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                       errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1947,7 +1923,6 @@ void qmp_guest_set_user_password(const char *username,
                                  bool crypted,
                                  Error **errp)
 {
-    Error *local_err = NULL;
     char *passwd_path = NULL;
     pid_t pid;
     int status;
@@ -2019,9 +1994,8 @@ void qmp_guest_set_user_password(const char *username,
     close(datafd[1]);
     datafd[1] = -1;
 
-    ga_wait_child(pid, &status, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    ga_wait_child(pid, &status, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -2327,7 +2301,6 @@ err:
 
 GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error **errp)
 {
-    Error *local_err = NULL;
     char *dirpath;
     int dirfd;
     char *buf;
@@ -2343,11 +2316,10 @@ GuestMemoryBlockInfo *qmp_guest_get_memory_block_info(Error **errp)
     g_free(dirpath);
 
     buf = g_malloc0(20);
-    ga_read_sysfs_file(dirfd, "block_size_bytes", buf, 20, &local_err);
+    ga_read_sysfs_file(dirfd, "block_size_bytes", buf, 20, errp);
     close(dirfd);
-    if (local_err) {
+    if (ERR_IS_SET(errp)) {
         g_free(buf);
-        error_propagate(errp, local_err);
         return NULL;
     }
 

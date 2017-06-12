@@ -164,7 +164,6 @@ SpiceInfo *qmp_query_spice(Error **errp)
 
 void qmp_cont(Error **errp)
 {
-    Error *local_err = NULL;
     BlockBackend *blk;
     BlockDriverState *bs;
     BdrvNextIterator it;
@@ -188,9 +187,8 @@ void qmp_cont(Error **errp)
     }
 
     for (bs = bdrv_first(&it); bs; bs = bdrv_next(&it)) {
-        bdrv_add_key(bs, NULL, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        bdrv_add_key(bs, NULL, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -201,9 +199,8 @@ void qmp_cont(Error **errp)
      * If there are no inactive block nodes (e.g. because the VM was just
      * paused rather than completing a migration), bdrv_inactivate_all() simply
      * doesn't do anything. */
-    bdrv_invalidate_cache_all(&local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    bdrv_invalidate_cache_all(errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

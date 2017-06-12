@@ -101,7 +101,6 @@ static void virtio_vga_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
     VirtIOVGA *vvga = VIRTIO_VGA(vpci_dev);
     VirtIOGPU *g = &vvga->vdev;
     VGACommonState *vga = &vvga->vga;
-    Error *err = NULL;
     uint32_t offset;
     int i;
 
@@ -146,9 +145,8 @@ static void virtio_vga_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
     /* init virtio bits */
     qdev_set_parent_bus(DEVICE(g), BUS(&vpci_dev->bus));
     virtio_pci_force_virtio_1(vpci_dev);
-    object_property_set_bool(OBJECT(g), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(g), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

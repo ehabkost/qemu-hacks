@@ -463,7 +463,6 @@ static void setup_interrupt(IVShmemState *s, int vector, Error **errp)
     bool with_irqfd = kvm_msi_via_irqfd_enabled() &&
         ivshmem_has_feature(s, IVSHMEM_MSI);
     PCIDevice *pdev = PCI_DEVICE(s);
-    Error *err = NULL;
 
     IVSHMEM_DPRINTF("setting up interrupt for vector: %d\n", vector);
 
@@ -472,9 +471,8 @@ static void setup_interrupt(IVShmemState *s, int vector, Error **errp)
         watch_vector_notifier(s, n, vector);
     } else if (msix_enabled(pdev)) {
         IVSHMEM_DPRINTF("with irqfd\n");
-        ivshmem_add_kvm_msi_virq(s, vector, &err);
-        if (err) {
-            error_propagate(errp, err);
+        ivshmem_add_kvm_msi_virq(s, vector, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -836,11 +834,9 @@ static void ivshmem_write_config(PCIDevice *pdev, uint32_t address,
 static void ivshmem_common_realize(PCIDevice *dev, Error **errp)
 {
     IVShmemState *s = IVSHMEM_COMMON(dev);
-    Error *err = NULL;
     uint8_t *pci_conf;
     uint8_t attr = PCI_BASE_ADDRESS_SPACE_MEMORY |
         PCI_BASE_ADDRESS_MEM_PREFETCH;
-    Error *local_err = NULL;
 
     /* IRQFD requires MSI */
     if (ivshmem_has_feature(s, IVSHMEM_IOEVENTFD) &&
@@ -883,9 +879,8 @@ static void ivshmem_common_realize(PCIDevice *dev, Error **errp)
          * Older versions did it asynchronously, but that creates a
          * number of entertaining race conditions.
          */
-        ivshmem_recv_setup(s, &err);
-        if (err) {
-            error_propagate(errp, err);
+        ivshmem_recv_setup(s, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 
@@ -911,9 +906,8 @@ static void ivshmem_common_realize(PCIDevice *dev, Error **errp)
     if (!ivshmem_is_master(s)) {
         error_setg(&s->migration_blocker,
                    "Migration is disabled when using feature 'peer mode' in device 'ivshmem'");
-        migrate_add_blocker(s->migration_blocker, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        migrate_add_blocker(s->migration_blocker, errp);
+        if (ERR_IS_SET(errp)) {
             error_free(s->migration_blocker);
             return;
         }

@@ -54,19 +54,16 @@ static void aw_a10_realize(DeviceState *dev, Error **errp)
     SysBusDevice *sysbusdev;
     uint8_t i;
     qemu_irq fiq, irq;
-    Error *err = NULL;
 
-    object_property_set_bool(OBJECT(&s->cpu), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->cpu), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     irq = qdev_get_gpio_in(DEVICE(&s->cpu), ARM_CPU_IRQ);
     fiq = qdev_get_gpio_in(DEVICE(&s->cpu), ARM_CPU_FIQ);
 
-    object_property_set_bool(OBJECT(&s->intc), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->intc), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbusdev = SYS_BUS_DEVICE(&s->intc);
@@ -77,9 +74,8 @@ static void aw_a10_realize(DeviceState *dev, Error **errp)
         s->irq[i] = qdev_get_gpio_in(DEVICE(&s->intc), i);
     }
 
-    object_property_set_bool(OBJECT(&s->timer), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->timer), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbusdev = SYS_BUS_DEVICE(&s->timer);
@@ -91,18 +87,16 @@ static void aw_a10_realize(DeviceState *dev, Error **errp)
     sysbus_connect_irq(sysbusdev, 4, s->irq[67]);
     sysbus_connect_irq(sysbusdev, 5, s->irq[68]);
 
-    object_property_set_bool(OBJECT(&s->emac), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->emac), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbusdev = SYS_BUS_DEVICE(&s->emac);
     sysbus_mmio_map(sysbusdev, 0, AW_A10_EMAC_BASE);
     sysbus_connect_irq(sysbusdev, 0, s->irq[55]);
 
-    object_property_set_bool(OBJECT(&s->sata), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->sata), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_mmio_map(SYS_BUS_DEVICE(&s->sata), 0, AW_A10_SATA_BASE);

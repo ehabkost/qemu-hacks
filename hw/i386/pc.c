@@ -1111,7 +1111,6 @@ void pc_hot_add_cpu(const int64_t id, Error **errp)
     ObjectClass *oc;
     MachineState *ms = MACHINE(qdev_get_machine());
     int64_t apic_id = x86_cpu_apic_id_from_index(id);
-    Error *local_err = NULL;
 
     if (id < 0) {
         error_setg(errp, "Invalid CPU id: %" PRIi64, id);
@@ -1127,9 +1126,8 @@ void pc_hot_add_cpu(const int64_t id, Error **errp)
 
     assert(ms->possible_cpus->cpus[0].cpu); /* BSP is always present */
     oc = OBJECT_CLASS(CPU_GET_CLASS(ms->possible_cpus->cpus[0].cpu));
-    pc_new_cpu(object_class_get_name(oc), apic_id, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    pc_new_cpu(object_class_get_name(oc), apic_id, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 }

@@ -1003,7 +1003,6 @@ static void armv7m_nvic_realize(DeviceState *dev, Error **errp)
 {
     NVICState *s = NVIC(dev);
     SysBusDevice *systick_sbd;
-    Error *err = NULL;
 
     s->cpu = ARM_CPU(qemu_get_cpu(0));
     assert(s->cpu);
@@ -1018,9 +1017,8 @@ static void armv7m_nvic_realize(DeviceState *dev, Error **errp)
     /* include space for internal exception vectors */
     s->num_irq += NVIC_FIRST_IRQ;
 
-    object_property_set_bool(OBJECT(&s->systick), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->systick), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     systick_sbd = SYS_BUS_DEVICE(&s->systick);

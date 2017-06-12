@@ -2615,7 +2615,6 @@ static void vfio_realize(PCIDevice *pdev, Error **errp)
     VFIODevice *vbasedev_iter;
     VFIOGroup *group;
     char *tmp, group_path[PATH_MAX], *group_name;
-    Error *err = NULL;
     ssize_t len;
     struct stat st;
     int groupid;
@@ -2684,9 +2683,8 @@ static void vfio_realize(PCIDevice *pdev, Error **errp)
         goto error;
     }
 
-    vfio_populate_device(vdev, &err);
-    if (err) {
-        error_propagate(errp, err);
+    vfio_populate_device(vdev, errp);
+    if (ERR_IS_SET(errp)) {
         goto error;
     }
 
@@ -2775,9 +2773,8 @@ static void vfio_realize(PCIDevice *pdev, Error **errp)
 
     vfio_pci_size_rom(vdev);
 
-    vfio_msix_early_setup(vdev, &err);
-    if (err) {
-        error_propagate(errp, err);
+    vfio_msix_early_setup(vdev, errp);
+    if (ERR_IS_SET(errp)) {
         goto error;
     }
 

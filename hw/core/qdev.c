@@ -768,7 +768,6 @@ static void qdev_property_add_legacy(DeviceState *dev, Property *prop,
 void qdev_property_add_static(DeviceState *dev, Property *prop,
                               Error **errp)
 {
-    Error *local_err = NULL;
     Object *obj = OBJECT(dev);
 
     /*
@@ -783,10 +782,9 @@ void qdev_property_add_static(DeviceState *dev, Property *prop,
     object_property_add(obj, prop->name, prop->info->name,
                         prop->info->get, prop->info->set,
                         prop->info->release,
-                        prop, &local_err);
+                        prop, errp);
 
-    if (local_err) {
-        error_propagate(errp, local_err);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

@@ -152,7 +152,6 @@ static void scsi_qdev_realize(DeviceState *qdev, Error **errp)
     SCSIDevice *dev = SCSI_DEVICE(qdev);
     SCSIBus *bus = DO_UPCAST(SCSIBus, qbus, dev->qdev.parent_bus);
     SCSIDevice *d;
-    Error *local_err = NULL;
 
     if (dev->channel > bus->info->max_channel) {
         error_setg(errp, "bad scsi channel id: %d", dev->channel);
@@ -200,9 +199,8 @@ static void scsi_qdev_realize(DeviceState *qdev, Error **errp)
     }
 
     QTAILQ_INIT(&dev->requests);
-    scsi_device_realize(dev, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    scsi_device_realize(dev, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     dev->vmsentry = qemu_add_vm_change_state_handler(scsi_dma_restart_cb,
@@ -229,7 +227,6 @@ SCSIDevice *scsi_bus_legacy_add_drive(SCSIBus *bus, BlockBackend *blk,
     const char *driver;
     char *name;
     DeviceState *dev;
-    Error *err = NULL;
 
     driver = blk_is_sg(blk) ? "scsi-generic" : "scsi-disk";
     dev = qdev_create(&bus->qbus, driver);
@@ -248,15 +245,13 @@ SCSIDevice *scsi_bus_legacy_add_drive(SCSIBus *bus, BlockBackend *blk,
     if (serial && object_property_find(OBJECT(dev), "serial", IGNORE_ERRORS)) {
         qdev_prop_set_string(dev, "serial", serial);
     }
-    qdev_prop_set_drive(dev, "drive", blk, &err);
-    if (err) {
-        error_propagate(errp, err);
+    qdev_prop_set_drive(dev, "drive", blk, errp);
+    if (ERR_IS_SET(errp)) {
         object_unparent(OBJECT(dev));
         return NULL;
     }
-    object_property_set_bool(OBJECT(dev), true, "realized", &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(dev), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         object_unparent(OBJECT(dev));
         return NULL;
     }

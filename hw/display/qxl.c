@@ -2163,7 +2163,6 @@ static void qxl_realize_primary(PCIDevice *dev, Error **errp)
 {
     PCIQXLDevice *qxl = PCI_QXL(dev);
     VGACommonState *vga = &qxl->vga;
-    Error *local_err = NULL;
 
     qxl->id = 0;
     qxl_init_ramsize(qxl);
@@ -2180,9 +2179,8 @@ static void qxl_realize_primary(PCIDevice *dev, Error **errp)
     vga->con = graphic_console_init(DEVICE(dev), 0, &qxl_ops, qxl);
     qemu_spice_display_init_common(&qxl->ssd);
 
-    qxl_realize_common(qxl, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qxl_realize_common(qxl, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

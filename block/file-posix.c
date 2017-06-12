@@ -756,7 +756,6 @@ static int raw_reopen_prepare(BDRVReopenState *state,
     BDRVRawState *s;
     BDRVRawReopenState *rs;
     int ret = 0;
-    Error *local_err = NULL;
 
     assert(state != NULL);
     assert(state->bs != NULL);
@@ -819,11 +818,10 @@ static int raw_reopen_prepare(BDRVReopenState *state,
     /* Fail already reopen_prepare() if we can't get a working O_DIRECT
      * alignment with the new fd. */
     if (rs->fd != -1) {
-        raw_probe_alignment(state->bs, rs->fd, &local_err);
-        if (local_err) {
+        raw_probe_alignment(state->bs, rs->fd, errp);
+        if (ERR_IS_SET(errp)) {
             qemu_close(rs->fd);
             rs->fd = -1;
-            error_propagate(errp, local_err);
             ret = -EINVAL;
         }
     }

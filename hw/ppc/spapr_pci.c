@@ -1429,7 +1429,6 @@ static void spapr_phb_hot_plug_child(HotplugHandler *plug_handler,
     sPAPRPHBState *phb = SPAPR_PCI_HOST_BRIDGE(DEVICE(plug_handler));
     PCIDevice *pdev = PCI_DEVICE(plugged_dev);
     sPAPRDRConnector *drc = spapr_phb_get_pci_drc(phb, pdev);
-    Error *local_err = NULL;
     PCIBus *bus = PCI_BUS(qdev_get_parent_bus(DEVICE(pdev)));
     uint32_t slotnr = PCI_SLOT(pdev->devfn);
 
@@ -1461,9 +1460,8 @@ static void spapr_phb_hot_plug_child(HotplugHandler *plug_handler,
         return;
     }
 
-    spapr_phb_add_pci_device(drc, phb, pdev, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    spapr_phb_add_pci_device(drc, phb, pdev, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -1497,7 +1495,6 @@ static void spapr_phb_hot_unplug_child(HotplugHandler *plug_handler,
     PCIDevice *pdev = PCI_DEVICE(plugged_dev);
     sPAPRDRConnectorClass *drck;
     sPAPRDRConnector *drc = spapr_phb_get_pci_drc(phb, pdev);
-    Error *local_err = NULL;
 
     if (!phb->dr_enabled) {
         error_setg(errp, QERR_BUS_NO_HOTPLUG,
@@ -1534,9 +1531,8 @@ static void spapr_phb_hot_unplug_child(HotplugHandler *plug_handler,
             }
         }
 
-        spapr_phb_remove_pci_device(drc, phb, pdev, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        spapr_phb_remove_pci_device(drc, phb, pdev, errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
 

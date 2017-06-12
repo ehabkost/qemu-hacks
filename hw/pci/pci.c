@@ -960,7 +960,6 @@ static PCIDevice *do_pci_register_device(PCIDevice *pci_dev, PCIBus *bus,
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(pci_dev);
     PCIConfigReadFunc *config_read = pc->config_read;
     PCIConfigWriteFunc *config_write = pc->config_write;
-    Error *local_err = NULL;
     DeviceState *dev = DEVICE(pci_dev);
 
     pci_dev->bus = bus;
@@ -1039,9 +1038,8 @@ static PCIDevice *do_pci_register_device(PCIDevice *pci_dev, PCIBus *bus,
     if (pc->is_bridge) {
         pci_init_mask_bridge(pci_dev);
     }
-    pci_init_multifunction(bus, pci_dev, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    pci_init_multifunction(bus, pci_dev, errp);
+    if (ERR_IS_SET(errp)) {
         do_pci_unregister_device(pci_dev);
         return NULL;
     }
@@ -1983,7 +1981,6 @@ static void pci_qdev_realize(DeviceState *qdev, Error **errp)
 {
     PCIDevice *pci_dev = (PCIDevice *)qdev;
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(pci_dev);
-    Error *local_err = NULL;
     PCIBus *bus;
     bool is_default_rom;
 
@@ -2000,9 +1997,8 @@ static void pci_qdev_realize(DeviceState *qdev, Error **errp)
         return;
 
     if (pc->realize) {
-        pc->realize(pci_dev, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        pc->realize(pci_dev, errp);
+        if (ERR_IS_SET(errp)) {
             do_pci_unregister_device(pci_dev);
             return;
         }
@@ -2015,9 +2011,8 @@ static void pci_qdev_realize(DeviceState *qdev, Error **errp)
         is_default_rom = true;
     }
 
-    pci_add_option_rom(pci_dev, is_default_rom, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    pci_add_option_rom(pci_dev, is_default_rom, errp);
+    if (ERR_IS_SET(errp)) {
         pci_qdev_unrealize(DEVICE(pci_dev), IGNORE_ERRORS);
         return;
     }

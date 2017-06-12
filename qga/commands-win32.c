@@ -269,7 +269,6 @@ static void execute_async(DWORD WINAPI (*func)(LPVOID), LPVOID opaque,
 
 void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
 {
-    Error *local_err = NULL;
     UINT shutdown_flag = EWX_FORCE;
 
     slog("guest-shutdown called, mode: %s", mode);
@@ -288,9 +287,8 @@ void qmp_guest_shutdown(bool has_mode, const char *mode, Error **errp)
 
     /* Request a shutdown privilege, but try to shut down the system
        anyway. */
-    acquire_privilege(SE_SHUTDOWN_NAME, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    acquire_privilege(SE_SHUTDOWN_NAME, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -760,7 +758,6 @@ GuestFsfreezeStatus qmp_guest_fsfreeze_status(Error **errp)
 int64_t qmp_guest_fsfreeze_freeze(Error **errp)
 {
     int i;
-    Error *local_err = NULL;
 
     if (!vss_initialized()) {
         error_setg(errp, QERR_UNSUPPORTED);
@@ -772,9 +769,8 @@ int64_t qmp_guest_fsfreeze_freeze(Error **errp)
     /* cannot risk guest agent blocking itself on a write in this state */
     ga_set_frozen(ga_state);
 
-    qga_vss_fsfreeze(&i, true, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qga_vss_fsfreeze(&i, true, errp);
+    if (ERR_IS_SET(errp)) {
         goto error;
     }
 
@@ -1264,7 +1260,6 @@ int64_t qmp_guest_get_time(Error **errp)
 
 void qmp_guest_set_time(bool has_time, int64_t time_ns, Error **errp)
 {
-    Error *local_err = NULL;
     SYSTEMTIME ts;
     FILETIME tf;
     LONGLONG time;
@@ -1296,9 +1291,8 @@ void qmp_guest_set_time(bool has_time, int64_t time_ns, Error **errp)
         return;
     }
 
-    acquire_privilege(SE_SYSTEMTIME_NAME, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    acquire_privilege(SE_SYSTEMTIME_NAME, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

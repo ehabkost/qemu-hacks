@@ -160,7 +160,6 @@ static void virtio_rng_device_realize(DeviceState *dev, Error **errp)
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIORNG *vrng = VIRTIO_RNG(dev);
-    Error *local_err = NULL;
 
     if (vrng->conf.period_ms <= 0) {
         error_setg(errp, "'period' parameter expects a positive integer");
@@ -179,9 +178,8 @@ static void virtio_rng_device_realize(DeviceState *dev, Error **errp)
         vrng->conf.default_backend = RNG_RANDOM(object_new(TYPE_RNG_RANDOM));
 
         user_creatable_complete(OBJECT(vrng->conf.default_backend),
-                                &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+                                errp);
+        if (ERR_IS_SET(errp)) {
             object_unref(OBJECT(vrng->conf.default_backend));
             return;
         }

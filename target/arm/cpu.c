@@ -628,11 +628,9 @@ static void arm_cpu_realizefn(DeviceState *dev, Error **errp)
     ARMCPUClass *acc = ARM_CPU_GET_CLASS(dev);
     CPUARMState *env = &cpu->env;
     int pagebits;
-    Error *local_err = NULL;
 
-    cpu_exec_realizefn(cs, &local_err);
-    if (local_err != NULL) {
-        error_propagate(errp, local_err);
+    cpu_exec_realizefn(cs, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 

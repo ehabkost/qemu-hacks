@@ -1620,7 +1620,6 @@ static void external_snapshot_prepare(BlkActionState *common,
 {
     int flags = 0;
     QDict *options = NULL;
-    Error *local_err = NULL;
     /* Device and node name of the image to generate the snapshot from */
     const char *device;
     const char *node_name;
@@ -1726,9 +1725,8 @@ static void external_snapshot_prepare(BlkActionState *common,
             bdrv_img_create(new_image_file, format,
                             state->old_bs->filename,
                             state->old_bs->drv->format_name,
-                            NULL, size, flags, false, &local_err);
-            if (local_err) {
-                error_propagate(errp, local_err);
+                            NULL, size, flags, false, errp);
+            if (ERR_IS_SET(errp)) {
                 return;
             }
         }
@@ -1775,9 +1773,8 @@ static void external_snapshot_prepare(BlkActionState *common,
      * can fail, so we need to do it in .prepare; undoing it for abort is
      * always possible. */
     bdrv_ref(state->new_bs);
-    bdrv_append(state->new_bs, state->old_bs, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    bdrv_append(state->new_bs, state->old_bs, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     state->overlay_appended = true;
@@ -2166,7 +2163,6 @@ void qmp_transaction(TransactionActionList *dev_list,
     TransactionActionList *dev_entry = dev_list;
     BlockJobTxn *block_job_txn = NULL;
     BlkActionState *state, *next;
-    Error *local_err = NULL;
 
     QSIMPLEQ_HEAD(snap_bdrv_states, BlkActionState) snap_bdrv_states;
     QSIMPLEQ_INIT(&snap_bdrv_states);
@@ -2202,9 +2198,8 @@ void qmp_transaction(TransactionActionList *dev_list,
         state->txn_props = props;
         QSIMPLEQ_INSERT_TAIL(&snap_bdrv_states, state, entry);
 
-        state->ops->prepare(state, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        state->ops->prepare(state, errp);
+        if (ERR_IS_SET(errp)) {
             goto delete_and_fail;
         }
     }
@@ -2366,7 +2361,6 @@ void qmp_blockdev_close_tray(bool has_device, const char *device,
                              Error **errp)
 {
     BlockBackend *blk;
-    Error *local_err = NULL;
 
     device = has_device ? device : NULL;
     id = has_id ? id : NULL;
@@ -2390,9 +2384,8 @@ void qmp_blockdev_close_tray(bool has_device, const char *device,
         return;
     }
 
-    blk_dev_change_media_cb(blk, true, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    blk_dev_change_media_cb(blk, true, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 }
@@ -2457,7 +2450,6 @@ out:
 static void qmp_blockdev_insert_anon_medium(BlockBackend *blk,
                                             BlockDriverState *bs, Error **errp)
 {
-    Error *local_err = NULL;
     bool has_device;
     int ret;
 
@@ -2490,9 +2482,8 @@ static void qmp_blockdev_insert_anon_medium(BlockBackend *blk,
          * slot here.
          * Do it after blk_insert_bs() so blk_is_inserted(blk) returns the @load
          * value passed here (i.e. true). */
-        blk_dev_change_media_cb(blk, true, &local_err);
-        if (local_err) {
-            error_propagate(errp, local_err);
+        blk_dev_change_media_cb(blk, true, errp);
+        if (ERR_IS_SET(errp)) {
             blk_remove_bs(blk);
             return;
         }
@@ -2947,7 +2938,6 @@ void qmp_block_stream(bool has_job_id, const char *job_id, const char *device,
     BlockDriverState *bs, *iter;
     BlockDriverState *base_bs = NULL;
     AioContext *aio_context;
-    Error *local_err = NULL;
     const char *base_name = NULL;
 
     if (!has_on_error) {
@@ -3011,9 +3001,8 @@ void qmp_block_stream(bool has_job_id, const char *job_id, const char *device,
     base_name = has_backing_file ? backing_file : base_name;
 
     stream_start(has_job_id ? job_id : NULL, bs, base_bs, base_name,
-                 has_speed ? speed : 0, on_error, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                 has_speed ? speed : 0, on_error, errp);
+    if (ERR_IS_SET(errp)) {
         goto out;
     }
 
@@ -3600,7 +3589,6 @@ void qmp_blockdev_mirror(bool has_job_id, const char *job_id,
     BlockDriverState *target_bs;
     AioContext *aio_context;
     BlockMirrorBackingMode backing_mode = MIRROR_LEAVE_BACKING_CHAIN;
-    Error *local_err = NULL;
 
     bs = qmp_get_root_bs(device, errp);
     if (!bs) {
@@ -3626,8 +3614,7 @@ void qmp_blockdev_mirror(bool has_job_id, const char *job_id,
                            has_on_target_error, on_target_error,
                            true, true,
                            has_filter_node_name, filter_node_name,
-                           &local_err);
-    error_propagate(errp, local_err);
+                           errp);
 
     aio_context_release(aio_context);
 }
@@ -3856,11 +3843,9 @@ void qmp_blockdev_add(BlockdevOptions *options, Error **errp)
     QObject *obj;
     Visitor *v = qobject_output_visitor_new(&obj);
     QDict *qdict;
-    Error *local_err = NULL;
 
-    visit_type_BlockdevOptions(v, NULL, &options, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_BlockdevOptions(v, NULL, &options, errp);
+    if (ERR_IS_SET(errp)) {
         goto fail;
     }
 

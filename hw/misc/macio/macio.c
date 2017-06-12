@@ -126,15 +126,13 @@ static void macio_common_realize(PCIDevice *d, Error **errp)
 {
     MacIOState *s = MACIO(d);
     SysBusDevice *sysbus_dev;
-    Error *err = NULL;
     MemoryRegion *dbdma_mem;
 
     s->dbdma = DBDMA_init(&dbdma_mem);
     memory_region_add_subregion(&s->bar, 0x08000, dbdma_mem);
 
-    object_property_set_bool(OBJECT(&s->cuda), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&s->cuda), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_dev = SYS_BUS_DEVICE(&s->cuda);
@@ -162,23 +160,20 @@ static void macio_oldworld_realize(PCIDevice *d, Error **errp)
 {
     MacIOState *s = MACIO(d);
     OldWorldMacIOState *os = OLDWORLD_MACIO(d);
-    Error *err = NULL;
     SysBusDevice *sysbus_dev;
     int i;
     int cur_irq = 0;
 
-    macio_common_realize(d, &err);
-    if (err) {
-        error_propagate(errp, err);
+    macio_common_realize(d, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
     sysbus_dev = SYS_BUS_DEVICE(&s->cuda);
     sysbus_connect_irq(sysbus_dev, 0, os->irqs[cur_irq++]);
 
-    object_property_set_bool(OBJECT(&os->nvram), true, "realized", &err);
-    if (err) {
-        error_propagate(errp, err);
+    object_property_set_bool(OBJECT(&os->nvram), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_dev = SYS_BUS_DEVICE(&os->nvram);
@@ -196,9 +191,8 @@ static void macio_oldworld_realize(PCIDevice *d, Error **errp)
         qemu_irq irq0 = os->irqs[cur_irq++];
         qemu_irq irq1 = os->irqs[cur_irq++];
 
-        macio_realize_ide(s, &os->ide[i], irq0, irq1, 0x16 + (i * 4), &err);
-        if (err) {
-            error_propagate(errp, err);
+        macio_realize_ide(s, &os->ide[i], irq0, irq1, 0x16 + (i * 4), errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }
@@ -273,15 +267,13 @@ static void macio_newworld_realize(PCIDevice *d, Error **errp)
 {
     MacIOState *s = MACIO(d);
     NewWorldMacIOState *ns = NEWWORLD_MACIO(d);
-    Error *err = NULL;
     SysBusDevice *sysbus_dev;
     MemoryRegion *timer_memory = NULL;
     int i;
     int cur_irq = 0;
 
-    macio_common_realize(d, &err);
-    if (err) {
-        error_propagate(errp, err);
+    macio_common_realize(d, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -298,9 +290,8 @@ static void macio_newworld_realize(PCIDevice *d, Error **errp)
         qemu_irq irq0 = ns->irqs[cur_irq++];
         qemu_irq irq1 = ns->irqs[cur_irq++];
 
-        macio_realize_ide(s, &ns->ide[i], irq0, irq1, 0x16 + (i * 4), &err);
-        if (err) {
-            error_propagate(errp, err);
+        macio_realize_ide(s, &ns->ide[i], irq0, irq1, 0x16 + (i * 4), errp);
+        if (ERR_IS_SET(errp)) {
             return;
         }
     }

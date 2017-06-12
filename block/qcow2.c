@@ -598,22 +598,19 @@ static int qcow2_update_options_prepare(BlockDriverState *bs,
     int overlap_check_template = 0;
     uint64_t l2_cache_size, refcount_cache_size;
     int i;
-    Error *local_err = NULL;
     int ret;
 
     opts = qemu_opts_create(&qcow2_runtime_opts, NULL, 0, &error_abort);
-    qemu_opts_absorb_qdict(opts, options, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    qemu_opts_absorb_qdict(opts, options, errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto fail;
     }
 
     /* get L2 table/refcount block cache size from command line options */
     read_cache_sizes(bs, opts, &l2_cache_size, &refcount_cache_size,
-                     &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+                     errp);
+    if (ERR_IS_SET(errp)) {
         ret = -EINVAL;
         goto fail;
     }

@@ -55,12 +55,10 @@ static void serial_pci_realize(PCIDevice *dev, Error **errp)
 {
     PCISerialState *pci = DO_UPCAST(PCISerialState, dev, dev);
     SerialState *s = &pci->state;
-    Error *err = NULL;
 
     s->baudbase = 115200;
-    serial_realize_core(s, &err);
-    if (err != NULL) {
-        error_propagate(errp, err);
+    serial_realize_core(s, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -91,7 +89,6 @@ static void multi_serial_pci_realize(PCIDevice *dev, Error **errp)
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(dev);
     PCIMultiSerialState *pci = DO_UPCAST(PCIMultiSerialState, dev, dev);
     SerialState *s;
-    Error *err = NULL;
     int i, nr_ports = 0;
 
     switch (pc->device_id) {
@@ -115,9 +112,8 @@ static void multi_serial_pci_realize(PCIDevice *dev, Error **errp)
     for (i = 0; i < nr_ports; i++) {
         s = pci->state + i;
         s->baudbase = 115200;
-        serial_realize_core(s, &err);
-        if (err != NULL) {
-            error_propagate(errp, err);
+        serial_realize_core(s, errp);
+        if (ERR_IS_SET(errp)) {
             multi_serial_pci_exit(dev);
             return;
         }

@@ -2823,7 +2823,6 @@ void spapr_core_unplug_request(HotplugHandler *hotplug_dev, DeviceState *dev,
     int index;
     sPAPRDRConnector *drc;
     sPAPRDRConnectorClass *drck;
-    Error *local_err = NULL;
     CPUCore *cc = CPU_CORE(dev);
     int smt = kvmppc_smt_threads();
 
@@ -2841,9 +2840,8 @@ void spapr_core_unplug_request(HotplugHandler *hotplug_dev, DeviceState *dev,
     g_assert(drc);
 
     drck = SPAPR_DR_CONNECTOR_GET_CLASS(drc);
-    drck->detach(drc, dev, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    drck->detach(drc, dev, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -2859,7 +2857,6 @@ static void spapr_core_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
     CPUCore *cc = CPU_CORE(dev);
     CPUState *cs = CPU(core->threads);
     sPAPRDRConnector *drc;
-    Error *local_err = NULL;
     void *fdt = NULL;
     int fdt_offset = 0;
     int smt = kvmppc_smt_threads();
@@ -2886,10 +2883,9 @@ static void spapr_core_plug(HotplugHandler *hotplug_dev, DeviceState *dev,
 
     if (drc) {
         sPAPRDRConnectorClass *drck = SPAPR_DR_CONNECTOR_GET_CLASS(drc);
-        drck->attach(drc, dev, fdt, fdt_offset, !dev->hotplugged, &local_err);
-        if (local_err) {
+        drck->attach(drc, dev, fdt, fdt_offset, !dev->hotplugged, errp);
+        if (ERR_IS_SET(errp)) {
             g_free(fdt);
-            error_propagate(errp, local_err);
             return;
         }
     }

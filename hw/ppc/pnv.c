@@ -885,7 +885,6 @@ static void pnv_chip_icp_realize(PnvChip *chip, Error **errp)
 static void pnv_chip_realize(DeviceState *dev, Error **errp)
 {
     PnvChip *chip = PNV_CHIP(dev);
-    Error *error = NULL;
     PnvChipClass *pcc = PNV_CHIP_GET_CLASS(chip);
     char *typename = pnv_core_typename(pcc->cpu_model);
     size_t typesize = object_type_get_instance_size(typename);
@@ -897,17 +896,15 @@ static void pnv_chip_realize(DeviceState *dev, Error **errp)
     }
 
     /* XSCOM bridge */
-    pnv_xscom_realize(chip, &error);
-    if (error) {
-        error_propagate(errp, error);
+    pnv_xscom_realize(chip, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     sysbus_mmio_map(SYS_BUS_DEVICE(chip), 0, PNV_XSCOM_BASE(chip));
 
     /* Cores */
-    pnv_chip_core_sanitize(chip, &error);
-    if (error) {
-        error_propagate(errp, error);
+    pnv_chip_core_sanitize(chip, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
@@ -955,26 +952,23 @@ static void pnv_chip_realize(DeviceState *dev, Error **errp)
 
     /* Interrupt Management Area. This is the memory region holding
      * all the Interrupt Control Presenter (ICP) registers */
-    pnv_chip_icp_realize(chip, &error);
-    if (error) {
-        error_propagate(errp, error);
+    pnv_chip_icp_realize(chip, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
     /* Processor Service Interface (PSI) Host Bridge */
     object_property_set_int(OBJECT(&chip->psi), PNV_PSIHB_BASE(chip),
                             "bar", &error_fatal);
-    object_property_set_bool(OBJECT(&chip->psi), true, "realized", &error);
-    if (error) {
-        error_propagate(errp, error);
+    object_property_set_bool(OBJECT(&chip->psi), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     pnv_xscom_add_subregion(chip, PNV_XSCOM_PSIHB_BASE, &chip->psi.xscom_regs);
 
     /* Create the simplified OCC model */
-    object_property_set_bool(OBJECT(&chip->occ), true, "realized", &error);
-    if (error) {
-        error_propagate(errp, error);
+    object_property_set_bool(OBJECT(&chip->occ), true, "realized", errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
     pnv_xscom_add_subregion(chip, PNV_XSCOM_OCC_BASE, &chip->occ.xscom_regs);
@@ -1083,11 +1077,9 @@ static void pnv_set_num_chips(Object *obj, Visitor *v, const char *name,
 {
     PnvMachineState *pnv = POWERNV_MACHINE(obj);
     uint32_t num_chips;
-    Error *local_err = NULL;
 
-    visit_type_uint32(v, name, &num_chips, &local_err);
-    if (local_err) {
-        error_propagate(errp, local_err);
+    visit_type_uint32(v, name, &num_chips, errp);
+    if (ERR_IS_SET(errp)) {
         return;
     }
 
