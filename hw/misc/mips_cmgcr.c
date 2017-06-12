@@ -230,7 +230,7 @@ static Property mips_gcr_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void mips_gcr_realize(DeviceState *dev, Error **errp)
+static void mips_gcr_realize(DeviceState *dev, Error *errp[static 1])
 {
     MIPSGCRState *s = MIPS_GCR(dev);
 

@@ -137,7 +137,7 @@ static uint32_t tosa_ssp_tansfer(SSISlave *dev, uint32_t value)
     return 0;
 }
 
-static void tosa_ssp_realize(SSISlave *dev, Error **errp)
+static void tosa_ssp_realize(SSISlave *dev, Error *errp[static 1])
 {
     /* Nothing to do.  */
 }

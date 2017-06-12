@@ -1700,7 +1700,7 @@ static void sysbus_ahci_init(Object *obj)
     sysbus_init_irq(sbd, &s->ahci.irq);
 }
 
-static void sysbus_ahci_realize(DeviceState *dev, Error **errp)
+static void sysbus_ahci_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysbusAHCIState *s = SYSBUS_AHCI(dev);
 

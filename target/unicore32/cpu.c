@@ -99,7 +99,7 @@ static const UniCore32CPUInfo uc32_cpus[] = {
     { .name = "any",        .instance_init = uc32_any_cpu_initfn },
 };
 
-static void uc32_cpu_realizefn(DeviceState *dev, Error **errp)
+static void uc32_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     UniCore32CPUClass *ucc = UNICORE32_CPU_GET_CLASS(dev);

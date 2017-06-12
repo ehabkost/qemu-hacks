@@ -337,7 +337,7 @@ static void grlib_irqmp_init(Object *obj)
     sysbus_init_mmio(dev, &irqmp->iomem);
 }
 
-static void grlib_irqmp_realize(DeviceState *dev, Error **errp)
+static void grlib_irqmp_realize(DeviceState *dev, Error *errp[static 1])
 {
     IRQMP *irqmp = GRLIB_IRQMP(dev);
 

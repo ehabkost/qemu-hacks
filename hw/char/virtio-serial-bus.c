@@ -548,7 +548,7 @@ static void handle_input(VirtIODevice *vdev, VirtQueue *vq)
 }
 
 static uint64_t get_features(VirtIODevice *vdev, uint64_t features,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     VirtIOSerial *vser;
 
@@ -919,7 +919,8 @@ static void remove_port(VirtIOSerial *vser, uint32_t port_id)
     send_control_event(vser, port->id, VIRTIO_CONSOLE_PORT_REMOVE, 1);
 }
 
-static void virtser_port_device_realize(DeviceState *dev, Error **errp)
+static void virtser_port_device_realize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     VirtIOSerialPort *port = VIRTIO_SERIAL_PORT(dev);
     VirtIOSerialPortClass *vsc = VIRTIO_SERIAL_PORT_GET_CLASS(port);
@@ -980,7 +981,7 @@ static void virtser_port_device_realize(DeviceState *dev, Error **errp)
 }
 
 static void virtser_port_device_plug(HotplugHandler *hotplug_dev,
-                                     DeviceState *dev, Error **errp)
+                                     DeviceState *dev, Error *errp[static 1])
 {
     VirtIOSerialPort *port = VIRTIO_SERIAL_PORT(dev);
 
@@ -994,7 +995,8 @@ static void virtser_port_device_plug(HotplugHandler *hotplug_dev,
     virtio_notify_config(VIRTIO_DEVICE(hotplug_dev));
 }
 
-static void virtser_port_device_unrealize(DeviceState *dev, Error **errp)
+static void virtser_port_device_unrealize(DeviceState *dev,
+                                          Error *errp[static 1])
 {
     VirtIOSerialPort *port = VIRTIO_SERIAL_PORT(dev);
     VirtIOSerialPortClass *vsc = VIRTIO_SERIAL_PORT_GET_CLASS(dev);
@@ -1010,7 +1012,8 @@ static void virtser_port_device_unrealize(DeviceState *dev, Error **errp)
     }
 }
 
-static void virtio_serial_device_realize(DeviceState *dev, Error **errp)
+static void virtio_serial_device_realize(DeviceState *dev,
+                                         Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOSerial *vser = VIRTIO_SERIAL(dev);
@@ -1106,7 +1109,8 @@ static const TypeInfo virtio_serial_port_type_info = {
     .class_init = virtio_serial_port_class_init,
 };
 
-static void virtio_serial_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_serial_device_unrealize(DeviceState *dev,
+                                           Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOSerial *vser = VIRTIO_SERIAL(dev);

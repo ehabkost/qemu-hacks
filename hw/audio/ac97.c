@@ -1338,7 +1338,7 @@ static void ac97_on_reset (DeviceState *dev)
     mixer_reset (s);
 }
 
-static void ac97_realize(PCIDevice *dev, Error **errp)
+static void ac97_realize(PCIDevice *dev, Error *errp[static 1])
 {
     AC97LinkState *s = DO_UPCAST (AC97LinkState, dev, dev);
     uint8_t *c = s->dev.config;

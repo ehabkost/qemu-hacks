@@ -293,7 +293,7 @@ static void cg3_initfn(Object *obj)
     sysbus_init_mmio(sbd, &s->reg);
 }
 
-static void cg3_realizefn(DeviceState *dev, Error **errp)
+static void cg3_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     CG3State *s = CG3(dev);

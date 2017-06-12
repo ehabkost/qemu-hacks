@@ -843,7 +843,7 @@ static const char **slirp_dnssearch(const StringList *dnsname)
 }
 
 int net_init_slirp(const Netdev *netdev, const char *name,
-                   NetClientState *peer, Error **errp)
+                   NetClientState *peer, Error *errp[static 1])
 {
     /* FIXME error_setg(errp, ...) on failure */
     struct slirp_config_str *config;

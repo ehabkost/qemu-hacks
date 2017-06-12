@@ -178,7 +178,8 @@ BlockJob *block_job_get(const char *id);
  * @job exists.
  */
 int block_job_add_bdrv(BlockJob *job, const char *name, BlockDriverState *bs,
-                       uint64_t perm, uint64_t shared_perm, Error **errp);
+                       uint64_t perm, uint64_t shared_perm,
+                       Error *errp[static 1]);
 
 /**
  * block_job_remove_all_bdrv:
@@ -198,7 +199,7 @@ void block_job_remove_all_bdrv(BlockJob *job);
  * Set a rate-limiting parameter for the job; the actual meaning may
  * vary depending on the job type.
  */
-void block_job_set_speed(BlockJob *job, int64_t speed, Error **errp);
+void block_job_set_speed(BlockJob *job, int64_t speed, Error *errp[static 1]);
 
 /**
  * block_job_start:
@@ -224,7 +225,7 @@ void block_job_cancel(BlockJob *job);
  *
  * Asynchronously complete the specified job.
  */
-void block_job_complete(BlockJob *job, Error **errp);
+void block_job_complete(BlockJob *job, Error *errp[static 1]);
 
 /**
  * block_job_query:
@@ -232,7 +233,7 @@ void block_job_complete(BlockJob *job, Error **errp);
  *
  * Return information about a job.
  */
-BlockJobInfo *block_job_query(BlockJob *job, Error **errp);
+BlockJobInfo *block_job_query(BlockJob *job, Error *errp[static 1]);
 
 /**
  * block_job_user_pause:
@@ -294,7 +295,7 @@ void block_job_cancel_sync_all(void);
  *
  * Returns the return value from the job.
  */
-int block_job_complete_sync(BlockJob *job, Error **errp);
+int block_job_complete_sync(BlockJob *job, Error *errp[static 1]);
 
 /**
  * block_job_iostatus_reset:

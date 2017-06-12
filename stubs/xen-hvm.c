@@ -37,7 +37,7 @@ int xen_is_pirq_msi(uint32_t msi_data)
 }
 
 void xen_ram_alloc(ram_addr_t ram_addr, ram_addr_t size, MemoryRegion *mr,
-                   Error **errp)
+                   Error *errp[static 1])
 {
 }
 
@@ -58,6 +58,6 @@ void xen_hvm_init(PCMachineState *pcms, MemoryRegion **ram_memory)
 {
 }
 
-void qmp_xen_set_global_dirty_log(bool enable, Error **errp)
+void qmp_xen_set_global_dirty_log(bool enable, Error *errp[static 1])
 {
 }

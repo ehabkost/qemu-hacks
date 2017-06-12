@@ -136,7 +136,8 @@ out:
 /* This size should be enough to read a long from a file */
 #define XEN_HOST_PCI_GET_VALUE_BUFFER_SIZE 22
 static void xen_host_pci_get_value(XenHostPCIDevice *d, const char *name,
-                                   unsigned int *pvalue, int base, Error **errp)
+                                   unsigned int *pvalue, int base,
+                                   Error *errp[static 1])
 {
     char path[PATH_MAX];
     char buf[XEN_HOST_PCI_GET_VALUE_BUFFER_SIZE];
@@ -176,7 +177,7 @@ out:
 static inline void xen_host_pci_get_hex_value(XenHostPCIDevice *d,
                                               const char *name,
                                               unsigned int *pvalue,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     xen_host_pci_get_value(d, name, pvalue, 16, errp);
 }
@@ -184,7 +185,7 @@ static inline void xen_host_pci_get_hex_value(XenHostPCIDevice *d,
 static inline void xen_host_pci_get_dec_value(XenHostPCIDevice *d,
                                               const char *name,
                                               unsigned int *pvalue,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     xen_host_pci_get_value(d, name, pvalue, 10, errp);
 }
@@ -199,7 +200,8 @@ static bool xen_host_pci_dev_is_virtfn(XenHostPCIDevice *d)
     return !stat(path, &buf);
 }
 
-static void xen_host_pci_config_open(XenHostPCIDevice *d, Error **errp)
+static void xen_host_pci_config_open(XenHostPCIDevice *d,
+                                     Error *errp[static 1])
 {
     char path[PATH_MAX];
 
@@ -332,7 +334,7 @@ int xen_host_pci_find_ext_cap_offset(XenHostPCIDevice *d, uint32_t cap)
 
 void xen_host_pci_device_get(XenHostPCIDevice *d, uint16_t domain,
                              uint8_t bus, uint8_t dev, uint8_t func,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     unsigned int v;
     Error *err = NULL;

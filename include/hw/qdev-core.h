@@ -271,9 +271,9 @@ void qdev_init_nofail(DeviceState *dev);
 void qdev_set_legacy_instance_id(DeviceState *dev, int alias_id,
                                  int required_for_version);
 HotplugHandler *qdev_get_hotplug_handler(DeviceState *dev);
-void qdev_unplug(DeviceState *dev, Error **errp);
+void qdev_unplug(DeviceState *dev, Error *errp[static 1]);
 void qdev_simple_device_unplug_cb(HotplugHandler *hotplug_dev,
-                                  DeviceState *dev, Error **errp);
+                                  DeviceState *dev, Error *errp[static 1]);
 void qdev_machine_creation_done(void);
 bool qdev_machine_modified(void);
 
@@ -382,9 +382,9 @@ char *qdev_get_dev_path(DeviceState *dev);
 GSList *qdev_build_hotpluggable_device_list(Object *peripheral);
 
 void qbus_set_hotplug_handler(BusState *bus, DeviceState *handler,
-                              Error **errp);
+                              Error *errp[static 1]);
 
-void qbus_set_bus_hotplug_handler(BusState *bus, Error **errp);
+void qbus_set_bus_hotplug_handler(BusState *bus, Error *errp[static 1]);
 
 static inline bool qbus_is_hotpluggable(BusState *bus)
 {

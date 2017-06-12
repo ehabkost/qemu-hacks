@@ -60,7 +60,7 @@ static int cloop_probe(const uint8_t *buf, int buf_size, const char *filename)
 }
 
 static int cloop_open(BlockDriverState *bs, QDict *options, int flags,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     BDRVCloopState *s = bs->opaque;
     uint32_t offsets_size, max_compressed_block_size = 1, i;
@@ -207,7 +207,7 @@ fail:
     return ret;
 }
 
-static void cloop_refresh_limits(BlockDriverState *bs, Error **errp)
+static void cloop_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     bs->bl.request_alignment = BDRV_SECTOR_SIZE; /* No sub-sector I/O */
 }

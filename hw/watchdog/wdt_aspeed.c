@@ -182,7 +182,7 @@ static void aspeed_wdt_timer_expired(void *dev)
 
 #define PCLK_HZ 24000000
 
-static void aspeed_wdt_realize(DeviceState *dev, Error **errp)
+static void aspeed_wdt_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     AspeedWDTState *s = ASPEED_WDT(dev);

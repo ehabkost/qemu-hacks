@@ -391,7 +391,7 @@ out:
 }
 
 static struct glfs *qemu_gluster_glfs_init(BlockdevOptionsGluster *gconf,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     struct glfs *glfs;
     int ret;
@@ -484,7 +484,7 @@ out:
  * Convert the json formatted command line into qapi.
 */
 static int qemu_gluster_parse_json(BlockdevOptionsGluster *gconf,
-                                  QDict *options, Error **errp)
+                                  QDict *options, Error *errp[static 1])
 {
     QemuOpts *opts;
     SocketAddress *gsconf = NULL;
@@ -658,7 +658,7 @@ out:
 
 static struct glfs *qemu_gluster_init(BlockdevOptionsGluster *gconf,
                                       const char *filename,
-                                      QDict *options, Error **errp)
+                                      QDict *options, Error *errp[static 1])
 {
     int ret;
     if (filename) {
@@ -758,7 +758,7 @@ static bool qemu_gluster_test_seek(struct glfs_fd *fd)
 }
 
 static int qemu_gluster_open(BlockDriverState *bs,  QDict *options,
-                             int bdrv_flags, Error **errp)
+                             int bdrv_flags, Error *errp[static 1])
 {
     BDRVGlusterState *s = bs->opaque;
     int open_flags = 0;
@@ -843,7 +843,8 @@ out:
 }
 
 static int qemu_gluster_reopen_prepare(BDRVReopenState *state,
-                                       BlockReopenQueue *queue, Error **errp)
+                                       BlockReopenQueue *queue,
+                                       Error *errp[static 1])
 {
     int ret = 0;
     BDRVGlusterState *s;
@@ -965,7 +966,7 @@ static coroutine_fn int qemu_gluster_co_pwrite_zeroes(BlockDriverState *bs,
 #endif
 
 static int qemu_gluster_create(const char *filename,
-                               QemuOpts *opts, Error **errp)
+                               QemuOpts *opts, Error *errp[static 1])
 {
     BlockdevOptionsGluster *gconf;
     struct glfs *glfs;
@@ -1095,7 +1096,7 @@ static coroutine_fn int qemu_gluster_co_rw(BlockDriverState *bs,
 }
 
 static int qemu_gluster_truncate(BlockDriverState *bs, int64_t offset,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     int ret;
     BDRVGlusterState *s = bs->opaque;

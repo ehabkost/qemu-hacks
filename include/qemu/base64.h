@@ -52,7 +52,7 @@
 uint8_t *qbase64_decode(const char *input,
                         size_t in_len,
                         size_t *out_len,
-                        Error **errp);
+                        Error *errp[static 1]);
 
 
 #endif /* QEMU_BASE64_H */

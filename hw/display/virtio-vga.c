@@ -96,7 +96,8 @@ static const VMStateDescription vmstate_virtio_vga = {
 };
 
 /* VGA device wrapper around PCI device around virtio GPU */
-static void virtio_vga_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_vga_realize(VirtIOPCIProxy *vpci_dev,
+                               Error *errp[static 1])
 {
     VirtIOVGA *vvga = VIRTIO_VGA(vpci_dev);
     VirtIOGPU *g = &vvga->vdev;

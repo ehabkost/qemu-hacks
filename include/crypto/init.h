@@ -21,6 +21,6 @@
 #ifndef QCRYPTO_INIT_H
 #define QCRYPTO_INIT_H
 
-int qcrypto_init(Error **errp);
+int qcrypto_init(Error *errp[static 1]);
 
 #endif /* QCRYPTO_INIT_H */

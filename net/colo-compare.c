@@ -608,14 +608,15 @@ static void *colo_compare_thread(void *opaque)
     return NULL;
 }
 
-static char *compare_get_pri_indev(Object *obj, Error **errp)
+static char *compare_get_pri_indev(Object *obj, Error *errp[static 1])
 {
     CompareState *s = COLO_COMPARE(obj);
 
     return g_strdup(s->pri_indev);
 }
 
-static void compare_set_pri_indev(Object *obj, const char *value, Error **errp)
+static void compare_set_pri_indev(Object *obj, const char *value,
+                                  Error *errp[static 1])
 {
     CompareState *s = COLO_COMPARE(obj);
 
@@ -623,14 +624,15 @@ static void compare_set_pri_indev(Object *obj, const char *value, Error **errp)
     s->pri_indev = g_strdup(value);
 }
 
-static char *compare_get_sec_indev(Object *obj, Error **errp)
+static char *compare_get_sec_indev(Object *obj, Error *errp[static 1])
 {
     CompareState *s = COLO_COMPARE(obj);
 
     return g_strdup(s->sec_indev);
 }
 
-static void compare_set_sec_indev(Object *obj, const char *value, Error **errp)
+static void compare_set_sec_indev(Object *obj, const char *value,
+                                  Error *errp[static 1])
 {
     CompareState *s = COLO_COMPARE(obj);
 
@@ -638,14 +640,15 @@ static void compare_set_sec_indev(Object *obj, const char *value, Error **errp)
     s->sec_indev = g_strdup(value);
 }
 
-static char *compare_get_outdev(Object *obj, Error **errp)
+static char *compare_get_outdev(Object *obj, Error *errp[static 1])
 {
     CompareState *s = COLO_COMPARE(obj);
 
     return g_strdup(s->outdev);
 }
 
-static void compare_set_outdev(Object *obj, const char *value, Error **errp)
+static void compare_set_outdev(Object *obj, const char *value,
+                               Error *errp[static 1])
 {
     CompareState *s = COLO_COMPARE(obj);
 
@@ -685,7 +688,7 @@ static void compare_sec_rs_finalize(SocketReadState *sec_rs)
  */
 static int find_and_check_chardev(Chardev **chr,
                                   char *chr_name,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     *chr = qemu_chr_find(chr_name);
     if (*chr == NULL) {
@@ -707,7 +710,7 @@ static int find_and_check_chardev(Chardev **chr,
  * Called from the main thread on the primary
  * to setup colo-compare.
  */
-static void colo_compare_complete(UserCreatable *uc, Error **errp)
+static void colo_compare_complete(UserCreatable *uc, Error *errp[static 1])
 {
     CompareState *s = COLO_COMPARE(uc);
     Chardev *chr;

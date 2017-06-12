@@ -139,7 +139,7 @@ static void qemu_chr_set_echo_win_stdio(Chardev *chr, bool echo)
 static void qemu_chr_open_stdio(Chardev *chr,
                                 ChardevBackend *backend,
                                 bool *be_opened,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     WinStdioChardev *stdio = WIN_STDIO_CHARDEV(chr);
     DWORD              dwMode;

@@ -44,7 +44,7 @@ static void powernv_cpu_reset(void *opaque)
     env->msr |= MSR_HVB; /* Hypervisor mode */
 }
 
-static void powernv_cpu_init(PowerPCCPU *cpu, Error **errp)
+static void powernv_cpu_init(PowerPCCPU *cpu, Error *errp[static 1])
 {
     CPUPPCState *env = &cpu->env;
     int core_pir;
@@ -111,7 +111,8 @@ static const MemoryRegionOps pnv_core_xscom_ops = {
     .endianness = DEVICE_BIG_ENDIAN,
 };
 
-static void pnv_core_realize_child(Object *child, XICSFabric *xi, Error **errp)
+static void pnv_core_realize_child(Object *child, XICSFabric *xi,
+                                   Error *errp[static 1])
 {
     CPUState *cs = CPU(child);
     PowerPCCPU *cpu = POWERPC_CPU(cs);
@@ -140,7 +141,7 @@ static void pnv_core_realize_child(Object *child, XICSFabric *xi, Error **errp)
     xics_cpu_setup(xi, cpu, ICP(obj));
 }
 
-static void pnv_core_realize(DeviceState *dev, Error **errp)
+static void pnv_core_realize(DeviceState *dev, Error *errp[static 1])
 {
     PnvCore *pc = PNV_CORE(OBJECT(dev));
     CPUCore *cc = CPU_CORE(OBJECT(dev));

@@ -53,7 +53,7 @@ static int kvm_its_send_msi(GICv3ITSState *s, uint32_t value, uint16_t devid)
     return kvm_vm_ioctl(kvm_state, KVM_SIGNAL_MSI, &msi);
 }
 
-static void kvm_arm_its_realize(DeviceState *dev, Error **errp)
+static void kvm_arm_its_realize(DeviceState *dev, Error *errp[static 1])
 {
     GICv3ITSState *s = ARM_GICV3_ITS_COMMON(dev);
 

@@ -193,7 +193,7 @@ static bool default_mttcg_enabled(void)
     }
 }
 
-void qemu_tcg_configure(QemuOpts *opts, Error **errp)
+void qemu_tcg_configure(QemuOpts *opts, Error *errp[static 1])
 {
     const char *t = qemu_opt_get(opts, "thread");
     if (t) {
@@ -738,7 +738,7 @@ void cpu_ticks_init(void)
                                            cpu_throttle_timer_tick, NULL);
 }
 
-void configure_icount(QemuOpts *opts, Error **errp)
+void configure_icount(QemuOpts *opts, Error *errp[static 1])
 {
     const char *option;
     char *rem_str = NULL;
@@ -1873,7 +1873,7 @@ void list_cpus(FILE *f, fprintf_function cpu_fprintf, const char *optarg)
 #endif
 }
 
-CpuInfoList *qmp_query_cpus(Error **errp)
+CpuInfoList *qmp_query_cpus(Error *errp[static 1])
 {
     MachineState *ms = MACHINE(qdev_get_machine());
     MachineClass *mc = MACHINE_GET_CLASS(ms);
@@ -1948,7 +1948,7 @@ CpuInfoList *qmp_query_cpus(Error **errp)
 }
 
 void qmp_memsave(int64_t addr, int64_t size, const char *filename,
-                 bool has_cpu, int64_t cpu_index, Error **errp)
+                 bool has_cpu, int64_t cpu_index, Error *errp[static 1])
 {
     FILE *f;
     uint32_t l;
@@ -1995,7 +1995,7 @@ exit:
 }
 
 void qmp_pmemsave(int64_t addr, int64_t size, const char *filename,
-                  Error **errp)
+                  Error *errp[static 1])
 {
     FILE *f;
     uint32_t l;
@@ -2024,7 +2024,7 @@ exit:
     fclose(f);
 }
 
-void qmp_inject_nmi(Error **errp)
+void qmp_inject_nmi(Error *errp[static 1])
 {
     nmi_monitor_handle(monitor_get_cpu_index(), errp);
 }

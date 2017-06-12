@@ -514,7 +514,7 @@ static const MemoryRegionOps axidma_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void xilinx_axidma_realize(DeviceState *dev, Error **errp)
+static void xilinx_axidma_realize(DeviceState *dev, Error *errp[static 1])
 {
     XilinxAXIDMA *s = XILINX_AXI_DMA(dev);
     XilinxAXIDMAStreamSlave *ds = XILINX_AXI_DMA_DATA_STREAM(&s->rx_data_dev);

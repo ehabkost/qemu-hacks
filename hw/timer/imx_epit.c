@@ -301,7 +301,7 @@ static const VMStateDescription vmstate_imx_timer_epit = {
     }
 };
 
-static void imx_epit_realize(DeviceState *dev, Error **errp)
+static void imx_epit_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMXEPITState *s = IMX_EPIT(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

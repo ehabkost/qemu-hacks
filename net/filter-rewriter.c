@@ -226,7 +226,7 @@ static void colo_rewriter_cleanup(NetFilterState *nf)
     }
 }
 
-static void colo_rewriter_setup(NetFilterState *nf, Error **errp)
+static void colo_rewriter_setup(NetFilterState *nf, Error *errp[static 1])
 {
     RewriterState *s = FILTER_COLO_REWRITER(nf);
 

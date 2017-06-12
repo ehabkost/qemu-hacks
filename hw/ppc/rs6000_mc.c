@@ -136,7 +136,7 @@ static const MemoryRegionPortio rs6000mc_port_list[] = {
     PORTIO_END_OF_LIST()
 };
 
-static void rs6000mc_realize(DeviceState *dev, Error **errp)
+static void rs6000mc_realize(DeviceState *dev, Error *errp[static 1])
 {
     RS6000MCState *s = RS6000MC_DEVICE(dev);
     int socket = 0;

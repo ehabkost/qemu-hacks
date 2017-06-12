@@ -269,7 +269,8 @@ static int ics_find_free_block(ICSState *ics, int num, int alignnum)
     return -1;
 }
 
-int spapr_ics_alloc(ICSState *ics, int irq_hint, bool lsi, Error **errp)
+int spapr_ics_alloc(ICSState *ics, int irq_hint, bool lsi,
+                    Error *errp[static 1])
 {
     int irq;
 
@@ -302,7 +303,7 @@ int spapr_ics_alloc(ICSState *ics, int irq_hint, bool lsi, Error **errp)
  * the block. If align==true, aligns the first IRQ number to num.
  */
 int spapr_ics_alloc_block(ICSState *ics, int num, bool lsi,
-                          bool align, Error **errp)
+                          bool align, Error *errp[static 1])
 {
     int i, first = -1;
 

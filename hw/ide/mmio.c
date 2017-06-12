@@ -117,7 +117,7 @@ static const VMStateDescription vmstate_ide_mmio = {
     }
 };
 
-static void mmio_ide_realizefn(DeviceState *dev, Error **errp)
+static void mmio_ide_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *d = SYS_BUS_DEVICE(dev);
     MMIOState *s = MMIO_IDE(dev);

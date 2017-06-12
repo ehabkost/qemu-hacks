@@ -632,7 +632,7 @@ static NetClientInfo net_mcf_fec_info = {
     .receive = mcf_fec_receive,
 };
 
-static void mcf_fec_realize(DeviceState *dev, Error **errp)
+static void mcf_fec_realize(DeviceState *dev, Error *errp[static 1])
 {
     mcf_fec_state *s = MCF_FEC_NET(dev);
 

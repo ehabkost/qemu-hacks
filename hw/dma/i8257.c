@@ -542,7 +542,7 @@ static const VMStateDescription vmstate_i8257 = {
     }
 };
 
-static void i8257_realize(DeviceState *dev, Error **errp)
+static void i8257_realize(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isa = ISA_DEVICE(dev);
     I8257State *d = I8257(dev);

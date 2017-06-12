@@ -96,7 +96,7 @@ static inline void qemu_spice_init(void)
 
 #endif /* CONFIG_SPICE */
 
-static inline bool qemu_using_spice(Error **errp)
+static inline bool qemu_using_spice(Error *errp[static 1])
 {
     if (!using_spice) {
         error_set(errp, ERROR_CLASS_DEVICE_NOT_ACTIVE,

@@ -55,7 +55,7 @@ static void moxie_cpu_disas_set_info(CPUState *cpu, disassemble_info *info)
     info->print_insn = print_insn_moxie;
 }
 
-static void moxie_cpu_realizefn(DeviceState *dev, Error **errp)
+static void moxie_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     MoxieCPUClass *mcc = MOXIE_CPU_GET_CLASS(dev);

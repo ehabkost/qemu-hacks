@@ -98,7 +98,7 @@ static int qcow_probe(const uint8_t *buf, int buf_size, const char *filename)
 }
 
 static int qcow_open(BlockDriverState *bs, QDict *options, int flags,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     BDRVQcowState *s = bs->opaque;
     unsigned int len, i, shift;
@@ -281,7 +281,7 @@ static int qcow_open(BlockDriverState *bs, QDict *options, int flags,
 /* We have nothing to do for QCOW reopen, stubs just return
  * success */
 static int qcow_reopen_prepare(BDRVReopenState *state,
-                               BlockReopenQueue *queue, Error **errp)
+                               BlockReopenQueue *queue, Error *errp[static 1])
 {
     return 0;
 }
@@ -326,7 +326,7 @@ static int qcow_set_key(BlockDriverState *bs, const char *key)
    supported */
 static int encrypt_sectors(BDRVQcowState *s, int64_t sector_num,
                            uint8_t *out_buf, const uint8_t *in_buf,
-                           int nb_sectors, bool enc, Error **errp)
+                           int nb_sectors, bool enc, Error *errp[static 1])
 {
     union {
         uint64_t ll[2];
@@ -797,7 +797,8 @@ static void qcow_close(BlockDriverState *bs)
     error_free(s->migration_blocker);
 }
 
-static int qcow_create(const char *filename, QemuOpts *opts, Error **errp)
+static int qcow_create(const char *filename, QemuOpts *opts,
+                       Error *errp[static 1])
 {
     int header_size, backing_filename_len, l1_size, shift, i;
     QCowHeader header;

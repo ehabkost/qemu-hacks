@@ -172,7 +172,7 @@ static void vt82c686b_init_ports(PCIIDEState *d) {
 }
 
 /* via ide func */
-static void vt82c686b_ide_realize(PCIDevice *dev, Error **errp)
+static void vt82c686b_ide_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIIDEState *d = PCI_IDE(dev);
     uint8_t *pci_conf = dev->config;

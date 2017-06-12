@@ -44,7 +44,7 @@ int qcrypto_pbkdf2(QCryptoHashAlgorithm hash,
                    const uint8_t *salt, size_t nsalt,
                    uint64_t iterations,
                    uint8_t *out, size_t nout,
-                   Error **errp)
+                   Error *errp[static 1])
 {
     static const int hash_map[QCRYPTO_HASH_ALG__MAX] = {
         [QCRYPTO_HASH_ALG_MD5] = GCRY_MD_MD5,

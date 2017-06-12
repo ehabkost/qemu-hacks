@@ -59,7 +59,7 @@ static void i82378_request_pic_irq(void *opaque, int irq, int level)
     qemu_set_irq(s->i8259[irq], level);
 }
 
-static void i82378_realize(PCIDevice *pci, Error **errp)
+static void i82378_realize(PCIDevice *pci, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(pci);
     I82378State *s = I82378(dev);

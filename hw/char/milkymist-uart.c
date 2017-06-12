@@ -194,7 +194,7 @@ static void milkymist_uart_reset(DeviceState *d)
     s->regs[R_STAT] = STAT_THRE;
 }
 
-static void milkymist_uart_realize(DeviceState *dev, Error **errp)
+static void milkymist_uart_realize(DeviceState *dev, Error *errp[static 1])
 {
     MilkymistUartState *s = MILKYMIST_UART(dev);
 

@@ -50,7 +50,7 @@ static void or_irq_reset(DeviceState *dev)
     }
 }
 
-static void or_irq_realize(DeviceState *dev, Error **errp)
+static void or_irq_realize(DeviceState *dev, Error *errp[static 1])
 {
     qemu_or_irq *s = OR_IRQ(dev);
 

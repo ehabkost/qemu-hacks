@@ -205,7 +205,7 @@ static void timer_hit(void *opaque)
     timer_update_irq(t);
 }
 
-static void xilinx_timer_realize(DeviceState *dev, Error **errp)
+static void xilinx_timer_realize(DeviceState *dev, Error *errp[static 1])
 {
     struct timerblock *t = XILINX_TIMER(dev);
     unsigned int i;

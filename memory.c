@@ -1005,7 +1005,7 @@ void memory_region_init(MemoryRegion *mr,
 }
 
 static void memory_region_get_addr(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     MemoryRegion *mr = MEMORY_REGION(obj);
     uint64_t value = mr->addr;
@@ -1015,7 +1015,7 @@ static void memory_region_get_addr(Object *obj, Visitor *v, const char *name,
 
 static void memory_region_get_container(Object *obj, Visitor *v,
                                         const char *name, void *opaque,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     MemoryRegion *mr = MEMORY_REGION(obj);
     gchar *path = (gchar *)"";
@@ -1039,7 +1039,7 @@ static Object *memory_region_resolve_container(Object *obj, void *opaque,
 
 static void memory_region_get_priority(Object *obj, Visitor *v,
                                        const char *name, void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     MemoryRegion *mr = MEMORY_REGION(obj);
     int32_t value = mr->priority;
@@ -1048,7 +1048,7 @@ static void memory_region_get_priority(Object *obj, Visitor *v,
 }
 
 static void memory_region_get_size(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     MemoryRegion *mr = MEMORY_REGION(obj);
     uint64_t value = memory_region_size(mr);
@@ -1352,7 +1352,7 @@ void memory_region_init_ram(MemoryRegion *mr,
                             Object *owner,
                             const char *name,
                             uint64_t size,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     memory_region_init(mr, owner, name, size);
     mr->ram = true;
@@ -1370,7 +1370,7 @@ void memory_region_init_resizeable_ram(MemoryRegion *mr,
                                        void (*resized)(const char*,
                                                        uint64_t length,
                                                        void *host),
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     memory_region_init(mr, owner, name, size);
     mr->ram = true;
@@ -1388,7 +1388,7 @@ void memory_region_init_ram_from_file(MemoryRegion *mr,
                                       uint64_t size,
                                       bool share,
                                       const char *path,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     memory_region_init(mr, owner, name, size);
     mr->ram = true;
@@ -1444,7 +1444,7 @@ void memory_region_init_rom(MemoryRegion *mr,
                             struct Object *owner,
                             const char *name,
                             uint64_t size,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     memory_region_init(mr, owner, name, size);
     mr->ram = true;
@@ -1461,7 +1461,7 @@ void memory_region_init_rom_device(MemoryRegion *mr,
                                    void *opaque,
                                    const char *name,
                                    uint64_t size,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     assert(ops);
     memory_region_init(mr, owner, name, size);
@@ -1879,7 +1879,8 @@ ram_addr_t memory_region_get_ram_addr(MemoryRegion *mr)
     return mr->ram_block ? mr->ram_block->offset : RAM_ADDR_INVALID;
 }
 
-void memory_region_ram_resize(MemoryRegion *mr, ram_addr_t newsize, Error **errp)
+void memory_region_ram_resize(MemoryRegion *mr, ram_addr_t newsize,
+                              Error *errp[static 1])
 {
     assert(mr->ram_block);
 

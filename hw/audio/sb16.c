@@ -1358,7 +1358,7 @@ static void sb16_initfn (Object *obj)
     s->cmd = -1;
 }
 
-static void sb16_realizefn (DeviceState *dev, Error **errp)
+static void sb16_realizefn (DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE (dev);
     SB16State *s = SB16 (dev);

@@ -183,7 +183,7 @@ static void virtio_input_set_config(VirtIODevice *vdev,
 }
 
 static uint64_t virtio_input_get_features(VirtIODevice *vdev, uint64_t f,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     return f;
 }
@@ -229,7 +229,8 @@ static int virtio_input_post_load(void *opaque, int version_id)
     return 0;
 }
 
-static void virtio_input_device_realize(DeviceState *dev, Error **errp)
+static void virtio_input_device_realize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     VirtIOInputClass *vic = VIRTIO_INPUT_GET_CLASS(dev);
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
@@ -272,7 +273,8 @@ static void virtio_input_finalize(Object *obj)
 
     g_free(vinput->queue);
 }
-static void virtio_input_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_input_device_unrealize(DeviceState *dev,
+                                          Error *errp[static 1])
 {
     VirtIOInputClass *vic = VIRTIO_INPUT_GET_CLASS(dev);
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);

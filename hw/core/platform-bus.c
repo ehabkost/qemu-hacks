@@ -195,7 +195,7 @@ static void platform_bus_init_notify(Notifier *notifier, void *data)
     foreach_dynamic_sysbus_device(link_sysbus_device, pb);
 }
 
-static void platform_bus_realize(DeviceState *dev, Error **errp)
+static void platform_bus_realize(DeviceState *dev, Error *errp[static 1])
 {
     PlatformBusDevice *pbus;
     SysBusDevice *d;

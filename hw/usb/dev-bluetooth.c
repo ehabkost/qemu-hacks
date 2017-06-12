@@ -496,7 +496,7 @@ static void usb_bt_out_hci_packet_acl(void *opaque,
     usb_bt_fifo_enqueue(&s->acl, data, len);
 }
 
-static void usb_bt_unrealize(USBDevice *dev, Error **errp)
+static void usb_bt_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     struct USBBtState *s = (struct USBBtState *) dev->opaque;
 
@@ -505,7 +505,7 @@ static void usb_bt_unrealize(USBDevice *dev, Error **errp)
     s->hci->acl_recv = NULL;
 }
 
-static void usb_bt_realize(USBDevice *dev, Error **errp)
+static void usb_bt_realize(USBDevice *dev, Error *errp[static 1])
 {
     struct USBBtState *s = USB_BT(dev);
 

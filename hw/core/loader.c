@@ -362,7 +362,8 @@ const char *load_elf_strerror(int error)
     }
 }
 
-void load_elf_hdr(const char *filename, void *hdr, bool *is64, Error **errp)
+void load_elf_hdr(const char *filename, void *hdr, bool *is64,
+                  Error *errp[static 1])
 {
     int fd;
     uint8_t e_ident_local[EI_NIDENT];

@@ -37,7 +37,7 @@
  * Q35 host
  */
 
-static void q35_host_realize(DeviceState *dev, Error **errp)
+static void q35_host_realize(DeviceState *dev, Error *errp[static 1])
 {
     PCIHostState *pci = PCI_HOST_BRIDGE(dev);
     Q35PCIHost *s = Q35_HOST_DEVICE(dev);
@@ -71,7 +71,7 @@ static const char *q35_host_root_bus_path(PCIHostState *host_bridge,
 
 static void q35_host_get_pci_hole_start(Object *obj, Visitor *v,
                                         const char *name, void *opaque,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     Q35PCIHost *s = Q35_HOST_DEVICE(obj);
     uint64_t val64;
@@ -86,7 +86,7 @@ static void q35_host_get_pci_hole_start(Object *obj, Visitor *v,
 
 static void q35_host_get_pci_hole_end(Object *obj, Visitor *v,
                                       const char *name, void *opaque,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     Q35PCIHost *s = Q35_HOST_DEVICE(obj);
     uint64_t val64;
@@ -101,7 +101,7 @@ static void q35_host_get_pci_hole_end(Object *obj, Visitor *v,
 
 static void q35_host_get_pci_hole64_start(Object *obj, Visitor *v,
                                           const char *name, void *opaque,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     PCIHostState *h = PCI_HOST_BRIDGE(obj);
     Range w64;
@@ -114,7 +114,7 @@ static void q35_host_get_pci_hole64_start(Object *obj, Visitor *v,
 
 static void q35_host_get_pci_hole64_end(Object *obj, Visitor *v,
                                         const char *name, void *opaque,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     PCIHostState *h = PCI_HOST_BRIDGE(obj);
     Range w64;
@@ -126,7 +126,7 @@ static void q35_host_get_pci_hole64_end(Object *obj, Visitor *v,
 }
 
 static void q35_host_get_mmcfg_size(Object *obj, Visitor *v, const char *name,
-                                    void *opaque, Error **errp)
+                                    void *opaque, Error *errp[static 1])
 {
     PCIExpressHost *e = PCIE_HOST_BRIDGE(obj);
     uint32_t value = e->size;
@@ -465,7 +465,7 @@ static void mch_reset(DeviceState *qdev)
     mch_update(mch);
 }
 
-static void mch_realize(PCIDevice *d, Error **errp)
+static void mch_realize(PCIDevice *d, Error *errp[static 1])
 {
     int i;
     MCHPCIState *mch = MCH_PCI_DEVICE(d);

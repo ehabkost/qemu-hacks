@@ -133,7 +133,7 @@ static void qemu_rbd_unescape(char *src)
 }
 
 static void qemu_rbd_parse_filename(const char *filename, QDict *options,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     const char *start;
     char *p, *buf;
@@ -222,7 +222,7 @@ done:
 
 
 static int qemu_rbd_set_auth(rados_t cluster, const char *secretid,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     if (secretid == 0) {
         return 0;
@@ -241,7 +241,7 @@ static int qemu_rbd_set_auth(rados_t cluster, const char *secretid,
 }
 
 static int qemu_rbd_set_keypairs(rados_t cluster, const char *keypairs_json,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     QList *keypairs;
     QString *name;
@@ -344,7 +344,8 @@ static QemuOptsList runtime_opts = {
     },
 };
 
-static int qemu_rbd_create(const char *filename, QemuOpts *opts, Error **errp)
+static int qemu_rbd_create(const char *filename, QemuOpts *opts,
+                           Error *errp[static 1])
 {
     int64_t bytes = 0;
     int64_t objsize;
@@ -494,7 +495,7 @@ static void qemu_rbd_complete_aio(RADOSCB *rcb)
     qemu_aio_unref(acb);
 }
 
-static char *qemu_rbd_mon_host(QDict *options, Error **errp)
+static char *qemu_rbd_mon_host(QDict *options, Error *errp[static 1])
 {
     const char **vals = g_new(const char *, qdict_size(options) + 1);
     char keybuf[32];
@@ -535,7 +536,7 @@ out:
 }
 
 static int qemu_rbd_open(BlockDriverState *bs, QDict *options, int flags,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     BDRVRBDState *s = bs->opaque;
     const char *pool, *snap, *conf, *user, *image_name, *keypairs;
@@ -671,7 +672,8 @@ failed_opts:
  * we just need to check if we are using a snapshot or not, in
  * order to determine if we will allow it to be R/W */
 static int qemu_rbd_reopen_prepare(BDRVReopenState *state,
-                                   BlockReopenQueue *queue, Error **errp)
+                                   BlockReopenQueue *queue,
+                                   Error *errp[static 1])
 {
     BDRVRBDState *s = state->bs->opaque;
     int ret = 0;
@@ -914,7 +916,8 @@ static int64_t qemu_rbd_getlength(BlockDriverState *bs)
     return info.size;
 }
 
-static int qemu_rbd_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int qemu_rbd_truncate(BlockDriverState *bs, int64_t offset,
+                             Error *errp[static 1])
 {
     BDRVRBDState *s = bs->opaque;
     int r;
@@ -963,7 +966,7 @@ static int qemu_rbd_snap_create(BlockDriverState *bs,
 static int qemu_rbd_snap_remove(BlockDriverState *bs,
                                 const char *snapshot_id,
                                 const char *snapshot_name,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     BDRVRBDState *s = bs->opaque;
     int r;
@@ -1054,7 +1057,7 @@ static BlockAIOCB *qemu_rbd_aio_pdiscard(BlockDriverState *bs,
 
 #ifdef LIBRBD_SUPPORTS_INVALIDATE
 static void qemu_rbd_invalidate_cache(BlockDriverState *bs,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     BDRVRBDState *s = bs->opaque;
     int r = rbd_invalidate_cache(s->image);

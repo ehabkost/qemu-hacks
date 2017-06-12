@@ -39,7 +39,7 @@ static void colo_failover_bh(void *opaque)
     colo_do_failover(NULL);
 }
 
-void failover_request_active(Error **errp)
+void failover_request_active(Error *errp[static 1])
 {
    if (failover_set_state(FAILOVER_STATUS_NONE,
         FAILOVER_STATUS_REQUIRE) != FAILOVER_STATUS_NONE) {
@@ -72,7 +72,7 @@ FailoverStatus failover_get_state(void)
     return atomic_read(&failover_state);
 }
 
-void qmp_x_colo_lost_heartbeat(Error **errp)
+void qmp_x_colo_lost_heartbeat(Error *errp[static 1])
 {
     if (get_colo_mode() == COLO_MODE_UNKNOWN) {
         error_setg(errp, QERR_FEATURE_DISABLED, "colo");

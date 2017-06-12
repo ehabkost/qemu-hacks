@@ -221,7 +221,8 @@ static AcpiCpuStatus *get_cpu_status(CPUHotplugState *cpu_st, DeviceState *dev)
 }
 
 void acpi_cpu_plug_cb(HotplugHandler *hotplug_dev,
-                      CPUHotplugState *cpu_st, DeviceState *dev, Error **errp)
+                      CPUHotplugState *cpu_st, DeviceState *dev,
+                      Error *errp[static 1])
 {
     AcpiCpuStatus *cdev;
 
@@ -239,7 +240,7 @@ void acpi_cpu_plug_cb(HotplugHandler *hotplug_dev,
 
 void acpi_cpu_unplug_request_cb(HotplugHandler *hotplug_dev,
                                 CPUHotplugState *cpu_st,
-                                DeviceState *dev, Error **errp)
+                                DeviceState *dev, Error *errp[static 1])
 {
     AcpiCpuStatus *cdev;
 
@@ -253,7 +254,7 @@ void acpi_cpu_unplug_request_cb(HotplugHandler *hotplug_dev,
 }
 
 void acpi_cpu_unplug_cb(CPUHotplugState *cpu_st,
-                        DeviceState *dev, Error **errp)
+                        DeviceState *dev, Error *errp[static 1])
 {
     AcpiCpuStatus *cdev;
 

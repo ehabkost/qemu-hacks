@@ -542,15 +542,15 @@ void usb_register_port(USBBus *bus, USBPort *port, void *opaque, int index,
 void usb_register_companion(const char *masterbus, USBPort *ports[],
                             uint32_t portcount, uint32_t firstport,
                             void *opaque, USBPortOps *ops, int speedmask,
-                            Error **errp);
+                            Error *errp[static 1]);
 void usb_port_location(USBPort *downstream, USBPort *upstream, int portnr);
 void usb_unregister_port(USBBus *bus, USBPort *port);
-void usb_claim_port(USBDevice *dev, Error **errp);
+void usb_claim_port(USBDevice *dev, Error *errp[static 1]);
 void usb_release_port(USBDevice *dev);
-void usb_device_attach(USBDevice *dev, Error **errp);
+void usb_device_attach(USBDevice *dev, Error *errp[static 1]);
 int usb_device_detach(USBDevice *dev);
 int usb_device_delete_addr(int busnr, int addr);
-void usb_check_attach(USBDevice *dev, Error **errp);
+void usb_check_attach(USBDevice *dev, Error *errp[static 1]);
 
 static inline USBBus *usb_bus_from_device(USBDevice *d)
 {

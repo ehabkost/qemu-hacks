@@ -29,7 +29,7 @@
 
 SocketAddress *
 qio_channel_socket_get_local_address(QIOChannelSocket *ioc,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     return socket_sockaddr_to_address(&ioc->localAddr,
                                       ioc->localAddrLen,
@@ -38,7 +38,7 @@ qio_channel_socket_get_local_address(QIOChannelSocket *ioc,
 
 SocketAddress *
 qio_channel_socket_get_remote_address(QIOChannelSocket *ioc,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     return socket_sockaddr_to_address(&ioc->remoteAddr,
                                       ioc->remoteAddrLen,
@@ -70,7 +70,7 @@ qio_channel_socket_new(void)
 static int
 qio_channel_socket_set_fd(QIOChannelSocket *sioc,
                           int fd,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     if (sioc->fd != -1) {
         error_setg(errp, "Socket is already open");
@@ -117,7 +117,7 @@ qio_channel_socket_set_fd(QIOChannelSocket *sioc,
 
 QIOChannelSocket *
 qio_channel_socket_new_fd(int fd,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     QIOChannelSocket *ioc;
 
@@ -135,7 +135,7 @@ qio_channel_socket_new_fd(int fd,
 
 int qio_channel_socket_connect_sync(QIOChannelSocket *ioc,
                                     SocketAddress *addr,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     int fd;
 
@@ -193,7 +193,7 @@ void qio_channel_socket_connect_async(QIOChannelSocket *ioc,
 
 int qio_channel_socket_listen_sync(QIOChannelSocket *ioc,
                                    SocketAddress *addr,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     int fd;
 
@@ -252,7 +252,7 @@ void qio_channel_socket_listen_async(QIOChannelSocket *ioc,
 int qio_channel_socket_dgram_sync(QIOChannelSocket *ioc,
                                   SocketAddress *localAddr,
                                   SocketAddress *remoteAddr,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     int fd;
 
@@ -327,7 +327,7 @@ void qio_channel_socket_dgram_async(QIOChannelSocket *ioc,
 
 QIOChannelSocket *
 qio_channel_socket_accept(QIOChannelSocket *ioc,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     QIOChannelSocket *cioc;
 
@@ -451,7 +451,7 @@ static ssize_t qio_channel_socket_readv(QIOChannel *ioc,
                                         size_t niov,
                                         int **fds,
                                         size_t *nfds,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     QIOChannelSocket *sioc = QIO_CHANNEL_SOCKET(ioc);
     ssize_t ret;
@@ -499,7 +499,7 @@ static ssize_t qio_channel_socket_writev(QIOChannel *ioc,
                                          size_t niov,
                                          int *fds,
                                          size_t nfds,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QIOChannelSocket *sioc = QIO_CHANNEL_SOCKET(ioc);
     ssize_t ret;
@@ -552,7 +552,7 @@ static ssize_t qio_channel_socket_readv(QIOChannel *ioc,
                                         size_t niov,
                                         int **fds,
                                         size_t *nfds,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     QIOChannelSocket *sioc = QIO_CHANNEL_SOCKET(ioc);
     ssize_t done = 0;
@@ -594,7 +594,7 @@ static ssize_t qio_channel_socket_writev(QIOChannel *ioc,
                                          size_t niov,
                                          int *fds,
                                          size_t nfds,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QIOChannelSocket *sioc = QIO_CHANNEL_SOCKET(ioc);
     ssize_t done = 0;
@@ -635,7 +635,7 @@ static ssize_t qio_channel_socket_writev(QIOChannel *ioc,
 static int
 qio_channel_socket_set_blocking(QIOChannel *ioc,
                                 bool enabled,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     QIOChannelSocket *sioc = QIO_CHANNEL_SOCKET(ioc);
 
@@ -674,7 +674,7 @@ qio_channel_socket_set_cork(QIOChannel *ioc,
 
 static int
 qio_channel_socket_close(QIOChannel *ioc,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     QIOChannelSocket *sioc = QIO_CHANNEL_SOCKET(ioc);
 
@@ -696,7 +696,7 @@ qio_channel_socket_close(QIOChannel *ioc,
 static int
 qio_channel_socket_shutdown(QIOChannel *ioc,
                             QIOChannelShutdown how,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     QIOChannelSocket *sioc = QIO_CHANNEL_SOCKET(ioc);
     int sockhow;

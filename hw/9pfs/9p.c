@@ -3482,7 +3482,7 @@ void pdu_submit(V9fsPDU *pdu, P9MsgHeader *hdr)
 }
 
 /* Returns 0 on success, 1 on failure. */
-int v9fs_device_realize_common(V9fsState *s, Error **errp)
+int v9fs_device_realize_common(V9fsState *s, Error *errp[static 1])
 {
     int i, len;
     struct stat stat;
@@ -3578,7 +3578,7 @@ out:
     return rc;
 }
 
-void v9fs_device_unrealize_common(V9fsState *s, Error **errp)
+void v9fs_device_unrealize_common(V9fsState *s, Error *errp[static 1])
 {
     if (s->ops->cleanup) {
         s->ops->cleanup(&s->ctx);

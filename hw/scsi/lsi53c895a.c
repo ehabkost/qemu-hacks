@@ -2186,7 +2186,7 @@ static const struct SCSIBusInfo lsi_scsi_info = {
     .cancel = lsi_request_cancelled
 };
 
-static void lsi_scsi_realize(PCIDevice *dev, Error **errp)
+static void lsi_scsi_realize(PCIDevice *dev, Error *errp[static 1])
 {
     LSIState *s = LSI53C895A(dev);
     DeviceState *d = DEVICE(dev);
@@ -2216,7 +2216,7 @@ static void lsi_scsi_realize(PCIDevice *dev, Error **errp)
     scsi_bus_new(&s->bus, sizeof(s->bus), d, &lsi_scsi_info, NULL);
 }
 
-static void lsi_scsi_unrealize(DeviceState *dev, Error **errp)
+static void lsi_scsi_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     LSIState *s = LSI53C895A(dev);
 

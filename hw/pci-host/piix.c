@@ -212,7 +212,7 @@ static const VMStateDescription vmstate_i440fx = {
 
 static void i440fx_pcihost_get_pci_hole_start(Object *obj, Visitor *v,
                                               const char *name, void *opaque,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     I440FXState *s = I440FX_PCI_HOST_BRIDGE(obj);
     uint64_t val64;
@@ -226,7 +226,7 @@ static void i440fx_pcihost_get_pci_hole_start(Object *obj, Visitor *v,
 
 static void i440fx_pcihost_get_pci_hole_end(Object *obj, Visitor *v,
                                             const char *name, void *opaque,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     I440FXState *s = I440FX_PCI_HOST_BRIDGE(obj);
     uint64_t val64;
@@ -240,7 +240,8 @@ static void i440fx_pcihost_get_pci_hole_end(Object *obj, Visitor *v,
 
 static void i440fx_pcihost_get_pci_hole64_start(Object *obj, Visitor *v,
                                                 const char *name,
-                                                void *opaque, Error **errp)
+                                                void *opaque,
+                                                Error *errp[static 1])
 {
     PCIHostState *h = PCI_HOST_BRIDGE(obj);
     Range w64;
@@ -253,7 +254,7 @@ static void i440fx_pcihost_get_pci_hole64_start(Object *obj, Visitor *v,
 
 static void i440fx_pcihost_get_pci_hole64_end(Object *obj, Visitor *v,
                                               const char *name, void *opaque,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     PCIHostState *h = PCI_HOST_BRIDGE(obj);
     Range w64;
@@ -290,7 +291,7 @@ static void i440fx_pcihost_initfn(Object *obj)
                         NULL, NULL, NULL, IGNORE_ERRORS);
 }
 
-static void i440fx_pcihost_realize(DeviceState *dev, Error **errp)
+static void i440fx_pcihost_realize(DeviceState *dev, Error *errp[static 1])
 {
     PCIHostState *s = PCI_HOST_BRIDGE(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
@@ -302,7 +303,7 @@ static void i440fx_pcihost_realize(DeviceState *dev, Error **errp)
     sysbus_init_ioports(sbd, 0xcfc, 4);
 }
 
-static void i440fx_realize(PCIDevice *dev, Error **errp)
+static void i440fx_realize(PCIDevice *dev, Error *errp[static 1])
 {
     dev->config[I440FX_SMRAM] = 0x02;
 
@@ -652,7 +653,7 @@ static const MemoryRegionOps rcr_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN
 };
 
-static void piix3_realize(PCIDevice *dev, Error **errp)
+static void piix3_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PIIX3State *d = PIIX3_PCI_DEVICE(dev);
 

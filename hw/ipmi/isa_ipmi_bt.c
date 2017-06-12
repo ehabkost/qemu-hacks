@@ -370,7 +370,7 @@ static void ipmi_bt_set_irq_enable(IPMIInterface *ii, int val)
     ib->irqs_enabled = val;
 }
 
-static void ipmi_bt_init(IPMIInterface *ii, Error **errp)
+static void ipmi_bt_init(IPMIInterface *ii, Error *errp[static 1])
 {
     IPMIInterfaceClass *iic = IPMI_INTERFACE_GET_CLASS(ii);
     IPMIBT *ib = iic->get_backend_data(ii);
@@ -421,7 +421,7 @@ static void ipmi_bt_class_init(IPMIInterfaceClass *iic)
     iic->get_fwinfo = ipmi_bt_get_fwinfo;
 }
 
-static void isa_ipmi_bt_realize(DeviceState *dev, Error **errp)
+static void isa_ipmi_bt_realize(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     ISAIPMIBTDevice *iib = ISA_IPMI_BT(dev);

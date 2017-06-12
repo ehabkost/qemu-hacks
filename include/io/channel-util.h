@@ -47,6 +47,6 @@
  * Returns: the channel object, or NULL on error
  */
 QIOChannel *qio_channel_new_fd(int fd,
-                               Error **errp);
+                               Error *errp[static 1]);
 
 #endif /* QIO_CHANNEL_UTIL_H */

@@ -413,7 +413,7 @@ static const VMStateDescription vmstate_i6300esb = {
     }
 };
 
-static void i6300esb_realize(PCIDevice *dev, Error **errp)
+static void i6300esb_realize(PCIDevice *dev, Error *errp[static 1])
 {
     I6300State *d = WATCHDOG_I6300ESB_DEVICE(dev);
 

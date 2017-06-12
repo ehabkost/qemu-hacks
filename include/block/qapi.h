@@ -30,13 +30,14 @@
 #include "block/snapshot.h"
 
 BlockDeviceInfo *bdrv_block_device_info(BlockBackend *blk,
-                                        BlockDriverState *bs, Error **errp);
+                                        BlockDriverState *bs,
+                                        Error *errp[static 1]);
 int bdrv_query_snapshot_info_list(BlockDriverState *bs,
                                   SnapshotInfoList **p_list,
-                                  Error **errp);
+                                  Error *errp[static 1]);
 void bdrv_query_image_info(BlockDriverState *bs,
                            ImageInfo **p_info,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 void bdrv_snapshot_dump(fprintf_function func_fprintf, void *f,
                         QEMUSnapshotInfo *sn);

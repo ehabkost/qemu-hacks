@@ -123,7 +123,8 @@ static void bcm2835_peripherals_init(Object *obj)
                                    OBJECT(&s->sdhost.sdbus), &error_abort);
 }
 
-static void bcm2835_peripherals_realize(DeviceState *dev, Error **errp)
+static void bcm2835_peripherals_realize(DeviceState *dev,
+                                        Error *errp[static 1])
 {
     BCM2835PeripheralState *s = BCM2835_PERIPHERALS(dev);
     Object *obj;

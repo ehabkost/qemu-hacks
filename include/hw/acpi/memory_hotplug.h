@@ -32,12 +32,12 @@ void acpi_memory_hotplug_init(MemoryRegion *as, Object *owner,
                               MemHotplugState *state, uint16_t io_base);
 
 void acpi_memory_plug_cb(HotplugHandler *hotplug_dev, MemHotplugState *mem_st,
-                         DeviceState *dev, Error **errp);
+                         DeviceState *dev, Error *errp[static 1]);
 void acpi_memory_unplug_request_cb(HotplugHandler *hotplug_dev,
                                    MemHotplugState *mem_st,
-                                   DeviceState *dev, Error **errp);
+                                   DeviceState *dev, Error *errp[static 1]);
 void acpi_memory_unplug_cb(MemHotplugState *mem_st,
-                           DeviceState *dev, Error **errp);
+                           DeviceState *dev, Error *errp[static 1]);
 
 extern const VMStateDescription vmstate_memory_hotplug;
 #define VMSTATE_MEMORY_HOTPLUG(memhp, state) \

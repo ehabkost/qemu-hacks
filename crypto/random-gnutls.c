@@ -27,7 +27,7 @@
 
 int qcrypto_random_bytes(uint8_t *buf,
                          size_t buflen,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     int ret;
 
@@ -43,4 +43,4 @@ int qcrypto_random_bytes(uint8_t *buf,
 }
 
 
-int qcrypto_random_init(Error **errp G_GNUC_UNUSED) { return 0; }
+int qcrypto_random_init(Error *errp[static 1] G_GNUC_UNUSED) { return 0; }

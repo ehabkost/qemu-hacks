@@ -101,7 +101,7 @@
  * iteratively.
  */
 static inline ssize_t read_sync_eof(QIOChannel *ioc, void *buffer, size_t size,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     struct iovec iov = { .iov_base = buffer, .iov_len = size };
     /* Sockets are kept in blocking mode in the negotiation phase.  After
@@ -116,7 +116,7 @@ static inline ssize_t read_sync_eof(QIOChannel *ioc, void *buffer, size_t size,
  * Reads @size bytes from @ioc. Returns 0 on success.
  */
 static inline int read_sync(QIOChannel *ioc, void *buffer, size_t size,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     ssize_t ret = read_sync_eof(ioc, buffer, size, errp);
 
@@ -132,7 +132,7 @@ static inline int read_sync(QIOChannel *ioc, void *buffer, size_t size,
  * Writes @size bytes to @ioc. Returns 0 on success.
  */
 static inline int write_sync(QIOChannel *ioc, const void *buffer, size_t size,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     struct iovec iov = { .iov_base = (void *) buffer, .iov_len = size };
 

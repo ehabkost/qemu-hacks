@@ -379,7 +379,7 @@ static void bcm2835_property_reset(DeviceState *dev)
     s->pending = false;
 }
 
-static void bcm2835_property_realize(DeviceState *dev, Error **errp)
+static void bcm2835_property_realize(DeviceState *dev, Error *errp[static 1])
 {
     BCM2835PropertyState *s = BCM2835_PROPERTY(dev);
     Object *obj;

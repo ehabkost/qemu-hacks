@@ -324,7 +324,7 @@ static uint32_t PREP_io_800_readb (void *opaque, uint32_t addr)
 #define NVRAM_SIZE        0x2000
 
 static void fw_cfg_boot_set(void *opaque, const char *boot_device,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     fw_cfg_modify_i16(opaque, FW_CFG_BOOT_DEVICE, boot_device[0]);
 }

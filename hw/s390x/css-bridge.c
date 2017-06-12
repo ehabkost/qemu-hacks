@@ -25,7 +25,7 @@
  * device from the virtual css bus.
  */
 static void ccw_device_unplug(HotplugHandler *hotplug_dev,
-                              DeviceState *dev, Error **errp)
+                              DeviceState *dev, Error *errp[static 1])
 {
     CcwDevice *ccw_dev = CCW_DEVICE(dev);
     CCWDeviceClass *k = CCW_DEVICE_GET_CLASS(ccw_dev);

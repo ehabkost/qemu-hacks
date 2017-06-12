@@ -164,7 +164,7 @@ struct pci_data {
 } __attribute__((packed));
 
 void xen_pt_setup_vga(XenPCIPassthroughState *s, XenHostPCIDevice *dev,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     unsigned char *bios = NULL;
     struct rom_header *rom;

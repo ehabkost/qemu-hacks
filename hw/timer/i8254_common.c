@@ -167,7 +167,7 @@ void pit_reset_common(PITCommonState *pit)
     }
 }
 
-static void pit_common_realize(DeviceState *dev, Error **errp)
+static void pit_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     PITCommonState *pit = PIT_COMMON(dev);

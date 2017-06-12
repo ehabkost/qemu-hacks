@@ -1537,7 +1537,7 @@ static void pl330_reset(DeviceState *d)
     timer_del(s->timer);
 }
 
-static void pl330_realize(DeviceState *dev, Error **errp)
+static void pl330_realize(DeviceState *dev, Error *errp[static 1])
 {
     int i;
     PL330State *s = PL330(dev);

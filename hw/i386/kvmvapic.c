@@ -724,7 +724,7 @@ static const MemoryRegionOps vapic_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void vapic_realize(DeviceState *dev, Error **errp)
+static void vapic_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     VAPICROMState *s = VAPIC(dev);

@@ -127,12 +127,13 @@ static void rtas_set_time_of_day(PowerPCCPU *cpu, sPAPRMachineState *spapr,
     rtas_st(rets, 0, RTAS_OUT_SUCCESS);
 }
 
-static void spapr_rtc_qom_date(Object *obj, struct tm *current_tm, Error **errp)
+static void spapr_rtc_qom_date(Object *obj, struct tm *current_tm,
+                               Error *errp[static 1])
 {
     spapr_rtc_read(SPAPR_RTC(obj), current_tm, NULL);
 }
 
-static void spapr_rtc_realize(DeviceState *dev, Error **errp)
+static void spapr_rtc_realize(DeviceState *dev, Error *errp[static 1])
 {
     sPAPRRTCState *rtc = SPAPR_RTC(dev);
     struct tm tm;

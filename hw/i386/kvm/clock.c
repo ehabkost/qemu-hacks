@@ -208,7 +208,7 @@ static void kvmclock_vm_state_change(void *opaque, int running,
     }
 }
 
-static void kvmclock_realize(DeviceState *dev, Error **errp)
+static void kvmclock_realize(DeviceState *dev, Error *errp[static 1])
 {
     KVMClockState *s = KVM_CLOCK(dev);
 

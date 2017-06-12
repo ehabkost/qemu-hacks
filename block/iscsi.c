@@ -1293,7 +1293,7 @@ out_unlock:
 }
 
 static void apply_chap(struct iscsi_context *iscsi, QemuOpts *opts,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     const char *user = NULL;
     const char *password = NULL;
@@ -1331,7 +1331,7 @@ static void apply_chap(struct iscsi_context *iscsi, QemuOpts *opts,
 }
 
 static void apply_header_digest(struct iscsi_context *iscsi, QemuOpts *opts,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     const char *digest = NULL;
 
@@ -1394,7 +1394,7 @@ out:
     qemu_mutex_unlock(&iscsilun->mutex);
 }
 
-static void iscsi_readcapacity_sync(IscsiLun *iscsilun, Error **errp)
+static void iscsi_readcapacity_sync(IscsiLun *iscsilun, Error *errp[static 1])
 {
     struct scsi_task *task = NULL;
     struct scsi_readcapacity10 *rc10 = NULL;
@@ -1465,7 +1465,8 @@ static void iscsi_readcapacity_sync(IscsiLun *iscsilun, Error **errp)
 }
 
 static struct scsi_task *iscsi_do_inquiry(struct iscsi_context *iscsi, int lun,
-                                          int evpd, int pc, void **inq, Error **errp)
+                                          int evpd, int pc, void **inq,
+                                          Error *errp[static 1])
 {
     int full_size;
     struct scsi_task *task = NULL;
@@ -1641,7 +1642,7 @@ static void iscsi_parse_iscsi_option(const char *target, QDict *options)
  * iscsi://[<username>%<password>@]<host>[:<port>]/<targetname>/<lun>
  */
 static void iscsi_parse_filename(const char *filename, QDict *options,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     struct iscsi_url *iscsi_url;
     const char *transport_name;
@@ -1738,7 +1739,7 @@ static QemuOptsList runtime_opts = {
 };
 
 static int iscsi_open(BlockDriverState *bs, QDict *options, int flags,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     IscsiLun *iscsilun = bs->opaque;
     struct iscsi_context *iscsi = NULL;
@@ -1982,7 +1983,7 @@ static void iscsi_close(BlockDriverState *bs)
     memset(iscsilun, 0, sizeof(IscsiLun));
 }
 
-static void iscsi_refresh_limits(BlockDriverState *bs, Error **errp)
+static void iscsi_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     /* We don't actually refresh here, but just return data queried in
      * iscsi_open(): iscsi targets don't change their limits. */
@@ -2034,7 +2035,8 @@ static void iscsi_refresh_limits(BlockDriverState *bs, Error **errp)
 /* Note that this will not re-establish a connection with an iSCSI target - it
  * is effectively a NOP.  */
 static int iscsi_reopen_prepare(BDRVReopenState *state,
-                                BlockReopenQueue *queue, Error **errp)
+                                BlockReopenQueue *queue,
+                                Error *errp[static 1])
 {
     IscsiLun *iscsilun = state->bs->opaque;
 
@@ -2055,7 +2057,8 @@ static void iscsi_reopen_commit(BDRVReopenState *reopen_state)
     }
 }
 
-static int iscsi_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int iscsi_truncate(BlockDriverState *bs, int64_t offset,
+                          Error *errp[static 1])
 {
     IscsiLun *iscsilun = bs->opaque;
 
@@ -2081,7 +2084,8 @@ static int iscsi_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
     return 0;
 }
 
-static int iscsi_create(const char *filename, QemuOpts *opts, Error **errp)
+static int iscsi_create(const char *filename, QemuOpts *opts,
+                        Error *errp[static 1])
 {
     int ret = 0;
     int64_t total_size = 0;
@@ -2142,7 +2146,7 @@ static int iscsi_get_info(BlockDriverState *bs, BlockDriverInfo *bdi)
 }
 
 static void iscsi_invalidate_cache(BlockDriverState *bs,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     IscsiLun *iscsilun = bs->opaque;
     iscsi_allocmap_invalidate(iscsilun);

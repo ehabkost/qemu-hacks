@@ -41,7 +41,7 @@ void *load_device_tree_from_sysfs(void);
  * was encountered when parsing the blob, the function returns NULL
  */
 char **qemu_fdt_node_path(void *fdt, const char *name, char *compat,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 int qemu_fdt_setprop(void *fdt, const char *node_path,
                      const char *property, const void *val, int size);
@@ -66,7 +66,7 @@ int qemu_fdt_setprop_phandle(void *fdt, const char *node_path,
  */
 const void *qemu_fdt_getprop(void *fdt, const char *node_path,
                              const char *property, int *lenp,
-                             Error **errp);
+                             Error *errp[static 1]);
 /**
  * qemu_fdt_getprop_cell: retrieve the value of a given 4 byte property
  * @fdt: pointer to the device tree blob
@@ -80,7 +80,7 @@ const void *qemu_fdt_getprop(void *fdt, const char *node_path,
  */
 uint32_t qemu_fdt_getprop_cell(void *fdt, const char *node_path,
                                const char *property, int *lenp,
-                               Error **errp);
+                               Error *errp[static 1]);
 uint32_t qemu_fdt_get_phandle(void *fdt, const char *path);
 uint32_t qemu_fdt_alloc_phandle(void *fdt);
 int qemu_fdt_nop_node(void *fdt, const char *node_path);

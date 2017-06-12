@@ -117,7 +117,7 @@ NetworkAddressFamily inet_netfamily(int family)
  * callers at all.
  */
 int inet_ai_family_from_address(InetSocketAddress *addr,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     if (addr->has_ipv6 && addr->has_ipv4 &&
         !addr->ipv6 && !addr->ipv4) {
@@ -136,7 +136,7 @@ int inet_ai_family_from_address(InetSocketAddress *addr,
 static int inet_listen_saddr(InetSocketAddress *saddr,
                              int port_offset,
                              bool update_addr,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     struct addrinfo ai,*res,*e;
     char port[33];
@@ -273,7 +273,8 @@ typedef struct ConnectState {
 } ConnectState;
 
 static int inet_connect_addr(struct addrinfo *addr, bool *in_progress,
-                             ConnectState *connect_state, Error **errp);
+                             ConnectState *connect_state,
+                             Error *errp[static 1]);
 
 static void wait_for_connect(void *opaque)
 {
@@ -331,7 +332,8 @@ out:
 }
 
 static int inet_connect_addr(struct addrinfo *addr, bool *in_progress,
-                             ConnectState *connect_state, Error **errp)
+                             ConnectState *connect_state,
+                             Error *errp[static 1])
 {
     int sock, rc;
 
@@ -367,7 +369,7 @@ static int inet_connect_addr(struct addrinfo *addr, bool *in_progress,
 }
 
 static struct addrinfo *inet_parse_connect_saddr(InetSocketAddress *saddr,
-                                                 Error **errp)
+                                                 Error *errp[static 1])
 {
     struct addrinfo ai, *res;
     int rc;
@@ -431,7 +433,7 @@ static struct addrinfo *inet_parse_connect_saddr(InetSocketAddress *saddr,
  */
 int inet_connect_saddr(InetSocketAddress *saddr,
                        NonBlockingConnectHandler *callback, void *opaque,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     Error *local_err = NULL;
     struct addrinfo *res, *e;
@@ -480,7 +482,7 @@ int inet_connect_saddr(InetSocketAddress *saddr,
 
 static int inet_dgram_saddr(InetSocketAddress *sraddr,
                             InetSocketAddress *sladdr,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     struct addrinfo ai, *peer = NULL, *local = NULL;
     const char *addr;
@@ -580,7 +582,8 @@ err:
 }
 
 /* compatibility wrapper */
-int inet_parse(InetSocketAddress *addr, const char *str, Error **errp)
+int inet_parse(InetSocketAddress *addr, const char *str,
+               Error *errp[static 1])
 {
     const char *optstr, *h;
     char host[65];
@@ -650,7 +653,7 @@ int inet_parse(InetSocketAddress *addr, const char *str, Error **errp)
  *
  * Returns -1 in case of error, file descriptor on success
  **/
-int inet_connect(const char *str, Error **errp)
+int inet_connect(const char *str, Error *errp[static 1])
 {
     int sock = -1;
     InetSocketAddress *addr = g_new(InetSocketAddress, 1);
@@ -690,7 +693,8 @@ static bool vsock_parse_vaddr_to_sockaddr(const VsockSocketAddress *vaddr,
 }
 
 static int vsock_connect_addr(const struct sockaddr_vm *svm, bool *in_progress,
-                              ConnectState *connect_state, Error **errp)
+                              ConnectState *connect_state,
+                              Error *errp[static 1])
 {
     int sock, rc;
 
@@ -727,7 +731,7 @@ static int vsock_connect_addr(const struct sockaddr_vm *svm, bool *in_progress,
 static int vsock_connect_saddr(VsockSocketAddress *vaddr,
                                NonBlockingConnectHandler *callback,
                                void *opaque,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     struct sockaddr_vm svm;
     int sock = -1;
@@ -760,7 +764,7 @@ static int vsock_connect_saddr(VsockSocketAddress *vaddr,
 }
 
 static int vsock_listen_saddr(VsockSocketAddress *vaddr,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     struct sockaddr_vm svm;
     int slisten;
@@ -790,7 +794,7 @@ static int vsock_listen_saddr(VsockSocketAddress *vaddr,
 }
 
 static int vsock_parse(VsockSocketAddress *addr, const char *str,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     char cid[33];
     char port[33];
@@ -810,28 +814,28 @@ static int vsock_parse(VsockSocketAddress *addr, const char *str,
     return 0;
 }
 #else
-static void vsock_unsupported(Error **errp)
+static void vsock_unsupported(Error *errp[static 1])
 {
     error_setg(errp, "socket family AF_VSOCK unsupported");
 }
 
 static int vsock_connect_saddr(VsockSocketAddress *vaddr,
                                NonBlockingConnectHandler *callback,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     vsock_unsupported(errp);
     return -1;
 }
 
 static int vsock_listen_saddr(VsockSocketAddress *vaddr,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     vsock_unsupported(errp);
     return -1;
 }
 
 static int vsock_parse(VsockSocketAddress *addr, const char *str,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     vsock_unsupported(errp);
     return -1;
@@ -842,7 +846,7 @@ static int vsock_parse(VsockSocketAddress *addr, const char *str,
 
 static int unix_listen_saddr(UnixSocketAddress *saddr,
                              bool update_addr,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     struct sockaddr_un un;
     int sock, fd;
@@ -922,7 +926,7 @@ err:
 
 static int unix_connect_saddr(UnixSocketAddress *saddr,
                               NonBlockingConnectHandler *callback, void *opaque,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     struct sockaddr_un un;
     ConnectState *connect_state = NULL;
@@ -994,7 +998,7 @@ static int unix_connect_saddr(UnixSocketAddress *saddr,
 
 static int unix_listen_saddr(UnixSocketAddress *saddr,
                              bool update_addr,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     error_setg(errp, "unix sockets are not available on windows");
     errno = ENOTSUP;
@@ -1003,7 +1007,7 @@ static int unix_listen_saddr(UnixSocketAddress *saddr,
 
 static int unix_connect_saddr(UnixSocketAddress *saddr,
                               NonBlockingConnectHandler *callback, void *opaque,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     error_setg(errp, "unix sockets are not available on windows");
     errno = ENOTSUP;
@@ -1012,7 +1016,7 @@ static int unix_connect_saddr(UnixSocketAddress *saddr,
 #endif
 
 /* compatibility wrapper */
-int unix_listen(const char *str, char *ostr, int olen, Error **errp)
+int unix_listen(const char *str, char *ostr, int olen, Error *errp[static 1])
 {
     char *path, *optstr;
     int sock, len;
@@ -1042,7 +1046,7 @@ int unix_listen(const char *str, char *ostr, int olen, Error **errp)
     return sock;
 }
 
-int unix_connect(const char *path, Error **errp)
+int unix_connect(const char *path, Error *errp[static 1])
 {
     UnixSocketAddress *saddr;
     int sock;
@@ -1055,7 +1059,7 @@ int unix_connect(const char *path, Error **errp)
 }
 
 
-SocketAddress *socket_parse(const char *str, Error **errp)
+SocketAddress *socket_parse(const char *str, Error *errp[static 1])
 {
     SocketAddress *addr;
 
@@ -1095,7 +1099,7 @@ fail:
 }
 
 int socket_connect(SocketAddress *addr, NonBlockingConnectHandler *callback,
-                   void *opaque, Error **errp)
+                   void *opaque, Error *errp[static 1])
 {
     int fd;
 
@@ -1126,7 +1130,7 @@ int socket_connect(SocketAddress *addr, NonBlockingConnectHandler *callback,
     return fd;
 }
 
-int socket_listen(SocketAddress *addr, Error **errp)
+int socket_listen(SocketAddress *addr, Error *errp[static 1])
 {
     int fd;
 
@@ -1153,7 +1157,7 @@ int socket_listen(SocketAddress *addr, Error **errp)
     return fd;
 }
 
-void socket_listen_cleanup(int fd, Error **errp)
+void socket_listen_cleanup(int fd, Error *errp[static 1])
 {
     SocketAddress *addr;
 
@@ -1171,7 +1175,8 @@ void socket_listen_cleanup(int fd, Error **errp)
     qapi_free_SocketAddress(addr);
 }
 
-int socket_dgram(SocketAddress *remote, SocketAddress *local, Error **errp)
+int socket_dgram(SocketAddress *remote, SocketAddress *local,
+                 Error *errp[static 1])
 {
     int fd;
 
@@ -1196,7 +1201,7 @@ int socket_dgram(SocketAddress *remote, SocketAddress *local, Error **errp)
 static SocketAddress *
 socket_sockaddr_to_address_inet(struct sockaddr_storage *sa,
                                 socklen_t salen,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     char host[NI_MAXHOST];
     char serv[NI_MAXSERV];
@@ -1233,7 +1238,7 @@ socket_sockaddr_to_address_inet(struct sockaddr_storage *sa,
 static SocketAddress *
 socket_sockaddr_to_address_unix(struct sockaddr_storage *sa,
                                 socklen_t salen,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     SocketAddress *addr;
     struct sockaddr_un *su = (struct sockaddr_un *)sa;
@@ -1252,7 +1257,7 @@ socket_sockaddr_to_address_unix(struct sockaddr_storage *sa,
 static SocketAddress *
 socket_sockaddr_to_address_vsock(struct sockaddr_storage *sa,
                                  socklen_t salen,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     SocketAddress *addr;
     VsockSocketAddress *vaddr;
@@ -1271,7 +1276,7 @@ socket_sockaddr_to_address_vsock(struct sockaddr_storage *sa,
 SocketAddress *
 socket_sockaddr_to_address(struct sockaddr_storage *sa,
                            socklen_t salen,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     switch (sa->ss_family) {
     case AF_INET:
@@ -1297,7 +1302,7 @@ socket_sockaddr_to_address(struct sockaddr_storage *sa,
 }
 
 
-SocketAddress *socket_local_address(int fd, Error **errp)
+SocketAddress *socket_local_address(int fd, Error *errp[static 1])
 {
     struct sockaddr_storage ss;
     socklen_t sslen = sizeof(ss);
@@ -1312,7 +1317,7 @@ SocketAddress *socket_local_address(int fd, Error **errp)
 }
 
 
-SocketAddress *socket_remote_address(int fd, Error **errp)
+SocketAddress *socket_remote_address(int fd, Error *errp[static 1])
 {
     struct sockaddr_storage ss;
     socklen_t sslen = sizeof(ss);
@@ -1326,7 +1331,8 @@ SocketAddress *socket_remote_address(int fd, Error **errp)
     return socket_sockaddr_to_address(&ss, sslen, errp);
 }
 
-char *socket_address_to_string(struct SocketAddress *addr, Error **errp)
+char *socket_address_to_string(struct SocketAddress *addr,
+                               Error *errp[static 1])
 {
     char *buf;
     InetSocketAddress *inet;

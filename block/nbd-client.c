@@ -375,7 +375,7 @@ int nbd_client_init(BlockDriverState *bs,
                     const char *export,
                     QCryptoTLSCreds *tlscreds,
                     const char *hostname,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     NBDClientSession *client = nbd_get_client_session(bs);
     int ret;

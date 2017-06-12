@@ -1194,7 +1194,7 @@ static int gt64120_init(SysBusDevice *dev)
     return 0;
 }
 
-static void gt64120_pci_realize(PCIDevice *d, Error **errp)
+static void gt64120_pci_realize(PCIDevice *d, Error *errp[static 1])
 {
     /* FIXME: Malta specific hw assumptions ahead */
     pci_set_word(d->config + PCI_COMMAND, 0);

@@ -361,7 +361,7 @@ static void bcm2835_fb_reset(DeviceState *dev)
     s->lock = false;
 }
 
-static void bcm2835_fb_realize(DeviceState *dev, Error **errp)
+static void bcm2835_fb_realize(DeviceState *dev, Error *errp[static 1])
 {
     BCM2835FBState *s = BCM2835_FB(dev);
     Error *err = NULL;

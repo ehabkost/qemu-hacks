@@ -105,7 +105,7 @@ QCryptoBlock *qcrypto_block_open(QCryptoBlockOpenOptions *options,
                                  QCryptoBlockReadFunc readfunc,
                                  void *opaque,
                                  unsigned int flags,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 
 /**
  * qcrypto_block_create:
@@ -136,7 +136,7 @@ QCryptoBlock *qcrypto_block_create(QCryptoBlockCreateOptions *options,
                                    QCryptoBlockInitFunc initfunc,
                                    QCryptoBlockWriteFunc writefunc,
                                    void *opaque,
-                                   Error **errp);
+                                   Error *errp[static 1]);
 
 
 /**
@@ -152,7 +152,7 @@ QCryptoBlock *qcrypto_block_create(QCryptoBlockCreateOptions *options,
  * Returns: a block encryption info object, or NULL on error
  */
 QCryptoBlockInfo *qcrypto_block_get_info(QCryptoBlock *block,
-                                         Error **errp);
+                                         Error *errp[static 1]);
 
 /**
  * @qcrypto_block_decrypt:
@@ -171,7 +171,7 @@ int qcrypto_block_decrypt(QCryptoBlock *block,
                           uint64_t startsector,
                           uint8_t *buf,
                           size_t len,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 /**
  * @qcrypto_block_encrypt:
@@ -190,7 +190,7 @@ int qcrypto_block_encrypt(QCryptoBlock *block,
                           uint64_t startsector,
                           uint8_t *buf,
                           size_t len,
-                          Error **errp);
+                          Error *errp[static 1]);
 
 /**
  * qcrypto_block_get_cipher:

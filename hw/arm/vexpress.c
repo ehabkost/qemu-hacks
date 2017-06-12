@@ -718,14 +718,15 @@ static void vexpress_common_init(MachineState *machine)
     arm_load_kernel(ARM_CPU(first_cpu), &daughterboard->bootinfo);
 }
 
-static bool vexpress_get_secure(Object *obj, Error **errp)
+static bool vexpress_get_secure(Object *obj, Error *errp[static 1])
 {
     VexpressMachineState *vms = VEXPRESS_MACHINE(obj);
 
     return vms->secure;
 }
 
-static void vexpress_set_secure(Object *obj, bool value, Error **errp)
+static void vexpress_set_secure(Object *obj, bool value,
+                                Error *errp[static 1])
 {
     VexpressMachineState *vms = VEXPRESS_MACHINE(obj);
 

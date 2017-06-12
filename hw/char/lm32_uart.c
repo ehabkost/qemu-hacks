@@ -261,7 +261,7 @@ static void lm32_uart_init(Object *obj)
     sysbus_init_mmio(dev, &s->iomem);
 }
 
-static void lm32_uart_realize(DeviceState *dev, Error **errp)
+static void lm32_uart_realize(DeviceState *dev, Error *errp[static 1])
 {
     LM32UartState *s = LM32_UART(dev);
 

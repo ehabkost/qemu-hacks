@@ -247,7 +247,8 @@ void block_job_remove_all_bdrv(BlockJob *job)
 }
 
 int block_job_add_bdrv(BlockJob *job, const char *name, BlockDriverState *bs,
-                       uint64_t perm, uint64_t shared_perm, Error **errp)
+                       uint64_t perm, uint64_t shared_perm,
+                       Error *errp[static 1])
 {
     BdrvChild *c;
 
@@ -354,7 +355,7 @@ static void block_job_cancel_async(BlockJob *job)
 
 static int block_job_finish_sync(BlockJob *job,
                                  void (*finish)(BlockJob *, Error **errp),
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     int ret;
 
@@ -450,7 +451,7 @@ static void block_job_completed_txn_success(BlockJob *job)
     }
 }
 
-void block_job_set_speed(BlockJob *job, int64_t speed, Error **errp)
+void block_job_set_speed(BlockJob *job, int64_t speed, Error *errp[static 1])
 {
     if (!job->driver->set_speed) {
         error_setg(errp, QERR_UNSUPPORTED);
@@ -464,7 +465,7 @@ void block_job_set_speed(BlockJob *job, int64_t speed, Error **errp)
     job->speed = speed;
 }
 
-void block_job_complete(BlockJob *job, Error **errp)
+void block_job_complete(BlockJob *job, Error *errp[static 1])
 {
     /* Should not be reachable via external interface for internal jobs */
     assert(job->id);
@@ -511,7 +512,7 @@ void block_job_cancel(BlockJob *job)
 /* A wrapper around block_job_cancel() taking an Error ** parameter so it may be
  * used with block_job_finish_sync() without the need for (rather nasty)
  * function pointer casts there. */
-static void block_job_cancel_err(BlockJob *job, Error **errp)
+static void block_job_cancel_err(BlockJob *job, Error *errp[static 1])
 {
     block_job_cancel(job);
 }
@@ -534,12 +535,12 @@ void block_job_cancel_sync_all(void)
     }
 }
 
-int block_job_complete_sync(BlockJob *job, Error **errp)
+int block_job_complete_sync(BlockJob *job, Error *errp[static 1])
 {
     return block_job_finish_sync(job, &block_job_complete, errp);
 }
 
-BlockJobInfo *block_job_query(BlockJob *job, Error **errp)
+BlockJobInfo *block_job_query(BlockJob *job, Error *errp[static 1])
 {
     BlockJobInfo *info;
 
@@ -606,7 +607,8 @@ static void block_job_event_completed(BlockJob *job, const char *msg)
 void *block_job_create(const char *job_id, const BlockJobDriver *driver,
                        BlockDriverState *bs, uint64_t perm,
                        uint64_t shared_perm, int64_t speed, int flags,
-                       BlockCompletionFunc *cb, void *opaque, Error **errp)
+                       BlockCompletionFunc *cb, void *opaque,
+                       Error *errp[static 1])
 {
     BlockBackend *blk;
     BlockJob *job;

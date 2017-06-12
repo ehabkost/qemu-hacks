@@ -232,7 +232,7 @@ static void arm_mptimer_init(Object *obj)
     sysbus_init_mmio(SYS_BUS_DEVICE(obj), &s->iomem);
 }
 
-static void arm_mptimer_realize(DeviceState *dev, Error **errp)
+static void arm_mptimer_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     ARMMPTimerState *s = ARM_MPTIMER(dev);

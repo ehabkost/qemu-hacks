@@ -491,7 +491,8 @@ static const MemoryRegionOps shpc_mmio_ops = {
     },
 };
 static void shpc_device_hotplug_common(PCIDevice *affected_dev, int *slot,
-                                       SHPCDevice *shpc, Error **errp)
+                                       SHPCDevice *shpc,
+                                       Error *errp[static 1])
 {
     int pci_slot = PCI_SLOT(affected_dev->devfn);
     *slot = SHPC_PCI_TO_IDX(pci_slot);
@@ -506,7 +507,7 @@ static void shpc_device_hotplug_common(PCIDevice *affected_dev, int *slot,
 }
 
 void shpc_device_hotplug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     PCIDevice *pci_hotplug_dev = PCI_DEVICE(hotplug_dev);
     SHPCDevice *shpc = pci_hotplug_dev->shpc;
@@ -547,7 +548,8 @@ void shpc_device_hotplug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
 }
 
 void shpc_device_hot_unplug_request_cb(HotplugHandler *hotplug_dev,
-                                       DeviceState *dev, Error **errp)
+                                       DeviceState *dev,
+                                       Error *errp[static 1])
 {
     PCIDevice *pci_hotplug_dev = PCI_DEVICE(hotplug_dev);
     SHPCDevice *shpc = pci_hotplug_dev->shpc;

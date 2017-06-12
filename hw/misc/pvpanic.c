@@ -85,7 +85,7 @@ static void pvpanic_isa_initfn(Object *obj)
     memory_region_init_io(&s->io, OBJECT(s), &pvpanic_ops, s, "pvpanic", 1);
 }
 
-static void pvpanic_isa_realizefn(DeviceState *dev, Error **errp)
+static void pvpanic_isa_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *d = ISA_DEVICE(dev);
     PVPanicState *s = ISA_PVPANIC_DEVICE(dev);

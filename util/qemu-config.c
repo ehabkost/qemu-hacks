@@ -10,7 +10,7 @@ static QemuOptsList *vm_config_groups[48];
 static QemuOptsList *drive_config_groups[5];
 
 static QemuOptsList *find_list(QemuOptsList **lists, const char *group,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     int i;
 
@@ -241,7 +241,7 @@ static QemuOptsList machine_opts = {
 
 CommandLineOptionInfoList *qmp_query_command_line_options(bool has_option,
                                                           const char *option,
-                                                          Error **errp)
+                                                          Error *errp[static 1])
 {
     CommandLineOptionInfoList *conf_list = NULL, *entry;
     CommandLineOptionInfo *info;
@@ -273,7 +273,7 @@ CommandLineOptionInfoList *qmp_query_command_line_options(bool has_option,
     return conf_list;
 }
 
-QemuOptsList *qemu_find_opts_err(const char *group, Error **errp)
+QemuOptsList *qemu_find_opts_err(const char *group, Error *errp[static 1])
 {
     return find_list(vm_config_groups, group, errp);
 }
@@ -350,7 +350,7 @@ struct ConfigWriteData {
 };
 
 static int config_write_opt(void *opaque, const char *name, const char *value,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     struct ConfigWriteData *data = opaque;
 
@@ -358,7 +358,8 @@ static int config_write_opt(void *opaque, const char *name, const char *value,
     return 0;
 }
 
-static int config_write_opts(void *opaque, QemuOpts *opts, Error **errp)
+static int config_write_opts(void *opaque, QemuOpts *opts,
+                             Error *errp[static 1])
 {
     struct ConfigWriteData *data = opaque;
     const char *id = qemu_opts_id(opts);
@@ -474,7 +475,7 @@ int qemu_read_config_file(const char *filename)
 }
 
 static void config_parse_qdict_section(QDict *options, QemuOptsList *opts,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QemuOpts *subopts;
     QDict *subqdict;
@@ -565,7 +566,7 @@ out:
 }
 
 void qemu_config_parse_qdict(QDict *options, QemuOptsList **lists,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     int i;
 

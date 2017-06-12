@@ -187,7 +187,7 @@ int qemu_chr_add_client(Chardev *s, int fd)
 }
 
 static void qemu_char_open(Chardev *chr, ChardevBackend *backend,
-                           bool *be_opened, Error **errp)
+                           bool *be_opened, Error *errp[static 1])
 {
     ChardevClass *cc = CHARDEV_GET_CLASS(chr);
     /* Any ChardevCommon member would work */
@@ -307,7 +307,7 @@ static bool qemu_chr_is_busy(Chardev *s)
     }
 }
 
-int qemu_chr_wait_connected(Chardev *chr, Error **errp)
+int qemu_chr_wait_connected(Chardev *chr, Error *errp[static 1])
 {
     ChardevClass *cc = CHARDEV_GET_CLASS(chr);
 
@@ -476,7 +476,8 @@ void qemu_chr_parse_common(QemuOpts *opts, ChardevCommon *backend)
     backend->logappend = qemu_opt_get_bool(opts, "logappend", false);
 }
 
-static const ChardevClass *char_get_class(const char *driver, Error **errp)
+static const ChardevClass *char_get_class(const char *driver,
+                                          Error *errp[static 1])
 {
     ObjectClass *oc;
     const ChardevClass *cc;
@@ -557,7 +558,7 @@ help_string_append(const char *name, void *opaque)
 }
 
 Chardev *qemu_chr_new_from_opts(QemuOpts *opts,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     const ChardevClass *cc;
     Chardev *chr;
@@ -709,7 +710,7 @@ static int qmp_query_chardev_foreach(Object *obj, void *data)
     return 0;
 }
 
-ChardevInfoList *qmp_query_chardev(Error **errp)
+ChardevInfoList *qmp_query_chardev(Error *errp[static 1])
 {
     ChardevInfoList *chr_list = NULL;
 
@@ -731,7 +732,7 @@ qmp_prepend_backend(const char *name, void *opaque)
     *list = info;
 }
 
-ChardevBackendInfoList *qmp_query_chardev_backends(Error **errp)
+ChardevBackendInfoList *qmp_query_chardev_backends(Error *errp[static 1])
 {
     ChardevBackendInfoList *backend_list = NULL;
 
@@ -858,7 +859,7 @@ void qemu_chr_set_feature(Chardev *chr,
 
 Chardev *qemu_chardev_new(const char *id, const char *typename,
                           ChardevBackend *backend,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     Object *obj;
     Chardev *chr = NULL;
@@ -902,7 +903,7 @@ end:
 }
 
 ChardevReturn *qmp_chardev_add(const char *id, ChardevBackend *backend,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     const ChardevClass *cc;
     ChardevReturn *ret;
@@ -928,7 +929,7 @@ ChardevReturn *qmp_chardev_add(const char *id, ChardevBackend *backend,
     return ret;
 }
 
-void qmp_chardev_remove(const char *id, Error **errp)
+void qmp_chardev_remove(const char *id, Error *errp[static 1])
 {
     Chardev *chr;
 

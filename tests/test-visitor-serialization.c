@@ -87,7 +87,8 @@ typedef struct PrimitiveList {
 
 typedef void (*VisitorFunc)(Visitor *v, void **native, Error **errp);
 
-static void dealloc_helper(void *native_in, VisitorFunc visit, Error **errp)
+static void dealloc_helper(void *native_in, VisitorFunc visit,
+                           Error *errp[static 1])
 {
     Visitor *v = qapi_dealloc_visitor_new();
 
@@ -96,7 +97,8 @@ static void dealloc_helper(void *native_in, VisitorFunc visit, Error **errp)
     visit_free(v);
 }
 
-static void visit_primitive_type(Visitor *v, void **native, Error **errp)
+static void visit_primitive_type(Visitor *v, void **native,
+                                 Error *errp[static 1])
 {
     PrimitiveType *pt = *native;
     switch(pt->type) {
@@ -141,7 +143,8 @@ static void visit_primitive_type(Visitor *v, void **native, Error **errp)
     }
 }
 
-static void visit_primitive_list(Visitor *v, void **native, Error **errp)
+static void visit_primitive_list(Visitor *v, void **native,
+                                 Error *errp[static 1])
 {
     PrimitiveList *pl = *native;
     switch (pl->type) {
@@ -211,7 +214,7 @@ static void struct_cleanup(TestStruct *ts)
     g_free(ts);
 }
 
-static void visit_struct(Visitor *v, void **native, Error **errp)
+static void visit_struct(Visitor *v, void **native, Error *errp[static 1])
 {
     visit_type_TestStruct(v, NULL, (TestStruct **)native, errp);
 }
@@ -262,12 +265,14 @@ static void nested_struct_cleanup(UserDefTwo *udnp)
     qapi_free_UserDefTwo(udnp);
 }
 
-static void visit_nested_struct(Visitor *v, void **native, Error **errp)
+static void visit_nested_struct(Visitor *v, void **native,
+                                Error *errp[static 1])
 {
     visit_type_UserDefTwo(v, NULL, (UserDefTwo **)native, errp);
 }
 
-static void visit_nested_struct_list(Visitor *v, void **native, Error **errp)
+static void visit_nested_struct_list(Visitor *v, void **native,
+                                     Error *errp[static 1])
 {
     visit_type_UserDefTwoList(v, NULL, (UserDefTwoList **)native, errp);
 }
@@ -1018,7 +1023,7 @@ typedef struct QmpSerializeData {
 } QmpSerializeData;
 
 static void qmp_serialize(void *native_in, void **datap,
-                          VisitorFunc visit, Error **errp)
+                          VisitorFunc visit, Error *errp[static 1])
 {
     QmpSerializeData *d = g_malloc0(sizeof(*d));
 
@@ -1028,7 +1033,7 @@ static void qmp_serialize(void *native_in, void **datap,
 }
 
 static void qmp_deserialize(void **native_out, void *datap,
-                            VisitorFunc visit, Error **errp)
+                            VisitorFunc visit, Error *errp[static 1])
 {
     QmpSerializeData *d = datap;
     QString *output_json;
@@ -1062,7 +1067,7 @@ typedef struct StringSerializeData {
 } StringSerializeData;
 
 static void string_serialize(void *native_in, void **datap,
-                             VisitorFunc visit, Error **errp)
+                             VisitorFunc visit, Error *errp[static 1])
 {
     StringSerializeData *d = g_malloc0(sizeof(*d));
 
@@ -1072,7 +1077,7 @@ static void string_serialize(void *native_in, void **datap,
 }
 
 static void string_deserialize(void **native_out, void *datap,
-                               VisitorFunc visit, Error **errp)
+                               VisitorFunc visit, Error *errp[static 1])
 {
     StringSerializeData *d = datap;
 

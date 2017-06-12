@@ -53,7 +53,7 @@ bool qcrypto_hmac_supports(QCryptoHashAlgorithm alg);
  */
 QCryptoHmac *qcrypto_hmac_new(QCryptoHashAlgorithm alg,
                               const uint8_t *key, size_t nkey,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 /**
  * qcrypto_hmac_free:
@@ -88,7 +88,7 @@ int qcrypto_hmac_bytesv(QCryptoHmac *hmac,
                         size_t niov,
                         uint8_t **result,
                         size_t *resultlen,
-                        Error **errp);
+                        Error *errp[static 1]);
 
 /**
  * qcrypto_hmac_bytes:
@@ -114,7 +114,7 @@ int qcrypto_hmac_bytes(QCryptoHmac *hmac,
                        size_t len,
                        uint8_t **result,
                        size_t *resultlen,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 /**
  * qcrypto_hmac_digestv:
@@ -138,7 +138,7 @@ int qcrypto_hmac_digestv(QCryptoHmac *hmac,
                          const struct iovec *iov,
                          size_t niov,
                          char **digest,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 /**
  * qcrypto_hmac_digest:
@@ -161,6 +161,6 @@ int qcrypto_hmac_digest(QCryptoHmac *hmac,
                         const char *buf,
                         size_t len,
                         char **digest,
-                        Error **errp);
+                        Error *errp[static 1]);
 
 #endif

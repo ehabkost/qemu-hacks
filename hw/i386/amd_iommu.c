@@ -1133,7 +1133,7 @@ static void amdvi_reset(DeviceState *dev)
     amdvi_init(s);
 }
 
-static void amdvi_realize(DeviceState *dev, Error **err)
+static void amdvi_realize(DeviceState *dev, Error *err[static 1])
 {
     int ret = 0;
     AMDVIState *s = AMD_IOMMU_DEVICE(dev);

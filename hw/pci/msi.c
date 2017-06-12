@@ -184,7 +184,7 @@ bool msi_enabled(const PCIDevice *dev)
  */
 int msi_init(struct PCIDevice *dev, uint8_t offset,
              unsigned int nr_vectors, bool msi64bit,
-             bool msi_per_vector_mask, Error **errp)
+             bool msi_per_vector_mask, Error *errp[static 1])
 {
     unsigned int vectors_order;
     uint16_t flags;

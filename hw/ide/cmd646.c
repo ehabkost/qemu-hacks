@@ -327,7 +327,7 @@ static void cmd646_pci_config_write(PCIDevice *d, uint32_t addr, uint32_t val,
 }
 
 /* CMD646 PCI IDE controller */
-static void pci_cmd646_ide_realize(PCIDevice *dev, Error **errp)
+static void pci_cmd646_ide_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIIDEState *d = PCI_IDE(dev);
     uint8_t *pci_conf = dev->config;

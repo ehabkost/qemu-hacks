@@ -411,7 +411,7 @@ static const struct MemoryRegionOps imx_spi_ops = {
     },
 };
 
-static void imx_spi_realize(DeviceState *dev, Error **errp)
+static void imx_spi_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMXSPIState *s = IMX_SPI(dev);
     int i;

@@ -690,7 +690,7 @@ static void usb_hid_handle_data(USBDevice *dev, USBPacket *p)
     }
 }
 
-static void usb_hid_unrealize(USBDevice *dev, Error **errp)
+static void usb_hid_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     USBHIDState *us = USB_HID(dev);
 
@@ -699,7 +699,7 @@ static void usb_hid_unrealize(USBDevice *dev, Error **errp)
 
 static void usb_hid_initfn(USBDevice *dev, int kind,
                            const USBDesc *usb1, const USBDesc *usb2,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     USBHIDState *us = USB_HID(dev);
     switch (us->usb_version) {
@@ -730,18 +730,18 @@ static void usb_hid_initfn(USBDevice *dev, int kind,
     }
 }
 
-static void usb_tablet_realize(USBDevice *dev, Error **errp)
+static void usb_tablet_realize(USBDevice *dev, Error *errp[static 1])
 {
 
     usb_hid_initfn(dev, HID_TABLET, &desc_tablet, &desc_tablet2, errp);
 }
 
-static void usb_mouse_realize(USBDevice *dev, Error **errp)
+static void usb_mouse_realize(USBDevice *dev, Error *errp[static 1])
 {
     usb_hid_initfn(dev, HID_MOUSE, &desc_mouse, &desc_mouse2, errp);
 }
 
-static void usb_keyboard_realize(USBDevice *dev, Error **errp)
+static void usb_keyboard_realize(USBDevice *dev, Error *errp[static 1])
 {
     usb_hid_initfn(dev, HID_KEYBOARD, &desc_keyboard, &desc_keyboard2, errp);
 }

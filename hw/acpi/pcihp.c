@@ -182,7 +182,7 @@ void acpi_pcihp_reset(AcpiPciHpState *s)
 }
 
 void acpi_pcihp_device_plug_cb(HotplugHandler *hotplug_dev, AcpiPciHpState *s,
-                               DeviceState *dev, Error **errp)
+                               DeviceState *dev, Error *errp[static 1])
 {
     PCIDevice *pdev = PCI_DEVICE(dev);
     int slot = PCI_SLOT(pdev->devfn);
@@ -205,7 +205,7 @@ void acpi_pcihp_device_plug_cb(HotplugHandler *hotplug_dev, AcpiPciHpState *s,
 }
 
 void acpi_pcihp_device_unplug_cb(HotplugHandler *hotplug_dev, AcpiPciHpState *s,
-                                 DeviceState *dev, Error **errp)
+                                 DeviceState *dev, Error *errp[static 1])
 {
     PCIDevice *pdev = PCI_DEVICE(dev);
     int slot = PCI_SLOT(pdev->devfn);

@@ -176,7 +176,7 @@ static void vhost_vsock_set_status(VirtIODevice *vdev, uint8_t status)
 
 static uint64_t vhost_vsock_get_features(VirtIODevice *vdev,
                                          uint64_t requested_features,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     /* No feature bits used yet */
     return requested_features;
@@ -294,7 +294,8 @@ static const VMStateDescription vmstate_virtio_vhost_vsock = {
     .post_load = vhost_vsock_post_load,
 };
 
-static void vhost_vsock_device_realize(DeviceState *dev, Error **errp)
+static void vhost_vsock_device_realize(DeviceState *dev,
+                                       Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VHostVSock *vsock = VHOST_VSOCK(dev);
@@ -364,7 +365,8 @@ err_virtio:
     return;
 }
 
-static void vhost_vsock_device_unrealize(DeviceState *dev, Error **errp)
+static void vhost_vsock_device_unrealize(DeviceState *dev,
+                                         Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VHostVSock *vsock = VHOST_VSOCK(dev);

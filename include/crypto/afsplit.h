@@ -108,7 +108,7 @@ int qcrypto_afsplit_encode(QCryptoHashAlgorithm hash,
                            uint32_t stripes,
                            const uint8_t *in,
                            uint8_t *out,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 /**
  * qcrypto_afsplit_decode:
@@ -130,6 +130,6 @@ int qcrypto_afsplit_decode(QCryptoHashAlgorithm hash,
                            uint32_t stripes,
                            const uint8_t *in,
                            uint8_t *out,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 #endif /* QCRYPTO_AFSPLIT_H */

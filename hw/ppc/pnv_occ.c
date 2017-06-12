@@ -92,7 +92,7 @@ static const MemoryRegionOps pnv_occ_xscom_ops = {
 };
 
 
-static void pnv_occ_realize(DeviceState *dev, Error **errp)
+static void pnv_occ_realize(DeviceState *dev, Error *errp[static 1])
 {
     PnvOCC *occ = PNV_OCC(dev);
     Object *obj;

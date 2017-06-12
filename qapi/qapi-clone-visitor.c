@@ -24,7 +24,7 @@ static QapiCloneVisitor *to_qcv(Visitor *v)
 }
 
 static void qapi_clone_start_struct(Visitor *v, const char *name, void **obj,
-                                    size_t size, Error **errp)
+                                    size_t size, Error *errp[static 1])
 {
     QapiCloneVisitor *qcv = to_qcv(v);
 
@@ -52,7 +52,7 @@ static void qapi_clone_end(Visitor *v, void **obj)
 
 static void qapi_clone_start_list(Visitor *v, const char *name,
                                   GenericList **listp, size_t size,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     qapi_clone_start_struct(v, name, (void **)listp, size, errp);
 }
@@ -70,13 +70,14 @@ static GenericList *qapi_clone_next_list(Visitor *v, GenericList *tail,
 
 static void qapi_clone_start_alternate(Visitor *v, const char *name,
                                        GenericAlternate **obj, size_t size,
-                                       bool promote_int, Error **errp)
+                                       bool promote_int,
+                                       Error *errp[static 1])
 {
     qapi_clone_start_struct(v, name, (void **)obj, size, errp);
 }
 
 static void qapi_clone_type_int64(Visitor *v, const char *name, int64_t *obj,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QapiCloneVisitor *qcv = to_qcv(v);
 
@@ -85,7 +86,7 @@ static void qapi_clone_type_int64(Visitor *v, const char *name, int64_t *obj,
 }
 
 static void qapi_clone_type_uint64(Visitor *v, const char *name,
-                                    uint64_t *obj, Error **errp)
+                                    uint64_t *obj, Error *errp[static 1])
 {
     QapiCloneVisitor *qcv = to_qcv(v);
 
@@ -94,7 +95,7 @@ static void qapi_clone_type_uint64(Visitor *v, const char *name,
 }
 
 static void qapi_clone_type_bool(Visitor *v, const char *name, bool *obj,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     QapiCloneVisitor *qcv = to_qcv(v);
 
@@ -103,7 +104,7 @@ static void qapi_clone_type_bool(Visitor *v, const char *name, bool *obj,
 }
 
 static void qapi_clone_type_str(Visitor *v, const char *name, char **obj,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     QapiCloneVisitor *qcv = to_qcv(v);
 
@@ -119,7 +120,7 @@ static void qapi_clone_type_str(Visitor *v, const char *name, char **obj,
 }
 
 static void qapi_clone_type_number(Visitor *v, const char *name, double *obj,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     QapiCloneVisitor *qcv = to_qcv(v);
 
@@ -127,7 +128,8 @@ static void qapi_clone_type_number(Visitor *v, const char *name, double *obj,
     /* Value was already cloned by g_memdup() */
 }
 
-static void qapi_clone_type_null(Visitor *v, const char *name, Error **errp)
+static void qapi_clone_type_null(Visitor *v, const char *name,
+                                 Error *errp[static 1])
 {
     QapiCloneVisitor *qcv = to_qcv(v);
 

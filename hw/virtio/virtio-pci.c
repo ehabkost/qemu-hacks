@@ -1089,7 +1089,8 @@ static void virtio_pci_vmstate_change(DeviceState *d, bool running)
 }
 
 #ifdef CONFIG_VIRTFS
-static void virtio_9p_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_9p_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                  Error *errp[static 1])
 {
     V9fsPCIState *dev = VIRTIO_9P_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -1563,7 +1564,7 @@ static void virtio_pci_modern_io_region_unmap(VirtIOPCIProxy *proxy,
                                 &region->mr);
 }
 
-static void virtio_pci_pre_plugged(DeviceState *d, Error **errp)
+static void virtio_pci_pre_plugged(DeviceState *d, Error *errp[static 1])
 {
     VirtIOPCIProxy *proxy = VIRTIO_PCI(d);
     VirtIODevice *vdev = virtio_bus_get_device(&proxy->bus);
@@ -1576,7 +1577,7 @@ static void virtio_pci_pre_plugged(DeviceState *d, Error **errp)
 }
 
 /* This is called by virtio-bus just after the device is plugged. */
-static void virtio_pci_device_plugged(DeviceState *d, Error **errp)
+static void virtio_pci_device_plugged(DeviceState *d, Error *errp[static 1])
 {
     VirtIOPCIProxy *proxy = VIRTIO_PCI(d);
     VirtioBusState *bus = &proxy->bus;
@@ -1733,7 +1734,7 @@ static void virtio_pci_device_unplugged(DeviceState *d)
     }
 }
 
-static void virtio_pci_realize(PCIDevice *pci_dev, Error **errp)
+static void virtio_pci_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     VirtIOPCIProxy *proxy = VIRTIO_PCI(pci_dev);
     VirtioPCIClass *k = VIRTIO_PCI_GET_CLASS(pci_dev);
@@ -1916,7 +1917,7 @@ static Property virtio_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_pci_dc_realize(DeviceState *qdev, Error **errp)
+static void virtio_pci_dc_realize(DeviceState *qdev, Error *errp[static 1])
 {
     VirtioPCIClass *vpciklass = VIRTIO_PCI_GET_CLASS(qdev);
     VirtIOPCIProxy *proxy = VIRTIO_PCI(qdev);
@@ -1966,7 +1967,8 @@ static Property virtio_blk_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_blk_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_blk_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                   Error *errp[static 1])
 {
     VirtIOBlkPCI *dev = VIRTIO_BLK_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -2020,7 +2022,8 @@ static Property virtio_scsi_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_scsi_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_scsi_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                    Error *errp[static 1])
 {
     VirtIOSCSIPCI *dev = VIRTIO_SCSI_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -2088,7 +2091,8 @@ static Property vhost_scsi_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void vhost_scsi_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void vhost_scsi_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                   Error *errp[static 1])
 {
     VHostSCSIPCI *dev = VHOST_SCSI_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -2143,7 +2147,8 @@ static Property vhost_vsock_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void vhost_vsock_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void vhost_vsock_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                    Error *errp[static 1])
 {
     VHostVSockPCI *dev = VHOST_VSOCK_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -2190,7 +2195,8 @@ static Property virtio_balloon_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_balloon_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_balloon_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                       Error *errp[static 1])
 {
     VirtIOBalloonPCI *dev = VIRTIO_BALLOON_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -2241,7 +2247,8 @@ static const TypeInfo virtio_balloon_pci_info = {
 
 /* virtio-serial-pci */
 
-static void virtio_serial_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_serial_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                      Error *errp[static 1])
 {
     VirtIOSerialPCI *dev = VIRTIO_SERIAL_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&dev->vdev);
@@ -2321,7 +2328,8 @@ static Property virtio_net_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_net_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_net_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                   Error *errp[static 1])
 {
     DeviceState *qdev = DEVICE(vpci_dev);
     VirtIONetPCI *dev = VIRTIO_NET_PCI(vpci_dev);
@@ -2369,7 +2377,8 @@ static const TypeInfo virtio_net_pci_info = {
 
 /* virtio-rng-pci */
 
-static void virtio_rng_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_rng_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                   Error *errp[static 1])
 {
     VirtIORngPCI *vrng = VIRTIO_RNG_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&vrng->vdev);
@@ -2425,7 +2434,8 @@ static Property virtio_input_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_input_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_input_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                     Error *errp[static 1])
 {
     VirtIOInputPCI *vinput = VIRTIO_INPUT_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&vinput->vdev);

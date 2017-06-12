@@ -621,7 +621,7 @@ static void arm_cpu_finalizefn(Object *obj)
     g_hash_table_destroy(cpu->cp_regs);
 }
 
-static void arm_cpu_realizefn(DeviceState *dev, Error **errp)
+static void arm_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     ARMCPU *cpu = ARM_CPU(dev);

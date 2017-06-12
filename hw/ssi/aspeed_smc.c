@@ -710,7 +710,7 @@ static const MemoryRegionOps aspeed_smc_ops = {
     .valid.unaligned = true,
 };
 
-static void aspeed_smc_realize(DeviceState *dev, Error **errp)
+static void aspeed_smc_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     AspeedSMCState *s = ASPEED_SMC(dev);

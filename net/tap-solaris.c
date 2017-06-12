@@ -57,7 +57,7 @@ ssize_t tap_read_packet(int tapfd, uint8_t *buf, int maxlen)
  * Allocate TAP device, returns opened fd.
  * Stores dev name in the first arg(must be large enough).
  */
-static int tap_alloc(char *dev, size_t dev_size, Error **errp)
+static int tap_alloc(char *dev, size_t dev_size, Error *errp[static 1])
 {
     /* FIXME leaks like a sieve on error paths */
     /* FIXME suspicious: many errors are reported, then ignored */
@@ -177,7 +177,7 @@ static int tap_alloc(char *dev, size_t dev_size, Error **errp)
 }
 
 int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
-             int vnet_hdr_required, int mq_required, Error **errp)
+             int vnet_hdr_required, int mq_required, Error *errp[static 1])
 {
     char  dev[10]="";
     int fd;
@@ -202,7 +202,8 @@ int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
     return fd;
 }
 
-void tap_set_sndbuf(int fd, const NetdevTapOptions *tap, Error **errp)
+void tap_set_sndbuf(int fd, const NetdevTapOptions *tap,
+		    Error *errp[static 1])
 {
 }
 

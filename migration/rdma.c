@@ -811,7 +811,8 @@ static void qemu_rdma_dump_gid(const char *who, struct rdma_cm_id *id)
  *
  * Patches are being reviewed on linux-rdma.
  */
-static int qemu_rdma_broken_ipv6_kernel(struct ibv_context *verbs, Error **errp)
+static int qemu_rdma_broken_ipv6_kernel(struct ibv_context *verbs,
+                                        Error *errp[static 1])
 {
     struct ibv_port_attr port_attr;
 
@@ -906,7 +907,7 @@ static int qemu_rdma_broken_ipv6_kernel(struct ibv_context *verbs, Error **errp)
  * Also create the initial connection manager identifiers for opening
  * the connection.
  */
-static int qemu_rdma_resolve_host(RDMAContext *rdma, Error **errp)
+static int qemu_rdma_resolve_host(RDMAContext *rdma, Error *errp[static 1])
 {
     int ret;
     struct rdma_addrinfo *res;
@@ -2279,7 +2280,8 @@ static void qemu_rdma_cleanup(RDMAContext *rdma)
 }
 
 
-static int qemu_rdma_source_init(RDMAContext *rdma, bool pin_all, Error **errp)
+static int qemu_rdma_source_init(RDMAContext *rdma, bool pin_all,
+                                 Error *errp[static 1])
 {
     int ret, idx;
     Error *local_err = NULL;
@@ -2341,7 +2343,7 @@ err_rdma_source_init:
     return -1;
 }
 
-static int qemu_rdma_connect(RDMAContext *rdma, Error **errp)
+static int qemu_rdma_connect(RDMAContext *rdma, Error *errp[static 1])
 {
     RDMACapabilities cap = {
                                 .version = RDMA_CONTROL_VERSION_CURRENT,
@@ -2421,7 +2423,7 @@ err_rdma_source_connect:
     return -1;
 }
 
-static int qemu_rdma_dest_init(RDMAContext *rdma, Error **errp)
+static int qemu_rdma_dest_init(RDMAContext *rdma, Error *errp[static 1])
 {
     int ret, idx;
     struct rdma_cm_id *listen_id;
@@ -2499,7 +2501,7 @@ err_dest_init_create_listen_id:
 
 }
 
-static void *qemu_rdma_data_init(const char *host_port, Error **errp)
+static void *qemu_rdma_data_init(const char *host_port, Error *errp[static 1])
 {
     RDMAContext *rdma = NULL;
     InetSocketAddress *addr;
@@ -2535,7 +2537,7 @@ static ssize_t qio_channel_rdma_writev(QIOChannel *ioc,
                                        size_t niov,
                                        int *fds,
                                        size_t nfds,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QIOChannelRDMA *rioc = QIO_CHANNEL_RDMA(ioc);
     QEMUFile *f = rioc->file;
@@ -2610,7 +2612,7 @@ static ssize_t qio_channel_rdma_readv(QIOChannel *ioc,
                                       size_t niov,
                                       int **fds,
                                       size_t *nfds,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     QIOChannelRDMA *rioc = QIO_CHANNEL_RDMA(ioc);
     RDMAContext *rdma = rioc->rdma;
@@ -2702,7 +2704,7 @@ static int qemu_rdma_drain_cq(QEMUFile *f, RDMAContext *rdma)
 
 static int qio_channel_rdma_set_blocking(QIOChannel *ioc,
                                          bool blocking,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QIOChannelRDMA *rioc = QIO_CHANNEL_RDMA(ioc);
     /* XXX we should make readv/writev actually honour this :-) */
@@ -2806,7 +2808,7 @@ static GSource *qio_channel_rdma_create_watch(QIOChannel *ioc,
 
 
 static int qio_channel_rdma_close(QIOChannel *ioc,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     QIOChannelRDMA *rioc = QIO_CHANNEL_RDMA(ioc);
     trace_qemu_rdma_close();
@@ -3632,7 +3634,8 @@ static void rdma_accept_incoming_migration(void *opaque)
     migration_fd_process_incoming(f);
 }
 
-void rdma_start_incoming_migration(const char *host_port, Error **errp)
+void rdma_start_incoming_migration(const char *host_port,
+                                   Error *errp[static 1])
 {
     int ret;
     RDMAContext *rdma;
@@ -3671,7 +3674,7 @@ err:
 }
 
 void rdma_start_outgoing_migration(void *opaque,
-                            const char *host_port, Error **errp)
+                            const char *host_port, Error *errp[static 1])
 {
     MigrationState *s = opaque;
     RDMAContext *rdma = qemu_rdma_data_init(host_port, errp);

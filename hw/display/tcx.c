@@ -803,7 +803,7 @@ static void tcx_initfn(Object *obj)
     sysbus_init_mmio(sbd, &s->alt);
 }
 
-static void tcx_realizefn(DeviceState *dev, Error **errp)
+static void tcx_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     TCXState *s = TCX(dev);

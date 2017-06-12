@@ -312,7 +312,7 @@ void ich9_pm_init(PCIDevice *lpc_pci, ICH9LPCPMRegs *pm,
 }
 
 static void ich9_pm_get_gpe0_blk(Object *obj, Visitor *v, const char *name,
-                                 void *opaque, Error **errp)
+                                 void *opaque, Error *errp[static 1])
 {
     ICH9LPCPMRegs *pm = opaque;
     uint32_t value = pm->pm_io_base + ICH9_PMIO_GPE0_STS;
@@ -320,7 +320,8 @@ static void ich9_pm_get_gpe0_blk(Object *obj, Visitor *v, const char *name,
     visit_type_uint32(v, name, &value, errp);
 }
 
-static bool ich9_pm_get_memory_hotplug_support(Object *obj, Error **errp)
+static bool ich9_pm_get_memory_hotplug_support(Object *obj,
+                                               Error *errp[static 1])
 {
     ICH9LPCState *s = ICH9_LPC_DEVICE(obj);
 
@@ -328,14 +329,14 @@ static bool ich9_pm_get_memory_hotplug_support(Object *obj, Error **errp)
 }
 
 static void ich9_pm_set_memory_hotplug_support(Object *obj, bool value,
-                                               Error **errp)
+                                               Error *errp[static 1])
 {
     ICH9LPCState *s = ICH9_LPC_DEVICE(obj);
 
     s->pm.acpi_memory_hotplug.is_enabled = value;
 }
 
-static bool ich9_pm_get_cpu_hotplug_legacy(Object *obj, Error **errp)
+static bool ich9_pm_get_cpu_hotplug_legacy(Object *obj, Error *errp[static 1])
 {
     ICH9LPCState *s = ICH9_LPC_DEVICE(obj);
 
@@ -343,7 +344,7 @@ static bool ich9_pm_get_cpu_hotplug_legacy(Object *obj, Error **errp)
 }
 
 static void ich9_pm_set_cpu_hotplug_legacy(Object *obj, bool value,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     ICH9LPCState *s = ICH9_LPC_DEVICE(obj);
 
@@ -356,7 +357,7 @@ static void ich9_pm_set_cpu_hotplug_legacy(Object *obj, bool value,
 }
 
 static void ich9_pm_get_disable_s3(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     ICH9LPCPMRegs *pm = opaque;
     uint8_t value = pm->disable_s3;
@@ -365,7 +366,7 @@ static void ich9_pm_get_disable_s3(Object *obj, Visitor *v, const char *name,
 }
 
 static void ich9_pm_set_disable_s3(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     ICH9LPCPMRegs *pm = opaque;
     Error *local_err = NULL;
@@ -381,7 +382,7 @@ out:
 }
 
 static void ich9_pm_get_disable_s4(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     ICH9LPCPMRegs *pm = opaque;
     uint8_t value = pm->disable_s4;
@@ -390,7 +391,7 @@ static void ich9_pm_get_disable_s4(Object *obj, Visitor *v, const char *name,
 }
 
 static void ich9_pm_set_disable_s4(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     ICH9LPCPMRegs *pm = opaque;
     Error *local_err = NULL;
@@ -406,7 +407,7 @@ out:
 }
 
 static void ich9_pm_get_s4_val(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     ICH9LPCPMRegs *pm = opaque;
     uint8_t value = pm->s4_val;
@@ -415,7 +416,7 @@ static void ich9_pm_get_s4_val(Object *obj, Visitor *v, const char *name,
 }
 
 static void ich9_pm_set_s4_val(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     ICH9LPCPMRegs *pm = opaque;
     Error *local_err = NULL;
@@ -430,19 +431,21 @@ out:
     error_propagate(errp, local_err);
 }
 
-static bool ich9_pm_get_enable_tco(Object *obj, Error **errp)
+static bool ich9_pm_get_enable_tco(Object *obj, Error *errp[static 1])
 {
     ICH9LPCState *s = ICH9_LPC_DEVICE(obj);
     return s->pm.enable_tco;
 }
 
-static void ich9_pm_set_enable_tco(Object *obj, bool value, Error **errp)
+static void ich9_pm_set_enable_tco(Object *obj, bool value,
+                                   Error *errp[static 1])
 {
     ICH9LPCState *s = ICH9_LPC_DEVICE(obj);
     s->pm.enable_tco = value;
 }
 
-void ich9_pm_add_properties(Object *obj, ICH9LPCPMRegs *pm, Error **errp)
+void ich9_pm_add_properties(Object *obj, ICH9LPCPMRegs *pm,
+                            Error *errp[static 1])
 {
     static const uint32_t gpe0_len = ICH9_PMIO_GPE0_LEN;
     pm->acpi_memory_hotplug.is_enabled = true;
@@ -485,7 +488,7 @@ void ich9_pm_add_properties(Object *obj, ICH9LPCPMRegs *pm, Error **errp)
 }
 
 void ich9_pm_device_plug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     ICH9LPCState *lpc = ICH9_LPC_DEVICE(hotplug_dev);
 
@@ -510,7 +513,7 @@ void ich9_pm_device_plug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
 }
 
 void ich9_pm_device_unplug_request_cb(HotplugHandler *hotplug_dev,
-                                      DeviceState *dev, Error **errp)
+                                      DeviceState *dev, Error *errp[static 1])
 {
     ICH9LPCState *lpc = ICH9_LPC_DEVICE(hotplug_dev);
 
@@ -530,7 +533,7 @@ void ich9_pm_device_unplug_request_cb(HotplugHandler *hotplug_dev,
 }
 
 void ich9_pm_device_unplug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     ICH9LPCState *lpc = ICH9_LPC_DEVICE(hotplug_dev);
 

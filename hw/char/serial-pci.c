@@ -51,7 +51,7 @@ typedef struct PCIMultiSerialState {
 
 static void multi_serial_pci_exit(PCIDevice *dev);
 
-static void serial_pci_realize(PCIDevice *dev, Error **errp)
+static void serial_pci_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCISerialState *pci = DO_UPCAST(PCISerialState, dev, dev);
     SerialState *s = &pci->state;
@@ -84,7 +84,7 @@ static void multi_serial_irq_mux(void *opaque, int n, int level)
     pci_set_irq(&pci->dev, pending);
 }
 
-static void multi_serial_pci_realize(PCIDevice *dev, Error **errp)
+static void multi_serial_pci_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIDeviceClass *pc = PCI_DEVICE_GET_CLASS(dev);
     PCIMultiSerialState *pci = DO_UPCAST(PCIMultiSerialState, dev, dev);

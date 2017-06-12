@@ -466,7 +466,7 @@ static const MemoryRegionOps imx_gpt_ops = {
 };
 
 
-static void imx_gpt_realize(DeviceState *dev, Error **errp)
+static void imx_gpt_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMXGPTState *s = IMX_GPT(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

@@ -67,7 +67,7 @@ static int pic_dispatch_post_load(void *opaque, int version_id)
     return 0;
 }
 
-static void pic_common_realize(DeviceState *dev, Error **errp)
+static void pic_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     PICCommonState *s = PIC_COMMON(dev);
     ISADevice *isa = ISA_DEVICE(dev);

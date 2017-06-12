@@ -3409,7 +3409,7 @@ static NetClientInfo net_rtl8139_info = {
     .link_status_changed = rtl8139_set_link_status,
 };
 
-static void pci_rtl8139_realize(PCIDevice *dev, Error **errp)
+static void pci_rtl8139_realize(PCIDevice *dev, Error *errp[static 1])
 {
     RTL8139State *s = RTL8139(dev);
     DeviceState *d = DEVICE(dev);

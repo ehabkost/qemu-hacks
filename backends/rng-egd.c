@@ -83,7 +83,7 @@ static void rng_egd_chr_read(void *opaque, const uint8_t *buf, int size)
     }
 }
 
-static void rng_egd_opened(RngBackend *b, Error **errp)
+static void rng_egd_opened(RngBackend *b, Error *errp[static 1])
 {
     RngEgd *s = RNG_EGD(b);
     Chardev *chr;
@@ -109,7 +109,8 @@ static void rng_egd_opened(RngBackend *b, Error **errp)
                              rng_egd_chr_read, NULL, s, NULL, true);
 }
 
-static void rng_egd_set_chardev(Object *obj, const char *value, Error **errp)
+static void rng_egd_set_chardev(Object *obj, const char *value,
+                                Error *errp[static 1])
 {
     RngBackend *b = RNG_BACKEND(obj);
     RngEgd *s = RNG_EGD(b);
@@ -122,7 +123,7 @@ static void rng_egd_set_chardev(Object *obj, const char *value, Error **errp)
     }
 }
 
-static char *rng_egd_get_chardev(Object *obj, Error **errp)
+static char *rng_egd_get_chardev(Object *obj, Error *errp[static 1])
 {
     RngEgd *s = RNG_EGD(obj);
     Chardev *chr = qemu_chr_fe_get_driver(&s->chr);

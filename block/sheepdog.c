@@ -547,7 +547,7 @@ static SocketAddress *sd_socket_address(const char *path,
     return addr;
 }
 
-static SocketAddress *sd_server_config(QDict *options, Error **errp)
+static SocketAddress *sd_server_config(QDict *options, Error *errp[static 1])
 {
     QDict *server = NULL;
     QObject *crumpled_server = NULL;
@@ -583,7 +583,7 @@ done:
 }
 
 /* Return -EIO in case of error, file descriptor on success */
-static int connect_to_sdog(BDRVSheepdogState *s, Error **errp)
+static int connect_to_sdog(BDRVSheepdogState *s, Error *errp[static 1])
 {
     int fd;
 
@@ -746,7 +746,7 @@ static void coroutine_fn add_aio_request(BDRVSheepdogState *s, AIOReq *aio_req,
                                          enum AIOCBState aiocb_type);
 static void coroutine_fn resend_aioreq(BDRVSheepdogState *s, AIOReq *aio_req);
 static int reload_inode(BDRVSheepdogState *s, uint32_t snapid, const char *tag);
-static int get_sheep_fd(BDRVSheepdogState *s, Error **errp);
+static int get_sheep_fd(BDRVSheepdogState *s, Error *errp[static 1]);
 static void co_write_request(void *opaque);
 
 static coroutine_fn void reconnect_to_sdog(void *opaque)
@@ -950,7 +950,7 @@ static void co_write_request(void *opaque)
  * We cannot use this descriptor for other operations because
  * the block driver may be on waiting response from the server.
  */
-static int get_sheep_fd(BDRVSheepdogState *s, Error **errp)
+static int get_sheep_fd(BDRVSheepdogState *s, Error *errp[static 1])
 {
     int fd;
 
@@ -1028,7 +1028,7 @@ static void sd_config_done(SheepdogConfig *cfg)
 }
 
 static void sd_parse_uri(SheepdogConfig *cfg, const char *filename,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     Error *err = NULL;
     QueryParams *qp = NULL;
@@ -1133,7 +1133,7 @@ out:
  * `hostname' and `port' (experimental).
  */
 static void parse_vdiname(SheepdogConfig *cfg, const char *filename,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     Error *err = NULL;
     char *p, *q, *uri;
@@ -1193,7 +1193,7 @@ static void parse_vdiname(SheepdogConfig *cfg, const char *filename,
 }
 
 static void sd_parse_filename(const char *filename, QDict *options,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     SheepdogConfig cfg;
     char buf[32];
@@ -1229,7 +1229,7 @@ static void sd_parse_filename(const char *filename, QDict *options,
 
 static int find_vdi_name(BDRVSheepdogState *s, const char *filename,
                          uint32_t snapid, const char *tag, uint32_t *vid,
-                         bool lock, Error **errp)
+                         bool lock, Error *errp[static 1])
 {
     int ret, fd;
     SheepdogVdiReq hdr;
@@ -1559,7 +1559,7 @@ static QemuOptsList runtime_opts = {
 };
 
 static int sd_open(BlockDriverState *bs, QDict *options, int flags,
-                   Error **errp)
+                   Error *errp[static 1])
 {
     int ret, fd;
     uint32_t vid = 0;
@@ -1688,7 +1688,7 @@ err_no_fd:
 }
 
 static int sd_reopen_prepare(BDRVReopenState *state, BlockReopenQueue *queue,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     BDRVSheepdogState *s = state->bs->opaque;
     BDRVSheepdogReopenState *re_s;
@@ -1752,7 +1752,7 @@ static void sd_reopen_abort(BDRVReopenState *state)
 }
 
 static int do_sd_create(BDRVSheepdogState *s, uint32_t *vdi_id, int snapshot,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     SheepdogVdiReq hdr;
     SheepdogVdiRsp *rsp = (SheepdogVdiRsp *)&hdr;
@@ -1807,7 +1807,7 @@ static int do_sd_create(BDRVSheepdogState *s, uint32_t *vdi_id, int snapshot,
     return 0;
 }
 
-static int sd_prealloc(const char *filename, Error **errp)
+static int sd_prealloc(const char *filename, Error *errp[static 1])
 {
     BlockBackend *blk = NULL;
     BDRVSheepdogState *base = NULL;
@@ -1947,7 +1947,7 @@ static int parse_block_size_shift(BDRVSheepdogState *s, QemuOpts *opt)
 }
 
 static int sd_create(const char *filename, QemuOpts *opts,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     int ret = 0;
     uint32_t vid = 0;
@@ -2145,7 +2145,8 @@ static int64_t sd_getlength(BlockDriverState *bs)
     return s->inode.vdi_size;
 }
 
-static int sd_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int sd_truncate(BlockDriverState *bs, int64_t offset,
+                       Error *errp[static 1])
 {
     BDRVSheepdogState *s = bs->opaque;
     int ret, fd;
@@ -2613,7 +2614,7 @@ out:
 
 #define NR_BATCHED_DISCARD 128
 
-static int remove_objects(BDRVSheepdogState *s, Error **errp)
+static int remove_objects(BDRVSheepdogState *s, Error *errp[static 1])
 {
     int fd, i = 0, nr_objs = 0;
     int ret;
@@ -2665,7 +2666,7 @@ out:
 static int sd_snapshot_delete(BlockDriverState *bs,
                               const char *snapshot_id,
                               const char *name,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     /*
      * FIXME should delete the snapshot matching both @snapshot_id and

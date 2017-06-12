@@ -314,14 +314,14 @@ PCIBus *pci_pmac_u3_init(qemu_irq *pic,
     return h->bus;
 }
 
-static void unin_main_pci_host_realize(PCIDevice *d, Error **errp)
+static void unin_main_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     d->config[0x0C] = 0x08; // cache_line_size
     d->config[0x0D] = 0x10; // latency_timer
     d->config[0x34] = 0x00; // capabilities_pointer
 }
 
-static void unin_agp_pci_host_realize(PCIDevice *d, Error **errp)
+static void unin_agp_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     d->config[0x0C] = 0x08; // cache_line_size
     d->config[0x0D] = 0x10; // latency_timer
@@ -337,7 +337,7 @@ static void unin_agp_pci_host_realize(PCIDevice *d, Error **errp)
     d->config[0x4b] = 0x1;
 }
 
-static void u3_agp_pci_host_realize(PCIDevice *d, Error **errp)
+static void u3_agp_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     /* cache line size */
     d->config[0x0C] = 0x08;
@@ -345,7 +345,8 @@ static void u3_agp_pci_host_realize(PCIDevice *d, Error **errp)
     d->config[0x0D] = 0x10;
 }
 
-static void unin_internal_pci_host_realize(PCIDevice *d, Error **errp)
+static void unin_internal_pci_host_realize(PCIDevice *d,
+                                           Error *errp[static 1])
 {
     d->config[0x0C] = 0x08; // cache_line_size
     d->config[0x0D] = 0x10; // latency_timer

@@ -685,7 +685,7 @@ static void sysbus_esp_gpio_demux(void *opaque, int irq, int level)
     }
 }
 
-static void sysbus_esp_realize(DeviceState *dev, Error **errp)
+static void sysbus_esp_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     SysBusESPState *sysbus = ESP(dev);

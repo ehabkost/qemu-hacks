@@ -147,12 +147,12 @@ static int max111x_init(SSISlave *d, int inputs)
     return 0;
 }
 
-static void max1110_realize(SSISlave *dev, Error **errp)
+static void max1110_realize(SSISlave *dev, Error *errp[static 1])
 {
     max111x_init(dev, 8);
 }
 
-static void max1111_realize(SSISlave *dev, Error **errp)
+static void max1111_realize(SSISlave *dev, Error *errp[static 1])
 {
     max111x_init(dev, 4);
 }

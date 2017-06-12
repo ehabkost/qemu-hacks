@@ -87,7 +87,8 @@ static void test_parse_range(void)
     error_free_or_abort(&err);
 }
 
-static void set_log_path_tmp(char const *dir, char const *tpl, Error **errp)
+static void set_log_path_tmp(char const *dir, char const *tpl,
+                             Error *errp[static 1])
 {
     gchar *file_path = g_build_filename(dir, tpl, NULL);
 

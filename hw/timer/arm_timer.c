@@ -289,7 +289,7 @@ static void sp804_init(Object *obj)
     sysbus_init_mmio(sbd, &s->iomem);
 }
 
-static void sp804_realize(DeviceState *dev, Error **errp)
+static void sp804_realize(DeviceState *dev, Error *errp[static 1])
 {
     SP804State *s = SP804(dev);
 

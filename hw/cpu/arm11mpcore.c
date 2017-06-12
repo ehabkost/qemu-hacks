@@ -64,7 +64,7 @@ static void mpcore_priv_map_setup(ARM11MPCorePriveState *s)
     }
 }
 
-static void mpcore_priv_realize(DeviceState *dev, Error **errp)
+static void mpcore_priv_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     ARM11MPCorePriveState *s = ARM11MPCORE_PRIV(dev);

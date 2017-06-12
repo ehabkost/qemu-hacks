@@ -2288,7 +2288,7 @@ static uint64_t vmxnet3_device_serial_num(VMXNET3State *s)
 #define VMXNET3_USE_64BIT         (true)
 #define VMXNET3_PER_VECTOR_MASK   (false)
 
-static void vmxnet3_pci_realize(PCIDevice *pci_dev, Error **errp)
+static void vmxnet3_pci_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(pci_dev);
     VMXNET3State *s = VMXNET3(pci_dev);
@@ -2607,7 +2607,7 @@ static Property vmxnet3_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void vmxnet3_realize(DeviceState *qdev, Error **errp)
+static void vmxnet3_realize(DeviceState *qdev, Error *errp[static 1])
 {
     VMXNET3Class *vc = VMXNET3_DEVICE_GET_CLASS(qdev);
     PCIDevice *pci_dev = PCI_DEVICE(qdev);

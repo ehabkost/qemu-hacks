@@ -392,7 +392,7 @@ static const VMStateDescription kvm_s390_flic_vmstate = {
     }
 };
 
-static void kvm_s390_flic_realize(DeviceState *dev, Error **errp)
+static void kvm_s390_flic_realize(DeviceState *dev, Error *errp[static 1])
 {
     KVMS390FLICState *flic_state = KVM_S390_FLIC(dev);
     struct kvm_create_device cd = {0};

@@ -28,7 +28,7 @@ static const char *base64_valid_chars =
 uint8_t *qbase64_decode(const char *input,
                         size_t in_len,
                         size_t *out_len,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     *out_len = 0;
 

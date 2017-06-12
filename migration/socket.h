@@ -16,13 +16,14 @@
 
 #ifndef QEMU_MIGRATION_SOCKET_H
 #define QEMU_MIGRATION_SOCKET_H
-void tcp_start_incoming_migration(const char *host_port, Error **errp);
+void tcp_start_incoming_migration(const char *host_port,
+				  Error *errp[static 1]);
 
 void tcp_start_outgoing_migration(MigrationState *s, const char *host_port,
-                                  Error **errp);
+                                  Error *errp[static 1]);
 
-void unix_start_incoming_migration(const char *path, Error **errp);
+void unix_start_incoming_migration(const char *path, Error *errp[static 1]);
 
 void unix_start_outgoing_migration(MigrationState *s, const char *path,
-                                   Error **errp);
+                                   Error *errp[static 1]);
 #endif

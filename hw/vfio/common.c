@@ -953,7 +953,7 @@ static void vfio_put_address_space(VFIOAddressSpace *space)
 }
 
 static int vfio_connect_container(VFIOGroup *group, AddressSpace *as,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     VFIOContainer *container;
     int ret, fd;
@@ -1174,7 +1174,8 @@ static void vfio_disconnect_container(VFIOGroup *group)
     }
 }
 
-VFIOGroup *vfio_get_group(int groupid, AddressSpace *as, Error **errp)
+VFIOGroup *vfio_get_group(int groupid, AddressSpace *as,
+                          Error *errp[static 1])
 {
     VFIOGroup *group;
     char path[32];
@@ -1262,7 +1263,7 @@ void vfio_put_group(VFIOGroup *group)
 }
 
 int vfio_get_device(VFIOGroup *group, const char *name,
-                    VFIODevice *vbasedev, Error **errp)
+                    VFIODevice *vbasedev, Error *errp[static 1])
 {
     struct vfio_device_info dev_info = { .argsz = sizeof(dev_info) };
     int ret, fd;

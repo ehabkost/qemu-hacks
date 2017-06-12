@@ -25,7 +25,7 @@
 #include "qmp-commands.h"
 #include "hw/smbios/smbios.h"
 
-void smbios_entry_add(QemuOpts *opts, Error **errp)
+void smbios_entry_add(QemuOpts *opts, Error *errp[static 1])
 {
     error_setg(errp, QERR_UNSUPPORTED);
 }

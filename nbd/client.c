@@ -88,7 +88,7 @@ static QTAILQ_HEAD(, NBDExport) exports = QTAILQ_HEAD_INITIALIZER(exports);
 
 /* Discard length bytes from channel.  Return -errno on failure and 0 on
  * success*/
-static int drop_sync(QIOChannel *ioc, size_t size, Error **errp)
+static int drop_sync(QIOChannel *ioc, size_t size, Error *errp[static 1])
 {
     ssize_t ret = 0;
     char small[1024];
@@ -121,7 +121,7 @@ static int drop_sync(QIOChannel *ioc, size_t size, Error **errp)
  * continue. */
 static int nbd_send_option_request(QIOChannel *ioc, uint32_t opt,
                                    uint32_t len, const char *data,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     nbd_option req;
     QEMU_BUILD_BUG_ON(sizeof(req) != 16);
@@ -166,7 +166,8 @@ static void nbd_send_opt_abort(QIOChannel *ioc)
  * payload. Return 0 if successful, -1 with errp set if it is
  * impossible to continue. */
 static int nbd_receive_option_reply(QIOChannel *ioc, uint32_t opt,
-                                    nbd_opt_reply *reply, Error **errp)
+                                    nbd_opt_reply *reply,
+                                    Error *errp[static 1])
 {
     QEMU_BUILD_BUG_ON(sizeof(*reply) != 20);
     if (read_sync(ioc, reply, sizeof(*reply), errp) < 0) {
@@ -203,7 +204,7 @@ static int nbd_receive_option_reply(QIOChannel *ioc, uint32_t opt,
  * errors.
  */
 static int nbd_handle_reply_err(QIOChannel *ioc, nbd_opt_reply *reply,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     char *msg = NULL;
     int result = -1;
@@ -281,7 +282,7 @@ static int nbd_handle_reply_err(QIOChannel *ioc, nbd_opt_reply *reply,
  * is complete, positive if more replies are expected, or negative
  * with @errp set if an unrecoverable error occurred. */
 static int nbd_receive_list(QIOChannel *ioc, const char *want, bool *match,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     nbd_opt_reply reply;
     uint32_t len;
@@ -364,7 +365,7 @@ static int nbd_receive_list(QIOChannel *ioc, const char *want, bool *match,
 /* Return -1 on failure, 0 if wantname is an available export. */
 static int nbd_receive_query_exports(QIOChannel *ioc,
                                      const char *wantname,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     bool foundExport = false;
 
@@ -396,7 +397,8 @@ static int nbd_receive_query_exports(QIOChannel *ioc,
 
 static QIOChannel *nbd_receive_starttls(QIOChannel *ioc,
                                         QCryptoTLSCreds *tlscreds,
-                                        const char *hostname, Error **errp)
+                                        const char *hostname,
+                                        Error *errp[static 1])
 {
     nbd_opt_reply reply;
     QIOChannelTLS *tioc;
@@ -456,7 +458,7 @@ static QIOChannel *nbd_receive_starttls(QIOChannel *ioc,
 int nbd_receive_negotiate(QIOChannel *ioc, const char *name, uint16_t *flags,
                           QCryptoTLSCreds *tlscreds, const char *hostname,
                           QIOChannel **outioc,
-                          off_t *size, Error **errp)
+                          off_t *size, Error *errp[static 1])
 {
     char buf[256];
     uint64_t magic, s;
@@ -628,7 +630,7 @@ fail:
 
 #ifdef __linux__
 int nbd_init(int fd, QIOChannelSocket *sioc, uint16_t flags, off_t size,
-             Error **errp)
+             Error *errp[static 1])
 {
     unsigned long sectors = size / BDRV_SECTOR_SIZE;
     if (size / BDRV_SECTOR_SIZE != sectors) {
@@ -726,7 +728,7 @@ int nbd_disconnect(int fd)
 
 #else
 int nbd_init(int fd, QIOChannelSocket *ioc, uint16_t flags, off_t size,
-	     Error **errp)
+	     Error *errp[static 1])
 {
     error_setg(errp, "nbd_init is only supported on Linux");
     return -ENOTSUP;
@@ -762,7 +764,8 @@ ssize_t nbd_send_request(QIOChannel *ioc, NBDRequest *request)
     return write_sync(ioc, buf, sizeof(buf), IGNORE_ERRORS);
 }
 
-ssize_t nbd_receive_reply(QIOChannel *ioc, NBDReply *reply, Error **errp)
+ssize_t nbd_receive_reply(QIOChannel *ioc, NBDReply *reply,
+                          Error *errp[static 1])
 {
     uint8_t buf[NBD_REPLY_SIZE];
     uint32_t magic;

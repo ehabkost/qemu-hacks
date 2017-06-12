@@ -23,19 +23,20 @@
 #include "qapi/error.h"
 
 static void qbus_set_hotplug_handler_internal(BusState *bus, Object *handler,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
 
     object_property_set_link(OBJECT(bus), OBJECT(handler),
                              QDEV_HOTPLUG_HANDLER_PROPERTY, errp);
 }
 
-void qbus_set_hotplug_handler(BusState *bus, DeviceState *handler, Error **errp)
+void qbus_set_hotplug_handler(BusState *bus, DeviceState *handler,
+                              Error *errp[static 1])
 {
     qbus_set_hotplug_handler_internal(bus, OBJECT(handler), errp);
 }
 
-void qbus_set_bus_hotplug_handler(BusState *bus, Error **errp)
+void qbus_set_bus_hotplug_handler(BusState *bus, Error *errp[static 1])
 {
     qbus_set_hotplug_handler_internal(bus, OBJECT(bus), errp);
 }
@@ -147,14 +148,14 @@ BusState *qbus_create(const char *typename, DeviceState *parent, const char *nam
     return bus;
 }
 
-static bool bus_get_realized(Object *obj, Error **errp)
+static bool bus_get_realized(Object *obj, Error *errp[static 1])
 {
     BusState *bus = BUS(obj);
 
     return bus->realized;
 }
 
-static void bus_set_realized(Object *obj, bool value, Error **errp)
+static void bus_set_realized(Object *obj, bool value, Error *errp[static 1])
 {
     BusState *bus = BUS(obj);
     BusClass *bc = BUS_GET_CLASS(bus);

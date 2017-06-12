@@ -83,7 +83,7 @@ out_free_pdu:
 }
 
 static uint64_t virtio_9p_get_features(VirtIODevice *vdev, uint64_t features,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     virtio_add_feature(&features, VIRTIO_9P_MOUNT_TAG);
     return features;
@@ -105,7 +105,7 @@ static void virtio_9p_get_config(VirtIODevice *vdev, uint8_t *config)
     g_free(cfg);
 }
 
-static void virtio_9p_device_realize(DeviceState *dev, Error **errp)
+static void virtio_9p_device_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     V9fsVirtioState *v = VIRTIO_9P(dev);
@@ -124,7 +124,8 @@ out:
     return;
 }
 
-static void virtio_9p_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_9p_device_unrealize(DeviceState *dev,
+                                       Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     V9fsVirtioState *v = VIRTIO_9P(dev);

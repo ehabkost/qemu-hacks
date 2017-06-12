@@ -51,7 +51,7 @@ QCryptoBlock *qcrypto_block_open(QCryptoBlockOpenOptions *options,
                                  QCryptoBlockReadFunc readfunc,
                                  void *opaque,
                                  unsigned int flags,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     QCryptoBlock *block = g_new0(QCryptoBlock, 1);
 
@@ -81,7 +81,7 @@ QCryptoBlock *qcrypto_block_create(QCryptoBlockCreateOptions *options,
                                    QCryptoBlockInitFunc initfunc,
                                    QCryptoBlockWriteFunc writefunc,
                                    void *opaque,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QCryptoBlock *block = g_new0(QCryptoBlock, 1);
 
@@ -108,7 +108,7 @@ QCryptoBlock *qcrypto_block_create(QCryptoBlockCreateOptions *options,
 
 
 QCryptoBlockInfo *qcrypto_block_get_info(QCryptoBlock *block,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QCryptoBlockInfo *info = g_new0(QCryptoBlockInfo, 1);
 
@@ -128,7 +128,7 @@ int qcrypto_block_decrypt(QCryptoBlock *block,
                           uint64_t startsector,
                           uint8_t *buf,
                           size_t len,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     return block->driver->decrypt(block, startsector, buf, len, errp);
 }
@@ -138,7 +138,7 @@ int qcrypto_block_encrypt(QCryptoBlock *block,
                           uint64_t startsector,
                           uint8_t *buf,
                           size_t len,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     return block->driver->encrypt(block, startsector, buf, len, errp);
 }
@@ -189,7 +189,7 @@ int qcrypto_block_decrypt_helper(QCryptoCipher *cipher,
                                  uint64_t startsector,
                                  uint8_t *buf,
                                  size_t len,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     uint8_t *iv;
     int ret = -1;
@@ -238,7 +238,7 @@ int qcrypto_block_encrypt_helper(QCryptoCipher *cipher,
                                  uint64_t startsector,
                                  uint8_t *buf,
                                  size_t len,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     uint8_t *iv;
     int ret = -1;

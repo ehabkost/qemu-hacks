@@ -105,7 +105,7 @@ static const MemoryRegionPortio wdt_portio_list[] = {
     PORTIO_END_OF_LIST(),
 };
 
-static void wdt_ib700_realize(DeviceState *dev, Error **errp)
+static void wdt_ib700_realize(DeviceState *dev, Error *errp[static 1])
 {
     IB700State *s = IB700(dev);
 

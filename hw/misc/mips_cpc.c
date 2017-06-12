@@ -113,7 +113,7 @@ static void mips_cpc_init(Object *obj)
     sysbus_init_mmio(sbd, &s->mr);
 }
 
-static void mips_cpc_realize(DeviceState *dev, Error **errp)
+static void mips_cpc_realize(DeviceState *dev, Error *errp[static 1])
 {
     MIPSCPCState *s = MIPS_CPC(dev);
 

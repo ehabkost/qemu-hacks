@@ -227,7 +227,7 @@ static void etraxfs_ser_init(Object *obj)
     sysbus_init_mmio(dev, &s->mmio);
 }
 
-static void etraxfs_ser_realize(DeviceState *dev, Error **errp)
+static void etraxfs_ser_realize(DeviceState *dev, Error *errp[static 1])
 {
     ETRAXSerial *s = ETRAX_SERIAL(dev);
 

@@ -81,7 +81,7 @@ static void term_stdio_handler(int sig)
 static void qemu_chr_open_stdio(Chardev *chr,
                                 ChardevBackend *backend,
                                 bool *be_opened,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     ChardevStdio *opts = backend->u.stdio.data;
     struct sigaction act;
@@ -116,7 +116,7 @@ static void qemu_chr_open_stdio(Chardev *chr,
 #endif
 
 static void qemu_chr_parse_stdio(QemuOpts *opts, ChardevBackend *backend,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     ChardevStdio *stdio;
 

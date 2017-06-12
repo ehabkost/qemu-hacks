@@ -344,7 +344,7 @@ static const struct SCSIBusInfo esp_pci_scsi_info = {
     .cancel = esp_request_cancelled,
 };
 
-static void esp_pci_scsi_realize(PCIDevice *dev, Error **errp)
+static void esp_pci_scsi_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIESPState *pci = PCI_ESP(dev);
     DeviceState *d = DEVICE(dev);
@@ -459,7 +459,7 @@ static void dc390_write_config(PCIDevice *dev,
     }
 }
 
-static void dc390_scsi_realize(PCIDevice *dev, Error **errp)
+static void dc390_scsi_realize(PCIDevice *dev, Error *errp[static 1])
 {
     DC390State *pci = DC390(dev);
     uint8_t *contents;

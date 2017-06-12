@@ -14,7 +14,7 @@
 #ifndef MIGRATION_SAVEVM_H
 #define MIGRATION_SAVEVM_H
 
-bool qemu_savevm_state_blocked(Error **errp);
+bool qemu_savevm_state_blocked(Error *errp[static 1]);
 void qemu_savevm_state_begin(QEMUFile *f);
 void qemu_savevm_state_header(QEMUFile *f);
 int qemu_savevm_state_iterate(QEMUFile *f, bool postcopy);

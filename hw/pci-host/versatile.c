@@ -388,7 +388,7 @@ static void pci_vpb_init(Object *obj)
     s->mem_win_size[2] = 0x10000000;
 }
 
-static void pci_vpb_realize(DeviceState *dev, Error **errp)
+static void pci_vpb_realize(DeviceState *dev, Error *errp[static 1])
 {
     PCIVPBState *s = PCI_VPB(dev);
     PCIHostState *h = PCI_HOST_BRIDGE(dev);
@@ -459,7 +459,7 @@ static void pci_vpb_realize(DeviceState *dev, Error **errp)
     object_property_set_bool(OBJECT(&s->pci_dev), true, "realized", errp);
 }
 
-static void versatile_pci_host_realize(PCIDevice *d, Error **errp)
+static void versatile_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     pci_set_word(d->config + PCI_STATUS,
                  PCI_STATUS_66MHZ | PCI_STATUS_DEVSEL_MEDIUM);

@@ -334,7 +334,7 @@ static void icp_reset(void *dev)
     qemu_set_irq(icp->output, 0);
 }
 
-static void icp_realize(DeviceState *dev, Error **errp)
+static void icp_realize(DeviceState *dev, Error *errp[static 1])
 {
     ICPState *icp = ICP(dev);
     ICPStateClass *icpc = ICP_GET_CLASS(dev);
@@ -357,7 +357,7 @@ static void icp_realize(DeviceState *dev, Error **errp)
     qemu_register_reset(icp_reset, dev);
 }
 
-static void icp_unrealize(DeviceState *dev, Error **errp)
+static void icp_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     qemu_unregister_reset(icp_reset, dev);
 }
@@ -601,7 +601,7 @@ static void ics_simple_initfn(Object *obj)
     ics->offset = XICS_IRQ_BASE;
 }
 
-static void ics_simple_realize(DeviceState *dev, Error **errp)
+static void ics_simple_realize(DeviceState *dev, Error *errp[static 1])
 {
     ICSState *ics = ICS_SIMPLE(dev);
 
@@ -642,7 +642,7 @@ static const TypeInfo ics_simple_info = {
     .instance_init = ics_simple_initfn,
 };
 
-static void ics_base_realize(DeviceState *dev, Error **errp)
+static void ics_base_realize(DeviceState *dev, Error *errp[static 1])
 {
     ICSStateClass *icsc = ICS_BASE_GET_CLASS(dev);
     ICSState *ics = ICS_BASE(dev);

@@ -74,10 +74,10 @@ static inline unsigned int get_physical_block_exp(BlockConf *conf)
 void blkconf_serial(BlockConf *conf, char **serial);
 void blkconf_geometry(BlockConf *conf, int *trans,
                       unsigned cyls_max, unsigned heads_max, unsigned secs_max,
-                      Error **errp);
+                      Error *errp[static 1]);
 void blkconf_blocksizes(BlockConf *conf);
 void blkconf_apply_backend_options(BlockConf *conf, bool readonly,
-                                   bool resizable, Error **errp);
+                                   bool resizable, Error *errp[static 1]);
 
 /* Hard disk geometry */
 

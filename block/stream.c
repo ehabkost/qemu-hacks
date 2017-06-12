@@ -212,7 +212,8 @@ out:
     block_job_defer_to_main_loop(&s->common, stream_complete, data);
 }
 
-static void stream_set_speed(BlockJob *job, int64_t speed, Error **errp)
+static void stream_set_speed(BlockJob *job, int64_t speed,
+                             Error *errp[static 1])
 {
     StreamBlockJob *s = container_of(job, StreamBlockJob, common);
 
@@ -232,7 +233,8 @@ static const BlockJobDriver stream_job_driver = {
 
 void stream_start(const char *job_id, BlockDriverState *bs,
                   BlockDriverState *base, const char *backing_file_str,
-                  int64_t speed, BlockdevOnError on_error, Error **errp)
+                  int64_t speed, BlockdevOnError on_error,
+                  Error *errp[static 1])
 {
     StreamBlockJob *s;
     BlockDriverState *iter;

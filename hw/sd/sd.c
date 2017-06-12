@@ -458,7 +458,7 @@ static bool sd_get_readonly(SDState *sd)
     return sd->wp_switch;
 }
 
-static void sd_cardchange(void *opaque, bool load, Error **errp)
+static void sd_cardchange(void *opaque, bool load, Error *errp[static 1])
 {
     SDState *sd = opaque;
     DeviceState *dev = DEVICE(sd);
@@ -1884,7 +1884,7 @@ static void sd_instance_finalize(Object *obj)
     timer_free(sd->ocr_power_timer);
 }
 
-static void sd_realize(DeviceState *dev, Error **errp)
+static void sd_realize(DeviceState *dev, Error *errp[static 1])
 {
     SDState *sd = SD_CARD(dev);
     int ret;

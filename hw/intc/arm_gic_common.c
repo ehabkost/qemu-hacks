@@ -127,7 +127,7 @@ void gic_init_irqs_and_mmio(GICState *s, qemu_irq_handler handler,
     sysbus_init_mmio(sbd, &s->cpuiomem[0]);
 }
 
-static void arm_gic_common_realize(DeviceState *dev, Error **errp)
+static void arm_gic_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     GICState *s = ARM_GIC_COMMON(dev);
     int num_irq = s->num_irq;

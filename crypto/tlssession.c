@@ -94,7 +94,7 @@ qcrypto_tls_session_new(QCryptoTLSCreds *creds,
                         const char *hostname,
                         const char *aclname,
                         QCryptoTLSCredsEndpoint endpoint,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     QCryptoTLSSession *session;
     int ret;
@@ -212,7 +212,7 @@ qcrypto_tls_session_new(QCryptoTLSCreds *creds,
 
 static int
 qcrypto_tls_session_check_certificate(QCryptoTLSSession *session,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     int ret;
     unsigned int status;
@@ -347,7 +347,7 @@ qcrypto_tls_session_check_certificate(QCryptoTLSSession *session,
 
 int
 qcrypto_tls_session_check_credentials(QCryptoTLSSession *session,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     if (object_dynamic_cast(OBJECT(session->creds),
                             TYPE_QCRYPTO_TLS_CREDS_ANON)) {
@@ -440,7 +440,7 @@ qcrypto_tls_session_read(QCryptoTLSSession *session,
 
 int
 qcrypto_tls_session_handshake(QCryptoTLSSession *session,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     int ret = gnutls_handshake(session->handle);
     if (ret == 0) {
@@ -475,7 +475,7 @@ qcrypto_tls_session_get_handshake_status(QCryptoTLSSession *session)
 
 int
 qcrypto_tls_session_get_key_size(QCryptoTLSSession *session,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     gnutls_cipher_algorithm_t cipher;
     int ssf;
@@ -508,7 +508,7 @@ qcrypto_tls_session_new(QCryptoTLSCreds *creds G_GNUC_UNUSED,
                         const char *hostname G_GNUC_UNUSED,
                         const char *aclname G_GNUC_UNUSED,
                         QCryptoTLSCredsEndpoint endpoint G_GNUC_UNUSED,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     error_setg(errp, "TLS requires GNUTLS support");
     return NULL;
@@ -523,7 +523,7 @@ qcrypto_tls_session_free(QCryptoTLSSession *sess G_GNUC_UNUSED)
 
 int
 qcrypto_tls_session_check_credentials(QCryptoTLSSession *sess G_GNUC_UNUSED,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     error_setg(errp, "TLS requires GNUTLS support");
     return -1;
@@ -562,7 +562,7 @@ qcrypto_tls_session_read(QCryptoTLSSession *sess,
 
 int
 qcrypto_tls_session_handshake(QCryptoTLSSession *sess,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     error_setg(errp, "TLS requires GNUTLS support");
     return -1;
@@ -578,7 +578,7 @@ qcrypto_tls_session_get_handshake_status(QCryptoTLSSession *sess)
 
 int
 qcrypto_tls_session_get_key_size(QCryptoTLSSession *sess,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     error_setg(errp, "TLS requires GNUTLS support");
     return -1;

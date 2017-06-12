@@ -171,7 +171,7 @@ static void timer_hit(void *opaque)
     qemu_set_irq(t->irq, timer_irq_state(t));
 }
 
-static void altera_timer_realize(DeviceState *dev, Error **errp)
+static void altera_timer_realize(DeviceState *dev, Error *errp[static 1])
 {
     AlteraTimer *t = ALTERA_TIMER(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

@@ -53,7 +53,7 @@ static ssize_t qio_channel_buffer_readv(QIOChannel *ioc,
                                         size_t niov,
                                         int **fds,
                                         size_t *nfds,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     QIOChannelBuffer *bioc = QIO_CHANNEL_BUFFER(ioc);
     ssize_t ret = 0;
@@ -80,7 +80,7 @@ static ssize_t qio_channel_buffer_writev(QIOChannel *ioc,
                                          size_t niov,
                                          int *fds,
                                          size_t nfds,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QIOChannelBuffer *bioc = QIO_CHANNEL_BUFFER(ioc);
     ssize_t ret = 0;
@@ -115,7 +115,7 @@ static ssize_t qio_channel_buffer_writev(QIOChannel *ioc,
 
 static int qio_channel_buffer_set_blocking(QIOChannel *ioc G_GNUC_UNUSED,
                                            bool enabled G_GNUC_UNUSED,
-                                           Error **errp G_GNUC_UNUSED)
+                                           Error *errp[static 1] G_GNUC_UNUSED)
 {
     return 0;
 }
@@ -124,7 +124,7 @@ static int qio_channel_buffer_set_blocking(QIOChannel *ioc G_GNUC_UNUSED,
 static off_t qio_channel_buffer_seek(QIOChannel *ioc,
                                      off_t offset,
                                      int whence,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QIOChannelBuffer *bioc = QIO_CHANNEL_BUFFER(ioc);
 
@@ -135,7 +135,7 @@ static off_t qio_channel_buffer_seek(QIOChannel *ioc,
 
 
 static int qio_channel_buffer_close(QIOChannel *ioc,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     QIOChannelBuffer *bioc = QIO_CHANNEL_BUFFER(ioc);
 

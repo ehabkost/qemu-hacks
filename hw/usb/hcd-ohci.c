@@ -1848,7 +1848,7 @@ static USBBusOps ohci_bus_ops = {
 static void usb_ohci_init(OHCIState *ohci, DeviceState *dev,
                           int num_ports, dma_addr_t localmem_base,
                           char *masterbus, uint32_t firstport,
-                          AddressSpace *as, Error **errp)
+                          AddressSpace *as, Error *errp[static 1])
 {
     int i;
 
@@ -1940,7 +1940,7 @@ static void ohci_die(OHCIState *ohci)
                  PCI_STATUS_DETECTED_PARITY);
 }
 
-static void usb_ohci_realize_pci(PCIDevice *dev, Error **errp)
+static void usb_ohci_realize_pci(PCIDevice *dev, Error *errp[static 1])
 {
     OHCIPCIState *ohci = PCI_OHCI(dev);
 
@@ -2002,7 +2002,7 @@ typedef struct {
     dma_addr_t dma_offset;
 } OHCISysBusState;
 
-static void ohci_realize_pxa(DeviceState *dev, Error **errp)
+static void ohci_realize_pxa(DeviceState *dev, Error *errp[static 1])
 {
     OHCISysBusState *s = SYSBUS_OHCI(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

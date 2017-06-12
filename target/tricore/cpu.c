@@ -61,7 +61,7 @@ static bool tricore_cpu_has_work(CPUState *cs)
     return true;
 }
 
-static void tricore_cpu_realizefn(DeviceState *dev, Error **errp)
+static void tricore_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     TriCoreCPU *cpu = TRICORE_CPU(dev);

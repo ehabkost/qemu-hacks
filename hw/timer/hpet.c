@@ -709,7 +709,7 @@ static void hpet_init(Object *obj)
     sysbus_init_mmio(sbd, &s->iomem);
 }
 
-static void hpet_realize(DeviceState *dev, Error **errp)
+static void hpet_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     HPETState *s = HPET(dev);

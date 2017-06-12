@@ -429,7 +429,7 @@ static Property virtio_mmio_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_mmio_realizefn(DeviceState *d, Error **errp)
+static void virtio_mmio_realizefn(DeviceState *d, Error *errp[static 1])
 {
     VirtIOMMIOProxy *proxy = VIRTIO_MMIO(d);
     SysBusDevice *sbd = SYS_BUS_DEVICE(d);

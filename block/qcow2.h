@@ -530,7 +530,7 @@ int qcow2_pre_write_overlap_check(BlockDriverState *bs, int ign, int64_t offset,
 
 int qcow2_change_refcount_order(BlockDriverState *bs, int refcount_order,
                                 BlockDriverAmendStatusCB *status_cb,
-                                void *cb_opaque, Error **errp);
+                                void *cb_opaque, Error *errp[static 1]);
 
 /* qcow2-cluster.c functions */
 int qcow2_grow_l1_table(BlockDriverState *bs, uint64_t min_size,
@@ -539,7 +539,7 @@ int qcow2_write_l1_entry(BlockDriverState *bs, int l1_index);
 int qcow2_decompress_cluster(BlockDriverState *bs, uint64_t cluster_offset);
 int qcow2_encrypt_sectors(BDRVQcow2State *s, int64_t sector_num,
                           uint8_t *out_buf, const uint8_t *in_buf,
-                          int nb_sectors, bool enc, Error **errp);
+                          int nb_sectors, bool enc, Error *errp[static 1]);
 
 int qcow2_get_cluster_offset(BlockDriverState *bs, uint64_t offset,
                              unsigned int *bytes, uint64_t *cluster_offset);
@@ -567,12 +567,12 @@ int qcow2_snapshot_goto(BlockDriverState *bs, const char *snapshot_id);
 int qcow2_snapshot_delete(BlockDriverState *bs,
                           const char *snapshot_id,
                           const char *name,
-                          Error **errp);
+                          Error *errp[static 1]);
 int qcow2_snapshot_list(BlockDriverState *bs, QEMUSnapshotInfo **psn_tab);
 int qcow2_snapshot_load_tmp(BlockDriverState *bs,
                             const char *snapshot_id,
                             const char *name,
-                            Error **errp);
+                            Error *errp[static 1]);
 
 void qcow2_free_snapshots(BlockDriverState *bs);
 int qcow2_read_snapshots(BlockDriverState *bs);

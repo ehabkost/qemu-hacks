@@ -27,7 +27,8 @@
 #include "trace.h"
 
 
-static SocketAddress *tcp_build_address(const char *host_port, Error **errp)
+static SocketAddress *tcp_build_address(const char *host_port,
+                                        Error *errp[static 1])
 {
     SocketAddress *saddr;
 
@@ -90,7 +91,7 @@ static void socket_outgoing_migration(QIOTask *task,
 
 static void socket_start_outgoing_migration(MigrationState *s,
                                             SocketAddress *saddr,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     QIOChannelSocket *sioc = qio_channel_socket_new();
     struct SocketConnectData *data = g_new0(struct SocketConnectData, 1);
@@ -111,7 +112,7 @@ static void socket_start_outgoing_migration(MigrationState *s,
 
 void tcp_start_outgoing_migration(MigrationState *s,
                                   const char *host_port,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     Error *err = NULL;
     SocketAddress *saddr = tcp_build_address(host_port, &err);
@@ -123,7 +124,7 @@ void tcp_start_outgoing_migration(MigrationState *s,
 
 void unix_start_outgoing_migration(MigrationState *s,
                                    const char *path,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     SocketAddress *saddr = unix_build_address(path);
     socket_start_outgoing_migration(s, saddr, errp);
@@ -160,7 +161,7 @@ out:
 
 
 static void socket_start_incoming_migration(SocketAddress *saddr,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     QIOChannelSocket *listen_ioc = qio_channel_socket_new();
 
@@ -181,7 +182,8 @@ static void socket_start_incoming_migration(SocketAddress *saddr,
     qapi_free_SocketAddress(saddr);
 }
 
-void tcp_start_incoming_migration(const char *host_port, Error **errp)
+void tcp_start_incoming_migration(const char *host_port,
+                                  Error *errp[static 1])
 {
     Error *err = NULL;
     SocketAddress *saddr = tcp_build_address(host_port, &err);
@@ -191,7 +193,7 @@ void tcp_start_incoming_migration(const char *host_port, Error **errp)
     error_propagate(errp, err);
 }
 
-void unix_start_incoming_migration(const char *path, Error **errp)
+void unix_start_incoming_migration(const char *path, Error *errp[static 1])
 {
     SocketAddress *saddr = unix_build_address(path);
     socket_start_incoming_migration(saddr, errp);

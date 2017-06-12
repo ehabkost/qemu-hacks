@@ -70,7 +70,7 @@ typedef struct M48t59State {
 uint32_t m48t59_read(M48t59State *NVRAM, uint32_t addr);
 void m48t59_write(M48t59State *NVRAM, uint32_t addr, uint32_t val);
 void m48t59_reset_common(M48t59State *NVRAM);
-void m48t59_realize_common(M48t59State *s, Error **errp);
+void m48t59_realize_common(M48t59State *s, Error *errp[static 1]);
 
 static inline void m48t59_toggle_lock(M48t59State *NVRAM, int lock)
 {

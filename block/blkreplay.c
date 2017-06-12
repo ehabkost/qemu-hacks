@@ -21,7 +21,7 @@ typedef struct Request {
 } Request;
 
 static int blkreplay_open(BlockDriverState *bs, QDict *options, int flags,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     Error *local_err = NULL;
     int ret;

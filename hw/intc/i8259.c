@@ -445,7 +445,7 @@ static const MemoryRegionOps pic_elcr_ioport_ops = {
     },
 };
 
-static void pic_realize(DeviceState *dev, Error **errp)
+static void pic_realize(DeviceState *dev, Error *errp[static 1])
 {
     PICCommonState *s = PIC_COMMON(dev);
     PICClass *pc = PIC_GET_CLASS(dev);

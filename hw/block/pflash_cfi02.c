@@ -593,7 +593,7 @@ static const MemoryRegionOps pflash_cfi02_ops_le = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void pflash_cfi02_realize(DeviceState *dev, Error **errp)
+static void pflash_cfi02_realize(DeviceState *dev, Error *errp[static 1])
 {
     pflash_t *pfl = CFI_PFLASH02(dev);
     uint32_t chip_len;

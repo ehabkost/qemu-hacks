@@ -5,7 +5,7 @@
 #include "qapi/qmp/qdict.h"
 
 QemuOptsList *qemu_find_opts(const char *group);
-QemuOptsList *qemu_find_opts_err(const char *group, Error **errp);
+QemuOptsList *qemu_find_opts_err(const char *group, Error *errp[static 1]);
 QemuOpts *qemu_find_opts_singleton(const char *group);
 
 void qemu_add_opts(QemuOptsList *list);
@@ -21,6 +21,6 @@ int qemu_read_config_file(const char *filename);
 /* Parse QDict options as a replacement for a config file (allowing multiple
    enumerated (0..(n-1)) configuration "sections") */
 void qemu_config_parse_qdict(QDict *options, QemuOptsList **lists,
-                             Error **errp);
+                             Error *errp[static 1]);
 
 #endif /* QEMU_CONFIG_FILE_H */

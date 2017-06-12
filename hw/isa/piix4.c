@@ -87,7 +87,7 @@ static const VMStateDescription vmstate_piix4 = {
     }
 };
 
-static void piix4_realize(PCIDevice *dev, Error **errp)
+static void piix4_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PIIX4State *d = PIIX4_PCI_DEVICE(dev);
 

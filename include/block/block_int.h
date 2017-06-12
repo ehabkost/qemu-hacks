@@ -785,7 +785,8 @@ int is_windows_drive(const char *filename);
  */
 void stream_start(const char *job_id, BlockDriverState *bs,
                   BlockDriverState *base, const char *backing_file_str,
-                  int64_t speed, BlockdevOnError on_error, Error **errp);
+                  int64_t speed, BlockdevOnError on_error,
+                  Error *errp[static 1]);
 
 /**
  * commit_start:
@@ -806,7 +807,7 @@ void stream_start(const char *job_id, BlockDriverState *bs,
 void commit_start(const char *job_id, BlockDriverState *bs,
                   BlockDriverState *base, BlockDriverState *top, int64_t speed,
                   BlockdevOnError on_error, const char *backing_file_str,
-                  const char *filter_node_name, Error **errp);
+                  const char *filter_node_name, Error *errp[static 1]);
 /**
  * commit_active_start:
  * @job_id: The id of the newly-created job, or %NULL to use the
@@ -831,7 +832,7 @@ void commit_active_start(const char *job_id, BlockDriverState *bs,
                          int64_t speed, BlockdevOnError on_error,
                          const char *filter_node_name,
                          BlockCompletionFunc *cb, void *opaque,
-                         bool auto_complete, Error **errp);
+                         bool auto_complete, Error *errp[static 1]);
 /*
  * mirror_start:
  * @job_id: The id of the newly-created job, or %NULL to use the
@@ -864,7 +865,8 @@ void mirror_start(const char *job_id, BlockDriverState *bs,
                   MirrorSyncMode mode, BlockMirrorBackingMode backing_mode,
                   BlockdevOnError on_source_error,
                   BlockdevOnError on_target_error,
-                  bool unmap, const char *filter_node_name, Error **errp);
+                  bool unmap, const char *filter_node_name,
+                  Error *errp[static 1]);
 
 /*
  * backup_job_create:
@@ -895,7 +897,7 @@ BlockJob *backup_job_create(const char *job_id, BlockDriverState *bs,
                             BlockdevOnError on_target_error,
                             int creation_flags,
                             BlockCompletionFunc *cb, void *opaque,
-                            BlockJobTxn *txn, Error **errp);
+                            BlockJobTxn *txn, Error *errp[static 1]);
 
 void hmp_drive_add_node(Monitor *mon, const char *optstr);
 
@@ -903,11 +905,11 @@ BdrvChild *bdrv_root_attach_child(BlockDriverState *child_bs,
                                   const char *child_name,
                                   const BdrvChildRole *child_role,
                                   uint64_t perm, uint64_t shared_perm,
-                                  void *opaque, Error **errp);
+                                  void *opaque, Error *errp[static 1]);
 void bdrv_root_unref_child(BdrvChild *child);
 
 int bdrv_child_try_set_perm(BdrvChild *c, uint64_t perm, uint64_t shared,
-                            Error **errp);
+                            Error *errp[static 1]);
 
 /* Default implementation for BlockDriver.bdrv_child_perm() that can be used by
  * block filters: Forward CONSISTENT_READ, WRITE, WRITE_UNCHANGED and RESIZE to
@@ -927,7 +929,8 @@ void bdrv_format_default_perms(BlockDriverState *bs, BdrvChild *c,
                                uint64_t *nperm, uint64_t *nshared);
 
 const char *bdrv_get_parent_name(const BlockDriverState *bs);
-void blk_dev_change_media_cb(BlockBackend *blk, bool load, Error **errp);
+void blk_dev_change_media_cb(BlockBackend *blk, bool load,
+			     Error *errp[static 1]);
 bool blk_dev_has_removable_media(BlockBackend *blk);
 bool blk_dev_has_tray(BlockBackend *blk);
 void blk_dev_eject_request(BlockBackend *blk, bool force);

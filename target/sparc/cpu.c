@@ -105,7 +105,7 @@ static void cpu_sparc_disas_set_info(CPUState *cpu, disassemble_info *info)
 }
 
 static void sparc_cpu_parse_features(CPUState *cs, char *features,
-                                     Error **errp);
+                                     Error *errp[static 1]);
 
 static int cpu_sparc_register(SPARCCPU *cpu, const char *cpu_model)
 {
@@ -571,7 +571,7 @@ static int cpu_sparc_find_by_name(sparc_def_t *cpu_def, const char *name)
 }
 
 static void sparc_cpu_parse_features(CPUState *cs, char *features,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     SPARCCPU *cpu = SPARC_CPU(cs);
     sparc_def_t *cpu_def = cpu->env.def;
@@ -796,7 +796,7 @@ static bool sparc_cpu_has_work(CPUState *cs)
            cpu_interrupts_enabled(env);
 }
 
-static void sparc_cpu_realizefn(DeviceState *dev, Error **errp)
+static void sparc_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     SPARCCPUClass *scc = SPARC_CPU_GET_CLASS(dev);

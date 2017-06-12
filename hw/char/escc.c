@@ -1001,7 +1001,7 @@ static void escc_init1(Object *obj)
     sysbus_init_mmio(dev, &s->mmio);
 }
 
-static void escc_realize(DeviceState *dev, Error **errp)
+static void escc_realize(DeviceState *dev, Error *errp[static 1])
 {
     ESCCState *s = ESCC(dev);
     unsigned int i;

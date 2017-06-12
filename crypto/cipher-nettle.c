@@ -252,7 +252,7 @@ bool qcrypto_cipher_supports(QCryptoCipherAlgorithm alg,
 QCryptoCipher *qcrypto_cipher_new(QCryptoCipherAlgorithm alg,
                                   QCryptoCipherMode mode,
                                   const uint8_t *key, size_t nkey,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     QCryptoCipher *cipher;
     QCryptoCipherNettle *ctx;
@@ -452,7 +452,7 @@ int qcrypto_cipher_encrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoCipherNettle *ctx = cipher->opaque;
 
@@ -498,7 +498,7 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoCipherNettle *ctx = cipher->opaque;
 
@@ -540,7 +540,7 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
 
 int qcrypto_cipher_setiv(QCryptoCipher *cipher,
                          const uint8_t *iv, size_t niv,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     QCryptoCipherNettle *ctx = cipher->opaque;
     if (niv != ctx->blocksize) {

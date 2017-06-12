@@ -3072,7 +3072,7 @@ static AddressSpace *vtd_host_dma_iommu(PCIBus *bus, void *opaque, int devfn)
     return &vtd_as->as;
 }
 
-static bool vtd_decide_config(IntelIOMMUState *s, Error **errp)
+static bool vtd_decide_config(IntelIOMMUState *s, Error *errp[static 1])
 {
     X86IOMMUState *x86_iommu = X86_IOMMU_DEVICE(s);
 
@@ -3108,7 +3108,7 @@ static bool vtd_decide_config(IntelIOMMUState *s, Error **errp)
     return true;
 }
 
-static void vtd_realize(DeviceState *dev, Error **errp)
+static void vtd_realize(DeviceState *dev, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(qdev_get_machine());
     MachineClass *mc = MACHINE_GET_CLASS(ms);

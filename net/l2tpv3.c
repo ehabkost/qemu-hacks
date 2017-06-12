@@ -526,7 +526,7 @@ static NetClientInfo net_l2tpv3_info = {
 
 int net_init_l2tpv3(const Netdev *netdev,
                     const char *name,
-                    NetClientState *peer, Error **errp)
+                    NetClientState *peer, Error *errp[static 1])
 {
     /* FIXME error_setg(errp, ...) on failure */
     const NetdevL2TPv3Options *l2tpv3;

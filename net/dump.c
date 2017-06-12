@@ -101,7 +101,7 @@ static void dump_cleanup(DumpState *s)
 }
 
 static int net_dump_state_init(DumpState *s, const char *filename,
-                               int len, Error **errp)
+                               int len, Error *errp[static 1])
 {
     struct pcap_file_hdr hdr;
     struct tm tm;
@@ -180,7 +180,7 @@ static NetClientInfo net_dump_info = {
 };
 
 int net_init_dump(const Netdev *netdev, const char *name,
-                  NetClientState *peer, Error **errp)
+                  NetClientState *peer, Error *errp[static 1])
 {
     int len, rc;
     const char *file;
@@ -264,7 +264,7 @@ static void filter_dump_cleanup(NetFilterState *nf)
     dump_cleanup(&nfds->ds);
 }
 
-static void filter_dump_setup(NetFilterState *nf, Error **errp)
+static void filter_dump_setup(NetFilterState *nf, Error *errp[static 1])
 {
     NetFilterDumpState *nfds = FILTER_DUMP(nf);
 
@@ -277,7 +277,7 @@ static void filter_dump_setup(NetFilterState *nf, Error **errp)
 }
 
 static void filter_dump_get_maxlen(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     NetFilterDumpState *nfds = FILTER_DUMP(obj);
     uint32_t value = nfds->maxlen;
@@ -286,7 +286,7 @@ static void filter_dump_get_maxlen(Object *obj, Visitor *v, const char *name,
 }
 
 static void filter_dump_set_maxlen(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     NetFilterDumpState *nfds = FILTER_DUMP(obj);
     Error *local_err = NULL;
@@ -307,14 +307,15 @@ out:
     error_propagate(errp, local_err);
 }
 
-static char *file_dump_get_filename(Object *obj, Error **errp)
+static char *file_dump_get_filename(Object *obj, Error *errp[static 1])
 {
     NetFilterDumpState *nfds = FILTER_DUMP(obj);
 
     return g_strdup(nfds->filename);
 }
 
-static void file_dump_set_filename(Object *obj, const char *value, Error **errp)
+static void file_dump_set_filename(Object *obj, const char *value,
+                                   Error *errp[static 1])
 {
    NetFilterDumpState *nfds = FILTER_DUMP(obj);
 

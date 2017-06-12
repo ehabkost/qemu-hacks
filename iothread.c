@@ -97,7 +97,7 @@ static void iothread_instance_finalize(Object *obj)
     aio_context_unref(iothread->ctx);
 }
 
-static void iothread_complete(UserCreatable *obj, Error **errp)
+static void iothread_complete(UserCreatable *obj, Error *errp[static 1])
 {
     Error *local_error = NULL;
     IOThread *iothread = IOTHREAD(obj);
@@ -161,7 +161,7 @@ static PollParamInfo poll_shrink_info = {
 };
 
 static void iothread_get_poll_param(Object *obj, Visitor *v,
-        const char *name, void *opaque, Error **errp)
+        const char *name, void *opaque, Error *errp[static 1])
 {
     IOThread *iothread = IOTHREAD(obj);
     PollParamInfo *info = opaque;
@@ -171,7 +171,7 @@ static void iothread_get_poll_param(Object *obj, Visitor *v,
 }
 
 static void iothread_set_poll_param(Object *obj, Visitor *v,
-        const char *name, void *opaque, Error **errp)
+        const char *name, void *opaque, Error *errp[static 1])
 {
     IOThread *iothread = IOTHREAD(obj);
     PollParamInfo *info = opaque;
@@ -281,7 +281,7 @@ static int query_one_iothread(Object *object, void *opaque)
     return 0;
 }
 
-IOThreadInfoList *qmp_query_iothreads(Error **errp)
+IOThreadInfoList *qmp_query_iothreads(Error *errp[static 1])
 {
     IOThreadInfoList *head = NULL;
     IOThreadInfoList **prev = &head;

@@ -163,7 +163,7 @@ static void chr_event(void *opaque, int event)
     }
 }
 
-static void virtconsole_realize(DeviceState *dev, Error **errp)
+static void virtconsole_realize(DeviceState *dev, Error *errp[static 1])
 {
     VirtIOSerialPort *port = VIRTIO_SERIAL_PORT(dev);
     VirtConsole *vcon = VIRTIO_CONSOLE(dev);
@@ -197,7 +197,7 @@ static void virtconsole_realize(DeviceState *dev, Error **errp)
     }
 }
 
-static void virtconsole_unrealize(DeviceState *dev, Error **errp)
+static void virtconsole_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     VirtConsole *vcon = VIRTIO_CONSOLE(dev);
 

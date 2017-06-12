@@ -234,7 +234,7 @@ static const MemoryRegionOps pci_testdev_pio_ops = {
     },
 };
 
-static void pci_testdev_realize(PCIDevice *pci_dev, Error **errp)
+static void pci_testdev_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     PCITestDevState *d = PCI_TEST_DEV(pci_dev);
     uint8_t *pci_conf;

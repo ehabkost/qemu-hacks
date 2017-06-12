@@ -57,7 +57,7 @@ static const MemoryRegionOps AcpiCpuHotplug_ops = {
 };
 
 static void acpi_set_cpu_present_bit(AcpiCpuHotplug *g, CPUState *cpu,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     CPUClass *k = CPU_GET_CLASS(cpu);
     int64_t cpu_id;
@@ -73,7 +73,8 @@ static void acpi_set_cpu_present_bit(AcpiCpuHotplug *g, CPUState *cpu,
 }
 
 void legacy_acpi_cpu_plug_cb(HotplugHandler *hotplug_dev,
-                             AcpiCpuHotplug *g, DeviceState *dev, Error **errp)
+                             AcpiCpuHotplug *g, DeviceState *dev,
+                             Error *errp[static 1])
 {
     acpi_set_cpu_present_bit(g, CPU(dev), errp);
     if (ERR_IS_SET(errp)) {

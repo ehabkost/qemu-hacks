@@ -22,6 +22,6 @@ bool vss_initialized(void);
 int ga_install_vss_provider(void);
 void ga_uninstall_vss_provider(void);
 
-void qga_vss_fsfreeze(int *nr_volume, bool freeze, Error **errp);
+void qga_vss_fsfreeze(int *nr_volume, bool freeze, Error *errp[static 1]);
 
 #endif

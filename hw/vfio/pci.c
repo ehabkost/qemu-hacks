@@ -100,7 +100,7 @@ static void vfio_intx_eoi(VFIODevice *vbasedev)
     vfio_unmask_single_irqindex(vbasedev, VFIO_PCI_INTX_IRQ_INDEX);
 }
 
-static void vfio_intx_enable_kvm(VFIOPCIDevice *vdev, Error **errp)
+static void vfio_intx_enable_kvm(VFIOPCIDevice *vdev, Error *errp[static 1])
 {
 #ifdef CONFIG_KVM
     struct kvm_irqfd irqfd = {
@@ -254,7 +254,7 @@ static void vfio_intx_update(PCIDevice *pdev)
     vfio_intx_eoi(&vdev->vbasedev);
 }
 
-static int vfio_intx_enable(VFIOPCIDevice *vdev, Error **errp)
+static int vfio_intx_enable(VFIOPCIDevice *vdev, Error *errp[static 1])
 {
     uint8_t pin = vfio_pci_read_config(&vdev->pdev, PCI_INTERRUPT_PIN, 1);
     int ret, argsz;
@@ -1247,7 +1247,7 @@ static void vfio_disable_interrupts(VFIOPCIDevice *vdev)
     }
 }
 
-static int vfio_msi_setup(VFIOPCIDevice *vdev, int pos, Error **errp)
+static int vfio_msi_setup(VFIOPCIDevice *vdev, int pos, Error *errp[static 1])
 {
     uint16_t ctrl;
     bool msi_64bit, msi_maskbit;
@@ -1357,7 +1357,7 @@ static void vfio_pci_fixup_msix_region(VFIOPCIDevice *vdev)
  * need to first look for where the MSI-X table lives.  So we
  * unfortunately split MSI-X setup across two functions.
  */
-static void vfio_msix_early_setup(VFIOPCIDevice *vdev, Error **errp)
+static void vfio_msix_early_setup(VFIOPCIDevice *vdev, Error *errp[static 1])
 {
     uint8_t pos;
     uint16_t ctrl;
@@ -1429,7 +1429,8 @@ static void vfio_msix_early_setup(VFIOPCIDevice *vdev, Error **errp)
     vfio_pci_fixup_msix_region(vdev);
 }
 
-static int vfio_msix_setup(VFIOPCIDevice *vdev, int pos, Error **errp)
+static int vfio_msix_setup(VFIOPCIDevice *vdev, int pos,
+                           Error *errp[static 1])
 {
     int ret;
     Error *err = NULL;
@@ -1781,7 +1782,8 @@ static void vfio_check_af_flr(VFIOPCIDevice *vdev, uint8_t pos)
     }
 }
 
-static int vfio_add_std_cap(VFIOPCIDevice *vdev, uint8_t pos, Error **errp)
+static int vfio_add_std_cap(VFIOPCIDevice *vdev, uint8_t pos,
+                            Error *errp[static 1])
 {
     PCIDevice *pdev = &vdev->pdev;
     uint8_t cap_id, next, size;
@@ -1945,7 +1947,7 @@ static void vfio_add_ext_cap(VFIOPCIDevice *vdev)
     return;
 }
 
-static int vfio_add_capabilities(VFIOPCIDevice *vdev, Error **errp)
+static int vfio_add_capabilities(VFIOPCIDevice *vdev, Error *errp[static 1])
 {
     PCIDevice *pdev = &vdev->pdev;
     int ret;
@@ -2253,7 +2255,7 @@ static VFIODeviceOps vfio_pci_ops = {
     .vfio_eoi = vfio_intx_eoi,
 };
 
-int vfio_populate_vga(VFIOPCIDevice *vdev, Error **errp)
+int vfio_populate_vga(VFIOPCIDevice *vdev, Error *errp[static 1])
 {
     VFIODevice *vbasedev = &vdev->vbasedev;
     struct vfio_region_info *reg_info;
@@ -2321,7 +2323,7 @@ int vfio_populate_vga(VFIOPCIDevice *vdev, Error **errp)
     return 0;
 }
 
-static void vfio_populate_device(VFIOPCIDevice *vdev, Error **errp)
+static void vfio_populate_device(VFIOPCIDevice *vdev, Error *errp[static 1])
 {
     VFIODevice *vbasedev = &vdev->vbasedev;
     struct vfio_region_info *reg_info;
@@ -2609,7 +2611,7 @@ static void vfio_unregister_req_notifier(VFIOPCIDevice *vdev)
     vdev->req_enabled = false;
 }
 
-static void vfio_realize(PCIDevice *pdev, Error **errp)
+static void vfio_realize(PCIDevice *pdev, Error *errp[static 1])
 {
     VFIOPCIDevice *vdev = DO_UPCAST(VFIOPCIDevice, pdev, pdev);
     VFIODevice *vbasedev_iter;

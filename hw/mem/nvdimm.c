@@ -28,7 +28,7 @@
 #include "hw/mem/nvdimm.h"
 
 static void nvdimm_get_label_size(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     NVDIMMDevice *nvdimm = NVDIMM(obj);
     uint64_t value = nvdimm->label_size;
@@ -37,7 +37,7 @@ static void nvdimm_get_label_size(Object *obj, Visitor *v, const char *name,
 }
 
 static void nvdimm_set_label_size(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     NVDIMMDevice *nvdimm = NVDIMM(obj);
     Error *local_err = NULL;
@@ -78,7 +78,7 @@ static MemoryRegion *nvdimm_get_memory_region(PCDIMMDevice *dimm)
     return &nvdimm->nvdimm_mr;
 }
 
-static void nvdimm_realize(PCDIMMDevice *dimm, Error **errp)
+static void nvdimm_realize(PCDIMMDevice *dimm, Error *errp[static 1])
 {
     MemoryRegion *mr = host_memory_backend_get_memory(dimm->hostmem, errp);
     NVDIMMDevice *nvdimm = NVDIMM(dimm);

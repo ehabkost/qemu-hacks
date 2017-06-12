@@ -200,7 +200,8 @@ static int coroutine_fn backup_before_write_notify(
     return backup_do_cow(job, sector_num, nb_sectors, NULL, true);
 }
 
-static void backup_set_speed(BlockJob *job, int64_t speed, Error **errp)
+static void backup_set_speed(BlockJob *job, int64_t speed,
+                             Error *errp[static 1])
 {
     BackupBlockJob *s = container_of(job, BackupBlockJob, common);
 
@@ -258,7 +259,7 @@ static void backup_attached_aio_context(BlockJob *job, AioContext *aio_context)
     blk_set_aio_context(s->target, aio_context);
 }
 
-void backup_do_checkpoint(BlockJob *job, Error **errp)
+void backup_do_checkpoint(BlockJob *job, Error *errp[static 1])
 {
     BackupBlockJob *backup_job = container_of(job, BackupBlockJob, common);
     int64_t len;
@@ -558,7 +559,7 @@ BlockJob *backup_job_create(const char *job_id, BlockDriverState *bs,
                   BlockdevOnError on_target_error,
                   int creation_flags,
                   BlockCompletionFunc *cb, void *opaque,
-                  BlockJobTxn *txn, Error **errp)
+                  BlockJobTxn *txn, Error *errp[static 1])
 {
     int64_t len;
     BlockDriverInfo bdi;

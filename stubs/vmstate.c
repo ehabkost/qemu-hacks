@@ -9,7 +9,7 @@ int vmstate_register_with_alias_id(DeviceState *dev,
                                    const VMStateDescription *vmsd,
                                    void *base, int alias_id,
                                    int required_for_version,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     return 0;
 }

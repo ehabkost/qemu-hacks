@@ -82,7 +82,7 @@ void qemu_input_handler_unregister(QemuInputHandlerState *s)
 
 void qemu_input_handler_bind(QemuInputHandlerState *s,
                              const char *device_id, int head,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     QemuConsole *con;
     Error *err = NULL;
@@ -123,7 +123,7 @@ qemu_input_find_handler(uint32_t mask, QemuConsole *con)
 
 void qmp_input_send_event(bool has_device, const char *device,
                           bool has_head, int64_t head,
-                          InputEventList *events, Error **errp)
+                          InputEventList *events, Error *errp[static 1])
 {
     InputEventList *e;
     QemuConsole *con;
@@ -543,7 +543,7 @@ void qemu_remove_mouse_mode_change_notifier(Notifier *notify)
     notifier_remove(notify);
 }
 
-MouseInfoList *qmp_query_mice(Error **errp)
+MouseInfoList *qmp_query_mice(Error *errp[static 1])
 {
     MouseInfoList *mice_list = NULL;
     MouseInfoList *info;

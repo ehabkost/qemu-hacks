@@ -470,8 +470,9 @@ void trigger_pgm_exception(CPUS390XState *env, uint32_t code, uint32_t ilen);
 #endif
 
 S390CPU *cpu_s390x_init(const char *cpu_model);
-S390CPU *s390x_new_cpu(const char *cpu_model, int64_t id, Error **errp);
-S390CPU *cpu_s390x_create(const char *cpu_model, Error **errp);
+S390CPU *s390x_new_cpu(const char *cpu_model, int64_t id,
+		       Error *errp[static 1]);
+S390CPU *cpu_s390x_create(const char *cpu_model, Error *errp[static 1]);
 void s390x_translate_init(void);
 
 /* you can call this signal handler from your SIGBUS and SIGSEGV
@@ -640,7 +641,7 @@ void s390_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 #define cpu_list s390_cpu_list
 void s390_cpu_model_register_props(Object *obj);
 void s390_cpu_model_class_register_props(ObjectClass *oc);
-void s390_realize_cpu_model(CPUState *cs, Error **errp);
+void s390_realize_cpu_model(CPUState *cs, Error *errp[static 1]);
 ObjectClass *s390_cpu_class_by_name(const char *name);
 
 #define EXCP_EXT 1 /* external interrupt */

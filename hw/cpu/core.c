@@ -12,7 +12,7 @@
 #include "sysemu/cpus.h"
 
 static void core_prop_get_core_id(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     CPUCore *core = CPU_CORE(obj);
     int64_t value = core->core_id;
@@ -21,7 +21,7 @@ static void core_prop_get_core_id(Object *obj, Visitor *v, const char *name,
 }
 
 static void core_prop_set_core_id(Object *obj, Visitor *v, const char *name,
-                                  void *opaque, Error **errp)
+                                  void *opaque, Error *errp[static 1])
 {
     CPUCore *core = CPU_CORE(obj);
     int64_t value;
@@ -35,7 +35,7 @@ static void core_prop_set_core_id(Object *obj, Visitor *v, const char *name,
 }
 
 static void core_prop_get_nr_threads(Object *obj, Visitor *v, const char *name,
-                                     void *opaque, Error **errp)
+                                     void *opaque, Error *errp[static 1])
 {
     CPUCore *core = CPU_CORE(obj);
     int64_t value = core->nr_threads;
@@ -44,7 +44,7 @@ static void core_prop_get_nr_threads(Object *obj, Visitor *v, const char *name,
 }
 
 static void core_prop_set_nr_threads(Object *obj, Visitor *v, const char *name,
-                                     void *opaque, Error **errp)
+                                     void *opaque, Error *errp[static 1])
 {
     CPUCore *core = CPU_CORE(obj);
     int64_t value;

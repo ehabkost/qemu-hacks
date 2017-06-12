@@ -560,7 +560,8 @@ pvscsi_send_msg(PVSCSIState *s, SCSIDevice *dev, uint32_t msg_type)
 }
 
 static void
-pvscsi_hotplug(HotplugHandler *hotplug_dev, DeviceState *dev, Error **errp)
+pvscsi_hotplug(HotplugHandler *hotplug_dev, DeviceState *dev,
+               Error *errp[static 1])
 {
     PVSCSIState *s = PVSCSI(hotplug_dev);
 
@@ -568,7 +569,8 @@ pvscsi_hotplug(HotplugHandler *hotplug_dev, DeviceState *dev, Error **errp)
 }
 
 static void
-pvscsi_hot_unplug(HotplugHandler *hotplug_dev, DeviceState *dev, Error **errp)
+pvscsi_hot_unplug(HotplugHandler *hotplug_dev, DeviceState *dev,
+                  Error *errp[static 1])
 {
     PVSCSIState *s = PVSCSI(hotplug_dev);
 
@@ -1262,7 +1264,7 @@ static Property pvscsi_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void pvscsi_realize(DeviceState *qdev, Error **errp)
+static void pvscsi_realize(DeviceState *qdev, Error *errp[static 1])
 {
     PVSCSIClass *pvs_c = PVSCSI_DEVICE_GET_CLASS(qdev);
     PCIDevice *pci_dev = PCI_DEVICE(qdev);

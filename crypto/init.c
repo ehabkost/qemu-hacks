@@ -119,7 +119,7 @@ static struct gcry_thread_cbs qcrypto_gcrypt_thread_impl = {
 };
 #endif /* QCRYPTO_INIT_GCRYPT */
 
-int qcrypto_init(Error **errp)
+int qcrypto_init(Error *errp[static 1])
 {
 #ifdef QCRYPTO_INIT_GCRYPT_THREADS
     gcry_control(GCRYCTL_SET_THREAD_CBS, &qcrypto_gcrypt_thread_impl);

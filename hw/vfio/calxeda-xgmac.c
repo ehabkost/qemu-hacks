@@ -14,7 +14,7 @@
 #include "qemu/osdep.h"
 #include "hw/vfio/vfio-calxeda-xgmac.h"
 
-static void calxeda_xgmac_realize(DeviceState *dev, Error **errp)
+static void calxeda_xgmac_realize(DeviceState *dev, Error *errp[static 1])
 {
     VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(dev);
     VFIOCalxedaXgmacDeviceClass *k = VFIO_CALXEDA_XGMAC_DEVICE_GET_CLASS(dev);

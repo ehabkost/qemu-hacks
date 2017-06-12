@@ -387,7 +387,7 @@ static uint8_t pci_find_cap_offset(PCIDevice *d, uint8_t cap, uint8_t start)
 static void assigned_dev_register_regions(PCIRegion *io_regions,
                                           unsigned long regions_num,
                                           AssignedDevice *pci_dev,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     uint32_t i;
     PCIRegion *cur_region = io_regions;
@@ -490,7 +490,7 @@ static void assigned_dev_register_regions(PCIRegion *io_regions,
 }
 
 static void get_real_id(const char *devpath, const char *idname, uint16_t *val,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     FILE *f;
     char name[128];
@@ -511,18 +511,18 @@ static void get_real_id(const char *devpath, const char *idname, uint16_t *val,
 }
 
 static void get_real_vendor_id(const char *devpath, uint16_t *val,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     get_real_id(devpath, "vendor", val, errp);
 }
 
 static void get_real_device_id(const char *devpath, uint16_t *val,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     get_real_id(devpath, "device", val, errp);
 }
 
-static void get_real_device(AssignedDevice *pci_dev, Error **errp)
+static void get_real_device(AssignedDevice *pci_dev, Error *errp[static 1])
 {
     char dir[128], name[128];
     int fd, r = 0;
@@ -779,7 +779,7 @@ fail:
     return g_strdup("Couldn't find out why.\n");
 }
 
-static void assign_device(AssignedDevice *dev, Error **errp)
+static void assign_device(AssignedDevice *dev, Error *errp[static 1])
 {
     uint32_t flags = KVM_DEV_ASSIGN_ENABLE_IOMMU;
     int r;
@@ -824,7 +824,7 @@ static void assign_device(AssignedDevice *dev, Error **errp)
     }
 }
 
-static void verify_irqchip_in_kernel(Error **errp)
+static void verify_irqchip_in_kernel(Error *errp[static 1])
 {
     if (kvm_irqchip_in_kernel()) {
         return;
@@ -832,7 +832,7 @@ static void verify_irqchip_in_kernel(Error **errp)
     error_setg(errp, "pci-assign requires KVM with in-kernel irqchip enabled");
 }
 
-static int assign_intx(AssignedDevice *dev, Error **errp)
+static int assign_intx(AssignedDevice *dev, Error *errp[static 1])
 {
     AssignedIRQType new_type;
     PCIINTxRoute intx_route;
@@ -1639,7 +1639,8 @@ static void assigned_dev_msix_reset(AssignedDevice *dev)
     }
 }
 
-static void assigned_dev_register_msix_mmio(AssignedDevice *dev, Error **errp)
+static void assigned_dev_register_msix_mmio(AssignedDevice *dev,
+                                            Error *errp[static 1])
 {
     dev->msix_table = mmap(NULL, dev->msix_table_size, PROT_READ | PROT_WRITE,
                            MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
@@ -1730,7 +1731,7 @@ static void reset_assigned_device(DeviceState *dev)
     assigned_dev_pci_write_config(pci_dev, PCI_COMMAND, 0, 1);
 }
 
-static void assigned_realize(struct PCIDevice *pci_dev, Error **errp)
+static void assigned_realize(struct PCIDevice *pci_dev, Error *errp[static 1])
 {
     AssignedDevice *dev = PCI_ASSIGN(pci_dev);
     uint8_t e_intx;

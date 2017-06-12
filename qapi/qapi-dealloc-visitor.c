@@ -25,7 +25,7 @@ struct QapiDeallocVisitor
 };
 
 static void qapi_dealloc_start_struct(Visitor *v, const char *name, void **obj,
-                                      size_t unused, Error **errp)
+                                      size_t unused, Error *errp[static 1])
 {
 }
 
@@ -38,7 +38,8 @@ static void qapi_dealloc_end_struct(Visitor *v, void **obj)
 
 static void qapi_dealloc_start_alternate(Visitor *v, const char *name,
                                          GenericAlternate **obj, size_t size,
-                                         bool promote_int, Error **errp)
+                                         bool promote_int,
+                                         Error *errp[static 1])
 {
 }
 
@@ -51,7 +52,7 @@ static void qapi_dealloc_end_alternate(Visitor *v, void **obj)
 
 static void qapi_dealloc_start_list(Visitor *v, const char *name,
                                     GenericList **list, size_t size,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
 }
 
@@ -68,7 +69,7 @@ static void qapi_dealloc_end_list(Visitor *v, void **obj)
 }
 
 static void qapi_dealloc_type_str(Visitor *v, const char *name, char **obj,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     if (obj) {
         g_free(*obj);
@@ -76,34 +77,35 @@ static void qapi_dealloc_type_str(Visitor *v, const char *name, char **obj,
 }
 
 static void qapi_dealloc_type_int64(Visitor *v, const char *name, int64_t *obj,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
 }
 
 static void qapi_dealloc_type_uint64(Visitor *v, const char *name,
-                                     uint64_t *obj, Error **errp)
+                                     uint64_t *obj, Error *errp[static 1])
 {
 }
 
 static void qapi_dealloc_type_bool(Visitor *v, const char *name, bool *obj,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
 }
 
 static void qapi_dealloc_type_number(Visitor *v, const char *name, double *obj,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
 }
 
 static void qapi_dealloc_type_anything(Visitor *v, const char *name,
-                                       QObject **obj, Error **errp)
+                                       QObject **obj, Error *errp[static 1])
 {
     if (obj) {
         qobject_decref(*obj);
     }
 }
 
-static void qapi_dealloc_type_null(Visitor *v, const char *name, Error **errp)
+static void qapi_dealloc_type_null(Visitor *v, const char *name,
+				   Error *errp[static 1])
 {
 }
 

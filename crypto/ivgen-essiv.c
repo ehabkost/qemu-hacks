@@ -30,7 +30,7 @@ struct QCryptoIVGenESSIV {
 
 static int qcrypto_ivgen_essiv_init(QCryptoIVGen *ivgen,
                                     const uint8_t *key, size_t nkey,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     uint8_t *salt;
     size_t nhash;
@@ -72,7 +72,7 @@ static int qcrypto_ivgen_essiv_init(QCryptoIVGen *ivgen,
 static int qcrypto_ivgen_essiv_calculate(QCryptoIVGen *ivgen,
                                          uint64_t sector,
                                          uint8_t *iv, size_t niv,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QCryptoIVGenESSIV *essiv = ivgen->private;
     size_t ndata = qcrypto_cipher_get_block_len(ivgen->cipher);

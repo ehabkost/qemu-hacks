@@ -217,7 +217,7 @@ static void kvm_apic_reset(APICCommonState *s)
     run_on_cpu(CPU(s->cpu), kvm_apic_put, RUN_ON_CPU_HOST_PTR(s));
 }
 
-static void kvm_apic_realize(DeviceState *dev, Error **errp)
+static void kvm_apic_realize(DeviceState *dev, Error *errp[static 1])
 {
     APICCommonState *s = APIC_COMMON(dev);
 
@@ -229,7 +229,7 @@ static void kvm_apic_realize(DeviceState *dev, Error **errp)
     }
 }
 
-static void kvm_apic_unrealize(DeviceState *dev, Error **errp)
+static void kvm_apic_unrealize(DeviceState *dev, Error *errp[static 1])
 {
 }
 

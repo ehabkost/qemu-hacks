@@ -276,7 +276,7 @@ static void jazz_led_init(Object *obj)
     sysbus_init_mmio(dev, &s->iomem);
 }
 
-static void jazz_led_realize(DeviceState *dev, Error **errp)
+static void jazz_led_realize(DeviceState *dev, Error *errp[static 1])
 {
     LedState *s = JAZZ_LED(dev);
 

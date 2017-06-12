@@ -52,7 +52,7 @@ static const TypeInfo isa_bus_info = {
 };
 
 ISABus *isa_bus_new(DeviceState *dev, MemoryRegion* address_space,
-                    MemoryRegion *address_space_io, Error **errp)
+                    MemoryRegion *address_space_io, Error *errp[static 1])
 {
     if (isabus) {
         error_setg(errp, "Can't create a second ISA bus");

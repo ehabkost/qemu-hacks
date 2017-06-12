@@ -48,7 +48,7 @@ void s390_skeys_init(void)
 }
 
 static void write_keys(FILE *f, uint8_t *keys, uint64_t startgfn,
-                       uint64_t count, Error **errp)
+                       uint64_t count, Error *errp[static 1])
 {
     uint64_t curpage = startgfn;
     uint64_t maxpage = curpage + count - 1;
@@ -101,7 +101,7 @@ void hmp_dump_skeys(Monitor *mon, const QDict *qdict)
     }
 }
 
-void qmp_dump_skeys(const char *filename, Error **errp)
+void qmp_dump_skeys(const char *filename, Error *errp[static 1])
 {
     S390SKeysState *ss = s390_get_skeys_device();
     S390SKeysClass *skeyclass = S390_SKEYS_GET_CLASS(ss);
@@ -356,7 +356,8 @@ static int s390_storage_keys_load(QEMUFile *f, void *opaque, int version_id)
     return ret;
 }
 
-static inline bool s390_skeys_get_migration_enabled(Object *obj, Error **errp)
+static inline bool s390_skeys_get_migration_enabled(Object *obj,
+                                                    Error *errp[static 1])
 {
     S390SKeysState *ss = S390_SKEYS(obj);
 
@@ -369,7 +370,7 @@ static SaveVMHandlers savevm_s390_storage_keys = {
 };
 
 static inline void s390_skeys_set_migration_enabled(Object *obj, bool value,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     S390SKeysState *ss = S390_SKEYS(obj);
 

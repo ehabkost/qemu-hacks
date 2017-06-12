@@ -388,7 +388,8 @@ void qemu_console_early_init(void);
 QemuConsole *qemu_console_lookup_by_index(unsigned int index);
 QemuConsole *qemu_console_lookup_by_device(DeviceState *dev, uint32_t head);
 QemuConsole *qemu_console_lookup_by_device_name(const char *device_id,
-                                                uint32_t head, Error **errp);
+                                                uint32_t head,
+                                                Error *errp[static 1]);
 bool qemu_console_is_visible(QemuConsole *con);
 bool qemu_console_is_graphic(QemuConsole *con);
 bool qemu_console_is_fixedsize(QemuConsole *con);
@@ -463,13 +464,13 @@ static inline void cocoa_display_init(DisplayState *ds, int full_screen)
 
 /* vnc.c */
 void vnc_display_init(const char *id);
-void vnc_display_open(const char *id, Error **errp);
+void vnc_display_open(const char *id, Error *errp[static 1]);
 void vnc_display_add_client(const char *id, int csock, bool skipauth);
 #ifdef CONFIG_VNC
 int vnc_display_password(const char *id, const char *password);
 int vnc_display_pw_expire(const char *id, time_t expires);
-QemuOpts *vnc_parse(const char *str, Error **errp);
-int vnc_init_func(void *opaque, QemuOpts *opts, Error **errp);
+QemuOpts *vnc_parse(const char *str, Error *errp[static 1]);
+int vnc_init_func(void *opaque, QemuOpts *opts, Error *errp[static 1]);
 #else
 static inline int vnc_display_password(const char *id, const char *password)
 {
@@ -479,12 +480,13 @@ static inline int vnc_display_pw_expire(const char *id, time_t expires)
 {
     return -ENODEV;
 };
-static inline QemuOpts *vnc_parse(const char *str, Error **errp)
+static inline QemuOpts *vnc_parse(const char *str, Error *errp[static 1])
 {
     error_setg(errp, "VNC support is disabled");
     return NULL;
 }
-static inline int vnc_init_func(void *opaque, QemuOpts *opts, Error **errp)
+static inline int vnc_init_func(void *opaque, QemuOpts *opts,
+                                Error *errp[static 1])
 {
     error_setg(errp, "VNC support is disabled");
     return -1;

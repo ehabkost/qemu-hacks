@@ -202,7 +202,7 @@ static void stm32f2xx_usart_init(Object *obj)
     sysbus_init_mmio(SYS_BUS_DEVICE(obj), &s->mmio);
 }
 
-static void stm32f2xx_usart_realize(DeviceState *dev, Error **errp)
+static void stm32f2xx_usart_realize(DeviceState *dev, Error *errp[static 1])
 {
     STM32F2XXUsartState *s = STM32F2XX_USART(dev);
 

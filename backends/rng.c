@@ -38,19 +38,20 @@ void rng_backend_request_entropy(RngBackend *s, size_t size,
     }
 }
 
-static bool rng_backend_prop_get_opened(Object *obj, Error **errp)
+static bool rng_backend_prop_get_opened(Object *obj, Error *errp[static 1])
 {
     RngBackend *s = RNG_BACKEND(obj);
 
     return s->opened;
 }
 
-static void rng_backend_complete(UserCreatable *uc, Error **errp)
+static void rng_backend_complete(UserCreatable *uc, Error *errp[static 1])
 {
     object_property_set_bool(OBJECT(uc), true, "opened", errp);
 }
 
-static void rng_backend_prop_set_opened(Object *obj, bool value, Error **errp)
+static void rng_backend_prop_set_opened(Object *obj, bool value,
+                                        Error *errp[static 1])
 {
     RngBackend *s = RNG_BACKEND(obj);
     RngBackendClass *k = RNG_BACKEND_GET_CLASS(s);

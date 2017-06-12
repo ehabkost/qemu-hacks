@@ -122,7 +122,7 @@ static void macio_bar_setup(MacIOState *macio_state)
     }
 }
 
-static void macio_common_realize(PCIDevice *d, Error **errp)
+static void macio_common_realize(PCIDevice *d, Error *errp[static 1])
 {
     MacIOState *s = MACIO(d);
     SysBusDevice *sysbus_dev;
@@ -145,7 +145,7 @@ static void macio_common_realize(PCIDevice *d, Error **errp)
 
 static void macio_realize_ide(MacIOState *s, MACIOIDEState *ide,
                               qemu_irq irq0, qemu_irq irq1, int dmaid,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     SysBusDevice *sysbus_dev;
 
@@ -156,7 +156,7 @@ static void macio_realize_ide(MacIOState *s, MACIOIDEState *ide,
     object_property_set_bool(OBJECT(ide), true, "realized", errp);
 }
 
-static void macio_oldworld_realize(PCIDevice *d, Error **errp)
+static void macio_oldworld_realize(PCIDevice *d, Error *errp[static 1])
 {
     MacIOState *s = MACIO(d);
     OldWorldMacIOState *os = OLDWORLD_MACIO(d);
@@ -263,7 +263,7 @@ static const MemoryRegionOps timer_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void macio_newworld_realize(PCIDevice *d, Error **errp)
+static void macio_newworld_realize(PCIDevice *d, Error *errp[static 1])
 {
     MacIOState *s = MACIO(d);
     NewWorldMacIOState *ns = NEWWORLD_MACIO(d);

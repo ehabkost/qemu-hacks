@@ -39,7 +39,7 @@ struct QCryptoTLSCredsTestData {
 
 static QCryptoTLSCreds *test_tls_creds_create(QCryptoTLSCredsEndpoint endpoint,
                                               const char *certdir,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     Object *parent = object_get_objects_root();
     Object *creds = object_new_with_props(

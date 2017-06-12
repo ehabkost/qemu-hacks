@@ -295,7 +295,7 @@ void graphic_hw_invalidate(QemuConsole *con)
 }
 
 static void ppm_save(const char *filename, DisplaySurface *ds,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     int width = pixman_image_get_width(ds->image);
     int height = pixman_image_get_height(ds->image);
@@ -342,7 +342,7 @@ write_err:
     goto out;
 }
 
-void qmp_screendump(const char *filename, Error **errp)
+void qmp_screendump(const char *filename, Error *errp[static 1])
 {
     QemuConsole *con = qemu_console_lookup_by_index(0);
     DisplaySurface *surface;
@@ -1883,7 +1883,8 @@ QemuConsole *qemu_console_lookup_by_device(DeviceState *dev, uint32_t head)
 }
 
 QemuConsole *qemu_console_lookup_by_device_name(const char *device_id,
-                                                uint32_t head, Error **errp)
+                                                uint32_t head,
+                                                Error *errp[static 1])
 {
     DeviceState *dev;
     QemuConsole *con;
@@ -2082,7 +2083,7 @@ static void text_console_do_init(Chardev *chr, DisplayState *ds)
 static void vc_chr_open(Chardev *chr,
                         ChardevBackend *backend,
                         bool *be_opened,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     ChardevVC *vc = backend->u.vc.data;
     VCChardev *drv = VC_CHARDEV(chr);
@@ -2156,7 +2157,8 @@ PixelFormat qemu_default_pixelformat(int bpp)
     return pf;
 }
 
-void qemu_chr_parse_vc(QemuOpts *opts, ChardevBackend *backend, Error **errp)
+void qemu_chr_parse_vc(QemuOpts *opts, ChardevBackend *backend,
+                       Error *errp[static 1])
 {
     int val;
     ChardevVC *vc;

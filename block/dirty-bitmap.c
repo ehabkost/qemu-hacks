@@ -75,7 +75,7 @@ void bdrv_dirty_bitmap_make_anon(BdrvDirtyBitmap *bitmap)
 BdrvDirtyBitmap *bdrv_create_dirty_bitmap(BlockDriverState *bs,
                                           uint32_t granularity,
                                           const char *name,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     int64_t bitmap_size;
     BdrvDirtyBitmap *bitmap;
@@ -190,7 +190,8 @@ DirtyBitmapStatus bdrv_dirty_bitmap_status(BdrvDirtyBitmap *bitmap)
  * Requires that the bitmap is not frozen and has no successor.
  */
 int bdrv_dirty_bitmap_create_successor(BlockDriverState *bs,
-                                       BdrvDirtyBitmap *bitmap, Error **errp)
+                                       BdrvDirtyBitmap *bitmap,
+                                       Error *errp[static 1])
 {
     uint64_t granularity;
     BdrvDirtyBitmap *child;
@@ -223,7 +224,7 @@ int bdrv_dirty_bitmap_create_successor(BlockDriverState *bs,
  */
 BdrvDirtyBitmap *bdrv_dirty_bitmap_abdicate(BlockDriverState *bs,
                                             BdrvDirtyBitmap *bitmap,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     char *name;
     BdrvDirtyBitmap *successor = bitmap->successor;
@@ -250,7 +251,7 @@ BdrvDirtyBitmap *bdrv_dirty_bitmap_abdicate(BlockDriverState *bs,
  */
 BdrvDirtyBitmap *bdrv_reclaim_dirty_bitmap(BlockDriverState *bs,
                                            BdrvDirtyBitmap *parent,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     BdrvDirtyBitmap *successor = parent->successor;
 

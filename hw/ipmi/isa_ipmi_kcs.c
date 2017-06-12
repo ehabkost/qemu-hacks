@@ -345,7 +345,7 @@ static void ipmi_kcs_set_irq_enable(IPMIInterface *ii, int val)
     ik->irqs_enabled = val;
 }
 
-static void ipmi_kcs_init(IPMIInterface *ii, Error **errp)
+static void ipmi_kcs_init(IPMIInterface *ii, Error *errp[static 1])
 {
     IPMIInterfaceClass *iic = IPMI_INTERFACE_GET_CLASS(ii);
     IPMIKCS *ik = iic->get_backend_data(ii);
@@ -393,7 +393,7 @@ static void ipmi_kcs_class_init(IPMIInterfaceClass *iic)
     iic->get_fwinfo = ipmi_kcs_get_fwinfo;
 }
 
-static void ipmi_isa_realize(DeviceState *dev, Error **errp)
+static void ipmi_isa_realize(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     ISAIPMIKCSDevice *iik = ISA_IPMI_KCS(dev);

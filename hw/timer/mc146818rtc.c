@@ -130,7 +130,7 @@ static QLIST_HEAD(, RTCState) rtc_devices =
     QLIST_HEAD_INITIALIZER(rtc_devices);
 
 #ifdef TARGET_I386
-void qmp_rtc_reset_reinjection(Error **errp)
+void qmp_rtc_reset_reinjection(Error *errp[static 1])
 {
     RTCState *s;
 
@@ -925,7 +925,8 @@ static const MemoryRegionOps cmos_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void rtc_get_date(Object *obj, struct tm *current_tm, Error **errp)
+static void rtc_get_date(Object *obj, struct tm *current_tm,
+                         Error *errp[static 1])
 {
     RTCState *s = MC146818_RTC(obj);
 
@@ -933,7 +934,7 @@ static void rtc_get_date(Object *obj, struct tm *current_tm, Error **errp)
     rtc_get_time(s, current_tm);
 }
 
-static void rtc_realizefn(DeviceState *dev, Error **errp)
+static void rtc_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     RTCState *s = MC146818_RTC(dev);

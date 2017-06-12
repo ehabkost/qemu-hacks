@@ -31,7 +31,7 @@ int s390_ccw_cmd_request(ORB *orb, SCSW *scsw, void *data)
 
 static void s390_ccw_get_dev_info(S390CCWDevice *cdev,
                                   char *sysfsdev,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     unsigned int cssid, ssid, devid;
     char dev_path[PATH_MAX] = {0}, *tmp;
@@ -62,7 +62,8 @@ static void s390_ccw_get_dev_info(S390CCWDevice *cdev,
     cdev->hostid.valid = true;
 }
 
-static void s390_ccw_realize(S390CCWDevice *cdev, char *sysfsdev, Error **errp)
+static void s390_ccw_realize(S390CCWDevice *cdev, char *sysfsdev,
+                             Error *errp[static 1])
 {
     CcwDevice *ccw_dev = CCW_DEVICE(cdev);
     CCWDeviceClass *ck = CCW_DEVICE_GET_CLASS(ccw_dev);
@@ -112,7 +113,7 @@ out_err_propagate:
     error_propagate(errp, err);
 }
 
-static void s390_ccw_unrealize(S390CCWDevice *cdev, Error **errp)
+static void s390_ccw_unrealize(S390CCWDevice *cdev, Error *errp[static 1])
 {
     CcwDevice *ccw_dev = CCW_DEVICE(cdev);
     SubchDev *sch = ccw_dev->sch;

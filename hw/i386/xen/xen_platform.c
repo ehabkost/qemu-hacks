@@ -423,7 +423,7 @@ static const VMStateDescription vmstate_xen_platform = {
     }
 };
 
-static void xen_platform_realize(PCIDevice *dev, Error **errp)
+static void xen_platform_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIXenPlatformState *d = XEN_PLATFORM(dev);
     uint8_t *pci_conf;

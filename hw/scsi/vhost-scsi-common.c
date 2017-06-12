@@ -95,7 +95,7 @@ void vhost_scsi_common_stop(VHostSCSICommon *vsc)
 }
 
 uint64_t vhost_scsi_common_get_features(VirtIODevice *vdev, uint64_t features,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     VHostSCSICommon *vsc = VHOST_SCSI_COMMON(vdev);
 

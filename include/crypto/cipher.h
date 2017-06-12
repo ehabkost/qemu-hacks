@@ -158,7 +158,7 @@ size_t qcrypto_cipher_get_iv_len(QCryptoCipherAlgorithm alg,
 QCryptoCipher *qcrypto_cipher_new(QCryptoCipherAlgorithm alg,
                                   QCryptoCipherMode mode,
                                   const uint8_t *key, size_t nkey,
-                                  Error **errp);
+                                  Error *errp[static 1]);
 
 /**
  * qcrypto_cipher_free:
@@ -188,7 +188,7 @@ int qcrypto_cipher_encrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 
 /**
@@ -210,7 +210,7 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
                            const void *in,
                            void *out,
                            size_t len,
-                           Error **errp);
+                           Error *errp[static 1]);
 
 /**
  * qcrypto_cipher_setiv:
@@ -230,6 +230,6 @@ int qcrypto_cipher_decrypt(QCryptoCipher *cipher,
  */
 int qcrypto_cipher_setiv(QCryptoCipher *cipher,
                          const uint8_t *iv, size_t niv,
-                         Error **errp);
+                         Error *errp[static 1]);
 
 #endif /* QCRYPTO_CIPHER_H */

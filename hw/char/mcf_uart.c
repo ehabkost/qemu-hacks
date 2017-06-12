@@ -300,7 +300,7 @@ static void mcf_uart_instance_init(Object *obj)
     sysbus_init_irq(dev, &s->irq);
 }
 
-static void mcf_uart_realize(DeviceState *dev, Error **errp)
+static void mcf_uart_realize(DeviceState *dev, Error *errp[static 1])
 {
     mcf_uart_state *s = MCF_UART(dev);
 

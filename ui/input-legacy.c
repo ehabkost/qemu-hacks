@@ -80,7 +80,7 @@ static KeyValue *copy_key_value(KeyValue *src)
 }
 
 void qmp_send_key(KeyValueList *keys, bool has_hold_time, int64_t hold_time,
-                  Error **errp)
+                  Error *errp[static 1])
 {
     KeyValueList *p;
     KeyValue **up = NULL;

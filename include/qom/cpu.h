@@ -446,7 +446,7 @@ bool cpu_paging_enabled(const CPUState *cpu);
  * @errp: Pointer for reporting an #Error.
  */
 void cpu_get_memory_mapping(CPUState *cpu, MemoryMappingList *list,
-                            Error **errp);
+                            Error *errp[static 1]);
 
 /**
  * cpu_write_elf64_note:
@@ -1002,7 +1002,7 @@ AddressSpace *cpu_get_address_space(CPUState *cpu, int asidx);
 void QEMU_NORETURN cpu_abort(CPUState *cpu, const char *fmt, ...)
     GCC_FMT_ATTR(2, 3);
 void cpu_exec_initfn(CPUState *cpu);
-void cpu_exec_realizefn(CPUState *cpu, Error **errp);
+void cpu_exec_realizefn(CPUState *cpu, Error *errp[static 1]);
 void cpu_exec_unrealizefn(CPUState *cpu);
 
 #ifdef CONFIG_SOFTMMU

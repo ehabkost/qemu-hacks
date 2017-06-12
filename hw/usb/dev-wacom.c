@@ -329,7 +329,7 @@ static void usb_wacom_handle_data(USBDevice *dev, USBPacket *p)
     }
 }
 
-static void usb_wacom_unrealize(USBDevice *dev, Error **errp)
+static void usb_wacom_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     USBWacomState *s = (USBWacomState *) dev;
 
@@ -339,7 +339,7 @@ static void usb_wacom_unrealize(USBDevice *dev, Error **errp)
     }
 }
 
-static void usb_wacom_realize(USBDevice *dev, Error **errp)
+static void usb_wacom_realize(USBDevice *dev, Error *errp[static 1])
 {
     USBWacomState *s = USB_WACOM(dev);
     usb_desc_create_serial(dev);

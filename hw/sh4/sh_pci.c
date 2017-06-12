@@ -152,7 +152,7 @@ static int sh_pci_device_init(SysBusDevice *dev)
     return 0;
 }
 
-static void sh_pci_host_realize(PCIDevice *d, Error **errp)
+static void sh_pci_host_realize(PCIDevice *d, Error *errp[static 1])
 {
     pci_set_word(d->config + PCI_COMMAND, PCI_COMMAND_WAIT);
     pci_set_word(d->config + PCI_STATUS, PCI_STATUS_CAP_LIST |

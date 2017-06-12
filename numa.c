@@ -120,7 +120,7 @@ static bool numa_addr_belongs_to_node(ram_addr_t addr, uint32_t node)
  * Given an address, return the index of the NUMA node to which the
  * address belongs to.
  */
-uint32_t numa_get_node(ram_addr_t addr, Error **errp)
+uint32_t numa_get_node(ram_addr_t addr, Error *errp[static 1])
 {
     uint32_t i;
 
@@ -143,7 +143,7 @@ uint32_t numa_get_node(ram_addr_t addr, Error **errp)
 }
 
 static void parse_numa_node(MachineState *ms, NumaNodeOptions *node,
-                            QemuOpts *opts, Error **errp)
+                            QemuOpts *opts, Error *errp[static 1])
 {
     uint16_t nodenr;
     uint16List *cpus = NULL;
@@ -225,7 +225,7 @@ static void parse_numa_node(MachineState *ms, NumaNodeOptions *node,
     max_numa_nodeid = MAX(max_numa_nodeid, nodenr + 1);
 }
 
-static void parse_numa_distance(NumaDistOptions *dist, Error **errp)
+static void parse_numa_distance(NumaDistOptions *dist, Error *errp[static 1])
 {
     uint16_t src = dist->src;
     uint16_t dst = dist->dst;
@@ -261,7 +261,7 @@ static void parse_numa_distance(NumaDistOptions *dist, Error **errp)
     have_numa_distance = true;
 }
 
-static int parse_numa(void *opaque, QemuOpts *opts, Error **errp)
+static int parse_numa(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     NumaOptions *object = NULL;
     MachineState *ms = opaque;
@@ -509,7 +509,8 @@ void parse_numa_opts(MachineState *ms)
     }
 }
 
-void numa_cpu_pre_plug(const CPUArchId *slot, DeviceState *dev, Error **errp)
+void numa_cpu_pre_plug(const CPUArchId *slot, DeviceState *dev,
+                       Error *errp[static 1])
 {
     int node_id = object_property_get_int(OBJECT(dev), "node-id", &error_abort);
 
@@ -667,7 +668,7 @@ static int query_memdev(Object *obj, void *opaque)
     return 0;
 }
 
-MemdevList *qmp_query_memdev(Error **errp)
+MemdevList *qmp_query_memdev(Error *errp[static 1])
 {
     Object *obj = object_get_objects_root();
     MemdevList *list = NULL;

@@ -1484,63 +1484,63 @@ static void machvirt_init(MachineState *machine)
     create_platform_bus(vms, pic);
 }
 
-static bool virt_get_secure(Object *obj, Error **errp)
+static bool virt_get_secure(Object *obj, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     return vms->secure;
 }
 
-static void virt_set_secure(Object *obj, bool value, Error **errp)
+static void virt_set_secure(Object *obj, bool value, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     vms->secure = value;
 }
 
-static bool virt_get_virt(Object *obj, Error **errp)
+static bool virt_get_virt(Object *obj, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     return vms->virt;
 }
 
-static void virt_set_virt(Object *obj, bool value, Error **errp)
+static void virt_set_virt(Object *obj, bool value, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     vms->virt = value;
 }
 
-static bool virt_get_highmem(Object *obj, Error **errp)
+static bool virt_get_highmem(Object *obj, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     return vms->highmem;
 }
 
-static void virt_set_highmem(Object *obj, bool value, Error **errp)
+static void virt_set_highmem(Object *obj, bool value, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     vms->highmem = value;
 }
 
-static bool virt_get_its(Object *obj, Error **errp)
+static bool virt_get_its(Object *obj, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     return vms->its;
 }
 
-static void virt_set_its(Object *obj, bool value, Error **errp)
+static void virt_set_its(Object *obj, bool value, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 
     vms->its = value;
 }
 
-static char *virt_get_gic_version(Object *obj, Error **errp)
+static char *virt_get_gic_version(Object *obj, Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
     const char *val = vms->gic_version == 3 ? "3" : "2";
@@ -1548,7 +1548,8 @@ static char *virt_get_gic_version(Object *obj, Error **errp)
     return g_strdup(val);
 }
 
-static void virt_set_gic_version(Object *obj, const char *value, Error **errp)
+static void virt_set_gic_version(Object *obj, const char *value,
+                                 Error *errp[static 1])
 {
     VirtMachineState *vms = VIRT_MACHINE(obj);
 

@@ -297,7 +297,8 @@ static bool raw_is_io_aligned(int fd, void *buf, size_t len)
     return false;
 }
 
-static void raw_probe_alignment(BlockDriverState *bs, int fd, Error **errp)
+static void raw_probe_alignment(BlockDriverState *bs, int fd,
+                                Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     char *buf;
@@ -379,7 +380,7 @@ static void raw_parse_flags(int bdrv_flags, int *open_flags)
 }
 
 static void raw_parse_filename(const char *filename, QDict *options,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     bdrv_parse_filename_strip_prefix(filename, "file:", options);
 }
@@ -408,7 +409,8 @@ static QemuOptsList raw_runtime_opts = {
 };
 
 static int raw_open_common(BlockDriverState *bs, QDict *options,
-                           int bdrv_flags, int open_flags, Error **errp)
+                           int bdrv_flags, int open_flags,
+                           Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     QemuOpts *opts;
@@ -587,7 +589,7 @@ fail:
 }
 
 static int raw_open(BlockDriverState *bs, QDict *options, int flags,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
 
@@ -611,7 +613,7 @@ typedef enum {
 static int raw_apply_lock_bytes(BDRVRawState *s,
                                 uint64_t perm_lock_bits,
                                 uint64_t shared_perm_lock_bits,
-                                bool unlock, Error **errp)
+                                bool unlock, Error *errp[static 1])
 {
     int ret;
     int i;
@@ -654,7 +656,7 @@ static int raw_apply_lock_bytes(BDRVRawState *s,
 /* Check "unshared" bytes implied by @perm and ~@shared_perm in the file. */
 static int raw_check_lock_bytes(BDRVRawState *s,
                                 uint64_t perm, uint64_t shared_perm,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     int ret;
     int i;
@@ -699,7 +701,7 @@ static int raw_check_lock_bytes(BDRVRawState *s,
 static int raw_handle_perm_lock(BlockDriverState *bs,
                                 RawPermLockOp op,
                                 uint64_t new_perm, uint64_t new_shared,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     int ret = 0;
@@ -751,7 +753,7 @@ static int raw_handle_perm_lock(BlockDriverState *bs,
 }
 
 static int raw_reopen_prepare(BDRVReopenState *state,
-                              BlockReopenQueue *queue, Error **errp)
+                              BlockReopenQueue *queue, Error *errp[static 1])
 {
     BDRVRawState *s;
     BDRVRawReopenState *rs;
@@ -923,7 +925,7 @@ out:
 #endif
 }
 
-static void raw_refresh_limits(BlockDriverState *bs, Error **errp)
+static void raw_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     struct stat st;
@@ -1622,7 +1624,8 @@ static void raw_close(BlockDriverState *bs)
     }
 }
 
-static int raw_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int raw_truncate(BlockDriverState *bs, int64_t offset,
+                        Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     struct stat st;
@@ -1833,7 +1836,8 @@ static int64_t raw_get_allocated_file_size(BlockDriverState *bs)
     return (int64_t)st.st_blocks * 512;
 }
 
-static int raw_create(const char *filename, QemuOpts *opts, Error **errp)
+static int raw_create(const char *filename, QemuOpts *opts,
+                      Error *errp[static 1])
 {
     int fd;
     int result = 0;
@@ -2165,7 +2169,7 @@ static QemuOptsList raw_create_opts = {
 };
 
 static int raw_check_perm(BlockDriverState *bs, uint64_t perm, uint64_t shared,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     return raw_handle_perm_lock(bs, RAW_PL_PREPARE, perm, shared, errp);
 }
@@ -2296,7 +2300,7 @@ kern_return_t GetBSDPath(io_iterator_t mediaIterator, char *bsdPath,
 }
 
 /* Sets up a real cdrom for use in QEMU */
-static bool setup_cdrom(char *bsd_path, Error **errp)
+static bool setup_cdrom(char *bsd_path, Error *errp[static 1])
 {
     int index, num_of_test_partitions = 2, fd;
     char test_partition[MAXPATHLEN];
@@ -2386,7 +2390,7 @@ static int check_hdev_writable(BDRVRawState *s)
 }
 
 static void hdev_parse_filename(const char *filename, QDict *options,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     bdrv_parse_filename_strip_prefix(filename, "host_device:", options);
 }
@@ -2424,7 +2428,7 @@ static bool hdev_is_sg(BlockDriverState *bs)
 }
 
 static int hdev_open(BlockDriverState *bs, QDict *options, int flags,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     Error *local_err = NULL;
@@ -2591,7 +2595,7 @@ static coroutine_fn int hdev_co_pwrite_zeroes(BlockDriverState *bs,
 }
 
 static int hdev_create(const char *filename, QemuOpts *opts,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     int fd;
     int ret = 0;
@@ -2685,7 +2689,7 @@ static BlockDriver bdrv_host_device = {
 
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 static void cdrom_parse_filename(const char *filename, QDict *options,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     bdrv_parse_filename_strip_prefix(filename, "host_cdrom:", options);
 }
@@ -2693,7 +2697,7 @@ static void cdrom_parse_filename(const char *filename, QDict *options,
 
 #ifdef __linux__
 static int cdrom_open(BlockDriverState *bs, QDict *options, int flags,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
 
@@ -2805,7 +2809,7 @@ static BlockDriver bdrv_host_cdrom = {
 
 #if defined (__FreeBSD__) || defined(__FreeBSD_kernel__)
 static int cdrom_open(BlockDriverState *bs, QDict *options, int flags,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     BDRVRawState *s = bs->opaque;
     Error *local_err = NULL;

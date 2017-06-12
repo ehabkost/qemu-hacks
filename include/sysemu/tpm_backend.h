@@ -211,7 +211,7 @@ int tpm_backend_reset_tpm_established_flag(TPMBackend *s, uint8_t locty);
  * This function will open the backend if it is not already open.  Calling this
  * function on an already opened backend will not result in an error.
  */
-void tpm_backend_open(TPMBackend *s, Error **errp);
+void tpm_backend_open(TPMBackend *s, Error *errp[static 1]);
 
 /**
  * tpm_backend_get_tpm_version:

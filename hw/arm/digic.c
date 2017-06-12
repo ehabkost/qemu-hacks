@@ -56,7 +56,7 @@ static void digic_init(Object *obj)
     object_property_add_child(obj, "uart", OBJECT(&s->uart), IGNORE_ERRORS);
 }
 
-static void digic_realize(DeviceState *dev, Error **errp)
+static void digic_realize(DeviceState *dev, Error *errp[static 1])
 {
     DigicState *s = DIGIC(dev);
     SysBusDevice *sbd;

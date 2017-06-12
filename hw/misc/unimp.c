@@ -59,7 +59,7 @@ static const MemoryRegionOps unimp_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void unimp_realize(DeviceState *dev, Error **errp)
+static void unimp_realize(DeviceState *dev, Error *errp[static 1])
 {
     UnimplementedDeviceState *s = UNIMPLEMENTED_DEVICE(dev);
 

@@ -534,7 +534,7 @@ static void pl041_init(Object *obj)
     sysbus_init_irq(dev, &s->irq);
 }
 
-static void pl041_realize(DeviceState *dev, Error **errp)
+static void pl041_realize(DeviceState *dev, Error *errp[static 1])
 {
     PL041State *s = PL041(dev);
 

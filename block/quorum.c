@@ -824,7 +824,8 @@ static bool quorum_recurse_is_first_non_filter(BlockDriverState *bs,
     return false;
 }
 
-static int quorum_valid_threshold(int threshold, int num_children, Error **errp)
+static int quorum_valid_threshold(int threshold, int num_children,
+                                  Error *errp[static 1])
 {
 
     if (threshold < 1) {
@@ -888,7 +889,7 @@ static int parse_read_pattern(const char *opt)
 }
 
 static int quorum_open(BlockDriverState *bs, QDict *options, int flags,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     BDRVQuorumState *s = bs->opaque;
     Error *local_err = NULL;
@@ -1007,7 +1008,7 @@ static void quorum_close(BlockDriverState *bs)
 }
 
 static void quorum_add_child(BlockDriverState *bs, BlockDriverState *child_bs,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     BDRVQuorumState *s = bs->opaque;
     BdrvChild *child;
@@ -1047,7 +1048,7 @@ out:
 }
 
 static void quorum_del_child(BlockDriverState *bs, BdrvChild *child,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     BDRVQuorumState *s = bs->opaque;
     int i;

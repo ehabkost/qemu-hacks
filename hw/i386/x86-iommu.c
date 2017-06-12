@@ -76,7 +76,7 @@ IommuType x86_iommu_get_type(void)
     return x86_iommu_default->type;
 }
 
-static void x86_iommu_realize(DeviceState *dev, Error **errp)
+static void x86_iommu_realize(DeviceState *dev, Error *errp[static 1])
 {
     X86IOMMUState *x86_iommu = X86_IOMMU_DEVICE(dev);
     X86IOMMUClass *x86_class = X86_IOMMU_GET_CLASS(dev);

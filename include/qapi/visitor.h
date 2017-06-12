@@ -296,7 +296,7 @@ void visit_free(Visitor *v);
  * used for QAPI unions, and maps to JSON objects?
  */
 void visit_start_struct(Visitor *v, const char *name, void **obj,
-                        size_t size, Error **errp);
+                        size_t size, Error *errp[static 1]);
 
 /*
  * Prepare for completing an object visit.
@@ -309,7 +309,7 @@ void visit_start_struct(Visitor *v, const char *name, void **obj,
  * last chance to report errors.  May be skipped on a cleanup path,
  * where there is no need to check for further errors.
  */
-void visit_check_struct(Visitor *v, Error **errp);
+void visit_check_struct(Visitor *v, Error *errp[static 1]);
 
 /*
  * Complete an object visit started earlier.
@@ -353,7 +353,7 @@ void visit_end_struct(Visitor *v, void **obj);
  * examples above.
  */
 void visit_start_list(Visitor *v, const char *name, GenericList **list,
-                      size_t size, Error **errp);
+                      size_t size, Error *errp[static 1]);
 
 /*
  * Iterate over a GenericList during a non-virtual list visit.
@@ -382,7 +382,7 @@ GenericList *visit_next_list(Visitor *v, GenericList *tail, size_t size);
  * last chance to report errors.  May be skipped on a cleanup path,
  * where there is no need to check for further errors.
  */
-void visit_check_list(Visitor *v, Error **errp);
+void visit_check_list(Visitor *v, Error *errp[static 1]);
 
 /*
  * Complete a list visit started earlier.
@@ -418,7 +418,7 @@ void visit_end_list(Visitor *v, void **list);
  */
 void visit_start_alternate(Visitor *v, const char *name,
                            GenericAlternate **obj, size_t size,
-                           bool promote_int, Error **errp);
+                           bool promote_int, Error *errp[static 1]);
 
 /*
  * Finish visiting an alternate type.
@@ -471,7 +471,7 @@ bool visit_optional(Visitor *v, const char *name, bool *present);
  * that visit_type_str() must have no unwelcome side effects.
  */
 void visit_type_enum(Visitor *v, const char *name, int *obj,
-                     const char *const strings[], Error **errp);
+                     const char *const strings[], Error *errp[static 1]);
 
 /*
  * Check if visitor is an input visitor.
@@ -489,28 +489,29 @@ bool visit_is_input(Visitor *v);
  * @obj must be non-NULL.  Input visitors set *@obj to the value;
  * other visitors will leave *@obj unchanged.
  */
-void visit_type_int(Visitor *v, const char *name, int64_t *obj, Error **errp);
+void visit_type_int(Visitor *v, const char *name, int64_t *obj,
+		    Error *errp[static 1]);
 
 /*
  * Visit a uint8_t value.
  * Like visit_type_int(), except clamps the value to uint8_t range.
  */
 void visit_type_uint8(Visitor *v, const char *name, uint8_t *obj,
-                      Error **errp);
+                      Error *errp[static 1]);
 
 /*
  * Visit a uint16_t value.
  * Like visit_type_int(), except clamps the value to uint16_t range.
  */
 void visit_type_uint16(Visitor *v, const char *name, uint16_t *obj,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 /*
  * Visit a uint32_t value.
  * Like visit_type_int(), except clamps the value to uint32_t range.
  */
 void visit_type_uint32(Visitor *v, const char *name, uint32_t *obj,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 /*
  * Visit a uint64_t value.
@@ -518,34 +519,35 @@ void visit_type_uint32(Visitor *v, const char *name, uint32_t *obj,
  * that is, ensures it is unsigned.
  */
 void visit_type_uint64(Visitor *v, const char *name, uint64_t *obj,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 /*
  * Visit an int8_t value.
  * Like visit_type_int(), except clamps the value to int8_t range.
  */
-void visit_type_int8(Visitor *v, const char *name, int8_t *obj, Error **errp);
+void visit_type_int8(Visitor *v, const char *name, int8_t *obj,
+		     Error *errp[static 1]);
 
 /*
  * Visit an int16_t value.
  * Like visit_type_int(), except clamps the value to int16_t range.
  */
 void visit_type_int16(Visitor *v, const char *name, int16_t *obj,
-                      Error **errp);
+                      Error *errp[static 1]);
 
 /*
  * Visit an int32_t value.
  * Like visit_type_int(), except clamps the value to int32_t range.
  */
 void visit_type_int32(Visitor *v, const char *name, int32_t *obj,
-                      Error **errp);
+                      Error *errp[static 1]);
 
 /*
  * Visit an int64_t value.
  * Identical to visit_type_int().
  */
 void visit_type_int64(Visitor *v, const char *name, int64_t *obj,
-                      Error **errp);
+                      Error *errp[static 1]);
 
 /*
  * Visit a uint64_t value.
@@ -554,7 +556,7 @@ void visit_type_int64(Visitor *v, const char *name, int64_t *obj,
  * values.
  */
 void visit_type_size(Visitor *v, const char *name, uint64_t *obj,
-                     Error **errp);
+                     Error *errp[static 1]);
 
 /*
  * Visit a boolean value.
@@ -565,7 +567,8 @@ void visit_type_size(Visitor *v, const char *name, uint64_t *obj,
  * @obj must be non-NULL.  Input visitors set *@obj to the value;
  * other visitors will leave *@obj unchanged.
  */
-void visit_type_bool(Visitor *v, const char *name, bool *obj, Error **errp);
+void visit_type_bool(Visitor *v, const char *name, bool *obj,
+		     Error *errp[static 1]);
 
 /*
  * Visit a string value.
@@ -583,7 +586,8 @@ void visit_type_bool(Visitor *v, const char *name, bool *obj, Error **errp);
  *
  * FIXME: Callers that try to output NULL *obj should not be allowed.
  */
-void visit_type_str(Visitor *v, const char *name, char **obj, Error **errp);
+void visit_type_str(Visitor *v, const char *name, char **obj,
+		    Error *errp[static 1]);
 
 /*
  * Visit a number (i.e. double) value.
@@ -596,7 +600,7 @@ void visit_type_str(Visitor *v, const char *name, char **obj, Error **errp);
  * document if infinity or NaN are not permitted.
  */
 void visit_type_number(Visitor *v, const char *name, double *obj,
-                       Error **errp);
+                       Error *errp[static 1]);
 
 /*
  * Visit an arbitrary value.
@@ -612,7 +616,8 @@ void visit_type_number(Visitor *v, const char *name, double *obj,
  * E.g. the visitor returned by qobject_input_visitor_new_keyval()
  * can't create numbers or booleans, only strings.
  */
-void visit_type_any(Visitor *v, const char *name, QObject **obj, Error **errp);
+void visit_type_any(Visitor *v, const char *name, QObject **obj,
+		    Error *errp[static 1]);
 
 /*
  * Visit a JSON null value.
@@ -624,6 +629,6 @@ void visit_type_any(Visitor *v, const char *name, QObject **obj, Error **errp);
  * needed; rather, this is a witness that an explicit null value is
  * expected rather than any other type.
  */
-void visit_type_null(Visitor *v, const char *name, Error **errp);
+void visit_type_null(Visitor *v, const char *name, Error *errp[static 1]);
 
 #endif

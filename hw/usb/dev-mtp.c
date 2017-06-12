@@ -1529,7 +1529,7 @@ static void usb_mtp_handle_data(USBDevice *dev, USBPacket *p)
     }
 }
 
-static void usb_mtp_realize(USBDevice *dev, Error **errp)
+static void usb_mtp_realize(USBDevice *dev, Error *errp[static 1])
 {
     MTPState *s = USB_MTP(dev);
 

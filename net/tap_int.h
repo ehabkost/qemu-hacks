@@ -30,11 +30,12 @@
 #include "qapi-types.h"
 
 int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
-             int vnet_hdr_required, int mq_required, Error **errp);
+             int vnet_hdr_required, int mq_required, Error *errp[static 1]);
 
 ssize_t tap_read_packet(int tapfd, uint8_t *buf, int maxlen);
 
-void tap_set_sndbuf(int fd, const NetdevTapOptions *tap, Error **errp);
+void tap_set_sndbuf(int fd, const NetdevTapOptions *tap,
+		    Error *errp[static 1]);
 int tap_probe_vnet_hdr(int fd);
 int tap_probe_vnet_hdr_len(int fd, int len);
 int tap_probe_has_ufo(int fd);

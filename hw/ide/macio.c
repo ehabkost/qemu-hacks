@@ -422,7 +422,7 @@ static const IDEDMAOps dbdma_ops = {
     .rw_buf         = ide_nop_int,
 };
 
-static void macio_ide_realizefn(DeviceState *dev, Error **errp)
+static void macio_ide_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     MACIOIDEState *s = MACIO_IDE(dev);
 

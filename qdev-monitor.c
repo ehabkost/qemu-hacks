@@ -172,7 +172,7 @@ static void qdev_print_devinfos(bool show_no_user)
 }
 
 static int set_property(void *opaque, const char *name, const char *value,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     Object *obj = opaque;
 
@@ -206,7 +206,8 @@ static const char *find_typename_by_alias(const char *alias)
     return NULL;
 }
 
-static DeviceClass *qdev_get_device_class(const char **driver, Error **errp)
+static DeviceClass *qdev_get_device_class(const char **driver,
+                                          Error *errp[static 1])
 {
     ObjectClass *oc;
     DeviceClass *dc;
@@ -321,7 +322,7 @@ static Object *qdev_get_peripheral_anon(void)
     return dev;
 }
 
-static void qbus_list_bus(DeviceState *dev, Error **errp)
+static void qbus_list_bus(DeviceState *dev, Error *errp[static 1])
 {
     BusState *child;
     const char *sep = " ";
@@ -335,7 +336,7 @@ static void qbus_list_bus(DeviceState *dev, Error **errp)
     error_append_hint(errp, "\n");
 }
 
-static void qbus_list_dev(BusState *bus, Error **errp)
+static void qbus_list_dev(BusState *bus, Error *errp[static 1])
 {
     BusChild *kid;
     const char *sep = " ";
@@ -450,7 +451,7 @@ static BusState *qbus_find_recursive(BusState *bus, const char *name,
     return pick;
 }
 
-static BusState *qbus_find(const char *path, Error **errp)
+static BusState *qbus_find(const char *path, Error *errp[static 1])
 {
     DeviceState *dev;
     BusState *bus;
@@ -557,7 +558,7 @@ void qdev_set_id(DeviceState *dev, const char *id)
     }
 }
 
-DeviceState *qdev_device_add(QemuOpts *opts, Error **errp)
+DeviceState *qdev_device_add(QemuOpts *opts, Error *errp[static 1])
 {
     DeviceClass *dc;
     const char *driver, *path;
@@ -787,7 +788,7 @@ void hmp_info_qom_tree(Monitor *mon, const QDict *dict)
     print_qom_composition(mon, obj, 0);
 }
 
-void qmp_device_add(QDict *qdict, QObject **ret_data, Error **errp)
+void qmp_device_add(QDict *qdict, QObject **ret_data, Error *errp[static 1])
 {
     Error *local_err = NULL;
     QemuOpts *opts;
@@ -811,7 +812,7 @@ void qmp_device_add(QDict *qdict, QObject **ret_data, Error **errp)
     object_unref(OBJECT(dev));
 }
 
-static DeviceState *find_device_state(const char *id, Error **errp)
+static DeviceState *find_device_state(const char *id, Error *errp[static 1])
 {
     Object *obj;
 
@@ -840,7 +841,7 @@ static DeviceState *find_device_state(const char *id, Error **errp)
     return DEVICE(obj);
 }
 
-void qdev_unplug(DeviceState *dev, Error **errp)
+void qdev_unplug(DeviceState *dev, Error *errp[static 1])
 {
     DeviceClass *dc = DEVICE_GET_CLASS(dev);
     HotplugHandler *hotplug_ctrl;
@@ -879,7 +880,7 @@ void qdev_unplug(DeviceState *dev, Error **errp)
     }
 }
 
-void qmp_device_del(const char *id, Error **errp)
+void qmp_device_del(const char *id, Error *errp[static 1])
 {
     DeviceState *dev = find_device_state(id, errp);
     if (dev != NULL) {
@@ -887,7 +888,7 @@ void qmp_device_del(const char *id, Error **errp)
     }
 }
 
-BlockBackend *blk_by_qdev_id(const char *id, Error **errp)
+BlockBackend *blk_by_qdev_id(const char *id, Error *errp[static 1])
 {
     DeviceState *dev;
     BlockBackend *blk;

@@ -33,7 +33,7 @@ static Property ehci_sysbus_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void usb_ehci_sysbus_realize(DeviceState *dev, Error **errp)
+static void usb_ehci_sysbus_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *d = SYS_BUS_DEVICE(dev);
     EHCISysBusState *i = SYS_BUS_EHCI(dev);

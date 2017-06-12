@@ -25,7 +25,8 @@ static inline bool qtest_enabled(void)
 
 bool qtest_driver(void);
 
-void qtest_init(const char *qtest_chrdev, const char *qtest_log, Error **errp);
+void qtest_init(const char *qtest_chrdev, const char *qtest_log,
+		Error *errp[static 1]);
 
 static inline int qtest_available(void)
 {

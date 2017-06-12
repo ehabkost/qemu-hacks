@@ -30,7 +30,7 @@ int
 qcrypto_tls_creds_get_dh_params_file(QCryptoTLSCreds *creds,
                                      const char *filename,
                                      gnutls_dh_params_t *dh_params,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     int ret;
 
@@ -96,7 +96,7 @@ qcrypto_tls_creds_get_path(QCryptoTLSCreds *creds,
                            const char *filename,
                            bool required,
                            char **cred,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     struct stat sb;
     int ret = -1;
@@ -139,7 +139,7 @@ qcrypto_tls_creds_get_path(QCryptoTLSCreds *creds,
 static void
 qcrypto_tls_creds_prop_set_verify(Object *obj,
                                   bool value,
-                                  Error **errp G_GNUC_UNUSED)
+                                  Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 
@@ -149,7 +149,7 @@ qcrypto_tls_creds_prop_set_verify(Object *obj,
 
 static bool
 qcrypto_tls_creds_prop_get_verify(Object *obj,
-                                  Error **errp G_GNUC_UNUSED)
+                                  Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 
@@ -160,7 +160,7 @@ qcrypto_tls_creds_prop_get_verify(Object *obj,
 static void
 qcrypto_tls_creds_prop_set_dir(Object *obj,
                                const char *value,
-                               Error **errp G_GNUC_UNUSED)
+                               Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 
@@ -170,7 +170,7 @@ qcrypto_tls_creds_prop_set_dir(Object *obj,
 
 static char *
 qcrypto_tls_creds_prop_get_dir(Object *obj,
-                               Error **errp G_GNUC_UNUSED)
+                               Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 
@@ -181,7 +181,7 @@ qcrypto_tls_creds_prop_get_dir(Object *obj,
 static void
 qcrypto_tls_creds_prop_set_priority(Object *obj,
                                     const char *value,
-                                    Error **errp G_GNUC_UNUSED)
+                                    Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 
@@ -191,7 +191,7 @@ qcrypto_tls_creds_prop_set_priority(Object *obj,
 
 static char *
 qcrypto_tls_creds_prop_get_priority(Object *obj,
-                                    Error **errp G_GNUC_UNUSED)
+                                    Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 
@@ -202,7 +202,7 @@ qcrypto_tls_creds_prop_get_priority(Object *obj,
 static void
 qcrypto_tls_creds_prop_set_endpoint(Object *obj,
                                     int value,
-                                    Error **errp G_GNUC_UNUSED)
+                                    Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 
@@ -212,7 +212,7 @@ qcrypto_tls_creds_prop_set_endpoint(Object *obj,
 
 static int
 qcrypto_tls_creds_prop_get_endpoint(Object *obj,
-                                    Error **errp G_GNUC_UNUSED)
+                                    Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCreds *creds = QCRYPTO_TLS_CREDS(obj);
 

@@ -1347,7 +1347,7 @@ static int spapr_create_pci_child_dt(sPAPRPHBState *phb, PCIDevice *dev,
 static void spapr_phb_add_pci_device(sPAPRDRConnector *drc,
                                      sPAPRPHBState *phb,
                                      PCIDevice *pdev,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     sPAPRDRConnectorClass *drck = SPAPR_DR_CONNECTOR_GET_CLASS(drc);
     DeviceState *dev = DEVICE(pdev);
@@ -1389,7 +1389,7 @@ void spapr_phb_remove_pci_device_cb(DeviceState *dev)
 static void spapr_phb_remove_pci_device(sPAPRDRConnector *drc,
                                         sPAPRPHBState *phb,
                                         PCIDevice *pdev,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     sPAPRDRConnectorClass *drck = SPAPR_DR_CONNECTOR_GET_CLASS(drc);
 
@@ -1424,7 +1424,8 @@ static uint32_t spapr_phb_get_pci_drc_index(sPAPRPHBState *phb,
 }
 
 static void spapr_phb_hot_plug_child(HotplugHandler *plug_handler,
-                                     DeviceState *plugged_dev, Error **errp)
+                                     DeviceState *plugged_dev,
+                                     Error *errp[static 1])
 {
     sPAPRPHBState *phb = SPAPR_PCI_HOST_BRIDGE(DEVICE(plug_handler));
     PCIDevice *pdev = PCI_DEVICE(plugged_dev);
@@ -1489,7 +1490,8 @@ static void spapr_phb_hot_plug_child(HotplugHandler *plug_handler,
 }
 
 static void spapr_phb_hot_unplug_child(HotplugHandler *plug_handler,
-                                       DeviceState *plugged_dev, Error **errp)
+                                       DeviceState *plugged_dev,
+                                       Error *errp[static 1])
 {
     sPAPRPHBState *phb = SPAPR_PCI_HOST_BRIDGE(DEVICE(plug_handler));
     PCIDevice *pdev = PCI_DEVICE(plugged_dev);
@@ -1553,7 +1555,7 @@ static void spapr_phb_hot_unplug_child(HotplugHandler *plug_handler,
     }
 }
 
-static void spapr_phb_realize(DeviceState *dev, Error **errp)
+static void spapr_phb_realize(DeviceState *dev, Error *errp[static 1])
 {
     sPAPRMachineState *spapr = SPAPR_MACHINE(qdev_get_machine());
     SysBusDevice *s = SYS_BUS_DEVICE(dev);

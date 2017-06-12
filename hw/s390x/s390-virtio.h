@@ -27,7 +27,7 @@ void s390_init_ipl_dev(const char *kernel_filename,
                        const char *netboot_fw,
                        bool enforce_bios);
 void s390_create_virtio_net(BusState *bus, const char *name);
-void s390_nmi(NMIState *n, int cpu_index, Error **errp);
+void s390_nmi(NMIState *n, int cpu_index, Error *errp[static 1]);
 void s390_machine_reset(void);
 void s390_memory_init(ram_addr_t mem_size);
 #endif

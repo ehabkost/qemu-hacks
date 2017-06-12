@@ -68,7 +68,7 @@ struct DummyObjectClass {
 
 static void dummy_set_bv(Object *obj,
                          bool value,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     DummyObject *dobj = DUMMY_OBJECT(obj);
 
@@ -76,7 +76,7 @@ static void dummy_set_bv(Object *obj,
 }
 
 static bool dummy_get_bv(Object *obj,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     DummyObject *dobj = DUMMY_OBJECT(obj);
 
@@ -86,7 +86,7 @@ static bool dummy_get_bv(Object *obj,
 
 static void dummy_set_av(Object *obj,
                          int value,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     DummyObject *dobj = DUMMY_OBJECT(obj);
 
@@ -94,7 +94,7 @@ static void dummy_set_av(Object *obj,
 }
 
 static int dummy_get_av(Object *obj,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     DummyObject *dobj = DUMMY_OBJECT(obj);
 
@@ -104,7 +104,7 @@ static int dummy_get_av(Object *obj,
 
 static void dummy_set_sv(Object *obj,
                          const char *value,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     DummyObject *dobj = DUMMY_OBJECT(obj);
 
@@ -113,7 +113,7 @@ static void dummy_set_sv(Object *obj,
 }
 
 static char *dummy_get_sv(Object *obj,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     DummyObject *dobj = DUMMY_OBJECT(obj);
 

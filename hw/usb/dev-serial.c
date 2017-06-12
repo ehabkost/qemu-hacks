@@ -480,7 +480,7 @@ static void usb_serial_event(void *opaque, int event)
     }
 }
 
-static void usb_serial_realize(USBDevice *dev, Error **errp)
+static void usb_serial_realize(USBDevice *dev, Error *errp[static 1])
 {
     USBSerialState *s = USB_SERIAL_DEV(dev);
     Chardev *chr = qemu_chr_fe_get_driver(&s->cs);

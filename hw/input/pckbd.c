@@ -547,7 +547,7 @@ static void i8042_initfn(Object *obj)
     qdev_init_gpio_out_named(DEVICE(obj), &s->a20_out, I8042_A20_LINE, 1);
 }
 
-static void i8042_realizefn(DeviceState *dev, Error **errp)
+static void i8042_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     ISAKBDState *isa_s = I8042(dev);

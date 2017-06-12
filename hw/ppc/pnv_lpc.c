@@ -418,7 +418,7 @@ static const MemoryRegionOps opb_master_ops = {
     },
 };
 
-static void pnv_lpc_realize(DeviceState *dev, Error **errp)
+static void pnv_lpc_realize(DeviceState *dev, Error *errp[static 1])
 {
     PnvLpcController *lpc = PNV_LPC(dev);
     Object *obj;

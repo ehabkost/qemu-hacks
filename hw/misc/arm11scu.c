@@ -59,7 +59,7 @@ static const MemoryRegionOps mpcore_scu_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void arm11_scu_realize(DeviceState *dev, Error **errp)
+static void arm11_scu_realize(DeviceState *dev, Error *errp[static 1])
 {
 }
 

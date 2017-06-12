@@ -41,7 +41,7 @@
 
 #ifndef __FreeBSD__
 int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
-             int vnet_hdr_required, int mq_required, Error **errp)
+             int vnet_hdr_required, int mq_required, Error *errp[static 1])
 {
     int fd;
 #ifdef TAPGIFNAME
@@ -115,7 +115,8 @@ int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
 
 #define PATH_NET_TAP "/dev/tap"
 
-static int tap_open_clone(char *ifname, int ifname_size, Error **errp)
+static int tap_open_clone(char *ifname, int ifname_size,
+                          Error *errp[static 1])
 {
     int fd, s, ret;
     struct ifreq ifr;
@@ -160,7 +161,7 @@ static int tap_open_clone(char *ifname, int ifname_size, Error **errp)
 }
 
 int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
-             int vnet_hdr_required, int mq_required, Error **errp)
+             int vnet_hdr_required, int mq_required, Error *errp[static 1])
 {
     int fd = -1;
 
@@ -207,7 +208,8 @@ error:
 }
 #endif /* __FreeBSD__ */
 
-void tap_set_sndbuf(int fd, const NetdevTapOptions *tap, Error **errp)
+void tap_set_sndbuf(int fd, const NetdevTapOptions *tap,
+		    Error *errp[static 1])
 {
 }
 

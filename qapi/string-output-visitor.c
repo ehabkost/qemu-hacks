@@ -124,7 +124,7 @@ static void format_string(StringOutputVisitor *sov, Range *r, bool next,
 }
 
 static void print_type_int64(Visitor *v, const char *name, int64_t *obj,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     StringOutputVisitor *sov = to_sov(v);
     GList *l;
@@ -200,7 +200,7 @@ static void print_type_int64(Visitor *v, const char *name, int64_t *obj,
 }
 
 static void print_type_uint64(Visitor *v, const char *name, uint64_t *obj,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     /* FIXME: print_type_int64 mishandles values over INT64_MAX */
     int64_t i = *obj;
@@ -208,7 +208,7 @@ static void print_type_uint64(Visitor *v, const char *name, uint64_t *obj,
 }
 
 static void print_type_size(Visitor *v, const char *name, uint64_t *obj,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     StringOutputVisitor *sov = to_sov(v);
     uint64_t val;
@@ -229,14 +229,14 @@ static void print_type_size(Visitor *v, const char *name, uint64_t *obj,
 }
 
 static void print_type_bool(Visitor *v, const char *name, bool *obj,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     StringOutputVisitor *sov = to_sov(v);
     string_output_set(sov, g_strdup(*obj ? "true" : "false"));
 }
 
 static void print_type_str(Visitor *v, const char *name, char **obj,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     StringOutputVisitor *sov = to_sov(v);
     char *out;
@@ -250,7 +250,7 @@ static void print_type_str(Visitor *v, const char *name, char **obj,
 }
 
 static void print_type_number(Visitor *v, const char *name, double *obj,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     StringOutputVisitor *sov = to_sov(v);
     string_output_set(sov, g_strdup_printf("%f", *obj));
@@ -258,7 +258,7 @@ static void print_type_number(Visitor *v, const char *name, double *obj,
 
 static void
 start_list(Visitor *v, const char *name, GenericList **list, size_t size,
-           Error **errp)
+           Error *errp[static 1])
 {
     StringOutputVisitor *sov = to_sov(v);
 

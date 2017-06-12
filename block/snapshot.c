@@ -94,7 +94,7 @@ bool bdrv_snapshot_find_by_id_and_name(BlockDriverState *bs,
                                        const char *id,
                                        const char *name,
                                        QEMUSnapshotInfo *sn_info,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QEMUSnapshotInfo *sn_tab, *sn;
     int nb_sns, i;
@@ -248,7 +248,7 @@ int bdrv_snapshot_goto(BlockDriverState *bs,
 int bdrv_snapshot_delete(BlockDriverState *bs,
                          const char *snapshot_id,
                          const char *name,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     BlockDriver *drv = bs->drv;
     int ret;
@@ -282,7 +282,7 @@ int bdrv_snapshot_delete(BlockDriverState *bs,
 
 int bdrv_snapshot_delete_by_id_or_name(BlockDriverState *bs,
                                        const char *id_or_name,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     int ret;
     Error *local_err = NULL;
@@ -339,7 +339,7 @@ int bdrv_snapshot_list(BlockDriverState *bs,
 int bdrv_snapshot_load_tmp(BlockDriverState *bs,
                            const char *snapshot_id,
                            const char *name,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     BlockDriver *drv = bs->drv;
 
@@ -366,7 +366,7 @@ int bdrv_snapshot_load_tmp(BlockDriverState *bs,
 
 int bdrv_snapshot_load_tmp_by_id_or_name(BlockDriverState *bs,
                                          const char *id_or_name,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     int ret;
     Error *local_err = NULL;
@@ -413,7 +413,7 @@ fail:
 }
 
 int bdrv_all_delete_snapshot(const char *name, BlockDriverState **first_bad_bs,
-                             Error **err)
+                             Error *err[static 1])
 {
     int ret = 0;
     BlockDriverState *bs;

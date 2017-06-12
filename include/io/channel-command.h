@@ -85,7 +85,7 @@ qio_channel_command_new_pid(int writefd,
 QIOChannelCommand *
 qio_channel_command_new_spawn(const char *const argv[],
                               int flags,
-                              Error **errp);
+                              Error *errp[static 1]);
 
 
 #endif /* QIO_CHANNEL_COMMAND_H */

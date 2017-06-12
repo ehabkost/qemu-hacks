@@ -407,7 +407,7 @@ int vhdx_update_headers(BlockDriverState *bs, BDRVVHDXState *s,
 
 /* opens the specified header block from the VHDX file header section */
 static void vhdx_parse_header(BlockDriverState *bs, BDRVVHDXState *s,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     int ret;
     VHDXHeader *header1;
@@ -890,7 +890,7 @@ static void vhdx_close(BlockDriverState *bs)
 }
 
 static int vhdx_open(BlockDriverState *bs, QDict *options, int flags,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     BDRVVHDXState *s = bs->opaque;
     int ret = 0;
@@ -1024,7 +1024,7 @@ fail:
 }
 
 static int vhdx_reopen_prepare(BDRVReopenState *state,
-                               BlockReopenQueue *queue, Error **errp)
+                               BlockReopenQueue *queue, Error *errp[static 1])
 {
     return 0;
 }
@@ -1675,7 +1675,7 @@ static int vhdx_create_new_region_table(BlockBackend *blk,
                                         bool use_zero_blocks,
                                         VHDXImageType type,
                                         uint64_t *metadata_offset,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     int ret = 0;
     uint32_t offset = 0;
@@ -1787,7 +1787,8 @@ exit:
  *    .---- ~ ----------- ~ ------------ ~ ---------------- ~ -----------.
  *   1MB
  */
-static int vhdx_create(const char *filename, QemuOpts *opts, Error **errp)
+static int vhdx_create(const char *filename, QemuOpts *opts,
+                       Error *errp[static 1])
 {
     int ret = 0;
     uint64_t image_size = (uint64_t) 2 * GiB;

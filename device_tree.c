@@ -230,7 +230,7 @@ static int findnode_nofail(void *fdt, const char *node_path)
 }
 
 char **qemu_fdt_node_path(void *fdt, const char *name, char *compat,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     int offset, len, ret;
     const char *iter_name;
@@ -336,7 +336,8 @@ int qemu_fdt_setprop_string(void *fdt, const char *node_path,
 }
 
 const void *qemu_fdt_getprop(void *fdt, const char *node_path,
-                             const char *property, int *lenp, Error **errp)
+                             const char *property, int *lenp,
+                             Error *errp[static 1])
 {
     int len;
     const void *r;
@@ -353,7 +354,8 @@ const void *qemu_fdt_getprop(void *fdt, const char *node_path,
 }
 
 uint32_t qemu_fdt_getprop_cell(void *fdt, const char *node_path,
-                               const char *property, int *lenp, Error **errp)
+                               const char *property, int *lenp,
+                               Error *errp[static 1])
 {
     int len;
     const uint32_t *p;

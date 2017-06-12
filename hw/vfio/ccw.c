@@ -154,7 +154,8 @@ read_err:
     css_inject_io_interrupt(sch);
 }
 
-static void vfio_ccw_register_io_notifier(VFIOCCWDevice *vcdev, Error **errp)
+static void vfio_ccw_register_io_notifier(VFIOCCWDevice *vcdev,
+                                          Error *errp[static 1])
 {
     VFIODevice *vdev = &vcdev->vdev;
     struct vfio_irq_info *irq_info;
@@ -236,7 +237,7 @@ static void vfio_ccw_unregister_io_notifier(VFIOCCWDevice *vcdev)
     g_free(irq_set);
 }
 
-static void vfio_ccw_get_region(VFIOCCWDevice *vcdev, Error **errp)
+static void vfio_ccw_get_region(VFIOCCWDevice *vcdev, Error *errp[static 1])
 {
     VFIODevice *vdev = &vcdev->vdev;
     struct vfio_region_info *info;
@@ -284,7 +285,8 @@ static void vfio_put_device(VFIOCCWDevice *vcdev)
     vfio_put_base_device(&vcdev->vdev);
 }
 
-static VFIOGroup *vfio_ccw_get_group(S390CCWDevice *cdev, Error **errp)
+static VFIOGroup *vfio_ccw_get_group(S390CCWDevice *cdev,
+                                     Error *errp[static 1])
 {
     char *tmp, group_path[PATH_MAX];
     ssize_t len;
@@ -311,7 +313,7 @@ static VFIOGroup *vfio_ccw_get_group(S390CCWDevice *cdev, Error **errp)
     return vfio_get_group(groupid, &address_space_memory, errp);
 }
 
-static void vfio_ccw_realize(DeviceState *dev, Error **errp)
+static void vfio_ccw_realize(DeviceState *dev, Error *errp[static 1])
 {
     VFIODevice *vbasedev;
     VFIOGroup *group;
@@ -376,7 +378,7 @@ out_err_propagate:
     error_propagate(errp, err);
 }
 
-static void vfio_ccw_unrealize(DeviceState *dev, Error **errp)
+static void vfio_ccw_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     CcwDevice *ccw_dev = DO_UPCAST(CcwDevice, parent_obj, dev);
     S390CCWDevice *cdev = DO_UPCAST(S390CCWDevice, parent_obj, ccw_dev);

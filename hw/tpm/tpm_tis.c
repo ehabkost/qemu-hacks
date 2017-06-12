@@ -1030,7 +1030,7 @@ static Property tpm_tis_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void tpm_tis_realizefn(DeviceState *dev, Error **errp)
+static void tpm_tis_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     TPMState *s = TPM(dev);
     TPMTISEmuState *tis = &s->s.tis;

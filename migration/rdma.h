@@ -18,8 +18,9 @@
 #define QEMU_MIGRATION_RDMA_H
 
 void rdma_start_outgoing_migration(void *opaque, const char *host_port,
-                                   Error **errp);
+                                   Error *errp[static 1]);
 
-void rdma_start_incoming_migration(const char *host_port, Error **errp);
+void rdma_start_incoming_migration(const char *host_port,
+				   Error *errp[static 1]);
 
 #endif

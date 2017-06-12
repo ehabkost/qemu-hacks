@@ -48,7 +48,7 @@ static void aw_a10_init(Object *obj)
     qdev_set_parent_bus(DEVICE(&s->sata), sysbus_get_default());
 }
 
-static void aw_a10_realize(DeviceState *dev, Error **errp)
+static void aw_a10_realize(DeviceState *dev, Error *errp[static 1])
 {
     AwA10State *s = AW_A10(dev);
     SysBusDevice *sysbusdev;

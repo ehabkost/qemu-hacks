@@ -293,7 +293,7 @@ static void bcm2835_mbox_reset(DeviceState *dev)
     }
 }
 
-static void bcm2835_mbox_realize(DeviceState *dev, Error **errp)
+static void bcm2835_mbox_realize(DeviceState *dev, Error *errp[static 1])
 {
     BCM2835MboxState *s = BCM2835_MBOX(dev);
     Object *obj;

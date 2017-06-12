@@ -45,11 +45,12 @@ typedef struct BDRVReplicationState {
 } BDRVReplicationState;
 
 static void replication_start(ReplicationState *rs, ReplicationMode mode,
-                              Error **errp);
-static void replication_do_checkpoint(ReplicationState *rs, Error **errp);
-static void replication_get_error(ReplicationState *rs, Error **errp);
+                              Error *errp[static 1]);
+static void replication_do_checkpoint(ReplicationState *rs,
+				      Error *errp[static 1]);
+static void replication_get_error(ReplicationState *rs, Error *errp[static 1]);
 static void replication_stop(ReplicationState *rs, bool failover,
-                             Error **errp);
+                             Error *errp[static 1]);
 
 #define REPLICATION_MODE        "mode"
 #define REPLICATION_TOP_ID      "top-id"
@@ -77,7 +78,7 @@ static ReplicationOps replication_ops = {
 };
 
 static int replication_open(BlockDriverState *bs, QDict *options,
-                            int flags, Error **errp)
+                            int flags, Error *errp[static 1])
 {
     int ret;
     BDRVReplicationState *s = bs->opaque;
@@ -311,7 +312,8 @@ static bool replication_recurse_is_first_non_filter(BlockDriverState *bs,
     return bdrv_recurse_is_first_non_filter(bs->file->bs, candidate);
 }
 
-static void secondary_do_checkpoint(BDRVReplicationState *s, Error **errp)
+static void secondary_do_checkpoint(BDRVReplicationState *s,
+                                    Error *errp[static 1])
 {
     int ret;
 
@@ -339,7 +341,7 @@ static void secondary_do_checkpoint(BDRVReplicationState *s, Error **errp)
 }
 
 static void reopen_backing_file(BlockDriverState *bs, bool writable,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     BDRVReplicationState *s = bs->opaque;
     BlockReopenQueue *reopen_queue = NULL;
@@ -427,7 +429,7 @@ static bool check_top_bs(BlockDriverState *top_bs, BlockDriverState *bs)
 }
 
 static void replication_start(ReplicationState *rs, ReplicationMode mode,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     BlockDriverState *bs = rs->opaque;
     BDRVReplicationState *s;
@@ -551,7 +553,8 @@ static void replication_start(ReplicationState *rs, ReplicationMode mode,
     aio_context_release(aio_context);
 }
 
-static void replication_do_checkpoint(ReplicationState *rs, Error **errp)
+static void replication_do_checkpoint(ReplicationState *rs,
+                                      Error *errp[static 1])
 {
     BlockDriverState *bs = rs->opaque;
     BDRVReplicationState *s;
@@ -567,7 +570,7 @@ static void replication_do_checkpoint(ReplicationState *rs, Error **errp)
     aio_context_release(aio_context);
 }
 
-static void replication_get_error(ReplicationState *rs, Error **errp)
+static void replication_get_error(ReplicationState *rs, Error *errp[static 1])
 {
     BlockDriverState *bs = rs->opaque;
     BDRVReplicationState *s;
@@ -611,7 +614,8 @@ static void replication_done(void *opaque, int ret)
     }
 }
 
-static void replication_stop(ReplicationState *rs, bool failover, Error **errp)
+static void replication_stop(ReplicationState *rs, bool failover,
+                             Error *errp[static 1])
 {
     BlockDriverState *bs = rs->opaque;
     BDRVReplicationState *s;

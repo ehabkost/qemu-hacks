@@ -22,7 +22,7 @@
 #include "hw/virtio/virtio-access.h"
 
 /* Context: QEMU global mutex held */
-void virtio_scsi_dataplane_setup(VirtIOSCSI *s, Error **errp)
+void virtio_scsi_dataplane_setup(VirtIOSCSI *s, Error *errp[static 1])
 {
     VirtIOSCSICommon *vs = VIRTIO_SCSI_COMMON(s);
     VirtIODevice *vdev = VIRTIO_DEVICE(s);

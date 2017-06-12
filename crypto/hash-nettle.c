@@ -108,7 +108,7 @@ int qcrypto_hash_bytesv(QCryptoHashAlgorithm alg,
                         size_t niov,
                         uint8_t **result,
                         size_t *resultlen,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     int i;
     union qcrypto_hash_ctx ctx;

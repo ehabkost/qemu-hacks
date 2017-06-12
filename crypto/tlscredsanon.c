@@ -31,7 +31,7 @@
 
 static int
 qcrypto_tls_creds_anon_load(QCryptoTLSCredsAnon *creds,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     char *dhparams = NULL;
     int ret;
@@ -103,7 +103,7 @@ qcrypto_tls_creds_anon_unload(QCryptoTLSCredsAnon *creds)
 
 static void
 qcrypto_tls_creds_anon_load(QCryptoTLSCredsAnon *creds G_GNUC_UNUSED,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     error_setg(errp, "TLS credentials support requires GNUTLS");
 }
@@ -122,7 +122,7 @@ qcrypto_tls_creds_anon_unload(QCryptoTLSCredsAnon *creds G_GNUC_UNUSED)
 static void
 qcrypto_tls_creds_anon_prop_set_loaded(Object *obj,
                                        bool value,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     QCryptoTLSCredsAnon *creds = QCRYPTO_TLS_CREDS_ANON(obj);
 
@@ -139,7 +139,7 @@ qcrypto_tls_creds_anon_prop_set_loaded(Object *obj,
 
 static bool
 qcrypto_tls_creds_anon_prop_get_loaded(Object *obj,
-                                       Error **errp G_GNUC_UNUSED)
+                                       Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoTLSCredsAnon *creds = QCRYPTO_TLS_CREDS_ANON(obj);
 
@@ -156,7 +156,7 @@ qcrypto_tls_creds_anon_prop_get_loaded(Object *obj,
 
 static bool
 qcrypto_tls_creds_anon_prop_get_loaded(Object *obj G_GNUC_UNUSED,
-                                       Error **errp G_GNUC_UNUSED)
+                                       Error *errp[static 1] G_GNUC_UNUSED)
 {
     return false;
 }
@@ -166,7 +166,7 @@ qcrypto_tls_creds_anon_prop_get_loaded(Object *obj G_GNUC_UNUSED,
 
 
 static void
-qcrypto_tls_creds_anon_complete(UserCreatable *uc, Error **errp)
+qcrypto_tls_creds_anon_complete(UserCreatable *uc, Error *errp[static 1])
 {
     object_property_set_bool(OBJECT(uc), true, "loaded", errp);
 }

@@ -1855,7 +1855,7 @@ static NetClientInfo net_eepro100_info = {
     .receive = nic_receive,
 };
 
-static void e100_nic_realize(PCIDevice *pci_dev, Error **errp)
+static void e100_nic_realize(PCIDevice *pci_dev, Error *errp[static 1])
 {
     EEPRO100State *s = DO_UPCAST(EEPRO100State, dev, pci_dev);
     E100PCIDeviceInfo *info = eepro100_get_class(s);

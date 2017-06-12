@@ -34,6 +34,6 @@ void backup_cow_request_begin(CowRequest *req, BlockJob *job,
                               int nb_sectors);
 void backup_cow_request_end(CowRequest *req);
 
-void backup_do_checkpoint(BlockJob *job, Error **errp);
+void backup_do_checkpoint(BlockJob *job, Error *errp[static 1]);
 
 #endif

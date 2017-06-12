@@ -3,7 +3,7 @@
 #include "qemu/uuid.h"
 #include "qmp-commands.h"
 
-UuidInfo *qmp_query_uuid(Error **errp)
+UuidInfo *qmp_query_uuid(Error *errp[static 1])
 {
     UuidInfo *info = g_malloc0(sizeof(*info));
 

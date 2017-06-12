@@ -733,7 +733,7 @@ virtio_crypto_handle_dataq_bh(VirtIODevice *vdev, VirtQueue *vq)
 
 static uint64_t virtio_crypto_get_features(VirtIODevice *vdev,
                                            uint64_t features,
-                                           Error **errp)
+                                           Error *errp[static 1])
 {
     return features;
 }
@@ -771,7 +771,8 @@ static void virtio_crypto_init_config(VirtIODevice *vdev)
     vcrypto->conf.max_size = vcrypto->conf.cryptodev->conf.max_size;
 }
 
-static void virtio_crypto_device_realize(DeviceState *dev, Error **errp)
+static void virtio_crypto_device_realize(DeviceState *dev,
+                                         Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOCrypto *vcrypto = VIRTIO_CRYPTO(dev);
@@ -813,7 +814,8 @@ static void virtio_crypto_device_realize(DeviceState *dev, Error **errp)
     cryptodev_backend_set_used(vcrypto->cryptodev, true);
 }
 
-static void virtio_crypto_device_unrealize(DeviceState *dev, Error **errp)
+static void virtio_crypto_device_unrealize(DeviceState *dev,
+                                           Error *errp[static 1])
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
     VirtIOCrypto *vcrypto = VIRTIO_CRYPTO(dev);
@@ -890,7 +892,7 @@ static void virtio_crypto_class_init(ObjectClass *klass, void *data)
 
 static void
 virtio_crypto_check_cryptodev_is_used(Object *obj, const char *name,
-                                      Object *val, Error **errp)
+                                      Object *val, Error *errp[static 1])
 {
     if (cryptodev_backend_is_used(CRYPTODEV_BACKEND(val))) {
         char *path = object_get_canonical_path_component(val);

@@ -65,7 +65,7 @@ static const VMStateDescription vmstate_ide_isa = {
     }
 };
 
-static void isa_ide_realizefn(DeviceState *dev, Error **errp)
+static void isa_ide_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     ISADevice *isadev = ISA_DEVICE(dev);
     ISAIDEState *s = ISA_IDE(dev);

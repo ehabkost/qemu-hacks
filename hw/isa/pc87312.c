@@ -262,7 +262,7 @@ static void pc87312_reset(DeviceState *d)
     pc87312_soft_reset(s);
 }
 
-static void pc87312_realize(DeviceState *dev, Error **errp)
+static void pc87312_realize(DeviceState *dev, Error *errp[static 1])
 {
     PC87312State *s;
     DeviceState *d;

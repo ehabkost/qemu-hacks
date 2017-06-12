@@ -5336,7 +5336,7 @@ static void arm_cpu_add_definition(gpointer data, gpointer user_data)
     *cpu_list = entry;
 }
 
-CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
+CpuDefinitionInfoList *arch_query_cpu_definitions(Error *errp[static 1])
 {
     CpuDefinitionInfoList *cpu_list = NULL;
     GSList *list;

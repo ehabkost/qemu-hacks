@@ -176,19 +176,19 @@ void add_boot_device_path(int32_t bootindex, DeviceState *dev,
 char *get_boot_devices_list(size_t *size, bool ignore_suffixes);
 
 DeviceState *get_boot_device(uint32_t position);
-void check_boot_index(int32_t bootindex, Error **errp);
+void check_boot_index(int32_t bootindex, Error *errp[static 1]);
 void del_boot_device_path(DeviceState *dev, const char *suffix);
 void device_add_bootindex_property(Object *obj, int32_t *bootindex,
                                    const char *name, const char *suffix,
-                                   DeviceState *dev, Error **errp);
+                                   DeviceState *dev, Error *errp[static 1]);
 void restore_boot_order(void *opaque);
-void validate_bootdevices(const char *devices, Error **errp);
+void validate_bootdevices(const char *devices, Error *errp[static 1]);
 
 /* handler to set the boot_device order for a specific type of MachineClass */
 typedef void QEMUBootSetHandler(void *opaque, const char *boot_order,
-                                Error **errp);
+                                Error *errp[static 1]);
 void qemu_register_boot_set(QEMUBootSetHandler *func, void *opaque);
-void qemu_boot_set(const char *boot_order, Error **errp);
+void qemu_boot_set(const char *boot_order, Error *errp[static 1]);
 
 QemuOpts *qemu_get_machine_opts(void);
 

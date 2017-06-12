@@ -355,7 +355,7 @@ static int vdi_probe(const uint8_t *buf, int buf_size, const char *filename)
 }
 
 static int vdi_open(BlockDriverState *bs, QDict *options, int flags,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     BDRVVdiState *s = bs->opaque;
     VdiHeader header;
@@ -497,7 +497,7 @@ static int vdi_open(BlockDriverState *bs, QDict *options, int flags,
 }
 
 static int vdi_reopen_prepare(BDRVReopenState *state,
-                              BlockReopenQueue *queue, Error **errp)
+                              BlockReopenQueue *queue, Error *errp[static 1])
 {
     return 0;
 }
@@ -716,7 +716,8 @@ vdi_co_pwritev(BlockDriverState *bs, uint64_t offset, uint64_t bytes,
     return ret;
 }
 
-static int vdi_create(const char *filename, QemuOpts *opts, Error **errp)
+static int vdi_create(const char *filename, QemuOpts *opts,
+                      Error *errp[static 1])
 {
     int ret = 0;
     uint64_t bytes = 0;

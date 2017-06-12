@@ -92,7 +92,7 @@ static TypeInfo ipmi_interface_type_info = {
 };
 
 static void isa_ipmi_bmc_check(Object *obj, const char *name,
-                               Object *val, Error **errp)
+                               Object *val, Error *errp[static 1])
 {
     IPMIBmc *bmc = IPMI_BMC(val);
 

@@ -48,7 +48,7 @@ qio_channel_command_new_pid(int writefd,
 QIOChannelCommand *
 qio_channel_command_new_spawn(const char *const argv[],
                               int flags,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     pid_t pid = -1;
     int stdinfd[2] = { -1, -1 };
@@ -144,7 +144,7 @@ qio_channel_command_new_spawn(const char *const argv[],
 QIOChannelCommand *
 qio_channel_command_new_spawn(const char *const argv[],
                               int flags,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     error_setg_errno(errp, ENOSYS,
                      "Command spawn not supported on this platform");
@@ -154,7 +154,7 @@ qio_channel_command_new_spawn(const char *const argv[],
 
 #ifndef WIN32
 static int qio_channel_command_abort(QIOChannelCommand *ioc,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     pid_t ret;
     int status;
@@ -229,7 +229,7 @@ static ssize_t qio_channel_command_readv(QIOChannel *ioc,
                                          size_t niov,
                                          int **fds,
                                          size_t *nfds,
-                                         Error **errp)
+                                         Error *errp[static 1])
 {
     QIOChannelCommand *cioc = QIO_CHANNEL_COMMAND(ioc);
     ssize_t ret;
@@ -257,7 +257,7 @@ static ssize_t qio_channel_command_writev(QIOChannel *ioc,
                                           size_t niov,
                                           int *fds,
                                           size_t nfds,
-                                          Error **errp)
+                                          Error *errp[static 1])
 {
     QIOChannelCommand *cioc = QIO_CHANNEL_COMMAND(ioc);
     ssize_t ret;
@@ -280,7 +280,7 @@ static ssize_t qio_channel_command_writev(QIOChannel *ioc,
 
 static int qio_channel_command_set_blocking(QIOChannel *ioc,
                                             bool enabled,
-                                            Error **errp)
+                                            Error *errp[static 1])
 {
     QIOChannelCommand *cioc = QIO_CHANNEL_COMMAND(ioc);
 
@@ -297,7 +297,7 @@ static int qio_channel_command_set_blocking(QIOChannel *ioc,
 
 
 static int qio_channel_command_close(QIOChannel *ioc,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QIOChannelCommand *cioc = QIO_CHANNEL_COMMAND(ioc);
     int rv = 0;

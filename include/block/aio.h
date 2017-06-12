@@ -156,7 +156,7 @@ struct AioContext {
  * They also provide bottom halves, a service to execute a piece of code
  * as soon as possible.
  */
-AioContext *aio_context_new(Error **errp);
+AioContext *aio_context_new(Error *errp[static 1]);
 
 /**
  * aio_context_ref:
@@ -562,6 +562,6 @@ void aio_context_setup(AioContext *ctx);
  */
 void aio_context_set_poll_params(AioContext *ctx, int64_t max_ns,
                                  int64_t grow, int64_t shrink,
-                                 Error **errp);
+                                 Error *errp[static 1]);
 
 #endif

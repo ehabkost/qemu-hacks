@@ -511,7 +511,7 @@ static void usb_hub_handle_data(USBDevice *dev, USBPacket *p)
     }
 }
 
-static void usb_hub_unrealize(USBDevice *dev, Error **errp)
+static void usb_hub_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     USBHubState *s = (USBHubState *)dev;
     int i;
@@ -530,7 +530,7 @@ static USBPortOps usb_hub_port_ops = {
     .complete = usb_hub_complete,
 };
 
-static void usb_hub_realize(USBDevice *dev, Error **errp)
+static void usb_hub_realize(USBDevice *dev, Error *errp[static 1])
 {
     USBHubState *s = USB_HUB(dev);
     USBHubPort *port;

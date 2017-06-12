@@ -1923,7 +1923,7 @@ static void gdb_sigterm_handler(int signal)
 #endif
 
 static void gdb_monitor_open(Chardev *chr, ChardevBackend *backend,
-                             bool *be_opened, Error **errp)
+                             bool *be_opened, Error *errp[static 1])
 {
     *be_opened = false;
 }

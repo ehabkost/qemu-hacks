@@ -72,7 +72,8 @@ typedef struct NFSRPC {
     NFSClient *client;
 } NFSRPC;
 
-static int nfs_parse_uri(const char *filename, QDict *options, Error **errp)
+static int nfs_parse_uri(const char *filename, QDict *options,
+                         Error *errp[static 1])
 {
     URI *uri = NULL;
     QueryParams *qp = NULL;
@@ -149,7 +150,8 @@ out:
     return ret;
 }
 
-static bool nfs_has_filename_options_conflict(QDict *options, Error **errp)
+static bool nfs_has_filename_options_conflict(QDict *options,
+                                              Error *errp[static 1])
 {
     const QDictEntry *qe;
 
@@ -174,7 +176,7 @@ static bool nfs_has_filename_options_conflict(QDict *options, Error **errp)
 }
 
 static void nfs_parse_filename(const char *filename, QDict *options,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     if (nfs_has_filename_options_conflict(options, errp)) {
         return;
@@ -449,7 +451,7 @@ static void nfs_file_close(BlockDriverState *bs)
     qemu_mutex_destroy(&client->mutex);
 }
 
-static NFSServer *nfs_config(QDict *options, Error **errp)
+static NFSServer *nfs_config(QDict *options, Error *errp[static 1])
 {
     NFSServer *server = NULL;
     QDict *addr = NULL;
@@ -489,7 +491,8 @@ out:
 
 
 static int64_t nfs_client_open(NFSClient *client, QDict *options,
-                               int flags, int open_flags, Error **errp)
+                               int flags, int open_flags,
+                               Error *errp[static 1])
 {
     int ret = -EINVAL;
     QemuOpts *opts = NULL;
@@ -645,7 +648,7 @@ out:
 }
 
 static int nfs_file_open(BlockDriverState *bs, QDict *options, int flags,
-                         Error **errp) {
+                         Error *errp[static 1]) {
     NFSClient *client = bs->opaque;
     int64_t ret;
 
@@ -676,7 +679,8 @@ static QemuOptsList nfs_create_opts = {
     }
 };
 
-static int nfs_file_create(const char *url, QemuOpts *opts, Error **errp)
+static int nfs_file_create(const char *url, QemuOpts *opts,
+                           Error *errp[static 1])
 {
     int ret = 0;
     int64_t total_size = 0;
@@ -754,7 +758,8 @@ static int64_t nfs_get_allocated_file_size(BlockDriverState *bs)
     return (task.ret < 0 ? task.ret : st.st_blocks * 512);
 }
 
-static int nfs_file_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int nfs_file_truncate(BlockDriverState *bs, int64_t offset,
+                             Error *errp[static 1])
 {
     NFSClient *client = bs->opaque;
     int ret;
@@ -771,7 +776,7 @@ static int nfs_file_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
 /* Note that this will not re-establish a connection with the NFS server
  * - it is effectively a NOP.  */
 static int nfs_reopen_prepare(BDRVReopenState *state,
-                              BlockReopenQueue *queue, Error **errp)
+                              BlockReopenQueue *queue, Error *errp[static 1])
 {
     NFSClient *client = state->bs->opaque;
     struct stat st;
@@ -860,7 +865,7 @@ static void nfs_refresh_filename(BlockDriverState *bs, QDict *options)
 
 #ifdef LIBNFS_FEATURE_PAGECACHE
 static void nfs_invalidate_cache(BlockDriverState *bs,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     NFSClient *client = bs->opaque;
     nfs_pagecache_invalidate(client->context, client->fh);

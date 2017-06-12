@@ -47,7 +47,8 @@ static inline bool vfio_irq_is_automasked(VFIOINTp *intp)
  * @errp: error object
  */
 static VFIOINTp *vfio_init_intp(VFIODevice *vbasedev,
-                                struct vfio_irq_info info, Error **errp)
+                                struct vfio_irq_info info,
+                                Error *errp[static 1])
 {
     int ret;
     VFIOPlatformDevice *vdev =
@@ -462,7 +463,7 @@ static int vfio_platform_hot_reset_multi(VFIODevice *vbasedev)
  * @errp: error object
  *
  */
-static int vfio_populate_device(VFIODevice *vbasedev, Error **errp)
+static int vfio_populate_device(VFIODevice *vbasedev, Error *errp[static 1])
 {
     VFIOINTp *intp, *tmp;
     int i, ret = -1;
@@ -548,7 +549,7 @@ static VFIODeviceOps vfio_platform_ops = {
  * fd retrieval, resource query.
  * Precondition: the device name must be initialized
  */
-static int vfio_base_device_init(VFIODevice *vbasedev, Error **errp)
+static int vfio_base_device_init(VFIODevice *vbasedev, Error *errp[static 1])
 {
     VFIOGroup *group;
     VFIODevice *vbasedev_iter;
@@ -632,7 +633,7 @@ static int vfio_base_device_init(VFIODevice *vbasedev, Error **errp)
  * initialize the device, its memory regions and IRQ structures
  * IRQ are started separately
  */
-static void vfio_platform_realize(DeviceState *dev, Error **errp)
+static void vfio_platform_realize(DeviceState *dev, Error *errp[static 1])
 {
     VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(dev);
     SysBusDevice *sbdev = SYS_BUS_DEVICE(dev);

@@ -42,7 +42,7 @@ void replication_remove(ReplicationState *rs)
 /*
  * The caller of the function MUST make sure vm stopped
  */
-void replication_start_all(ReplicationMode mode, Error **errp)
+void replication_start_all(ReplicationMode mode, Error *errp[static 1])
 {
     ReplicationState *rs, *next;
 
@@ -56,7 +56,7 @@ void replication_start_all(ReplicationMode mode, Error **errp)
     }
 }
 
-void replication_do_checkpoint_all(Error **errp)
+void replication_do_checkpoint_all(Error *errp[static 1])
 {
     ReplicationState *rs, *next;
 
@@ -70,7 +70,7 @@ void replication_do_checkpoint_all(Error **errp)
     }
 }
 
-void replication_get_error_all(Error **errp)
+void replication_get_error_all(Error *errp[static 1])
 {
     ReplicationState *rs, *next;
 
@@ -84,7 +84,7 @@ void replication_get_error_all(Error **errp)
     }
 }
 
-void replication_stop_all(bool failover, Error **errp)
+void replication_stop_all(bool failover, Error *errp[static 1])
 {
     ReplicationState *rs, *next;
 

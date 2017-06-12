@@ -96,7 +96,7 @@ static int wdt_diag288_handle_timer(DIAG288State *diag288,
     return 0;
 }
 
-static void wdt_diag288_realize(DeviceState *dev, Error **errp)
+static void wdt_diag288_realize(DeviceState *dev, Error *errp[static 1])
 {
     DIAG288State *diag288 = DIAG288(dev);
 
@@ -105,7 +105,7 @@ static void wdt_diag288_realize(DeviceState *dev, Error **errp)
                                   dev);
 }
 
-static void wdt_diag288_unrealize(DeviceState *dev, Error **errp)
+static void wdt_diag288_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     DIAG288State *diag288 = DIAG288(dev);
 

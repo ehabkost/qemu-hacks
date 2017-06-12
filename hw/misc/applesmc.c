@@ -225,7 +225,7 @@ static const MemoryRegionOps applesmc_cmd_io_ops = {
     },
 };
 
-static void applesmc_isa_realize(DeviceState *dev, Error **errp)
+static void applesmc_isa_realize(DeviceState *dev, Error *errp[static 1])
 {
     AppleSMCState *s = APPLE_SMC(dev);
 

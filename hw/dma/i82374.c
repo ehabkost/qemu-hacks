@@ -114,7 +114,7 @@ static const MemoryRegionPortio i82374_portio_list[] = {
     PORTIO_END_OF_LIST(),
 };
 
-static void i82374_realize(DeviceState *dev, Error **errp)
+static void i82374_realize(DeviceState *dev, Error *errp[static 1])
 {
     I82374State *s = I82374(dev);
 

@@ -459,7 +459,7 @@ static void omap_i2c_init(Object *obj)
     s->bus = i2c_init_bus(dev, NULL);
 }
 
-static void omap_i2c_realize(DeviceState *dev, Error **errp)
+static void omap_i2c_realize(DeviceState *dev, Error *errp[static 1])
 {
     OMAPI2CState *s = OMAP_I2C(dev);
 

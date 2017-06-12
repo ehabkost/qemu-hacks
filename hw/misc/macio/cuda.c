@@ -897,7 +897,7 @@ static void cuda_reset(DeviceState *dev)
     s->sr_delay_timer = timer_new_ns(QEMU_CLOCK_VIRTUAL, cuda_set_sr_int, s);
 }
 
-static void cuda_realizefn(DeviceState *dev, Error **errp)
+static void cuda_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CUDAState *s = CUDA(dev);
     struct tm tm;

@@ -110,7 +110,7 @@ static void vnc_set_share_mode(VncState *vs, VncShareMode mode)
 
 static void vnc_init_basic_info(SocketAddress *addr,
                                 VncBasicInfo *info,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     switch (addr->type) {
     case SOCKET_ADDRESS_TYPE_INET:
@@ -143,7 +143,7 @@ static void vnc_init_basic_info(SocketAddress *addr,
 
 static void vnc_init_basic_info_from_server_addr(QIOChannelSocket *ioc,
                                                  VncBasicInfo *info,
-                                                 Error **errp)
+                                                 Error *errp[static 1])
 {
     SocketAddress *addr = NULL;
 
@@ -163,7 +163,7 @@ static void vnc_init_basic_info_from_server_addr(QIOChannelSocket *ioc,
 
 static void vnc_init_basic_info_from_remote_addr(QIOChannelSocket *ioc,
                                                  VncBasicInfo *info,
-                                                 Error **errp)
+                                                 Error *errp[static 1])
 {
     SocketAddress *addr = NULL;
 
@@ -373,7 +373,7 @@ static VncClientInfoList *qmp_query_client_list(VncDisplay *vd)
     return prev;
 }
 
-VncInfo *qmp_query_vnc(Error **errp)
+VncInfo *qmp_query_vnc(Error *errp[static 1])
 {
     VncInfo *info = g_malloc0(sizeof(*info));
     VncDisplay *vd = vnc_display_find(NULL);
@@ -552,7 +552,7 @@ static void qmp_query_auth(int auth, int subauth,
     }
 }
 
-VncInfo2List *qmp_query_vnc_servers(Error **errp)
+VncInfo2List *qmp_query_vnc_servers(Error *errp[static 1])
 {
     VncInfo2List *item, *prev = NULL;
     VncInfo2 *info;
@@ -3261,7 +3261,7 @@ vnc_display_setup_auth(int *auth,
                        bool password,
                        bool sasl,
                        bool websocket,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     /*
      * We have a choice of 3 authentication options
@@ -3375,7 +3375,7 @@ vnc_display_create_creds(bool x509,
                          bool x509verify,
                          const char *dir,
                          const char *id,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     gchar *credsid = g_strdup_printf("tlsvnc%s", id);
     Object *parent = object_get_objects_root();
@@ -3421,7 +3421,7 @@ static int vnc_display_get_address(const char *addrstr,
                                    bool ipv4,
                                    bool ipv6,
                                    SocketAddress **retaddr,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     int ret = -1;
     SocketAddress *addr = NULL;
@@ -3534,7 +3534,7 @@ static int vnc_display_get_addresses(QemuOpts *opts,
                                      size_t *retnsaddr,
                                      SocketAddress ***retwsaddr,
                                      size_t *retnwsaddr,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     SocketAddress *saddr = NULL;
     SocketAddress *wsaddr = NULL;
@@ -3640,7 +3640,7 @@ static int vnc_display_connect(VncDisplay *vd,
                                size_t nsaddr,
                                SocketAddress **wsaddr,
                                size_t nwsaddr,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     /* connect to viewer */
     QIOChannelSocket *sioc = NULL;
@@ -3671,7 +3671,7 @@ static int vnc_display_listen_addr(VncDisplay *vd,
                                    QIOChannelSocket ***lsock,
                                    guint **lsock_tag,
                                    size_t *nlsock,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     QIODNSResolver *resolver = qio_dns_resolver_get_instance();
     SocketAddress **rawaddrs = NULL;
@@ -3732,7 +3732,7 @@ static int vnc_display_listen(VncDisplay *vd,
                               size_t nsaddr,
                               SocketAddress **wsaddr,
                               size_t nwsaddr,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     size_t i;
 
@@ -3761,7 +3761,7 @@ static int vnc_display_listen(VncDisplay *vd,
 }
 
 
-void vnc_display_open(const char *id, Error **errp)
+void vnc_display_open(const char *id, Error *errp[static 1])
 {
     VncDisplay *vd = vnc_display_find(id);
     QemuOpts *opts = qemu_opts_find(&qemu_vnc_opts, id);
@@ -4043,7 +4043,7 @@ static void vnc_auto_assign_id(QemuOptsList *olist, QemuOpts *opts)
     qemu_opts_set_id(opts, id);
 }
 
-QemuOpts *vnc_parse(const char *str, Error **errp)
+QemuOpts *vnc_parse(const char *str, Error *errp[static 1])
 {
     QemuOptsList *olist = qemu_find_opts("vnc");
     QemuOpts *opts = qemu_opts_parse(olist, str, true, errp);
@@ -4061,7 +4061,7 @@ QemuOpts *vnc_parse(const char *str, Error **errp)
     return opts;
 }
 
-int vnc_init_func(void *opaque, QemuOpts *opts, Error **errp)
+int vnc_init_func(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     Error *local_err = NULL;
     char *id = (char *)qemu_opts_id(opts);

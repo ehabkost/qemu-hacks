@@ -564,7 +564,8 @@ static void res_free(void)
     boot_splash_filedata = NULL;
 }
 
-static int default_driver_check(void *opaque, QemuOpts *opts, Error **errp)
+static int default_driver_check(void *opaque, QemuOpts *opts,
+                                Error *errp[static 1])
 {
     const char *driver = qemu_opt_get(opts, "driver");
     int i;
@@ -741,7 +742,7 @@ bool runstate_needs_reset(void)
         runstate_check(RUN_STATE_SHUTDOWN);
 }
 
-StatusInfo *qmp_query_status(Error **errp)
+StatusInfo *qmp_query_status(Error *errp[static 1])
 {
     StatusInfo *info = g_malloc0(sizeof(*info));
 
@@ -1029,7 +1030,7 @@ static int bt_parse(const char *opt)
     return 1;
 }
 
-static int parse_sandbox(void *opaque, QemuOpts *opts, Error **errp)
+static int parse_sandbox(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     /* FIXME: change this to true for 1.3 */
     if (qemu_opt_get_bool(opts, "enable", false)) {
@@ -1048,7 +1049,7 @@ static int parse_sandbox(void *opaque, QemuOpts *opts, Error **errp)
     return 0;
 }
 
-static int parse_name(void *opaque, QemuOpts *opts, Error **errp)
+static int parse_name(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     const char *proc_name;
 
@@ -1071,7 +1072,7 @@ bool defaults_enabled(void)
 }
 
 #ifndef _WIN32
-static int parse_add_fd(void *opaque, QemuOpts *opts, Error **errp)
+static int parse_add_fd(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     int fd, dupfd, flags;
     int64_t fdset_id;
@@ -1128,7 +1129,7 @@ static int parse_add_fd(void *opaque, QemuOpts *opts, Error **errp)
     return 0;
 }
 
-static int cleanup_add_fd(void *opaque, QemuOpts *opts, Error **errp)
+static int cleanup_add_fd(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     int fd;
 
@@ -1149,14 +1150,16 @@ static int cleanup_add_fd(void *opaque, QemuOpts *opts, Error **errp)
 #define MTD_OPTS ""
 #define SD_OPTS ""
 
-static int drive_init_func(void *opaque, QemuOpts *opts, Error **errp)
+static int drive_init_func(void *opaque, QemuOpts *opts,
+                           Error *errp[static 1])
 {
     BlockInterfaceType *block_default_type = opaque;
 
     return drive_new(opts, *block_default_type) == NULL;
 }
 
-static int drive_enable_snapshot(void *opaque, QemuOpts *opts, Error **errp)
+static int drive_enable_snapshot(void *opaque, QemuOpts *opts,
+                                 Error *errp[static 1])
 {
     if (qemu_opt_get(opts, "snapshot") == NULL) {
         qemu_opt_set(opts, "snapshot", "on", &error_abort);
@@ -1333,7 +1336,7 @@ const char *semihosting_get_cmdline(void)
 
 static int add_semihosting_arg(void *opaque,
                                const char *name, const char *val,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     SemihostingConfig *s = opaque;
     if (strcmp(name, "arg") == 0) {
@@ -1502,7 +1505,7 @@ MachineClass *find_default_machine(void)
     return mc;
 }
 
-MachineInfoList *qmp_query_machines(Error **errp)
+MachineInfoList *qmp_query_machines(Error *errp[static 1])
 {
     GSList *el, *machines = object_class_get_list(TYPE_MACHINE, false);
     MachineInfoList *mach_list = NULL;
@@ -2274,7 +2277,7 @@ static inline bool nonempty_str(const char *str)
     return str && *str;
 }
 
-static int parse_fw_cfg(void *opaque, QemuOpts *opts, Error **errp)
+static int parse_fw_cfg(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     gchar *buf;
     size_t size;
@@ -2322,12 +2325,14 @@ static int parse_fw_cfg(void *opaque, QemuOpts *opts, Error **errp)
     return 0;
 }
 
-static int device_help_func(void *opaque, QemuOpts *opts, Error **errp)
+static int device_help_func(void *opaque, QemuOpts *opts,
+                            Error *errp[static 1])
 {
     return qdev_device_help(opts);
 }
 
-static int device_init_func(void *opaque, QemuOpts *opts, Error **errp)
+static int device_init_func(void *opaque, QemuOpts *opts,
+                            Error *errp[static 1])
 {
     Error *err = NULL;
     DeviceState *dev;
@@ -2341,7 +2346,8 @@ static int device_init_func(void *opaque, QemuOpts *opts, Error **errp)
     return 0;
 }
 
-static int chardev_init_func(void *opaque, QemuOpts *opts, Error **errp)
+static int chardev_init_func(void *opaque, QemuOpts *opts,
+                             Error *errp[static 1])
 {
     Error *local_err = NULL;
 
@@ -2354,13 +2360,14 @@ static int chardev_init_func(void *opaque, QemuOpts *opts, Error **errp)
 }
 
 #ifdef CONFIG_VIRTFS
-static int fsdev_init_func(void *opaque, QemuOpts *opts, Error **errp)
+static int fsdev_init_func(void *opaque, QemuOpts *opts,
+                           Error *errp[static 1])
 {
     return qemu_fsdev_add(opts);
 }
 #endif
 
-static int mon_init_func(void *opaque, QemuOpts *opts, Error **errp)
+static int mon_init_func(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     Chardev *chr;
     const char *chardev;
@@ -2771,7 +2778,7 @@ static MachineClass *select_machine(void)
 
 static int machine_set_property(void *opaque,
                                 const char *name, const char *value,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     Object *obj = OBJECT(opaque);
     Error *local_err = NULL;
@@ -2944,7 +2951,8 @@ static void set_memory_options(uint64_t *ram_slots, ram_addr_t *maxram_size,
     loc_pop(&loc);
 }
 
-static int global_init_func(void *opaque, QemuOpts *opts, Error **errp)
+static int global_init_func(void *opaque, QemuOpts *opts,
+                            Error *errp[static 1])
 {
     GlobalProperty *g;
 

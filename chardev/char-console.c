@@ -27,7 +27,7 @@
 static void qemu_chr_open_win_con(Chardev *chr,
                                   ChardevBackend *backend,
                                   bool *be_opened,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     win_chr_set_file(chr, GetStdHandle(STD_OUTPUT_HANDLE), true);
 }

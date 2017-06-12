@@ -57,7 +57,7 @@ static void GCC_FMT_ATTR(2, 3) blkverify_err(BlkverifyRequest *r,
 
 /* Valid blkverify filenames look like blkverify:path/to/raw_image:path/to/image */
 static void blkverify_parse_filename(const char *filename, QDict *options,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     const char *c;
     QString *raw_path;
@@ -106,7 +106,7 @@ static QemuOptsList runtime_opts = {
 };
 
 static int blkverify_open(BlockDriverState *bs, QDict *options, int flags,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     BDRVBlkverifyState *s = bs->opaque;
     QemuOpts *opts;

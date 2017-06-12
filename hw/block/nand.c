@@ -369,7 +369,7 @@ static const VMStateDescription vmstate_nand = {
     }
 };
 
-static void nand_realize(DeviceState *dev, Error **errp)
+static void nand_realize(DeviceState *dev, Error *errp[static 1])
 {
     int pagesize;
     NANDFlashState *s = NAND(dev);

@@ -69,7 +69,8 @@ static void nbd_server_free(NBDServerData *server)
     g_free(server);
 }
 
-static QCryptoTLSCreds *nbd_get_tls_creds(const char *id, Error **errp)
+static QCryptoTLSCreds *nbd_get_tls_creds(const char *id,
+                                          Error *errp[static 1])
 {
     Object *obj;
     QCryptoTLSCreds *creds;
@@ -100,7 +101,7 @@ static QCryptoTLSCreds *nbd_get_tls_creds(const char *id, Error **errp)
 
 
 void nbd_server_start(SocketAddress *addr, const char *tls_creds,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     if (nbd_server) {
         error_setg(errp, "NBD server already running");
@@ -146,7 +147,7 @@ void nbd_server_start(SocketAddress *addr, const char *tls_creds,
 
 void qmp_nbd_server_start(SocketAddressLegacy *addr,
                           bool has_tls_creds, const char *tls_creds,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     SocketAddress *addr_flat = socket_address_flatten(addr);
 
@@ -155,7 +156,7 @@ void qmp_nbd_server_start(SocketAddressLegacy *addr,
 }
 
 void qmp_nbd_server_add(const char *device, bool has_writable, bool writable,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     BlockDriverState *bs = NULL;
     BlockBackend *on_eject_blk;
@@ -199,7 +200,7 @@ void qmp_nbd_server_add(const char *device, bool has_writable, bool writable,
     nbd_export_put(exp);
 }
 
-void qmp_nbd_server_stop(Error **errp)
+void qmp_nbd_server_stop(Error *errp[static 1])
 {
     nbd_export_close_all();
 

@@ -179,8 +179,8 @@ extern size_t acpi_tables_len;
 uint8_t *acpi_table_first(void);
 uint8_t *acpi_table_next(uint8_t *current);
 unsigned acpi_table_len(void *current);
-void acpi_table_add(const QemuOpts *opts, Error **errp);
-void acpi_table_add_builtin(const QemuOpts *opts, Error **errp);
+void acpi_table_add(const QemuOpts *opts, Error *errp[static 1]);
+void acpi_table_add_builtin(const QemuOpts *opts, Error *errp[static 1]);
 
 typedef struct AcpiSlicOem AcpiSlicOem;
 struct AcpiSlicOem {

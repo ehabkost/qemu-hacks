@@ -466,7 +466,7 @@ static const GraphicHwOps pl110_gfx_ops = {
     .gfx_update  = pl110_update_display,
 };
 
-static void pl110_realize(DeviceState *dev, Error **errp)
+static void pl110_realize(DeviceState *dev, Error *errp[static 1])
 {
     PL110State *s = PL110(dev);
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);

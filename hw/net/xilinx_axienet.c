@@ -940,7 +940,7 @@ static NetClientInfo net_xilinx_enet_info = {
     .receive = eth_rx,
 };
 
-static void xilinx_enet_realize(DeviceState *dev, Error **errp)
+static void xilinx_enet_realize(DeviceState *dev, Error *errp[static 1])
 {
     XilinxAXIEnet *s = XILINX_AXI_ENET(dev);
     XilinxAXIEnetStreamSlave *ds = XILINX_AXI_ENET_DATA_STREAM(&s->rx_data_dev);

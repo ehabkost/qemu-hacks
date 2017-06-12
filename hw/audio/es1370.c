@@ -1016,7 +1016,7 @@ static void es1370_on_reset(DeviceState *dev)
     es1370_reset (s);
 }
 
-static void es1370_realize(PCIDevice *dev, Error **errp)
+static void es1370_realize(PCIDevice *dev, Error *errp[static 1])
 {
     ES1370State *s = ES1370(dev);
     uint8_t *c = s->dev.config;

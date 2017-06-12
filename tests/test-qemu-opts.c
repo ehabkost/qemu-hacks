@@ -435,7 +435,7 @@ static void test_qemu_opts_set(void)
 }
 
 static int opts_count_iter(void *opaque, const char *name, const char *value,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     (*(size_t *)opaque)++;
     return 0;

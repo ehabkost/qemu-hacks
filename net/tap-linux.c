@@ -39,7 +39,7 @@
 #define PATH_NET_TUN "/dev/net/tun"
 
 int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
-             int vnet_hdr_required, int mq_required, Error **errp)
+             int vnet_hdr_required, int mq_required, Error *errp[static 1])
 {
     struct ifreq ifr;
     int fd, ret;
@@ -130,7 +130,8 @@ int tap_open(char *ifname, int ifname_size, int *vnet_hdr,
  */
 #define TAP_DEFAULT_SNDBUF 0
 
-void tap_set_sndbuf(int fd, const NetdevTapOptions *tap, Error **errp)
+void tap_set_sndbuf(int fd, const NetdevTapOptions *tap,
+                    Error *errp[static 1])
 {
     int sndbuf;
 

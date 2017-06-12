@@ -102,7 +102,7 @@ static int fd_write_vmcore(const void *buf, size_t size, void *opaque)
     return 0;
 }
 
-static void write_elf64_header(DumpState *s, Error **errp)
+static void write_elf64_header(DumpState *s, Error *errp[static 1])
 {
     Elf64_Ehdr elf_header;
     int ret;
@@ -133,7 +133,7 @@ static void write_elf64_header(DumpState *s, Error **errp)
     }
 }
 
-static void write_elf32_header(DumpState *s, Error **errp)
+static void write_elf32_header(DumpState *s, Error *errp[static 1])
 {
     Elf32_Ehdr elf_header;
     int ret;
@@ -166,7 +166,7 @@ static void write_elf32_header(DumpState *s, Error **errp)
 
 static void write_elf64_load(DumpState *s, MemoryMapping *memory_mapping,
                              int phdr_index, hwaddr offset,
-                             hwaddr filesz, Error **errp)
+                             hwaddr filesz, Error *errp[static 1])
 {
     Elf64_Phdr phdr;
     int ret;
@@ -189,7 +189,7 @@ static void write_elf64_load(DumpState *s, MemoryMapping *memory_mapping,
 
 static void write_elf32_load(DumpState *s, MemoryMapping *memory_mapping,
                              int phdr_index, hwaddr offset,
-                             hwaddr filesz, Error **errp)
+                             hwaddr filesz, Error *errp[static 1])
 {
     Elf32_Phdr phdr;
     int ret;
@@ -210,7 +210,7 @@ static void write_elf32_load(DumpState *s, MemoryMapping *memory_mapping,
     }
 }
 
-static void write_elf64_note(DumpState *s, Error **errp)
+static void write_elf64_note(DumpState *s, Error *errp[static 1])
 {
     Elf64_Phdr phdr;
     hwaddr begin = s->memory_offset - s->note_size;
@@ -236,7 +236,7 @@ static inline int cpu_index(CPUState *cpu)
 }
 
 static void write_elf64_notes(WriteCoreDumpFunction f, DumpState *s,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     CPUState *cpu;
     int ret;
@@ -260,7 +260,7 @@ static void write_elf64_notes(WriteCoreDumpFunction f, DumpState *s,
     }
 }
 
-static void write_elf32_note(DumpState *s, Error **errp)
+static void write_elf32_note(DumpState *s, Error *errp[static 1])
 {
     hwaddr begin = s->memory_offset - s->note_size;
     Elf32_Phdr phdr;
@@ -281,7 +281,7 @@ static void write_elf32_note(DumpState *s, Error **errp)
 }
 
 static void write_elf32_notes(WriteCoreDumpFunction f, DumpState *s,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     CPUState *cpu;
     int ret;
@@ -331,7 +331,8 @@ static void write_elf_section(DumpState *s, int type, Error **errp)
     }
 }
 
-static void write_data(DumpState *s, void *buf, int length, Error **errp)
+static void write_data(DumpState *s, void *buf, int length,
+                       Error *errp[static 1])
 {
     int ret;
 
@@ -345,7 +346,7 @@ static void write_data(DumpState *s, void *buf, int length, Error **errp)
 
 /* write the memory to vmcore. 1 page per I/O. */
 static void write_memory(DumpState *s, GuestPhysBlock *block, ram_addr_t start,
-                         int64_t size, Error **errp)
+                         int64_t size, Error *errp[static 1])
 {
     int64_t i;
 
@@ -428,7 +429,7 @@ static void get_offset_range(hwaddr phys_addr,
     }
 }
 
-static void write_elf_loads(DumpState *s, Error **errp)
+static void write_elf_loads(DumpState *s, Error *errp[static 1])
 {
     hwaddr offset, filesz;
     MemoryMapping *memory_mapping;
@@ -464,7 +465,7 @@ static void write_elf_loads(DumpState *s, Error **errp)
 }
 
 /* write elf header, PT_NOTE and elf note to vmcore. */
-static void dump_begin(DumpState *s, Error **errp)
+static void dump_begin(DumpState *s, Error *errp[static 1])
 {
     if (s->dump_info.d_class == ELFCLASS64) {
         write_elf64_header(s, errp);
@@ -558,7 +559,7 @@ static int get_next_block(DumpState *s, GuestPhysBlock *block)
 }
 
 /* write all memory to vmcore */
-static void dump_iterate(DumpState *s, Error **errp)
+static void dump_iterate(DumpState *s, Error *errp[static 1])
 {
     GuestPhysBlock *block;
     int64_t size;
@@ -581,7 +582,7 @@ static void dump_iterate(DumpState *s, Error **errp)
     } while (!get_next_block(s, block));
 }
 
-static void create_vmcore(DumpState *s, Error **errp)
+static void create_vmcore(DumpState *s, Error *errp[static 1])
 {
     dump_begin(s, errp);
     if (ERR_IS_SET(errp)) {
@@ -669,7 +670,7 @@ static int buf_write_note(const void *buf, size_t size, void *opaque)
 }
 
 /* write common header, sub header and elf note to vmcore */
-static void create_header32(DumpState *s, Error **errp)
+static void create_header32(DumpState *s, Error *errp[static 1])
 {
     DiskDumpHeader32 *dh = NULL;
     KdumpSubHeader32 *kh = NULL;
@@ -767,7 +768,7 @@ out:
 }
 
 /* write common header, sub header and elf note to vmcore */
-static void create_header64(DumpState *s, Error **errp)
+static void create_header64(DumpState *s, Error *errp[static 1])
 {
     DiskDumpHeader64 *dh = NULL;
     KdumpSubHeader64 *kh = NULL;
@@ -865,7 +866,7 @@ out:
     g_free(s->note_buf);
 }
 
-static void write_dump_header(DumpState *s, Error **errp)
+static void write_dump_header(DumpState *s, Error *errp[static 1])
 {
     if (s->dump_info.d_class == ELFCLASS32) {
         create_header32(s, errp);
@@ -1005,7 +1006,7 @@ static bool get_next_page(GuestPhysBlock **blockptr, uint64_t *pfnptr,
     return true;
 }
 
-static void write_dump_bitmap(DumpState *s, Error **errp)
+static void write_dump_bitmap(DumpState *s, Error *errp[static 1])
 {
     int ret = 0;
     uint64_t last_pfn, pfn;
@@ -1134,7 +1135,7 @@ static inline bool is_zero_page(const uint8_t *buf, size_t page_size)
     return buffer_is_zero(buf, page_size);
 }
 
-static void write_dump_pages(DumpState *s, Error **errp)
+static void write_dump_pages(DumpState *s, Error *errp[static 1])
 {
     int ret = 0;
     DataCache page_desc, page_data;
@@ -1303,7 +1304,7 @@ out:
     g_free(buf_out);
 }
 
-static void create_kdump_vmcore(DumpState *s, Error **errp)
+static void create_kdump_vmcore(DumpState *s, Error *errp[static 1])
 {
     int ret;
 
@@ -1433,7 +1434,7 @@ static int64_t dump_calculate_size(DumpState *s)
 
 static void dump_init(DumpState *s, int fd, bool has_format,
                       DumpGuestMemoryFormat format, bool paging, bool has_filter,
-                      int64_t begin, int64_t length, Error **errp)
+                      int64_t begin, int64_t length, Error *errp[static 1])
 {
     CPUState *cpu;
     int nr_cpus;
@@ -1605,7 +1606,7 @@ cleanup:
 }
 
 /* this operation might be time consuming. */
-static void dump_process(DumpState *s, Error **errp)
+static void dump_process(DumpState *s, Error *errp[static 1])
 {
     Error *local_err = NULL;
     DumpQueryResult *result = NULL;
@@ -1643,7 +1644,7 @@ static void *dump_thread(void *data)
     return NULL;
 }
 
-DumpQueryResult *qmp_query_dump(Error **errp)
+DumpQueryResult *qmp_query_dump(Error *errp[static 1])
 {
     DumpQueryResult *result = g_new(DumpQueryResult, 1);
     DumpState *state = &dump_state_global;
@@ -1659,7 +1660,8 @@ void qmp_dump_guest_memory(bool paging, const char *file,
                            bool has_detach, bool detach,
                            bool has_begin, int64_t begin, bool has_length,
                            int64_t length, bool has_format,
-                           DumpGuestMemoryFormat format, Error **errp)
+                           DumpGuestMemoryFormat format,
+                           Error *errp[static 1])
 {
     const char *p;
     int fd = -1;
@@ -1758,7 +1760,7 @@ void qmp_dump_guest_memory(bool paging, const char *file,
     }
 }
 
-DumpGuestMemoryCapability *qmp_query_dump_guest_memory_capability(Error **errp)
+DumpGuestMemoryCapability *qmp_query_dump_guest_memory_capability(Error *errp[static 1])
 {
     DumpGuestMemoryFormatList *item;
     DumpGuestMemoryCapability *cap =

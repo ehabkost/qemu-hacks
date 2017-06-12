@@ -86,7 +86,7 @@ static int qcow2_probe(const uint8_t *buf, int buf_size, const char *filename)
  */
 static int qcow2_read_extensions(BlockDriverState *bs, uint64_t start_offset,
                                  uint64_t end_offset, void **p_feature_table,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     QCowExtension ext;
@@ -521,7 +521,8 @@ static void qcow2_attach_aio_context(BlockDriverState *bs,
 
 static void read_cache_sizes(BlockDriverState *bs, QemuOpts *opts,
                              uint64_t *l2_cache_size,
-                             uint64_t *refcount_cache_size, Error **errp)
+                             uint64_t *refcount_cache_size,
+                             Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     uint64_t combined_cache_size;
@@ -590,7 +591,7 @@ typedef struct Qcow2ReopenState {
 static int qcow2_update_options_prepare(BlockDriverState *bs,
                                         Qcow2ReopenState *r,
                                         QDict *options, int flags,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     QemuOpts *opts = NULL;
@@ -796,7 +797,7 @@ static void qcow2_update_options_abort(BlockDriverState *bs,
 }
 
 static int qcow2_update_options(BlockDriverState *bs, QDict *options,
-                                int flags, Error **errp)
+                                int flags, Error *errp[static 1])
 {
     Qcow2ReopenState r = {};
     int ret;
@@ -812,7 +813,7 @@ static int qcow2_update_options(BlockDriverState *bs, QDict *options,
 }
 
 static int qcow2_do_open(BlockDriverState *bs, QDict *options, int flags,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     unsigned int len, i;
@@ -1203,7 +1204,7 @@ static int qcow2_do_open(BlockDriverState *bs, QDict *options, int flags,
 }
 
 static int qcow2_open(BlockDriverState *bs, QDict *options, int flags,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     bs->file = bdrv_open_child(NULL, options, "file", bs, &child_file,
                                false, errp);
@@ -1214,7 +1215,7 @@ static int qcow2_open(BlockDriverState *bs, QDict *options, int flags,
     return qcow2_do_open(bs, options, flags, errp);
 }
 
-static void qcow2_refresh_limits(BlockDriverState *bs, Error **errp)
+static void qcow2_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
 
@@ -1262,7 +1263,8 @@ static int qcow2_set_key(BlockDriverState *bs, const char *key)
 }
 
 static int qcow2_reopen_prepare(BDRVReopenState *state,
-                                BlockReopenQueue *queue, Error **errp)
+                                BlockReopenQueue *queue,
+                                Error *errp[static 1])
 {
     Qcow2ReopenState *r;
     int ret;
@@ -1772,7 +1774,8 @@ static void qcow2_close(BlockDriverState *bs)
     qcow2_free_snapshots(bs);
 }
 
-static void qcow2_invalidate_cache(BlockDriverState *bs, Error **errp)
+static void qcow2_invalidate_cache(BlockDriverState *bs,
+                                   Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     int flags = s->flags;
@@ -2097,7 +2100,7 @@ static int qcow2_create2(const char *filename, int64_t total_size,
                          const char *backing_file, const char *backing_format,
                          int flags, size_t cluster_size, PreallocMode prealloc,
                          QemuOpts *opts, int version, int refcount_order,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     int cluster_bits;
     QDict *options;
@@ -2343,7 +2346,8 @@ out:
     return ret;
 }
 
-static int qcow2_create(const char *filename, QemuOpts *opts, Error **errp)
+static int qcow2_create(const char *filename, QemuOpts *opts,
+                        Error *errp[static 1])
 {
     char *backing_file = NULL;
     char *backing_fmt = NULL;
@@ -2538,7 +2542,8 @@ static coroutine_fn int qcow2_co_pdiscard(BlockDriverState *bs,
     return ret;
 }
 
-static int qcow2_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int qcow2_truncate(BlockDriverState *bs, int64_t offset,
+                          Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     int64_t new_l1_size;

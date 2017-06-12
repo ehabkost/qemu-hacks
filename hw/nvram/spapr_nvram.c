@@ -138,7 +138,7 @@ static void rtas_nvram_store(PowerPCCPU *cpu, sPAPRMachineState *spapr,
     rtas_st(rets, 1, (alen < 0) ? 0 : alen);
 }
 
-static void spapr_nvram_realize(VIOsPAPRDevice *dev, Error **errp)
+static void spapr_nvram_realize(VIOsPAPRDevice *dev, Error *errp[static 1])
 {
     sPAPRNVRAM *nvram = VIO_SPAPR_NVRAM(dev);
     int ret;

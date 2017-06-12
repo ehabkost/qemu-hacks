@@ -95,7 +95,7 @@ static Property s390_flic_common_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void s390_flic_common_realize(DeviceState *dev, Error **errp)
+static void s390_flic_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     uint32_t max_batch = S390_FLIC_COMMON(dev)->adapter_routes_max_batch;
 

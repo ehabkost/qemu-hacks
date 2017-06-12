@@ -105,7 +105,7 @@ static void pci_ich9_ahci_init(Object *obj)
     ahci_init(&d->ahci, DEVICE(obj));
 }
 
-static void pci_ich9_ahci_realize(PCIDevice *dev, Error **errp)
+static void pci_ich9_ahci_realize(PCIDevice *dev, Error *errp[static 1])
 {
     struct AHCIPCIState *d;
     int sata_cap_offset;

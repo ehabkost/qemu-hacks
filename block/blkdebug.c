@@ -169,7 +169,7 @@ struct add_rule_data {
     int action;
 };
 
-static int add_rule(void *opaque, QemuOpts *opts, Error **errp)
+static int add_rule(void *opaque, QemuOpts *opts, Error *errp[static 1])
 {
     struct add_rule_data *d = opaque;
     BDRVBlkdebugState *s = d->s;
@@ -241,7 +241,7 @@ static void remove_rule(BlkdebugRule *rule)
 }
 
 static int read_config(BDRVBlkdebugState *s, const char *filename,
-                       QDict *options, Error **errp)
+                       QDict *options, Error *errp[static 1])
 {
     FILE *f = NULL;
     int ret;
@@ -295,7 +295,7 @@ fail:
 
 /* Valid blkdebug filenames look like blkdebug:path/to/config:path/to/image */
 static void blkdebug_parse_filename(const char *filename, QDict *options,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     const char *c;
 
@@ -374,7 +374,7 @@ static QemuOptsList runtime_opts = {
 };
 
 static int blkdebug_open(BlockDriverState *bs, QDict *options, int flags,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     BDRVBlkdebugState *s = bs->opaque;
     QemuOpts *opts;
@@ -808,7 +808,8 @@ static int64_t blkdebug_getlength(BlockDriverState *bs)
     return bdrv_getlength(bs->file->bs);
 }
 
-static int blkdebug_truncate(BlockDriverState *bs, int64_t offset, Error **errp)
+static int blkdebug_truncate(BlockDriverState *bs, int64_t offset,
+                             Error *errp[static 1])
 {
     return bdrv_truncate(bs->file, offset, errp);
 }
@@ -857,7 +858,8 @@ static void blkdebug_refresh_filename(BlockDriverState *bs, QDict *options)
     bs->full_open_options = opts;
 }
 
-static void blkdebug_refresh_limits(BlockDriverState *bs, Error **errp)
+static void blkdebug_refresh_limits(BlockDriverState *bs,
+                                    Error *errp[static 1])
 {
     BDRVBlkdebugState *s = bs->opaque;
 
@@ -882,7 +884,8 @@ static void blkdebug_refresh_limits(BlockDriverState *bs, Error **errp)
 }
 
 static int blkdebug_reopen_prepare(BDRVReopenState *reopen_state,
-                                   BlockReopenQueue *queue, Error **errp)
+                                   BlockReopenQueue *queue,
+                                   Error *errp[static 1])
 {
     return 0;
 }

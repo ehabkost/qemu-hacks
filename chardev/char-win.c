@@ -71,7 +71,8 @@ static int win_chr_serial_poll(void *opaque)
     return 0;
 }
 
-int win_chr_serial_init(Chardev *chr, const char *filename, Error **errp)
+int win_chr_serial_init(Chardev *chr, const char *filename,
+                        Error *errp[static 1])
 {
     WinChardev *s = WIN_CHARDEV(chr);
     COMMCONFIG comcfg;

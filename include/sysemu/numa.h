@@ -30,10 +30,11 @@ void query_numa_node_mem(uint64_t node_mem[]);
 extern QemuOptsList qemu_numa_opts;
 void numa_set_mem_node_id(ram_addr_t addr, uint64_t size, uint32_t node);
 void numa_unset_mem_node_id(ram_addr_t addr, uint64_t size, uint32_t node);
-uint32_t numa_get_node(ram_addr_t addr, Error **errp);
+uint32_t numa_get_node(ram_addr_t addr, Error *errp[static 1]);
 void numa_legacy_auto_assign_ram(MachineClass *mc, NodeInfo *nodes,
                                  int nb_nodes, ram_addr_t size);
 void numa_default_auto_assign_ram(MachineClass *mc, NodeInfo *nodes,
                                   int nb_nodes, ram_addr_t size);
-void numa_cpu_pre_plug(const CPUArchId *slot, DeviceState *dev, Error **errp);
+void numa_cpu_pre_plug(const CPUArchId *slot, DeviceState *dev,
+		       Error *errp[static 1]);
 #endif

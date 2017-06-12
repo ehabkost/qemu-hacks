@@ -12,7 +12,7 @@
 #include "trace/control.h"
 
 
-static CPUState *get_cpu(bool has_vcpu, int vcpu, Error **errp)
+static CPUState *get_cpu(bool has_vcpu, int vcpu, Error *errp[static 1])
 {
     if (has_vcpu) {
         CPUState *cpu = qemu_get_cpu(vcpu);
@@ -26,7 +26,7 @@ static CPUState *get_cpu(bool has_vcpu, int vcpu, Error **errp)
 }
 
 static bool check_events(bool has_vcpu, bool ignore_unavailable, bool is_pattern,
-                         const char *name, Error **errp)
+                         const char *name, Error *errp[static 1])
 {
     if (!is_pattern) {
         TraceEvent *ev = trace_event_name(name);
@@ -67,7 +67,7 @@ static bool check_events(bool has_vcpu, bool ignore_unavailable, bool is_pattern
 
 TraceEventInfoList *qmp_trace_event_get_state(const char *name,
                                               bool has_vcpu, int64_t vcpu,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     Error *err = NULL;
     TraceEventInfoList *events = NULL;
@@ -132,7 +132,7 @@ TraceEventInfoList *qmp_trace_event_get_state(const char *name,
 void qmp_trace_event_set_state(const char *name, bool enable,
                                bool has_ignore_unavailable, bool ignore_unavailable,
                                bool has_vcpu, int64_t vcpu,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     Error *err = NULL;
     TraceEventIter iter;

@@ -1239,7 +1239,7 @@ static void strongarm_uart_init(Object *obj)
     s->tx_timer = timer_new_ns(QEMU_CLOCK_VIRTUAL, strongarm_uart_tx, s);
 }
 
-static void strongarm_uart_realize(DeviceState *dev, Error **errp)
+static void strongarm_uart_realize(DeviceState *dev, Error *errp[static 1])
 {
     StrongARMUARTState *s = STRONGARM_UART(dev);
 

@@ -60,7 +60,7 @@ static ssize_t block_crypto_read_func(QCryptoBlock *block,
                                       uint8_t *buf,
                                       size_t buflen,
                                       void *opaque,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     BlockDriverState *bs = opaque;
     ssize_t ret;
@@ -87,7 +87,7 @@ static ssize_t block_crypto_write_func(QCryptoBlock *block,
                                        const uint8_t *buf,
                                        size_t buflen,
                                        void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     struct BlockCryptoCreateData *data = opaque;
     ssize_t ret;
@@ -104,7 +104,7 @@ static ssize_t block_crypto_write_func(QCryptoBlock *block,
 static ssize_t block_crypto_init_func(QCryptoBlock *block,
                                       size_t headerlen,
                                       void *opaque,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     struct BlockCryptoCreateData *data = opaque;
     int ret;
@@ -197,7 +197,7 @@ static QemuOptsList block_crypto_create_opts_luks = {
 static QCryptoBlockOpenOptions *
 block_crypto_open_opts_init(QCryptoBlockFormat format,
                             QemuOpts *opts,
-                            Error **errp)
+                            Error *errp[static 1])
 {
     Visitor *v;
     QCryptoBlockOpenOptions *ret = NULL;
@@ -243,7 +243,7 @@ block_crypto_open_opts_init(QCryptoBlockFormat format,
 static QCryptoBlockCreateOptions *
 block_crypto_create_opts_init(QCryptoBlockFormat format,
                               QemuOpts *opts,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     Visitor *v;
     QCryptoBlockCreateOptions *ret = NULL;
@@ -291,7 +291,7 @@ static int block_crypto_open_generic(QCryptoBlockFormat format,
                                      BlockDriverState *bs,
                                      QDict *options,
                                      int flags,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     BlockCrypto *crypto = bs->opaque;
     QemuOpts *opts = NULL;
@@ -343,7 +343,7 @@ static int block_crypto_open_generic(QCryptoBlockFormat format,
 static int block_crypto_create_generic(QCryptoBlockFormat format,
                                        const char *filename,
                                        QemuOpts *opts,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     int ret = -EINVAL;
     QCryptoBlockCreateOptions *create_opts = NULL;
@@ -380,7 +380,7 @@ static int block_crypto_create_generic(QCryptoBlockFormat format,
 }
 
 static int block_crypto_truncate(BlockDriverState *bs, int64_t offset,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     BlockCrypto *crypto = bs->opaque;
     size_t payload_offset =
@@ -559,7 +559,7 @@ static int block_crypto_probe_luks(const uint8_t *buf,
 static int block_crypto_open_luks(BlockDriverState *bs,
                                   QDict *options,
                                   int flags,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     return block_crypto_open_generic(Q_CRYPTO_BLOCK_FORMAT_LUKS,
                                      &block_crypto_runtime_opts_luks,
@@ -568,7 +568,7 @@ static int block_crypto_open_luks(BlockDriverState *bs,
 
 static int block_crypto_create_luks(const char *filename,
                                     QemuOpts *opts,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     return block_crypto_create_generic(Q_CRYPTO_BLOCK_FORMAT_LUKS,
                                        filename, opts, errp);

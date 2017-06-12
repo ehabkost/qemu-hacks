@@ -63,7 +63,7 @@ typedef struct UserCreatableClass {
  * from implements USER_CREATABLE interface, otherwise the call does
  * nothing.
  */
-void user_creatable_complete(Object *obj, Error **errp);
+void user_creatable_complete(Object *obj, Error *errp[static 1]);
 
 /**
  * user_creatable_can_be_deleted:
@@ -73,7 +73,7 @@ void user_creatable_complete(Object *obj, Error **errp);
  * Wrapper to call can_be_deleted() method if one of types it's inherited
  * from implements USER_CREATABLE interface.
  */
-bool user_creatable_can_be_deleted(UserCreatable *uc, Error **errp);
+bool user_creatable_can_be_deleted(UserCreatable *uc, Error *errp[static 1]);
 
 /**
  * user_creatable_add_type:
@@ -91,7 +91,7 @@ bool user_creatable_can_be_deleted(UserCreatable *uc, Error **errp);
  */
 Object *user_creatable_add_type(const char *type, const char *id,
                                 const QDict *qdict,
-                                Visitor *v, Error **errp);
+                                Visitor *v, Error *errp[static 1]);
 
 /**
  * user_creatable_add_opts:
@@ -106,7 +106,7 @@ Object *user_creatable_add_type(const char *type, const char *id,
  *
  * Returns: the newly created object or NULL on error
  */
-Object *user_creatable_add_opts(QemuOpts *opts, Error **errp);
+Object *user_creatable_add_opts(QemuOpts *opts, Error *errp[static 1]);
 
 
 /**
@@ -136,7 +136,7 @@ typedef bool (*user_creatable_add_opts_predicate)(const char *type);
  * Returns: 0 on success, -1 when an error was reported.
  */
 int user_creatable_add_opts_foreach(void *opaque,
-                                    QemuOpts *opts, Error **errp);
+                                    QemuOpts *opts, Error *errp[static 1]);
 
 /**
  * user_creatable_del:
@@ -146,6 +146,6 @@ int user_creatable_add_opts_foreach(void *opaque,
  * Delete an instance of the user creatable object identified
  * by @id.
  */
-void user_creatable_del(const char *id, Error **errp);
+void user_creatable_del(const char *id, Error *errp[static 1]);
 
 #endif

@@ -149,7 +149,7 @@ void migrate_set_state(int *state, int old_state, int new_state);
 
 void migration_fd_process_incoming(QEMUFile *f);
 
-void qemu_start_incoming_migration(const char *uri, Error **errp);
+void qemu_start_incoming_migration(const char *uri, Error *errp[static 1]);
 
 uint64_t migrate_max_downtime(void);
 
@@ -160,7 +160,7 @@ void migrate_fd_connect(MigrationState *s);
 void add_migration_state_change_notifier(Notifier *notify);
 void remove_migration_state_change_notifier(Notifier *notify);
 MigrationState *migrate_init(void);
-bool migration_is_blocked(Error **errp);
+bool migration_is_blocked(Error *errp[static 1]);
 bool migration_in_setup(MigrationState *);
 bool migration_is_idle(void);
 bool migration_has_finished(MigrationState *);

@@ -141,7 +141,7 @@ static void digic_uart_reset(DeviceState *d)
     s->reg_st = ST_TX_RDY;
 }
 
-static void digic_uart_realize(DeviceState *dev, Error **errp)
+static void digic_uart_realize(DeviceState *dev, Error *errp[static 1])
 {
     DigicUartState *s = DIGIC_UART(dev);
 

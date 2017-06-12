@@ -396,7 +396,7 @@ static void mv88w8618_eth_init(Object *obj)
     sysbus_init_mmio(sbd, &s->iomem);
 }
 
-static void mv88w8618_eth_realize(DeviceState *dev, Error **errp)
+static void mv88w8618_eth_realize(DeviceState *dev, Error *errp[static 1])
 {
     mv88w8618_eth_state *s = MV88W8618_ETH(dev);
 
@@ -621,7 +621,7 @@ static const GraphicHwOps musicpal_gfx_ops = {
     .gfx_update  = lcd_refresh,
 };
 
-static void musicpal_lcd_realize(DeviceState *dev, Error **errp)
+static void musicpal_lcd_realize(DeviceState *dev, Error *errp[static 1])
 {
     musicpal_lcd_state *s = MUSICPAL_LCD(dev);
     s->con = graphic_console_init(dev, 0, &musicpal_gfx_ops, s);

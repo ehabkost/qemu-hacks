@@ -134,7 +134,8 @@ struct BlockJobDriver {
 void *block_job_create(const char *job_id, const BlockJobDriver *driver,
                        BlockDriverState *bs, uint64_t perm,
                        uint64_t shared_perm, int64_t speed, int flags,
-                       BlockCompletionFunc *cb, void *opaque, Error **errp);
+                       BlockCompletionFunc *cb, void *opaque,
+                       Error *errp[static 1]);
 
 /**
  * block_job_sleep_ns:

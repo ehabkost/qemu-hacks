@@ -1269,7 +1269,7 @@ static const struct SCSIBusInfo mptsas_scsi_info = {
     .load_request = mptsas_load_request,
 };
 
-static void mptsas_scsi_realize(PCIDevice *dev, Error **errp)
+static void mptsas_scsi_realize(PCIDevice *dev, Error *errp[static 1])
 {
     MPTSASState *s = MPT_SAS(dev);
     Error *err = NULL;

@@ -30,8 +30,8 @@ int monitor_read_block_device_key(Monitor *mon, const char *device,
                                   BlockCompletionFunc *completion_cb,
                                   void *opaque);
 
-int monitor_get_fd(Monitor *mon, const char *fdname, Error **errp);
-int monitor_fd_param(Monitor *mon, const char *fdname, Error **errp);
+int monitor_get_fd(Monitor *mon, const char *fdname, Error *errp[static 1]);
+int monitor_fd_param(Monitor *mon, const char *fdname, Error *errp[static 1]);
 
 void monitor_vprintf(Monitor *mon, const char *fmt, va_list ap)
     GCC_FMT_ATTR(2, 0);
@@ -47,7 +47,7 @@ int monitor_read_password(Monitor *mon, ReadLineFunc *readline_func,
 
 AddfdInfo *monitor_fdset_add_fd(int fd, bool has_fdset_id, int64_t fdset_id,
                                 bool has_opaque, const char *opaque,
-                                Error **errp);
+                                Error *errp[static 1]);
 int monitor_fdset_get_fd(int64_t fdset_id, int flags);
 int monitor_fdset_dup_fd_add(int64_t fdset_id, int dup_fd);
 void monitor_fdset_dup_fd_remove(int dup_fd);

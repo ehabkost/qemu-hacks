@@ -465,7 +465,7 @@ qemu_irq *csrhci_pins_get(Chardev *chr)
 static void csrhci_open(Chardev *chr,
                         ChardevBackend *backend,
                         bool *be_opened,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     struct csrhci_s *s = HCI_CHARDEV(chr);
 

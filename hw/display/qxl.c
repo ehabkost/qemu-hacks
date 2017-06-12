@@ -2048,7 +2048,7 @@ static void qxl_init_ramsize(PCIQXLDevice *qxl)
     qxl->vram_size = pow2ceil(qxl->vram_size);
 }
 
-static void qxl_realize_common(PCIQXLDevice *qxl, Error **errp)
+static void qxl_realize_common(PCIQXLDevice *qxl, Error *errp[static 1])
 {
     uint8_t* config = qxl->pci.config;
     uint32_t pci_device_rev;
@@ -2159,7 +2159,7 @@ static void qxl_realize_common(PCIQXLDevice *qxl, Error **errp)
     qxl->ssd.cursor_bh = qemu_bh_new(qemu_spice_cursor_refresh_bh, &qxl->ssd);
 }
 
-static void qxl_realize_primary(PCIDevice *dev, Error **errp)
+static void qxl_realize_primary(PCIDevice *dev, Error *errp[static 1])
 {
     PCIQXLDevice *qxl = PCI_QXL(dev);
     VGACommonState *vga = &qxl->vga;
@@ -2189,7 +2189,7 @@ static void qxl_realize_primary(PCIDevice *dev, Error **errp)
     register_displaychangelistener(&qxl->ssd.dcl);
 }
 
-static void qxl_realize_secondary(PCIDevice *dev, Error **errp)
+static void qxl_realize_secondary(PCIDevice *dev, Error *errp[static 1])
 {
     static int device_id = 1;
     PCIQXLDevice *qxl = PCI_QXL(dev);

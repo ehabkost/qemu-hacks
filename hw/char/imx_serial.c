@@ -308,7 +308,7 @@ static const struct MemoryRegionOps imx_serial_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static void imx_serial_realize(DeviceState *dev, Error **errp)
+static void imx_serial_realize(DeviceState *dev, Error *errp[static 1])
 {
     IMXSerialState *s = IMX_SERIAL(dev);
 

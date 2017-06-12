@@ -329,7 +329,7 @@ static void pit_post_load(PITCommonState *s)
     }
 }
 
-static void pit_realizefn(DeviceState *dev, Error **errp)
+static void pit_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     PITCommonState *pit = PIT_COMMON(dev);
     PITClass *pc = PIT_GET_CLASS(dev);

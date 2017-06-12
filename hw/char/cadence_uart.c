@@ -477,7 +477,7 @@ static void cadence_uart_reset(DeviceState *dev)
     uart_update_status(s);
 }
 
-static void cadence_uart_realize(DeviceState *dev, Error **errp)
+static void cadence_uart_realize(DeviceState *dev, Error *errp[static 1])
 {
     CadenceUARTState *s = CADENCE_UART(dev);
 

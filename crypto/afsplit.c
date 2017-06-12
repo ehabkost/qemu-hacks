@@ -44,7 +44,7 @@ static void qcrypto_afsplit_xor(size_t blocklen,
 static int qcrypto_afsplit_hash(QCryptoHashAlgorithm hash,
                                 size_t blocklen,
                                 uint8_t *block,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     size_t digestlen = qcrypto_hash_digest_len(hash);
 
@@ -92,7 +92,7 @@ int qcrypto_afsplit_encode(QCryptoHashAlgorithm hash,
                            uint32_t stripes,
                            const uint8_t *in,
                            uint8_t *out,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     uint8_t *block = g_new0(uint8_t, blocklen);
     size_t i;
@@ -129,7 +129,7 @@ int qcrypto_afsplit_decode(QCryptoHashAlgorithm hash,
                            uint32_t stripes,
                            const uint8_t *in,
                            uint8_t *out,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     uint8_t *block = g_new0(uint8_t, blocklen);
     size_t i;

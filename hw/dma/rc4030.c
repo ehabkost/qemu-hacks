@@ -664,7 +664,7 @@ static void rc4030_initfn(Object *obj)
     sysbus_init_mmio(sysbus, &s->iomem_jazzio);
 }
 
-static void rc4030_realize(DeviceState *dev, Error **errp)
+static void rc4030_realize(DeviceState *dev, Error *errp[static 1])
 {
     rc4030State *s = RC4030(dev);
     Object *o = OBJECT(dev);
@@ -682,7 +682,7 @@ static void rc4030_realize(DeviceState *dev, Error **errp)
     address_space_init(&s->dma_as, &s->dma_mr, "rc4030-dma");
 }
 
-static void rc4030_unrealize(DeviceState *dev, Error **errp)
+static void rc4030_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     rc4030State *s = RC4030(dev);
 

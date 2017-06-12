@@ -599,7 +599,7 @@ static uint32_t spitz_lcdtg_transfer(SSISlave *dev, uint32_t value)
     return 0;
 }
 
-static void spitz_lcdtg_realize(SSISlave *dev, Error **errp)
+static void spitz_lcdtg_realize(SSISlave *dev, Error *errp[static 1])
 {
     SpitzLCDTG *s = FROM_SSI_SLAVE(SpitzLCDTG, dev);
 
@@ -665,7 +665,7 @@ static void spitz_adc_temp_on(void *opaque, int line, int level)
         max111x_set_input(max1111, MAX1111_BATT_TEMP, 0);
 }
 
-static void corgi_ssp_realize(SSISlave *d, Error **errp)
+static void corgi_ssp_realize(SSISlave *d, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(d);
     CorgiSSPState *s = FROM_SSI_SLAVE(CorgiSSPState, d);

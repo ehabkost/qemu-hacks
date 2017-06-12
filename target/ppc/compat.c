@@ -111,7 +111,8 @@ bool ppc_check_compat(PowerPCCPU *cpu, uint32_t compat_pvr,
     return true;
 }
 
-void ppc_set_compat(PowerPCCPU *cpu, uint32_t compat_pvr, Error **errp)
+void ppc_set_compat(PowerPCCPU *cpu, uint32_t compat_pvr,
+                    Error *errp[static 1])
 {
     const CompatInfo *compat = compat_by_pvr(compat_pvr);
     CPUPPCState *env = &cpu->env;
@@ -158,7 +159,7 @@ static void do_set_compat(CPUState *cs, run_on_cpu_data arg)
     ppc_set_compat(cpu, s->compat_pvr, &s->err);
 }
 
-void ppc_set_compat_all(uint32_t compat_pvr, Error **errp)
+void ppc_set_compat_all(uint32_t compat_pvr, Error *errp[static 1])
 {
     CPUState *cs;
 

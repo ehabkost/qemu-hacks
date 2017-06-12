@@ -44,7 +44,7 @@ bool qcrypto_hmac_supports(QCryptoHashAlgorithm alg)
 
 QCryptoHmac *qcrypto_hmac_new(QCryptoHashAlgorithm alg,
                               const uint8_t *key, size_t nkey,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     QCryptoHmac *hmac;
     QCryptoHmacGcrypt *ctx;
@@ -105,7 +105,7 @@ int qcrypto_hmac_bytesv(QCryptoHmac *hmac,
                         size_t niov,
                         uint8_t **result,
                         size_t *resultlen,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     QCryptoHmacGcrypt *ctx;
     gcry_error_t err;

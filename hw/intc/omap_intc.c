@@ -379,7 +379,7 @@ static void omap_intc_init(Object *obj)
     sysbus_init_mmio(sbd, &s->mmio);
 }
 
-static void omap_intc_realize(DeviceState *dev, Error **errp)
+static void omap_intc_realize(DeviceState *dev, Error *errp[static 1])
 {
     struct omap_intr_handler_s *s = OMAP_INTC(dev);
 
@@ -627,7 +627,7 @@ static void omap2_intc_init(Object *obj)
     sysbus_init_mmio(sbd, &s->mmio);
 }
 
-static void omap2_intc_realize(DeviceState *dev, Error **errp)
+static void omap2_intc_realize(DeviceState *dev, Error *errp[static 1])
 {
     struct omap_intr_handler_s *s = OMAP_INTC(dev);
 

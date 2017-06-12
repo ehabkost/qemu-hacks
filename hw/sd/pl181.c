@@ -495,7 +495,7 @@ static void pl181_init(Object *obj)
     qdev_init_gpio_out(dev, s->cardstatus, 2);
 }
 
-static void pl181_realize(DeviceState *dev, Error **errp)
+static void pl181_realize(DeviceState *dev, Error *errp[static 1])
 {
     PL181State *s = PL181(dev);
     DriveInfo *dinfo;

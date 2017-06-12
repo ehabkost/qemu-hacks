@@ -314,7 +314,7 @@ static int net_vhost_user_init(NetClientState *peer, const char *device,
 }
 
 static Chardev *net_vhost_claim_chardev(
-    const NetdevVhostUserOptions *opts, Error **errp)
+    const NetdevVhostUserOptions *opts, Error *errp[static 1])
 {
     Chardev *chr = qemu_chr_find(opts->chardev);
 
@@ -337,7 +337,8 @@ static Chardev *net_vhost_claim_chardev(
     return chr;
 }
 
-static int net_vhost_check_net(void *opaque, QemuOpts *opts, Error **errp)
+static int net_vhost_check_net(void *opaque, QemuOpts *opts,
+                               Error *errp[static 1])
 {
     const char *name = opaque;
     const char *driver, *netdev;
@@ -359,7 +360,7 @@ static int net_vhost_check_net(void *opaque, QemuOpts *opts, Error **errp)
 }
 
 int net_init_vhost_user(const Netdev *netdev, const char *name,
-                        NetClientState *peer, Error **errp)
+                        NetClientState *peer, Error *errp[static 1])
 {
     int queues;
     const NetdevVhostUserOptions *vhost_user_opts;

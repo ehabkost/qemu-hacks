@@ -239,7 +239,7 @@ static const TypeInfo sh7785_type_info = {
     .instance_init = sh7785_cpu_initfn,
 };
 
-static void superh_cpu_realizefn(DeviceState *dev, Error **errp)
+static void superh_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     SuperHCPUClass *scc = SUPERH_CPU_GET_CLASS(dev);

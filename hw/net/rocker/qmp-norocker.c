@@ -20,13 +20,14 @@
 #include "qmp-commands.h"
 #include "qapi/qmp/qerror.h"
 
-RockerSwitch *qmp_query_rocker(const char *name, Error **errp)
+RockerSwitch *qmp_query_rocker(const char *name, Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "rocker");
     return NULL;
 };
 
-RockerPortList *qmp_query_rocker_ports(const char *name, Error **errp)
+RockerPortList *qmp_query_rocker_ports(const char *name,
+                                       Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "rocker");
     return NULL;
@@ -35,7 +36,7 @@ RockerPortList *qmp_query_rocker_ports(const char *name, Error **errp)
 RockerOfDpaFlowList *qmp_query_rocker_of_dpa_flows(const char *name,
                                                    bool has_tbl_id,
                                                    uint32_t tbl_id,
-                                                   Error **errp)
+                                                   Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "rocker");
     return NULL;
@@ -44,7 +45,7 @@ RockerOfDpaFlowList *qmp_query_rocker_of_dpa_flows(const char *name,
 RockerOfDpaGroupList *qmp_query_rocker_of_dpa_groups(const char *name,
                                                      bool has_type,
                                                      uint8_t type,
-                                                     Error **errp)
+                                                     Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "rocker");
     return NULL;

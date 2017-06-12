@@ -246,14 +246,15 @@ static const ARMCPUInfo aarch64_cpus[] = {
     { .name = NULL }
 };
 
-static bool aarch64_cpu_get_aarch64(Object *obj, Error **errp)
+static bool aarch64_cpu_get_aarch64(Object *obj, Error *errp[static 1])
 {
     ARMCPU *cpu = ARM_CPU(obj);
 
     return arm_feature(&cpu->env, ARM_FEATURE_AARCH64);
 }
 
-static void aarch64_cpu_set_aarch64(Object *obj, bool value, Error **errp)
+static void aarch64_cpu_set_aarch64(Object *obj, bool value,
+                                    Error *errp[static 1])
 {
     ARMCPU *cpu = ARM_CPU(obj);
 

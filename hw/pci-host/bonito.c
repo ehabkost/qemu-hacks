@@ -722,7 +722,7 @@ static int bonito_pcihost_initfn(SysBusDevice *dev)
     return 0;
 }
 
-static void bonito_realize(PCIDevice *dev, Error **errp)
+static void bonito_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIBonitoState *s = PCI_BONITO(dev);
     SysBusDevice *sysbus = SYS_BUS_DEVICE(s->pcihost);

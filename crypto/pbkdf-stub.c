@@ -35,7 +35,7 @@ int qcrypto_pbkdf2(QCryptoHashAlgorithm hash G_GNUC_UNUSED,
                    uint64_t iterations G_GNUC_UNUSED,
                    uint8_t *out G_GNUC_UNUSED,
                    size_t nout G_GNUC_UNUSED,
-                   Error **errp)
+                   Error *errp[static 1])
 {
     error_setg_errno(errp, ENOSYS,
                      "No crypto library supporting PBKDF in this build");

@@ -23,14 +23,15 @@
 #include "sysemu/numa.h"
 #include "sysemu/qtest.h"
 
-static char *machine_get_accel(Object *obj, Error **errp)
+static char *machine_get_accel(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->accel);
 }
 
-static void machine_set_accel(Object *obj, const char *value, Error **errp)
+static void machine_set_accel(Object *obj, const char *value,
+                              Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -40,7 +41,7 @@ static void machine_set_accel(Object *obj, const char *value, Error **errp)
 
 static void machine_set_kernel_irqchip(Object *obj, Visitor *v,
                                        const char *name, void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     Error *err = NULL;
     MachineState *ms = MACHINE(obj);
@@ -78,7 +79,7 @@ static void machine_set_kernel_irqchip(Object *obj, Visitor *v,
 
 static void machine_get_kvm_shadow_mem(Object *obj, Visitor *v,
                                        const char *name, void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
     int64_t value = ms->kvm_shadow_mem;
@@ -88,7 +89,7 @@ static void machine_get_kvm_shadow_mem(Object *obj, Visitor *v,
 
 static void machine_set_kvm_shadow_mem(Object *obj, Visitor *v,
                                        const char *name, void *opaque,
-                                       Error **errp)
+                                       Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
     int64_t value;
@@ -101,14 +102,15 @@ static void machine_set_kvm_shadow_mem(Object *obj, Visitor *v,
     ms->kvm_shadow_mem = value;
 }
 
-static char *machine_get_kernel(Object *obj, Error **errp)
+static char *machine_get_kernel(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->kernel_filename);
 }
 
-static void machine_set_kernel(Object *obj, const char *value, Error **errp)
+static void machine_set_kernel(Object *obj, const char *value,
+                               Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -116,14 +118,15 @@ static void machine_set_kernel(Object *obj, const char *value, Error **errp)
     ms->kernel_filename = g_strdup(value);
 }
 
-static char *machine_get_initrd(Object *obj, Error **errp)
+static char *machine_get_initrd(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->initrd_filename);
 }
 
-static void machine_set_initrd(Object *obj, const char *value, Error **errp)
+static void machine_set_initrd(Object *obj, const char *value,
+                               Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -131,14 +134,15 @@ static void machine_set_initrd(Object *obj, const char *value, Error **errp)
     ms->initrd_filename = g_strdup(value);
 }
 
-static char *machine_get_append(Object *obj, Error **errp)
+static char *machine_get_append(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->kernel_cmdline);
 }
 
-static void machine_set_append(Object *obj, const char *value, Error **errp)
+static void machine_set_append(Object *obj, const char *value,
+                               Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -146,14 +150,15 @@ static void machine_set_append(Object *obj, const char *value, Error **errp)
     ms->kernel_cmdline = g_strdup(value);
 }
 
-static char *machine_get_dtb(Object *obj, Error **errp)
+static char *machine_get_dtb(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->dtb);
 }
 
-static void machine_set_dtb(Object *obj, const char *value, Error **errp)
+static void machine_set_dtb(Object *obj, const char *value,
+                            Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -161,14 +166,15 @@ static void machine_set_dtb(Object *obj, const char *value, Error **errp)
     ms->dtb = g_strdup(value);
 }
 
-static char *machine_get_dumpdtb(Object *obj, Error **errp)
+static char *machine_get_dumpdtb(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->dumpdtb);
 }
 
-static void machine_set_dumpdtb(Object *obj, const char *value, Error **errp)
+static void machine_set_dumpdtb(Object *obj, const char *value,
+                                Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -178,7 +184,7 @@ static void machine_set_dumpdtb(Object *obj, const char *value, Error **errp)
 
 static void machine_get_phandle_start(Object *obj, Visitor *v,
                                       const char *name, void *opaque,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
     int64_t value = ms->phandle_start;
@@ -188,7 +194,7 @@ static void machine_get_phandle_start(Object *obj, Visitor *v,
 
 static void machine_set_phandle_start(Object *obj, Visitor *v,
                                       const char *name, void *opaque,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
     int64_t value;
@@ -201,14 +207,15 @@ static void machine_set_phandle_start(Object *obj, Visitor *v,
     ms->phandle_start = value;
 }
 
-static char *machine_get_dt_compatible(Object *obj, Error **errp)
+static char *machine_get_dt_compatible(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->dt_compatible);
 }
 
-static void machine_set_dt_compatible(Object *obj, const char *value, Error **errp)
+static void machine_set_dt_compatible(Object *obj, const char *value,
+                                      Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -216,42 +223,44 @@ static void machine_set_dt_compatible(Object *obj, const char *value, Error **er
     ms->dt_compatible = g_strdup(value);
 }
 
-static bool machine_get_dump_guest_core(Object *obj, Error **errp)
+static bool machine_get_dump_guest_core(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return ms->dump_guest_core;
 }
 
-static void machine_set_dump_guest_core(Object *obj, bool value, Error **errp)
+static void machine_set_dump_guest_core(Object *obj, bool value,
+                                        Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     ms->dump_guest_core = value;
 }
 
-static bool machine_get_mem_merge(Object *obj, Error **errp)
+static bool machine_get_mem_merge(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return ms->mem_merge;
 }
 
-static void machine_set_mem_merge(Object *obj, bool value, Error **errp)
+static void machine_set_mem_merge(Object *obj, bool value,
+                                  Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     ms->mem_merge = value;
 }
 
-static bool machine_get_usb(Object *obj, Error **errp)
+static bool machine_get_usb(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return ms->usb;
 }
 
-static void machine_set_usb(Object *obj, bool value, Error **errp)
+static void machine_set_usb(Object *obj, bool value, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -259,42 +268,45 @@ static void machine_set_usb(Object *obj, bool value, Error **errp)
     ms->usb_disabled = !value;
 }
 
-static bool machine_get_graphics(Object *obj, Error **errp)
+static bool machine_get_graphics(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return ms->enable_graphics;
 }
 
-static void machine_set_graphics(Object *obj, bool value, Error **errp)
+static void machine_set_graphics(Object *obj, bool value,
+                                 Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     ms->enable_graphics = value;
 }
 
-static bool machine_get_igd_gfx_passthru(Object *obj, Error **errp)
+static bool machine_get_igd_gfx_passthru(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return ms->igd_gfx_passthru;
 }
 
-static void machine_set_igd_gfx_passthru(Object *obj, bool value, Error **errp)
+static void machine_set_igd_gfx_passthru(Object *obj, bool value,
+                                         Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     ms->igd_gfx_passthru = value;
 }
 
-static char *machine_get_firmware(Object *obj, Error **errp)
+static char *machine_get_firmware(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     return g_strdup(ms->firmware);
 }
 
-static void machine_set_firmware(Object *obj, const char *value, Error **errp)
+static void machine_set_firmware(Object *obj, const char *value,
+                                 Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -302,14 +314,15 @@ static void machine_set_firmware(Object *obj, const char *value, Error **errp)
     ms->firmware = g_strdup(value);
 }
 
-static void machine_set_suppress_vmdesc(Object *obj, bool value, Error **errp)
+static void machine_set_suppress_vmdesc(Object *obj, bool value,
+                                        Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     ms->suppress_vmdesc = value;
 }
 
-static bool machine_get_suppress_vmdesc(Object *obj, Error **errp)
+static bool machine_get_suppress_vmdesc(Object *obj, Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -317,14 +330,15 @@ static bool machine_get_suppress_vmdesc(Object *obj, Error **errp)
 }
 
 static void machine_set_enforce_config_section(Object *obj, bool value,
-                                             Error **errp)
+                                             Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
     ms->enforce_config_section = value;
 }
 
-static bool machine_get_enforce_config_section(Object *obj, Error **errp)
+static bool machine_get_enforce_config_section(Object *obj,
+                                               Error *errp[static 1])
 {
     MachineState *ms = MACHINE(obj);
 
@@ -413,7 +427,8 @@ HotpluggableCPUList *machine_query_hotpluggable_cpus(MachineState *machine)
  * Empty subset is disallowed and function will return with error in this case.
  */
 void machine_set_cpu_numa_node(MachineState *machine,
-                               const CpuInstanceProperties *props, Error **errp)
+                               const CpuInstanceProperties *props,
+                               Error *errp[static 1])
 {
     MachineClass *mc = MACHINE_GET_CLASS(machine);
     bool match = false;

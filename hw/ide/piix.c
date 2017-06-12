@@ -148,7 +148,7 @@ static void pci_piix_init_ports(PCIIDEState *d) {
     }
 }
 
-static void pci_piix_ide_realize(PCIDevice *dev, Error **errp)
+static void pci_piix_ide_realize(PCIDevice *dev, Error *errp[static 1])
 {
     PCIIDEState *d = PCI_IDE(dev);
     uint8_t *pci_conf = dev->config;

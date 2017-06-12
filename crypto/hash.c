@@ -44,7 +44,7 @@ int qcrypto_hash_bytes(QCryptoHashAlgorithm alg,
                        size_t len,
                        uint8_t **result,
                        size_t *resultlen,
-                       Error **errp)
+                       Error *errp[static 1])
 {
     struct iovec iov = { .iov_base = (char *)buf,
                          .iov_len = len };
@@ -57,7 +57,7 @@ int qcrypto_hash_digestv(QCryptoHashAlgorithm alg,
                          const struct iovec *iov,
                          size_t niov,
                          char **digest,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     uint8_t *result = NULL;
     size_t resultlen = 0;
@@ -81,7 +81,7 @@ int qcrypto_hash_digest(QCryptoHashAlgorithm alg,
                         const char *buf,
                         size_t len,
                         char **digest,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     struct iovec iov = { .iov_base = (char *)buf, .iov_len = len };
 
@@ -92,7 +92,7 @@ int qcrypto_hash_base64v(QCryptoHashAlgorithm alg,
                          const struct iovec *iov,
                          size_t niov,
                          char **base64,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     uint8_t *result = NULL;
     size_t resultlen = 0;
@@ -110,7 +110,7 @@ int qcrypto_hash_base64(QCryptoHashAlgorithm alg,
                         const char *buf,
                         size_t len,
                         char **base64,
-                        Error **errp)
+                        Error *errp[static 1])
 {
     struct iovec iov = { .iov_base = (char *)buf, .iov_len = len };
 

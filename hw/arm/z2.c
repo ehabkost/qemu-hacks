@@ -151,7 +151,7 @@ static void z2_lcd_cs(void *opaque, int line, int level)
     z2_lcd->selected = !level;
 }
 
-static void zipit_lcd_realize(SSISlave *dev, Error **errp)
+static void zipit_lcd_realize(SSISlave *dev, Error *errp[static 1])
 {
     ZipitLCD *z = FROM_SSI_SLAVE(ZipitLCD, dev);
     z->selected = 0;

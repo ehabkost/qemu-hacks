@@ -133,7 +133,7 @@ static const MemoryRegionOps synic_test_sint_ops = {
     .endianness = DEVICE_LITTLE_ENDIAN,
 };
 
-static void hv_test_dev_realizefn(DeviceState *d, Error **errp)
+static void hv_test_dev_realizefn(DeviceState *d, Error *errp[static 1])
 {
     ISADevice *isa = ISA_DEVICE(d);
     HypervTestDev *dev = HYPERV_TEST_DEV(d);

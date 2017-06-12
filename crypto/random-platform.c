@@ -29,7 +29,7 @@ static HCRYPTPROV hCryptProv;
 static int fd; /* a file handle to either /dev/urandom or /dev/random */
 #endif
 
-int qcrypto_random_init(Error **errp)
+int qcrypto_random_init(Error *errp[static 1])
 {
 #ifndef _WIN32
     /* TBD perhaps also add support for BSD getentropy / Linux
@@ -57,7 +57,7 @@ int qcrypto_random_init(Error **errp)
 
 int qcrypto_random_bytes(uint8_t *buf G_GNUC_UNUSED,
                          size_t buflen G_GNUC_UNUSED,
-                         Error **errp)
+                         Error *errp[static 1])
 {
 #ifndef _WIN32
     int ret = -1;

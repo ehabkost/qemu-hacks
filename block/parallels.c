@@ -472,7 +472,8 @@ static int parallels_check(BlockDriverState *bs, BdrvCheckResult *res,
 }
 
 
-static int parallels_create(const char *filename, QemuOpts *opts, Error **errp)
+static int parallels_create(const char *filename, QemuOpts *opts,
+                            Error *errp[static 1])
 {
     int64_t total_size, cl_size;
     uint8_t tmp[BDRV_SECTOR_SIZE];
@@ -583,7 +584,7 @@ static int parallels_update_header(BlockDriverState *bs)
 }
 
 static int parallels_open(BlockDriverState *bs, QDict *options, int flags,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     BDRVParallelsState *s = bs->opaque;
     ParallelsHeader ph;

@@ -891,7 +891,7 @@ static void usb_uas_handle_data(USBDevice *dev, USBPacket *p)
     }
 }
 
-static void usb_uas_unrealize(USBDevice *dev, Error **errp)
+static void usb_uas_unrealize(USBDevice *dev, Error *errp[static 1])
 {
     UASDevice *uas = USB_UAS(dev);
 
@@ -900,7 +900,7 @@ static void usb_uas_unrealize(USBDevice *dev, Error **errp)
     object_unref(OBJECT(&uas->bus));
 }
 
-static void usb_uas_realize(USBDevice *dev, Error **errp)
+static void usb_uas_realize(USBDevice *dev, Error *errp[static 1])
 {
     UASDevice *uas = USB_UAS(dev);
     DeviceState *d = DEVICE(dev);

@@ -22,7 +22,8 @@ static Property virtio_gpu_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_gpu_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_gpu_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                   Error *errp[static 1])
 {
     VirtIOGPUPCI *vgpu = VIRTIO_GPU_PCI(vpci_dev);
     VirtIOGPU *g = &vgpu->vdev;

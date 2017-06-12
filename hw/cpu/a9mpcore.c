@@ -43,7 +43,7 @@ static void a9mp_priv_initfn(Object *obj)
     qdev_set_parent_bus(DEVICE(&s->wdt), sysbus_get_default());
 }
 
-static void a9mp_priv_realize(DeviceState *dev, Error **errp)
+static void a9mp_priv_realize(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
     A9MPPrivState *s = A9MPCORE_PRIV(dev);

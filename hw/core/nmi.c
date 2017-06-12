@@ -57,7 +57,7 @@ static void nmi_children(Object *o, struct do_nmi_s *ns)
     object_child_foreach(o, do_nmi, ns);
 }
 
-void nmi_monitor_handle(int cpu_index, Error **errp)
+void nmi_monitor_handle(int cpu_index, Error *errp[static 1])
 {
     struct do_nmi_s ns = {
         .cpu_index = cpu_index,

@@ -27,7 +27,7 @@
 static void null_chr_open(Chardev *chr,
                           ChardevBackend *backend,
                           bool *be_opened,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     *be_opened = false;
 }

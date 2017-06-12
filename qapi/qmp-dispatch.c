@@ -20,7 +20,8 @@
 #include "qapi-types.h"
 #include "qapi/qmp/qerror.h"
 
-static QDict *qmp_dispatch_check_obj(const QObject *request, Error **errp)
+static QDict *qmp_dispatch_check_obj(const QObject *request,
+                                     Error *errp[static 1])
 {
     const QDictEntry *ent;
     const char *arg_name;
@@ -68,7 +69,7 @@ static QDict *qmp_dispatch_check_obj(const QObject *request, Error **errp)
 }
 
 static QObject *do_qmp_dispatch(QmpCommandList *cmds, QObject *request,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     Error *local_err = NULL;
     const char *command;

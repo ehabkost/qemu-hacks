@@ -2507,7 +2507,7 @@ typedef int (RefblockFinishOp)(BlockDriverState *bs, uint64_t **reftable,
 static int alloc_refblock(BlockDriverState *bs, uint64_t **reftable,
                           uint64_t reftable_index, uint64_t *reftable_size,
                           void *refblock, bool refblock_empty, bool *allocated,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     int64_t offset;
@@ -2560,7 +2560,7 @@ static int alloc_refblock(BlockDriverState *bs, uint64_t **reftable,
 static int flush_refblock(BlockDriverState *bs, uint64_t **reftable,
                           uint64_t reftable_index, uint64_t *reftable_size,
                           void *refblock, bool refblock_empty, bool *allocated,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     int64_t offset;
@@ -2609,7 +2609,7 @@ static int walk_over_reftable(BlockDriverState *bs, uint64_t **new_reftable,
                               Qcow2SetRefcountFunc *new_set_refcount,
                               BlockDriverAmendStatusCB *status_cb,
                               void *cb_opaque, int index, int total,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     uint64_t reftable_index;
@@ -2749,7 +2749,7 @@ static int walk_over_reftable(BlockDriverState *bs, uint64_t **new_reftable,
 
 int qcow2_change_refcount_order(BlockDriverState *bs, int refcount_order,
                                 BlockDriverAmendStatusCB *status_cb,
-                                void *cb_opaque, Error **errp)
+                                void *cb_opaque, Error *errp[static 1])
 {
     BDRVQcow2State *s = bs->opaque;
     Qcow2GetRefcountFunc *new_get_refcount;

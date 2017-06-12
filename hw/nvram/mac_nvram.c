@@ -92,7 +92,7 @@ static void macio_nvram_reset(DeviceState *dev)
 {
 }
 
-static void macio_nvram_realizefn(DeviceState *dev, Error **errp)
+static void macio_nvram_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     SysBusDevice *d = SYS_BUS_DEVICE(dev);
     MacIONVRAMState *s = MACIO_NVRAM(dev);
@@ -104,7 +104,7 @@ static void macio_nvram_realizefn(DeviceState *dev, Error **errp)
     sysbus_init_mmio(d, &s->mem);
 }
 
-static void macio_nvram_unrealizefn(DeviceState *dev, Error **errp)
+static void macio_nvram_unrealizefn(DeviceState *dev, Error *errp[static 1])
 {
     MacIONVRAMState *s = MACIO_NVRAM(dev);
 

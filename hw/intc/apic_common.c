@@ -307,7 +307,7 @@ static int apic_load_old(QEMUFile *f, void *opaque, int version_id)
 
 static const VMStateDescription vmstate_apic_common;
 
-static void apic_common_realize(DeviceState *dev, Error **errp)
+static void apic_common_realize(DeviceState *dev, Error *errp[static 1])
 {
     APICCommonState *s = APIC_COMMON(dev);
     APICCommonClass *info;
@@ -334,7 +334,7 @@ static void apic_common_realize(DeviceState *dev, Error **errp)
                                    s, -1, 0, IGNORE_ERRORS);
 }
 
-static void apic_common_unrealize(DeviceState *dev, Error **errp)
+static void apic_common_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     APICCommonState *s = APIC_COMMON(dev);
     APICCommonClass *info = APIC_COMMON_GET_CLASS(s);
@@ -447,7 +447,7 @@ static Property apic_properties_common[] = {
 };
 
 static void apic_common_get_id(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     APICCommonState *s = APIC_COMMON(obj);
     int64_t value;
@@ -457,7 +457,7 @@ static void apic_common_get_id(Object *obj, Visitor *v, const char *name,
 }
 
 static void apic_common_set_id(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     APICCommonState *s = APIC_COMMON(obj);
     DeviceState *dev = DEVICE(obj);

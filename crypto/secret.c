@@ -31,7 +31,7 @@ static void
 qcrypto_secret_load_data(QCryptoSecret *secret,
                          uint8_t **output,
                          size_t *outputlen,
-                         Error **errp)
+                         Error *errp[static 1])
 {
     char *data = NULL;
     size_t length = 0;
@@ -69,7 +69,7 @@ static void qcrypto_secret_decrypt(QCryptoSecret *secret,
                                    size_t inputlen,
                                    uint8_t **output,
                                    size_t *outputlen,
-                                   Error **errp)
+                                   Error *errp[static 1])
 {
     uint8_t *key = NULL, *ciphertext = NULL, *iv = NULL;
     size_t keylen, ciphertextlen, ivlen;
@@ -170,7 +170,7 @@ static void qcrypto_secret_decode(const uint8_t *input,
                                   size_t inputlen,
                                   uint8_t **output,
                                   size_t *outputlen,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     *output = qbase64_decode((const gchar*)input,
                              inputlen,
@@ -182,7 +182,7 @@ static void qcrypto_secret_decode(const uint8_t *input,
 static void
 qcrypto_secret_prop_set_loaded(Object *obj,
                                bool value,
-                               Error **errp)
+                               Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
 
@@ -234,7 +234,7 @@ qcrypto_secret_prop_set_loaded(Object *obj,
 
 static bool
 qcrypto_secret_prop_get_loaded(Object *obj,
-                               Error **errp G_GNUC_UNUSED)
+                               Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
     return secret->data != NULL;
@@ -244,7 +244,7 @@ qcrypto_secret_prop_get_loaded(Object *obj,
 static void
 qcrypto_secret_prop_set_format(Object *obj,
                                int value,
-                               Error **errp G_GNUC_UNUSED)
+                               Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoSecret *creds = QCRYPTO_SECRET(obj);
 
@@ -254,7 +254,7 @@ qcrypto_secret_prop_set_format(Object *obj,
 
 static int
 qcrypto_secret_prop_get_format(Object *obj,
-                               Error **errp G_GNUC_UNUSED)
+                               Error *errp[static 1] G_GNUC_UNUSED)
 {
     QCryptoSecret *creds = QCRYPTO_SECRET(obj);
 
@@ -265,7 +265,7 @@ qcrypto_secret_prop_get_format(Object *obj,
 static void
 qcrypto_secret_prop_set_data(Object *obj,
                              const char *value,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
 
@@ -276,7 +276,7 @@ qcrypto_secret_prop_set_data(Object *obj,
 
 static char *
 qcrypto_secret_prop_get_data(Object *obj,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
     return g_strdup(secret->data);
@@ -286,7 +286,7 @@ qcrypto_secret_prop_get_data(Object *obj,
 static void
 qcrypto_secret_prop_set_file(Object *obj,
                              const char *value,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
 
@@ -297,7 +297,7 @@ qcrypto_secret_prop_set_file(Object *obj,
 
 static char *
 qcrypto_secret_prop_get_file(Object *obj,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
     return g_strdup(secret->file);
@@ -307,7 +307,7 @@ qcrypto_secret_prop_get_file(Object *obj,
 static void
 qcrypto_secret_prop_set_iv(Object *obj,
                            const char *value,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
 
@@ -318,7 +318,7 @@ qcrypto_secret_prop_set_iv(Object *obj,
 
 static char *
 qcrypto_secret_prop_get_iv(Object *obj,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
     return g_strdup(secret->iv);
@@ -328,7 +328,7 @@ qcrypto_secret_prop_get_iv(Object *obj,
 static void
 qcrypto_secret_prop_set_keyid(Object *obj,
                               const char *value,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
 
@@ -339,7 +339,7 @@ qcrypto_secret_prop_set_keyid(Object *obj,
 
 static char *
 qcrypto_secret_prop_get_keyid(Object *obj,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     QCryptoSecret *secret = QCRYPTO_SECRET(obj);
     return g_strdup(secret->keyid);
@@ -347,7 +347,7 @@ qcrypto_secret_prop_get_keyid(Object *obj,
 
 
 static void
-qcrypto_secret_complete(UserCreatable *uc, Error **errp)
+qcrypto_secret_complete(UserCreatable *uc, Error *errp[static 1])
 {
     object_property_set_bool(OBJECT(uc), true, "loaded", errp);
 }
@@ -404,7 +404,7 @@ qcrypto_secret_class_init(ObjectClass *oc, void *data)
 int qcrypto_secret_lookup(const char *secretid,
                           uint8_t **data,
                           size_t *datalen,
-                          Error **errp)
+                          Error *errp[static 1])
 {
     Object *obj;
     QCryptoSecret *secret;
@@ -441,7 +441,7 @@ int qcrypto_secret_lookup(const char *secretid,
 
 
 char *qcrypto_secret_lookup_as_utf8(const char *secretid,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     uint8_t *data;
     size_t datalen;
@@ -466,7 +466,7 @@ char *qcrypto_secret_lookup_as_utf8(const char *secretid,
 
 
 char *qcrypto_secret_lookup_as_base64(const char *secretid,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     uint8_t *data;
     size_t datalen;

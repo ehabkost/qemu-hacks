@@ -65,7 +65,7 @@ QIOChannelTLS *
 qio_channel_tls_new_server(QIOChannel *master,
                            QCryptoTLSCreds *creds,
                            const char *aclname,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QIOChannelTLS *ioc;
 
@@ -102,7 +102,7 @@ QIOChannelTLS *
 qio_channel_tls_new_client(QIOChannel *master,
                            QCryptoTLSCreds *creds,
                            const char *hostname,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     QIOChannelTLS *tioc;
     QIOChannel *ioc;
@@ -235,7 +235,7 @@ static ssize_t qio_channel_tls_readv(QIOChannel *ioc,
                                      size_t niov,
                                      int **fds,
                                      size_t *nfds,
-                                     Error **errp)
+                                     Error *errp[static 1])
 {
     QIOChannelTLS *tioc = QIO_CHANNEL_TLS(ioc);
     size_t i;
@@ -272,7 +272,7 @@ static ssize_t qio_channel_tls_writev(QIOChannel *ioc,
                                       size_t niov,
                                       int *fds,
                                       size_t nfds,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     QIOChannelTLS *tioc = QIO_CHANNEL_TLS(ioc);
     size_t i;
@@ -305,7 +305,7 @@ static ssize_t qio_channel_tls_writev(QIOChannel *ioc,
 
 static int qio_channel_tls_set_blocking(QIOChannel *ioc,
                                         bool enabled,
-                                        Error **errp)
+                                        Error *errp[static 1])
 {
     QIOChannelTLS *tioc = QIO_CHANNEL_TLS(ioc);
 
@@ -330,7 +330,7 @@ static void qio_channel_tls_set_cork(QIOChannel *ioc,
 
 static int qio_channel_tls_shutdown(QIOChannel *ioc,
                                     QIOChannelShutdown how,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     QIOChannelTLS *tioc = QIO_CHANNEL_TLS(ioc);
 
@@ -338,7 +338,7 @@ static int qio_channel_tls_shutdown(QIOChannel *ioc,
 }
 
 static int qio_channel_tls_close(QIOChannel *ioc,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     QIOChannelTLS *tioc = QIO_CHANNEL_TLS(ioc);
 

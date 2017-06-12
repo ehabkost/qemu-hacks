@@ -25,7 +25,7 @@
 
 static void get_pointer(Object *obj, Visitor *v, Property *prop,
                         char *(*print)(void *ptr),
-                        const char *name, Error **errp)
+                        const char *name, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     void **ptr = qdev_get_prop_ptr(dev, prop);
@@ -40,7 +40,7 @@ static void set_pointer(Object *obj, Visitor *v, Property *prop,
                         void (*parse)(DeviceState *dev, const char *str,
                                       void **ptr, const char *propname,
                                       Error **errp),
-                        const char *name, Error **errp)
+                        const char *name, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     void **ptr = qdev_get_prop_ptr(dev, prop);
@@ -67,7 +67,7 @@ static void set_pointer(Object *obj, Visitor *v, Property *prop,
 /* --- drive --- */
 
 static void parse_drive(DeviceState *dev, const char *str, void **ptr,
-                        const char *propname, Error **errp)
+                        const char *propname, Error *errp[static 1])
 {
     BlockBackend *blk;
     bool blk_created = false;
@@ -146,13 +146,13 @@ static char *print_drive(void *ptr)
 }
 
 static void get_drive(Object *obj, Visitor *v, const char *name, void *opaque,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     get_pointer(obj, v, opaque, print_drive, name, errp);
 }
 
 static void set_drive(Object *obj, Visitor *v, const char *name, void *opaque,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     set_pointer(obj, v, opaque, parse_drive, name, errp);
 }
@@ -168,7 +168,7 @@ PropertyInfo qdev_prop_drive = {
 /* --- character device --- */
 
 static void get_chr(Object *obj, Visitor *v, const char *name, void *opaque,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     CharBackend *be = qdev_get_prop_ptr(dev, opaque);
@@ -180,7 +180,7 @@ static void get_chr(Object *obj, Visitor *v, const char *name, void *opaque,
 }
 
 static void set_chr(Object *obj, Visitor *v, const char *name, void *opaque,
-                    Error **errp)
+                    Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -234,7 +234,7 @@ PropertyInfo qdev_prop_chr = {
 
 /* --- netdev device --- */
 static void get_netdev(Object *obj, Visitor *v, const char *name,
-                       void *opaque, Error **errp)
+                       void *opaque, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -246,7 +246,7 @@ static void get_netdev(Object *obj, Visitor *v, const char *name,
 }
 
 static void set_netdev(Object *obj, Visitor *v, const char *name,
-                       void *opaque, Error **errp)
+                       void *opaque, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -331,7 +331,7 @@ static int print_vlan(DeviceState *dev, Property *prop, char *dest, size_t len)
 }
 
 static void get_vlan(Object *obj, Visitor *v, const char *name, void *opaque,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -349,7 +349,7 @@ static void get_vlan(Object *obj, Visitor *v, const char *name, void *opaque,
 }
 
 static void set_vlan(Object *obj, Visitor *v, const char *name, void *opaque,
-                     Error **errp)
+                     Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     Property *prop = opaque;
@@ -394,7 +394,7 @@ PropertyInfo qdev_prop_vlan = {
 };
 
 void qdev_prop_set_drive(DeviceState *dev, const char *name,
-                         BlockBackend *value, Error **errp)
+                         BlockBackend *value, Error *errp[static 1])
 {
     const char *ref = "";
 

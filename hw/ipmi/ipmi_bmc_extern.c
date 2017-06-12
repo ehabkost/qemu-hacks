@@ -443,7 +443,7 @@ static void ipmi_bmc_extern_handle_reset(IPMIBmc *b)
     continue_send(ibe);
 }
 
-static void ipmi_bmc_extern_realize(DeviceState *dev, Error **errp)
+static void ipmi_bmc_extern_realize(DeviceState *dev, Error *errp[static 1])
 {
     IPMIBmcExtern *ibe = IPMI_BMC_EXTERN(dev);
 

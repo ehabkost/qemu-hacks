@@ -21,7 +21,7 @@ typedef struct VirtIOBlockDataPlane VirtIOBlockDataPlane;
 
 void virtio_blk_data_plane_create(VirtIODevice *vdev, VirtIOBlkConf *conf,
                                   VirtIOBlockDataPlane **dataplane,
-                                  Error **errp);
+                                  Error *errp[static 1]);
 void virtio_blk_data_plane_destroy(VirtIOBlockDataPlane *s);
 void virtio_blk_data_plane_notify(VirtIOBlockDataPlane *s, VirtQueue *vq);
 

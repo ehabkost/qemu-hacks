@@ -10,22 +10,22 @@
 
 static QmpCommandList qmp_commands;
 
-void qmp_user_def_cmd(Error **errp)
+void qmp_user_def_cmd(Error *errp[static 1])
 {
 }
 
-Empty2 *qmp_user_def_cmd0(Error **errp)
+Empty2 *qmp_user_def_cmd0(Error *errp[static 1])
 {
     return g_new0(Empty2, 1);
 }
 
-void qmp_user_def_cmd1(UserDefOne * ud1, Error **errp)
+void qmp_user_def_cmd1(UserDefOne * ud1, Error *errp[static 1])
 {
 }
 
 UserDefTwo *qmp_user_def_cmd2(UserDefOne *ud1a,
                               bool has_udb1, UserDefOne *ud1b,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     UserDefTwo *ret;
     UserDefOne *ud1c = g_malloc0(sizeof(UserDefOne));
@@ -51,7 +51,8 @@ UserDefTwo *qmp_user_def_cmd2(UserDefOne *ud1a,
     return ret;
 }
 
-int64_t qmp_guest_get_time(int64_t a, bool has_b, int64_t b, Error **errp)
+int64_t qmp_guest_get_time(int64_t a, bool has_b, int64_t b,
+                           Error *errp[static 1])
 {
     return a + (has_b ? b : 0);
 }
@@ -61,11 +62,11 @@ QObject *qmp_guest_sync(QObject *arg, Error **errp)
     return arg;
 }
 
-void qmp_boxed_struct(UserDefZero *arg, Error **errp)
+void qmp_boxed_struct(UserDefZero *arg, Error *errp[static 1])
 {
 }
 
-void qmp_boxed_union(UserDefNativeListUnion *arg, Error **errp)
+void qmp_boxed_union(UserDefNativeListUnion *arg, Error *errp[static 1])
 {
 }
 
@@ -73,7 +74,7 @@ __org_qemu_x_Union1 *qmp___org_qemu_x_command(__org_qemu_x_EnumList *a,
                                               __org_qemu_x_StructList *b,
                                               __org_qemu_x_Union2 *c,
                                               __org_qemu_x_Alt *d,
-                                              Error **errp)
+                                              Error *errp[static 1])
 {
     __org_qemu_x_Union1 *ret = g_new0(__org_qemu_x_Union1, 1);
 

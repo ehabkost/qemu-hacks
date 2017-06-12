@@ -36,7 +36,7 @@ void ipack_bus_new_inplace(IPackBus *bus, size_t bus_size,
     bus->set_irq = handler;
 }
 
-static void ipack_device_realize(DeviceState *dev, Error **errp)
+static void ipack_device_realize(DeviceState *dev, Error *errp[static 1])
 {
     IPackDevice *idev = IPACK_DEVICE(dev);
     IPackBus *bus = IPACK_BUS(qdev_get_parent_bus(dev));
@@ -56,7 +56,7 @@ static void ipack_device_realize(DeviceState *dev, Error **errp)
     k->realize(dev, errp);
 }
 
-static void ipack_device_unrealize(DeviceState *dev, Error **errp)
+static void ipack_device_unrealize(DeviceState *dev, Error *errp[static 1])
 {
     IPackDevice *idev = IPACK_DEVICE(dev);
     IPackDeviceClass *k = IPACK_DEVICE_GET_CLASS(dev);

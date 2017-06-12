@@ -117,40 +117,44 @@ out:
     return iov_size(iov, iovcnt);
 }
 
-static char *netfilter_get_netdev_id(Object *obj, Error **errp)
+static char *netfilter_get_netdev_id(Object *obj, Error *errp[static 1])
 {
     NetFilterState *nf = NETFILTER(obj);
 
     return g_strdup(nf->netdev_id);
 }
 
-static void netfilter_set_netdev_id(Object *obj, const char *str, Error **errp)
+static void netfilter_set_netdev_id(Object *obj, const char *str,
+                                    Error *errp[static 1])
 {
     NetFilterState *nf = NETFILTER(obj);
 
     nf->netdev_id = g_strdup(str);
 }
 
-static int netfilter_get_direction(Object *obj, Error **errp G_GNUC_UNUSED)
+static int netfilter_get_direction(Object *obj,
+                                   Error *errp[static 1] G_GNUC_UNUSED)
 {
     NetFilterState *nf = NETFILTER(obj);
     return nf->direction;
 }
 
-static void netfilter_set_direction(Object *obj, int direction, Error **errp)
+static void netfilter_set_direction(Object *obj, int direction,
+                                    Error *errp[static 1])
 {
     NetFilterState *nf = NETFILTER(obj);
     nf->direction = direction;
 }
 
-static char *netfilter_get_status(Object *obj, Error **errp)
+static char *netfilter_get_status(Object *obj, Error *errp[static 1])
 {
     NetFilterState *nf = NETFILTER(obj);
 
     return nf->on ? g_strdup("on") : g_strdup("off");
 }
 
-static void netfilter_set_status(Object *obj, const char *str, Error **errp)
+static void netfilter_set_status(Object *obj, const char *str,
+                                 Error *errp[static 1])
 {
     NetFilterState *nf = NETFILTER(obj);
     NetFilterClass *nfc = NETFILTER_GET_CLASS(obj);
@@ -187,7 +191,7 @@ static void netfilter_init(Object *obj)
                             IGNORE_ERRORS);
 }
 
-static void netfilter_complete(UserCreatable *uc, Error **errp)
+static void netfilter_complete(UserCreatable *uc, Error *errp[static 1])
 {
     NetFilterState *nf = NETFILTER(uc);
     NetClientState *ncs[MAX_QUEUE_NUM];

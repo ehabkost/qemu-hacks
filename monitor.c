@@ -429,7 +429,7 @@ static void monitor_qapi_event_handler(void *opaque);
  * applying any rate limiting if required.
  */
 static void
-monitor_qapi_event_queue(QAPIEvent event, QDict *qdict, Error **errp)
+monitor_qapi_event_queue(QAPIEvent event, QDict *qdict, Error *errp[static 1])
 {
     MonitorQAPIEventConf *evconf;
     MonitorQAPIEventState *evstate;
@@ -588,7 +588,7 @@ static void monitor_data_destroy(Monitor *mon)
 }
 
 char *qmp_human_monitor_command(const char *command_line, bool has_cpu_index,
-                                int64_t cpu_index, Error **errp)
+                                int64_t cpu_index, Error *errp[static 1])
 {
     char *output = NULL;
     Monitor *old_mon, hmp;
@@ -912,7 +912,7 @@ static void query_commands_cb(QmpCommand *cmd, void *opaque)
     *list = info;
 }
 
-CommandInfoList *qmp_query_commands(Error **errp)
+CommandInfoList *qmp_query_commands(Error *errp[static 1])
 {
     CommandInfoList *list = NULL;
 
@@ -921,7 +921,7 @@ CommandInfoList *qmp_query_commands(Error **errp)
     return list;
 }
 
-EventInfoList *qmp_query_events(Error **errp)
+EventInfoList *qmp_query_events(Error *errp[static 1])
 {
     EventInfoList *info, *ev_list = NULL;
     QAPIEvent e;
@@ -950,7 +950,7 @@ EventInfoList *qmp_query_events(Error **errp)
  * qapi-introspect.py's output actually conforms to the schema.
  */
 static void qmp_query_qmp_schema(QDict *qdict, QObject **ret_data,
-                                 Error **errp)
+                                 Error *errp[static 1])
 {
     *ret_data = qobject_from_json(qmp_schema_json, &error_abort);
 }
@@ -1025,7 +1025,7 @@ void monitor_init_qmp_commands(void)
                          qmp_marshal_qmp_capabilities, QCO_NO_OPTIONS);
 }
 
-void qmp_qmp_capabilities(Error **errp)
+void qmp_qmp_capabilities(Error *errp[static 1])
 {
     if (cur_mon->qmp.commands == &qmp_commands) {
         error_set(errp, ERROR_CLASS_COMMAND_NOT_FOUND,
@@ -1166,7 +1166,7 @@ void qmp_client_migrate_info(const char *protocol, const char *hostname,
                              bool has_port, int64_t port,
                              bool has_tls_port, int64_t tls_port,
                              bool has_cert_subject, const char *cert_subject,
-                             Error **errp)
+                             Error *errp[static 1])
 {
     if (strcmp(protocol, "spice") == 0) {
         if (!qemu_using_spice(errp)) {
@@ -1429,7 +1429,7 @@ static void hmp_physical_memory_dump(Monitor *mon, const QDict *qdict)
     memory_dump(mon, count, format, size, addr, 1);
 }
 
-static void *gpa2hva(MemoryRegion **p_mr, hwaddr addr, Error **errp)
+static void *gpa2hva(MemoryRegion **p_mr, hwaddr addr, Error *errp[static 1])
 {
     MemoryRegionSection mrs = memory_region_find(get_system_memory(),
                                                  addr, 1);
@@ -1470,7 +1470,7 @@ static void hmp_gpa2hva(Monitor *mon, const QDict *qdict)
 }
 
 #ifdef CONFIG_LINUX
-static uint64_t vtop(void *ptr, Error **errp)
+static uint64_t vtop(void *ptr, Error *errp[static 1])
 {
     uint64_t pinfo;
     uint64_t ret = -1;
@@ -1901,7 +1901,7 @@ static void hmp_acl_remove(Monitor *mon, const QDict *qdict)
     }
 }
 
-void qmp_getfd(const char *fdname, Error **errp)
+void qmp_getfd(const char *fdname, Error *errp[static 1])
 {
     mon_fd_t *monfd;
     int fd;
@@ -1936,7 +1936,7 @@ void qmp_getfd(const char *fdname, Error **errp)
     QLIST_INSERT_HEAD(&cur_mon->fds, monfd, next);
 }
 
-void qmp_closefd(const char *fdname, Error **errp)
+void qmp_closefd(const char *fdname, Error *errp[static 1])
 {
     mon_fd_t *monfd;
 
@@ -1955,7 +1955,7 @@ void qmp_closefd(const char *fdname, Error **errp)
     error_setg(errp, QERR_FD_NOT_FOUND, fdname);
 }
 
-int monitor_get_fd(Monitor *mon, const char *fdname, Error **errp)
+int monitor_get_fd(Monitor *mon, const char *fdname, Error *errp[static 1])
 {
     mon_fd_t *monfd;
 
@@ -2013,7 +2013,7 @@ static void monitor_fdsets_cleanup(void)
 }
 
 AddfdInfo *qmp_add_fd(bool has_fdset_id, int64_t fdset_id, bool has_opaque,
-                      const char *opaque, Error **errp)
+                      const char *opaque, Error *errp[static 1])
 {
     int fd;
     Monitor *mon = cur_mon;
@@ -2038,7 +2038,8 @@ error:
     return NULL;
 }
 
-void qmp_remove_fd(int64_t fdset_id, bool has_fd, int64_t fd, Error **errp)
+void qmp_remove_fd(int64_t fdset_id, bool has_fd, int64_t fd,
+                   Error *errp[static 1])
 {
     MonFdset *mon_fdset;
     MonFdsetFd *mon_fdset_fd;
@@ -2076,7 +2077,7 @@ error:
     error_setg(errp, QERR_FD_NOT_FOUND, fd_str);
 }
 
-FdsetInfoList *qmp_query_fdsets(Error **errp)
+FdsetInfoList *qmp_query_fdsets(Error *errp[static 1])
 {
     MonFdset *mon_fdset;
     MonFdsetFd *mon_fdset_fd;
@@ -2117,7 +2118,7 @@ FdsetInfoList *qmp_query_fdsets(Error **errp)
 
 AddfdInfo *monitor_fdset_add_fd(int fd, bool has_fdset_id, int64_t fdset_id,
                                 bool has_opaque, const char *opaque,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     MonFdset *mon_fdset = NULL;
     MonFdsetFd *mon_fdset_fd;
@@ -2281,7 +2282,7 @@ void monitor_fdset_dup_fd_remove(int dup_fd)
     monitor_fdset_dup_fd_find_remove(dup_fd, true);
 }
 
-int monitor_fd_param(Monitor *mon, const char *fdname, Error **errp)
+int monitor_fd_param(Monitor *mon, const char *fdname, Error *errp[static 1])
 {
     int fd;
     Error *local_err = NULL;
@@ -4207,28 +4208,28 @@ QemuOptsList qemu_mon_opts = {
 };
 
 #ifndef TARGET_I386
-void qmp_rtc_reset_reinjection(Error **errp)
+void qmp_rtc_reset_reinjection(Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "rtc-reset-reinjection");
 }
 #endif
 
 #ifndef TARGET_S390X
-void qmp_dump_skeys(const char *filename, Error **errp)
+void qmp_dump_skeys(const char *filename, Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "dump-skeys");
 }
 #endif
 
 #ifndef TARGET_ARM
-GICCapabilityList *qmp_query_gic_capabilities(Error **errp)
+GICCapabilityList *qmp_query_gic_capabilities(Error *errp[static 1])
 {
     error_setg(errp, QERR_FEATURE_DISABLED, "query-gic-capabilities");
     return NULL;
 }
 #endif
 
-HotpluggableCPUList *qmp_query_hotpluggable_cpus(Error **errp)
+HotpluggableCPUList *qmp_query_hotpluggable_cpus(Error *errp[static 1])
 {
     MachineState *ms = MACHINE(qdev_get_machine());
     MachineClass *mc = MACHINE_GET_CLASS(ms);

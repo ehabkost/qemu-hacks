@@ -401,7 +401,7 @@ static void mips_gic_init(Object *obj)
     qemu_register_reset(gic_reset, s);
 }
 
-static void mips_gic_realize(DeviceState *dev, Error **errp)
+static void mips_gic_realize(DeviceState *dev, Error *errp[static 1])
 {
     MIPSGICState *s = MIPS_GIC(dev);
     CPUState *cs = first_cpu;

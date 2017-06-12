@@ -284,7 +284,7 @@ static void migrate_generate_event(int new_state)
  * The migration can be started later after any parameters have been
  * changed.
  */
-static void deferred_incoming_migration(Error **errp)
+static void deferred_incoming_migration(Error *errp[static 1])
 {
     if (deferred_incoming) {
         error_setg(errp, "Incoming migration already deferred");
@@ -321,7 +321,7 @@ void migrate_send_rp_req_pages(MigrationIncomingState *mis, const char *rbname,
     }
 }
 
-void qemu_start_incoming_migration(const char *uri, Error **errp)
+void qemu_start_incoming_migration(const char *uri, Error *errp[static 1])
 {
     const char *p;
 
@@ -505,7 +505,7 @@ void migrate_send_rp_pong(MigrationIncomingState *mis,
     migrate_send_rp_message(mis, MIG_RP_MSG_PONG, sizeof(buf), &buf);
 }
 
-MigrationCapabilityStatusList *qmp_query_migrate_capabilities(Error **errp)
+MigrationCapabilityStatusList *qmp_query_migrate_capabilities(Error *errp[static 1])
 {
     MigrationCapabilityStatusList *head = NULL;
     MigrationCapabilityStatusList *caps;
@@ -538,7 +538,7 @@ MigrationCapabilityStatusList *qmp_query_migrate_capabilities(Error **errp)
     return head;
 }
 
-MigrationParameters *qmp_query_migrate_parameters(Error **errp)
+MigrationParameters *qmp_query_migrate_parameters(Error *errp[static 1])
 {
     MigrationParameters *params;
     MigrationState *s = migrate_get_current();
@@ -627,7 +627,7 @@ static void populate_ram_info(MigrationInfo *info, MigrationState *s)
     }
 }
 
-MigrationInfo *qmp_query_migrate(Error **errp)
+MigrationInfo *qmp_query_migrate(Error *errp[static 1])
 {
     MigrationInfo *info = g_malloc0(sizeof(*info));
     MigrationState *s = migrate_get_current();
@@ -716,7 +716,7 @@ MigrationInfo *qmp_query_migrate(Error **errp)
 }
 
 void qmp_migrate_set_capabilities(MigrationCapabilityStatusList *params,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     MigrationState *s = migrate_get_current();
     MigrationCapabilityStatusList *cap;
@@ -776,7 +776,8 @@ void qmp_migrate_set_capabilities(MigrationCapabilityStatusList *params,
     }
 }
 
-void qmp_migrate_set_parameters(MigrationParameters *params, Error **errp)
+void qmp_migrate_set_parameters(MigrationParameters *params,
+                                Error *errp[static 1])
 {
     MigrationState *s = migrate_get_current();
 
@@ -882,7 +883,7 @@ void qmp_migrate_set_parameters(MigrationParameters *params, Error **errp)
 }
 
 
-void qmp_migrate_start_postcopy(Error **errp)
+void qmp_migrate_start_postcopy(Error *errp[static 1])
 {
     MigrationState *s = migrate_get_current();
 
@@ -914,7 +915,7 @@ void migrate_set_state(int *state, int old_state, int new_state)
     }
 }
 
-void migrate_set_block_enabled(bool value, Error **errp)
+void migrate_set_block_enabled(bool value, Error *errp[static 1])
 {
     MigrationCapabilityStatusList *cap;
 
@@ -1124,7 +1125,7 @@ MigrationState *migrate_init(void)
 
 static GSList *migration_blockers;
 
-int migrate_add_blocker(Error *reason, Error **errp)
+int migrate_add_blocker(Error *reason, Error *errp[static 1])
 {
     if (only_migratable) {
         error_propagate(errp, error_copy(reason));
@@ -1149,7 +1150,7 @@ void migrate_del_blocker(Error *reason)
     migration_blockers = g_slist_remove(migration_blockers, reason);
 }
 
-void qmp_migrate_incoming(const char *uri, Error **errp)
+void qmp_migrate_incoming(const char *uri, Error *errp[static 1])
 {
     static bool once = true;
 
@@ -1170,7 +1171,7 @@ void qmp_migrate_incoming(const char *uri, Error **errp)
     once = false;
 }
 
-bool migration_is_blocked(Error **errp)
+bool migration_is_blocked(Error *errp[static 1])
 {
     if (qemu_savevm_state_blocked(errp)) {
         return true;
@@ -1186,7 +1187,7 @@ bool migration_is_blocked(Error **errp)
 
 void qmp_migrate(const char *uri, bool has_blk, bool blk,
                  bool has_inc, bool inc, bool has_detach, bool detach,
-                 Error **errp)
+                 Error *errp[static 1])
 {
     Error *local_err = NULL;
     MigrationState *s = migrate_get_current();
@@ -1254,12 +1255,12 @@ void qmp_migrate(const char *uri, bool has_blk, bool blk,
     }
 }
 
-void qmp_migrate_cancel(Error **errp)
+void qmp_migrate_cancel(Error *errp[static 1])
 {
     migrate_fd_cancel(migrate_get_current());
 }
 
-void qmp_migrate_set_cache_size(int64_t value, Error **errp)
+void qmp_migrate_set_cache_size(int64_t value, Error *errp[static 1])
 {
     MigrationState *s = migrate_get_current();
     int64_t new_size;
@@ -1288,12 +1289,12 @@ void qmp_migrate_set_cache_size(int64_t value, Error **errp)
     s->xbzrle_cache_size = new_size;
 }
 
-int64_t qmp_query_migrate_cache_size(Error **errp)
+int64_t qmp_query_migrate_cache_size(Error *errp[static 1])
 {
     return migrate_xbzrle_cache_size();
 }
 
-void qmp_migrate_set_speed(int64_t value, Error **errp)
+void qmp_migrate_set_speed(int64_t value, Error *errp[static 1])
 {
     MigrationParameters p = {
         .has_max_bandwidth = true,
@@ -1303,7 +1304,7 @@ void qmp_migrate_set_speed(int64_t value, Error **errp)
     qmp_migrate_set_parameters(&p, errp);
 }
 
-void qmp_migrate_set_downtime(double value, Error **errp)
+void qmp_migrate_set_downtime(double value, Error *errp[static 1])
 {
     if (value < 0 || value > MAX_MIGRATE_DOWNTIME_SECONDS) {
         error_setg(errp, "Parameter 'downtime_limit' expects an integer in "

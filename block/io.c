@@ -78,7 +78,7 @@ static void bdrv_merge_limits(BlockLimits *dst, const BlockLimits *src)
     dst->max_iov = MIN_NON_ZERO(dst->max_iov, src->max_iov);
 }
 
-void bdrv_refresh_limits(BlockDriverState *bs, Error **errp)
+void bdrv_refresh_limits(BlockDriverState *bs, Error *errp[static 1])
 {
     BlockDriver *drv = bs->drv;
 

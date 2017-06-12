@@ -157,7 +157,7 @@ static int pp_ioctl(Chardev *chr, int cmd, void *arg)
 static void qemu_chr_open_pp_fd(Chardev *chr,
                                 int fd,
                                 bool *be_opened,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     ParallelChardev *drv = PARALLEL_CHARDEV(chr);
 
@@ -227,7 +227,7 @@ static int pp_ioctl(Chardev *chr, int cmd, void *arg)
 static void qemu_chr_open_pp_fd(Chardev *chr,
                                 int fd,
                                 bool *be_opened,
-                                Error **errp)
+                                Error *errp[static 1])
 {
     ParallelChardev *drv = PARALLEL_CHARDEV(chr);
     drv->fd = fd;
@@ -239,7 +239,7 @@ static void qemu_chr_open_pp_fd(Chardev *chr,
 static void qmp_chardev_open_parallel(Chardev *chr,
                                       ChardevBackend *backend,
                                       bool *be_opened,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     ChardevHostdev *parallel = backend->u.parallel.data;
     int fd;
@@ -252,7 +252,7 @@ static void qmp_chardev_open_parallel(Chardev *chr,
 }
 
 static void qemu_chr_parse_parallel(QemuOpts *opts, ChardevBackend *backend,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     const char *device = qemu_opt_get(opts, "path");
     ChardevHostdev *parallel;

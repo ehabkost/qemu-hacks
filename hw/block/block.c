@@ -52,7 +52,7 @@ void blkconf_blocksizes(BlockConf *conf)
 }
 
 void blkconf_apply_backend_options(BlockConf *conf, bool readonly,
-                                   bool resizable, Error **errp)
+                                   bool resizable, Error *errp[static 1])
 {
     BlockBackend *blk = conf->blk;
     BlockdevOnError rerror, werror;
@@ -103,7 +103,7 @@ void blkconf_apply_backend_options(BlockConf *conf, bool readonly,
 
 void blkconf_geometry(BlockConf *conf, int *ptrans,
                       unsigned cyls_max, unsigned heads_max, unsigned secs_max,
-                      Error **errp)
+                      Error *errp[static 1])
 {
     DriveInfo *dinfo;
 

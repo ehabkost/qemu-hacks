@@ -328,7 +328,7 @@ static void wctablet_chr_finalize(Object *obj)
 static void wctablet_chr_open(Chardev *chr,
                               ChardevBackend *backend,
                               bool *be_opened,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     TabletChardev *tablet = WCTABLET_CHARDEV(chr);
 

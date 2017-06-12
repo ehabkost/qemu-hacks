@@ -516,7 +516,7 @@ static void xlnx_dp_aux_set_command(XlnxDPState *s, uint32_t value)
 }
 
 static void xlnx_dp_set_dpdma(Object *obj, const char *name, Object *val,
-                              Error **errp)
+                              Error *errp[static 1])
 {
     XlnxDPState *s = XLNX_DP(obj);
     if (s->console) {
@@ -1236,7 +1236,7 @@ static void xlnx_dp_init(Object *obj)
     fifo8_create(&s->tx_fifo, 16);
 }
 
-static void xlnx_dp_realize(DeviceState *dev, Error **errp)
+static void xlnx_dp_realize(DeviceState *dev, Error *errp[static 1])
 {
     XlnxDPState *s = XLNX_DP(dev);
     DisplaySurface *surface;

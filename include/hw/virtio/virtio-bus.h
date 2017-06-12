@@ -110,7 +110,7 @@ struct VirtioBusState {
     int ioeventfd_grabbed;
 };
 
-void virtio_bus_device_plugged(VirtIODevice *vdev, Error **errp);
+void virtio_bus_device_plugged(VirtIODevice *vdev, Error *errp[static 1]);
 void virtio_bus_reset(VirtioBusState *bus);
 void virtio_bus_device_unplugged(VirtIODevice *bus);
 /* Get the device id of the plugged device. */

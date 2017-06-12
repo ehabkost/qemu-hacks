@@ -665,7 +665,7 @@ static bool s390_pci_alloc_idx(S390pciState *s, S390PCIBusDevice *pbdev)
 }
 
 static void s390_pcihost_hot_plug(HotplugHandler *hotplug_dev,
-                                  DeviceState *dev, Error **errp)
+                                  DeviceState *dev, Error *errp[static 1])
 {
     PCIDevice *pdev = NULL;
     S390PCIBusDevice *pbdev = NULL;
@@ -765,7 +765,7 @@ static void s390_pcihost_timer_cb(void *opaque)
 }
 
 static void s390_pcihost_hot_unplug(HotplugHandler *hotplug_dev,
-                                    DeviceState *dev, Error **errp)
+                                    DeviceState *dev, Error *errp[static 1])
 {
     PCIDevice *pci_dev = NULL;
     PCIBus *bus;
@@ -910,7 +910,7 @@ static uint16_t s390_pci_generate_uid(S390pciState *s)
     return UID_UNDEFINED;
 }
 
-static uint32_t s390_pci_generate_fid(S390pciState *s, Error **errp)
+static uint32_t s390_pci_generate_fid(S390pciState *s, Error *errp[static 1])
 {
     uint32_t fid = 0;
 
@@ -924,7 +924,7 @@ static uint32_t s390_pci_generate_fid(S390pciState *s, Error **errp)
     return 0;
 }
 
-static void s390_pci_device_realize(DeviceState *dev, Error **errp)
+static void s390_pci_device_realize(DeviceState *dev, Error *errp[static 1])
 {
     S390PCIBusDevice *zpci = S390_PCI_DEVICE(dev);
     S390pciState *s = s390_get_phb();
@@ -993,7 +993,7 @@ static void s390_pci_device_reset(DeviceState *dev)
 }
 
 static void s390_pci_get_fid(Object *obj, Visitor *v, const char *name,
-                         void *opaque, Error **errp)
+                         void *opaque, Error *errp[static 1])
 {
     Property *prop = opaque;
     uint32_t *ptr = qdev_get_prop_ptr(DEVICE(obj), prop);
@@ -1002,7 +1002,7 @@ static void s390_pci_get_fid(Object *obj, Visitor *v, const char *name,
 }
 
 static void s390_pci_set_fid(Object *obj, Visitor *v, const char *name,
-                         void *opaque, Error **errp)
+                         void *opaque, Error *errp[static 1])
 {
     DeviceState *dev = DEVICE(obj);
     S390PCIBusDevice *zpci = S390_PCI_DEVICE(obj);

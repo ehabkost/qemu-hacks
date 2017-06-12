@@ -8414,7 +8414,7 @@ POWERPC_FAMILY(POWER5P)(ObjectClass *oc, void *data)
 }
 
 static void powerpc_get_compat(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     char *value = (char *)"";
     Property *prop = opaque;
@@ -8442,7 +8442,7 @@ static void powerpc_get_compat(Object *obj, Visitor *v, const char *name,
 }
 
 static void powerpc_set_compat(Object *obj, Visitor *v, const char *name,
-                               void *opaque, Error **errp)
+                               void *opaque, Error *errp[static 1])
 {
     char *value = NULL;
     Property *prop = opaque;
@@ -9503,7 +9503,7 @@ static void fix_opcode_tables(opc_handler_t **ppc_opcodes)
 }
 
 /*****************************************************************************/
-static void create_ppc_opcodes(PowerPCCPU *cpu, Error **errp)
+static void create_ppc_opcodes(PowerPCCPU *cpu, Error *errp[static 1])
 {
     PowerPCCPUClass *pcc = POWERPC_CPU_GET_CLASS(cpu);
     CPUPPCState *env = &cpu->env;
@@ -9818,7 +9818,7 @@ static inline bool ppc_cpu_is_valid(PowerPCCPUClass *pcc)
 #endif
 }
 
-static void ppc_cpu_realizefn(DeviceState *dev, Error **errp)
+static void ppc_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     PowerPCCPU *cpu = POWERPC_CPU(dev);
@@ -10064,7 +10064,7 @@ static void ppc_cpu_realizefn(DeviceState *dev, Error **errp)
 #endif
 }
 
-static void ppc_cpu_unrealizefn(DeviceState *dev, Error **errp)
+static void ppc_cpu_unrealizefn(DeviceState *dev, Error *errp[static 1])
 {
     PowerPCCPU *cpu = POWERPC_CPU(dev);
     PowerPCCPUClass *pcc = POWERPC_CPU_GET_CLASS(cpu);
@@ -10403,7 +10403,7 @@ static void ppc_cpu_defs_entry(gpointer data, gpointer user_data)
     *first = entry;
 }
 
-CpuDefinitionInfoList *arch_query_cpu_definitions(Error **errp)
+CpuDefinitionInfoList *arch_query_cpu_definitions(Error *errp[static 1])
 {
     CpuDefinitionInfoList *cpu_list = NULL;
     GSList *list;

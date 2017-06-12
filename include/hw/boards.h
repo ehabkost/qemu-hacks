@@ -45,7 +45,7 @@ void machine_register_compat_props(MachineState *machine);
 HotpluggableCPUList *machine_query_hotpluggable_cpus(MachineState *machine);
 void machine_set_cpu_numa_node(MachineState *machine,
                                const CpuInstanceProperties *props,
-                               Error **errp);
+                               Error *errp[static 1]);
 
 /**
  * CPUArchId:

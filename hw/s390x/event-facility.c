@@ -287,7 +287,7 @@ out:
 
 #define TYPE_SCLP_EVENTS_BUS "s390-sclp-events-bus"
 
-static void sclp_events_bus_realize(BusState *bus, Error **errp)
+static void sclp_events_bus_realize(BusState *bus, Error *errp[static 1])
 {
     BusChild *kid;
 
@@ -394,7 +394,7 @@ static const TypeInfo sclp_event_facility_info = {
     .class_size    = sizeof(SCLPEventFacilityClass),
 };
 
-static void event_realize(DeviceState *qdev, Error **errp)
+static void event_realize(DeviceState *qdev, Error *errp[static 1])
 {
     SCLPEvent *event = SCLP_EVENT(qdev);
     SCLPEventClass *child = SCLP_EVENT_GET_CLASS(event);
@@ -408,7 +408,7 @@ static void event_realize(DeviceState *qdev, Error **errp)
     }
 }
 
-static void event_unrealize(DeviceState *qdev, Error **errp)
+static void event_unrealize(DeviceState *qdev, Error *errp[static 1])
 {
     SCLPEvent *event = SCLP_EVENT(qdev);
     SCLPEventClass *child = SCLP_EVENT_GET_CLASS(event);

@@ -435,7 +435,8 @@ static QemuOptsList qemu_object_opts = {
 
 
 
-static QCryptoTLSCreds *nbd_get_tls_creds(const char *id, Error **errp)
+static QCryptoTLSCreds *nbd_get_tls_creds(const char *id,
+                                          Error *errp[static 1])
 {
     Object *obj;
     QCryptoTLSCreds *creds;

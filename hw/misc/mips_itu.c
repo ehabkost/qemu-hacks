@@ -460,7 +460,7 @@ static void mips_itu_init(Object *obj)
                           "mips-itc-tag", ITC_TAG_ADDRSPACE_SZ);
 }
 
-static void mips_itu_realize(DeviceState *dev, Error **errp)
+static void mips_itu_realize(DeviceState *dev, Error *errp[static 1])
 {
     MIPSITUState *s = MIPS_ITU(dev);
 

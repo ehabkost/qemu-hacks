@@ -26,7 +26,8 @@ static Property virtio_crypto_pci_properties[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static void virtio_crypto_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
+static void virtio_crypto_pci_realize(VirtIOPCIProxy *vpci_dev,
+                                      Error *errp[static 1])
 {
     VirtIOCryptoPCI *vcrypto = VIRTIO_CRYPTO_PCI(vpci_dev);
     DeviceState *vdev = DEVICE(&vcrypto->vdev);

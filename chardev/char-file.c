@@ -35,7 +35,7 @@
 static void qmp_chardev_open_file(Chardev *chr,
                                   ChardevBackend *backend,
                                   bool *be_opened,
-                                  Error **errp)
+                                  Error *errp[static 1])
 {
     ChardevFile *file = backend->u.file.data;
 #ifdef _WIN32
@@ -95,7 +95,7 @@ static void qmp_chardev_open_file(Chardev *chr,
 }
 
 static void qemu_chr_parse_file_out(QemuOpts *opts, ChardevBackend *backend,
-                                    Error **errp)
+                                    Error *errp[static 1])
 {
     const char *path = qemu_opt_get(opts, "path");
     ChardevFile *file;

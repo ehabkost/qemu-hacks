@@ -115,7 +115,7 @@ static const AspeedBoardConfig aspeed_boards[] = {
 #define FIRMWARE_ADDR 0x0
 
 static void write_boot_rom(DriveInfo *dinfo, hwaddr addr, size_t rom_size,
-                           Error **errp)
+                           Error *errp[static 1])
 {
     BlockBackend *blk = blk_by_legacy_dinfo(dinfo);
     uint8_t *storage;
@@ -145,7 +145,7 @@ static void write_boot_rom(DriveInfo *dinfo, hwaddr addr, size_t rom_size,
 }
 
 static void aspeed_board_init_flashes(AspeedSMCState *s, const char *flashtype,
-                                      Error **errp)
+                                      Error *errp[static 1])
 {
     int i ;
 

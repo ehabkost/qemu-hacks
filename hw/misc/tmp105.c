@@ -55,7 +55,7 @@ static void tmp105_alarm_update(TMP105State *s)
 }
 
 static void tmp105_get_temperature(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     TMP105State *s = TMP105(obj);
     int64_t value = s->temperature * 1000 / 256;
@@ -67,7 +67,7 @@ static void tmp105_get_temperature(Object *obj, Visitor *v, const char *name,
  * fixed point, so units are 1/256 centigrades.  A simple ratio will do.
  */
 static void tmp105_set_temperature(Object *obj, Visitor *v, const char *name,
-                                   void *opaque, Error **errp)
+                                   void *opaque, Error *errp[static 1])
 {
     TMP105State *s = TMP105(obj);
     int64_t temp;

@@ -54,7 +54,7 @@ static void alpha_cpu_disas_set_info(CPUState *cpu, disassemble_info *info)
     info->print_insn = print_insn_alpha;
 }
 
-static void alpha_cpu_realizefn(DeviceState *dev, Error **errp)
+static void alpha_cpu_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     CPUState *cs = CPU(dev);
     AlphaCPUClass *acc = ALPHA_CPU_GET_CLASS(dev);

@@ -261,7 +261,7 @@ static void vmmouse_reset(DeviceState *d)
     vmmouse_disable(s);
 }
 
-static void vmmouse_realizefn(DeviceState *dev, Error **errp)
+static void vmmouse_realizefn(DeviceState *dev, Error *errp[static 1])
 {
     VMMouseState *s = VMMOUSE(dev);
 
