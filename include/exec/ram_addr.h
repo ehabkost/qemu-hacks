@@ -63,10 +63,11 @@ static inline void *ramblock_ptr(RAMBlock *block, ram_addr_t offset)
 long qemu_getrampagesize(void);
 unsigned long last_ram_page(void);
 RAMBlock *qemu_ram_alloc_from_file(ram_addr_t size, MemoryRegion *mr,
-                                   bool share, const char *mem_path,
+                                   bool share, bool can_discard,
+                                   const char *mem_path,
                                    Error **errp);
 RAMBlock *qemu_ram_alloc_from_fd(ram_addr_t size, MemoryRegion *mr,
-                                 bool share, int fd,
+                                 bool share, bool can_discard, int fd,
                                  Error **errp);
 RAMBlock *qemu_ram_alloc_from_ptr(ram_addr_t size, void *host,
                                   MemoryRegion *mr, Error **errp);
