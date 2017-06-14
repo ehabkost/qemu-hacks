@@ -102,6 +102,10 @@ static MemoryRegion io_mem_unassigned;
  */
 #define RAM_RESIZEABLE (1 << 2)
 
+/* RAMBlock contents can be discarded when freeing the memory block.
+ */
+#define RAM_CAN_DISCARD (1 << 3)
+
 #endif
 
 #ifdef TARGET_PAGE_BITS_VARY
@@ -2083,6 +2087,14 @@ void qemu_ram_free(RAMBlock *block)
 
     if (block->host) {
         ram_block_notify_remove(block->host, block->max_length);
+    }
+
+    if (block->flags & RAM_CAN_DISCARD) {
+        /*
+         * We don't care if madvise() fails here, as this is just an optimization
+         * to avoid writing data back to storage after we use it.
+         */
+        qemu_madvise(block->host, block->max_length, QEMU_MADV_REMOVE);
     }
 
     qemu_mutex_lock_ramlist();
