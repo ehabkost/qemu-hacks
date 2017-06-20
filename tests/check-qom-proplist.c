@@ -123,10 +123,15 @@ static char *dummy_get_sv(Object *obj,
 
 static void dummy_init(Object *obj)
 {
+    Error *err = NULL;
     object_property_add_bool(obj, "bv",
                              dummy_get_bv,
                              dummy_set_bv,
                              &error_abort);
+
+    /* A "sv" class property already exists, so this should return an error: */
+    object_property_add(obj, "sv", "string", NULL, NULL, NULL, NULL, &err);
+    error_free_or_abort(&err);
 }
 
 
