@@ -291,6 +291,16 @@ BusState *qdev_get_child_bus(DeviceState *dev, const char *name);
 
 /*** Device API.  ***/
 
+/**
+ * device_class_add_props:
+ *
+ * Register static properties on a device class.
+ *
+ * Currently, it can be called only once per class.  Static
+ * properties from a parent class are automatically inherited.
+ */
+void device_class_add_props(DeviceClass *dc, Property *props);
+
 /* Register device properties.  */
 /* GPIO inputs also double as IRQ sinks.  */
 void qdev_init_gpio_in(DeviceState *dev, qemu_irq_handler handler, int n);
