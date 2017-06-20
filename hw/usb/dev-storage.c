@@ -774,7 +774,7 @@ static void usb_msd_class_initfn_storage(ObjectClass *klass, void *data)
 
     uc->realize = usb_msd_realize_storage;
     uc->unrealize = usb_msd_unrealize_storage;
-    dc->props = msd_properties;
+    device_class_add_props(dc, msd_properties);
 }
 
 static void usb_msd_get_bootindex(Object *obj, Visitor *v, const char *name,

@@ -239,7 +239,7 @@ static void vmgenid_device_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_vmgenid;
     dc->realize = vmgenid_realize;
     dc->hotpluggable = false;
-    dc->props = vmgenid_properties;
+    device_class_add_props(dc, vmgenid_properties);
 
     object_class_property_add_str(klass, VMGENID_GUID, NULL,
                                   vmgenid_set_guid, NULL);

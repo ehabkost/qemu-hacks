@@ -699,7 +699,7 @@ static void m48txx_sysbus_class_init(ObjectClass *klass, void *data)
 
     dc->realize = m48t59_realize;
     dc->reset = m48t59_reset_sysbus;
-    dc->props = m48t59_sysbus_properties;
+    device_class_add_props(dc, m48t59_sysbus_properties);
     dc->vmsd = &vmstate_m48t59;
     nc->read = m48txx_sysbus_read;
     nc->write = m48txx_sysbus_write;

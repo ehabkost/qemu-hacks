@@ -214,7 +214,7 @@ static void pnv_core_class_init(ObjectClass *oc, void *data)
     PnvCoreClass *pcc = PNV_CORE_CLASS(oc);
 
     dc->realize = pnv_core_realize;
-    dc->props = pnv_core_properties;
+    device_class_add_props(dc, pnv_core_properties);
     pcc->cpu_oc = cpu_class_by_name(TYPE_POWERPC_CPU, data);
 }
 

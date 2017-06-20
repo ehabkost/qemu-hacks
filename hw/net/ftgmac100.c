@@ -995,7 +995,7 @@ static void ftgmac100_class_init(ObjectClass *klass, void *data)
 
     dc->vmsd = &vmstate_ftgmac100;
     dc->reset = ftgmac100_reset;
-    dc->props = ftgmac100_properties;
+    device_class_add_props(dc, ftgmac100_properties);
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
     dc->realize = ftgmac100_realize;
     dc->desc = "Faraday FTGMAC100 Gigabit Ethernet emulation";

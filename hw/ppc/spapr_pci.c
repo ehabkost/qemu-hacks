@@ -1967,7 +1967,7 @@ static void spapr_phb_class_init(ObjectClass *klass, void *data)
 
     hc->root_bus_path = spapr_phb_root_bus_path;
     dc->realize = spapr_phb_realize;
-    dc->props = spapr_phb_properties;
+    device_class_add_props(dc, spapr_phb_properties);
     dc->reset = spapr_phb_reset;
     dc->vmsd = &vmstate_spapr_pci;
     /* Supported by TYPE_SPAPR_MACHINE */

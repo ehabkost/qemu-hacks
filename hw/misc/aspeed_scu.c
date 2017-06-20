@@ -309,7 +309,7 @@ static void aspeed_scu_class_init(ObjectClass *klass, void *data)
     dc->reset = aspeed_scu_reset;
     dc->desc = "ASPEED System Control Unit";
     dc->vmsd = &vmstate_aspeed_scu;
-    dc->props = aspeed_scu_properties;
+    device_class_add_props(dc, aspeed_scu_properties);
 }
 
 static const TypeInfo aspeed_scu_info = {

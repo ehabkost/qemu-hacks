@@ -1087,7 +1087,7 @@ static void device_class_base_init(ObjectClass *class, void *data)
     /* We explicitly look up properties in the superclasses,
      * so do not propagate them to the subclasses.
      */
-    klass->props = NULL;
+    device_class_add_props(klass, NULL);
 }
 
 static void device_unparent(Object *obj)

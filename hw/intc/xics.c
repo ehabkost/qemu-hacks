@@ -613,7 +613,7 @@ static void ics_simple_class_init(ObjectClass *klass, void *data)
     ICSStateClass *isc = ICS_BASE_CLASS(klass);
 
     isc->realize = ics_simple_realize;
-    dc->props = ics_simple_properties;
+    device_class_add_props(dc, ics_simple_properties);
     dc->vmsd = &vmstate_ics_simple;
     isc->reject = ics_simple_reject;
     isc->resend = ics_simple_resend;

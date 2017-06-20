@@ -99,7 +99,7 @@ static void x86_iommu_class_init(ObjectClass *klass, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(klass);
     dc->realize = x86_iommu_realize;
-    dc->props = x86_iommu_properties;
+    device_class_add_props(dc, x86_iommu_properties);
 }
 
 static const TypeInfo x86_iommu_info = {

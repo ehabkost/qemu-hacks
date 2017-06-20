@@ -446,7 +446,7 @@ static void mips_gic_class_init(ObjectClass *klass, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(klass);
 
-    dc->props = mips_gic_properties;
+    device_class_add_props(dc, mips_gic_properties);
     dc->realize = mips_gic_realize;
 }
 

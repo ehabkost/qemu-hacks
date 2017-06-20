@@ -444,7 +444,7 @@ static void nand_class_init(ObjectClass *klass, void *data)
     dc->realize = nand_realize;
     dc->reset = nand_reset;
     dc->vmsd = &vmstate_nand;
-    dc->props = nand_properties;
+    device_class_add_props(dc, nand_properties);
 }
 
 static const TypeInfo nand_info = {

@@ -995,7 +995,7 @@ static void pnv_chip_class_init(ObjectClass *klass, void *data)
 
     set_bit(DEVICE_CATEGORY_CPU, dc->categories);
     dc->realize = pnv_chip_realize;
-    dc->props = pnv_chip_properties;
+    device_class_add_props(dc, pnv_chip_properties);
     dc->desc = "PowerNV Chip";
 }
 

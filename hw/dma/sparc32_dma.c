@@ -306,7 +306,7 @@ static void sparc32_dma_class_init(ObjectClass *klass, void *data)
 
     dc->reset = dma_reset;
     dc->vmsd = &vmstate_dma;
-    dc->props = sparc32_dma_properties;
+    device_class_add_props(dc, sparc32_dma_properties);
     dc->realize = sparc32_dma_realize;
     /* Reason: pointer property "iommu_opaque" */
     dc->user_creatable = false;

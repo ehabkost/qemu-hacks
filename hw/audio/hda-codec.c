@@ -662,7 +662,7 @@ static void hda_audio_base_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_SOUND, dc->categories);
     dc->reset = hda_audio_reset;
     dc->vmsd = &vmstate_hda_audio;
-    dc->props = hda_audio_properties;
+    device_class_add_props(dc, hda_audio_properties);
 }
 
 static const TypeInfo hda_audio_info = {

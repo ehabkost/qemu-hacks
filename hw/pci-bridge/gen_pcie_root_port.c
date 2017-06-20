@@ -91,7 +91,7 @@ static void gen_rp_dev_class_init(ObjectClass *klass, void *data)
     k->device_id = PCI_DEVICE_ID_REDHAT_PCIE_RP;
     dc->desc = "PCI Express Root Port";
     dc->vmsd = &vmstate_rp_dev;
-    dc->props = gen_rp_props;
+    device_class_add_props(dc, gen_rp_props);
     rpc->aer_vector = gen_rp_aer_vector;
     rpc->interrupts_init = gen_rp_interrupts_init;
     rpc->interrupts_uninit = gen_rp_interrupts_uninit;

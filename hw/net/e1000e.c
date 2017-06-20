@@ -684,7 +684,7 @@ static void e1000e_class_init(ObjectClass *class, void *data)
     e1000e_prop_subsys = qdev_prop_uint16;
     e1000e_prop_subsys.description = "PCI device Subsystem ID";
 
-    dc->props = e1000e_properties;
+    device_class_add_props(dc, e1000e_properties);
 
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }

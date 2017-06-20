@@ -1277,7 +1277,7 @@ static void virtio_gpu_class_init(ObjectClass *klass, void *data)
 
     vdc->reset = virtio_gpu_reset;
 
-    dc->props = virtio_gpu_properties;
+    device_class_add_props(dc, virtio_gpu_properties);
     dc->vmsd = &vmstate_virtio_gpu;
     dc->hotpluggable = false;
 }

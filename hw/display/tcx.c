@@ -890,7 +890,7 @@ static void tcx_class_init(ObjectClass *klass, void *data)
     dc->realize = tcx_realizefn;
     dc->reset = tcx_reset;
     dc->vmsd = &vmstate_tcx;
-    dc->props = tcx_properties;
+    device_class_add_props(dc, tcx_properties);
 }
 
 static const TypeInfo tcx_info = {

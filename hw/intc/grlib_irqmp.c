@@ -358,7 +358,7 @@ static void grlib_irqmp_class_init(ObjectClass *klass, void *data)
     DeviceClass *dc = DEVICE_CLASS(klass);
 
     dc->reset = grlib_irqmp_reset;
-    dc->props = grlib_irqmp_properties;
+    device_class_add_props(dc, grlib_irqmp_properties);
     /* Reason: pointer properties "set_pil_in", "set_pil_in_opaque" */
     dc->user_creatable = false;
     dc->realize = grlib_irqmp_realize;

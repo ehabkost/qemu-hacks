@@ -845,7 +845,7 @@ static void onenand_class_init(ObjectClass *klass, void *data)
 
     k->init = onenand_initfn;
     dc->reset = onenand_system_reset;
-    dc->props = onenand_properties;
+    device_class_add_props(dc, onenand_properties);
 }
 
 static const TypeInfo onenand_info = {

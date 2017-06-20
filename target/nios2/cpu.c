@@ -199,7 +199,7 @@ static void nios2_cpu_class_init(ObjectClass *oc, void *data)
 
     ncc->parent_realize = dc->realize;
     dc->realize = nios2_cpu_realizefn;
-    dc->props = nios2_properties;
+    device_class_add_props(dc, nios2_properties);
     ncc->parent_reset = cc->reset;
     cc->reset = nios2_cpu_reset;
 

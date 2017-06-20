@@ -198,7 +198,7 @@ static void generic_loader_class_init(ObjectClass *klass, void *data)
      */
     dc->realize = generic_loader_realize;
     dc->unrealize = generic_loader_unrealize;
-    dc->props = generic_loader_props;
+    device_class_add_props(dc, generic_loader_props);
     dc->desc = "Generic Loader";
 }
 

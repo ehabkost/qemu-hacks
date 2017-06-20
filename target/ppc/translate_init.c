@@ -10655,7 +10655,7 @@ static void ppc_cpu_class_init(ObjectClass *oc, void *data)
     pcc->interrupts_big_endian = ppc_cpu_interrupts_big_endian_always;
     dc->realize = ppc_cpu_realizefn;
     dc->unrealize = ppc_cpu_unrealizefn;
-    dc->props = ppc_cpu_properties;
+    device_class_add_props(dc, ppc_cpu_properties);
 
     pcc->parent_reset = cc->reset;
     cc->reset = ppc_cpu_reset;

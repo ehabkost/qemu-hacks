@@ -116,7 +116,7 @@ static void bmc_class_init(ObjectClass *oc, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(oc);
 
-    dc->props = ipmi_bmc_properties;
+    device_class_add_props(dc, ipmi_bmc_properties);
 }
 
 static TypeInfo ipmi_bmc_type_info = {

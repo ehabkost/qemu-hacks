@@ -932,7 +932,7 @@ static void dp8393x_class_init(ObjectClass *klass, void *data)
     dc->realize = dp8393x_realize;
     dc->reset = dp8393x_reset;
     dc->vmsd = &vmstate_dp8393x;
-    dc->props = dp8393x_properties;
+    device_class_add_props(dc, dp8393x_properties);
     /* Reason: dma_mr property can't be set */
     dc->user_creatable = false;
 }

@@ -1572,7 +1572,7 @@ static void max_x86_cpu_class_init(ObjectClass *oc, void *data)
     xcc->model_description =
         "Enables all features supported by the accelerator in the current host";
 
-    dc->props = max_x86_cpu_properties;
+    device_class_add_props(dc, max_x86_cpu_properties);
 }
 
 static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp);
@@ -4035,7 +4035,7 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
     xcc->parent_unrealize = dc->unrealize;
     dc->realize = x86_cpu_realizefn;
     dc->unrealize = x86_cpu_unrealizefn;
-    dc->props = x86_cpu_properties;
+    device_class_add_props(dc, x86_cpu_properties);
 
     xcc->parent_reset = cc->reset;
     cc->reset = x86_cpu_reset;

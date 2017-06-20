@@ -549,7 +549,7 @@ static void pnv_psi_class_init(ObjectClass *klass, void *data)
     xdc->populate = pnv_psi_populate;
 
     dc->realize = pnv_psi_realize;
-    dc->props = pnv_psi_properties;
+    device_class_add_props(dc, pnv_psi_properties);
 }
 
 static const TypeInfo pnv_psi_info = {

@@ -212,7 +212,7 @@ static void stm32f205_soc_class_init(ObjectClass *klass, void *data)
     DeviceClass *dc = DEVICE_CLASS(klass);
 
     dc->realize = stm32f205_soc_realize;
-    dc->props = stm32f205_soc_properties;
+    device_class_add_props(dc, stm32f205_soc_properties);
 }
 
 static const TypeInfo stm32f205_soc_info = {

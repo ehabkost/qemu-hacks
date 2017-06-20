@@ -794,7 +794,7 @@ static void ich9_lpc_class_init(ObjectClass *klass, void *data)
     dc->reset = ich9_lpc_reset;
     k->realize = ich9_lpc_realize;
     dc->vmsd = &vmstate_ich9_lpc;
-    dc->props = ich9_lpc_properties;
+    device_class_add_props(dc, ich9_lpc_properties);
     k->config_write = ich9_lpc_config_write;
     dc->desc = "ICH9 LPC bridge";
     k->vendor_id = PCI_VENDOR_ID_INTEL;

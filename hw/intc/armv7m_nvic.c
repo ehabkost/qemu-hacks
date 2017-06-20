@@ -1080,7 +1080,7 @@ static void armv7m_nvic_class_init(ObjectClass *klass, void *data)
     DeviceClass *dc = DEVICE_CLASS(klass);
 
     dc->vmsd  = &vmstate_nvic;
-    dc->props = props_nvic;
+    device_class_add_props(dc, props_nvic);
     dc->reset = armv7m_nvic_reset;
     dc->realize = armv7m_nvic_realize;
 }

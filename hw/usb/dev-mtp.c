@@ -1584,7 +1584,7 @@ static void usb_mtp_class_initfn(ObjectClass *klass, void *data)
     dc->desc = "USB Media Transfer Protocol device";
     dc->fw_name = "mtp";
     dc->vmsd = &vmstate_usb_mtp;
-    dc->props = mtp_properties;
+    device_class_add_props(dc, mtp_properties);
 }
 
 static TypeInfo mtp_info = {

@@ -47,7 +47,7 @@ static void ccw_device_class_init(ObjectClass *klass, void *data)
 
     k->realize = ccw_device_realize;
     k->refill_ids = ccw_device_refill_ids;
-    dc->props = ccw_device_properties;
+    device_class_add_props(dc, ccw_device_properties);
 }
 
 static const TypeInfo ccw_device_info = {

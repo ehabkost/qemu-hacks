@@ -166,7 +166,7 @@ static void kvm_ioapic_class_init(ObjectClass *klass, void *data)
     k->pre_save  = kvm_ioapic_get;
     k->post_load = kvm_ioapic_put;
     dc->reset    = kvm_ioapic_reset;
-    dc->props    = kvm_ioapic_properties;
+    device_class_add_props(dc, kvm_ioapic_properties);
 }
 
 static const TypeInfo kvm_ioapic_info = {

@@ -265,7 +265,7 @@ void spapr_cpu_core_class_init(ObjectClass *oc, void *data)
 
     dc->realize = spapr_cpu_core_realize;
     dc->unrealize = spapr_cpu_core_unrealizefn;
-    dc->props = spapr_cpu_core_properties;
+    device_class_add_props(dc, spapr_cpu_core_properties);
     scc->cpu_class = cpu_class_by_name(TYPE_POWERPC_CPU, data);
     g_assert(scc->cpu_class);
 }

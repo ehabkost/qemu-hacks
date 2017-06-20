@@ -134,7 +134,7 @@ static void m48txx_isa_class_init(ObjectClass *klass, void *data)
 
     dc->realize = m48t59_isa_realize;
     dc->reset = m48t59_reset_isa;
-    dc->props = m48t59_isa_properties;
+    device_class_add_props(dc, m48t59_isa_properties);
     nc->read = m48txx_isa_read;
     nc->write = m48txx_isa_write;
     nc->toggle_lock = m48txx_isa_toggle_lock;

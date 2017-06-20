@@ -409,7 +409,7 @@ static void vfio_ccw_class_init(ObjectClass *klass, void *data)
     DeviceClass *dc = DEVICE_CLASS(klass);
     S390CCWDeviceClass *cdc = S390_CCW_DEVICE_CLASS(klass);
 
-    dc->props = vfio_ccw_properties;
+    device_class_add_props(dc, vfio_ccw_properties);
     dc->vmsd = &vfio_ccw_vmstate;
     dc->desc = "VFIO-based subchannel assignment";
     dc->realize = vfio_ccw_realize;
