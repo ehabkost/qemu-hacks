@@ -2628,8 +2628,8 @@ static gint machine_class_cmp(gconstpointer a, gconstpointer b)
     }
 
     /* Within the same family, machine types sort in decreasing order. */
-    return strcmp(object_class_get_name(OBJECT_CLASS(mc2)),
-                  object_class_get_name(OBJECT_CLASS(mc1)));
+    return strverscmp(object_class_get_name(OBJECT_CLASS(mc2)),
+                      object_class_get_name(OBJECT_CLASS(mc1)));
 }
 
  static MachineClass *machine_parse(const char *name)
