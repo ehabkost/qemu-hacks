@@ -4239,23 +4239,36 @@
 
 
 ##
-# @IntegerSet:
-#
-# A set of integers.
+# @SingleValue:
 ##
-{ 'struct': 'IntegerSet',
-  'data': { 'ranges': [ 'IntegerRange' ] } }
+{ 'alternate': 'SingleValue',
+  'data': { 'number': 'number', 'bool': 'bool', 'str': 'str' } }
 
 ##
-# @IntegerRange:
+# @ValueRange:
 #
-# A contiguous range of integers.
+# A range of values.
+#
+# [ min, max ] list.
+# if only one value is accepted, it can be represented as
+# [ value ]
+#
+# TODO: better doc
+##
+{ 'alternate': 'ValueRange',
+  'data': { 'values': [ 'SingleValue' ] } }
+
+##
+# @ValueRanges:
+#
+# A list of value ranges.
 #
 # @min: The first value in the range
 # @max: The last value in the range
 ##
-{ 'struct': 'IntegerRange',
-  'data': { 'min': 'int', 'max': 'int' } }
+{ 'alternate': 'ValueRanges',
+  'data': { 'list': [ 'ValueRange' ] } }
+
 
 ##
 # @ValueSet:
@@ -4266,8 +4279,9 @@
 #
 # FIXME: how to document it? int-set: A set represented by an IntegerSet.
 ##
-{ 'union': 'ValueSet',
-  'data': { 'list': [ 'any' ], 'int-set': 'IntegerSet' } }
+{ 'alternate': 'ValueSet',
+  'data': { 'single-value': 'SingleValue',
+            'range-list': 'ValueRanges' } }
 
 ##
 # @SlotOption:
