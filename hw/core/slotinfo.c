@@ -165,6 +165,23 @@ static bool valuelist_entry_contains(QObject *ev, ValueRange *vr)
 }
 
 /*
+ * Check if a given entry of a value list contains the range @minv-@maxv
+ * If @maxv is NULL, only check if the entry contains @minv
+ */
+static bool valuelist_entry_overlaps(QObject *ev, ValueRange *vr)
+{
+    ValueRange er;
+
+    if (!valuelist_element_get_range(ev, &er)) {
+        return false;
+    }
+
+    return range_contains(&er, vr->min) ||
+           range_contains(&er, vr->max) ||
+           range_contains_range(vr, &er);
+}
+
+/*
  * Find the entry in the value list that contains the range @minv-@maxv
  * If @maxv is NULL, check if the value list contains @minv
  *
@@ -185,13 +202,20 @@ static QListEntry *nvaluelist_find_range_match(QList *l, ValueRange *vr)
     return NULL;
 }
 
+/*
+ * Find the entry in the value list that contains @v
+ *
+ * Returns the list entry that contains the range, or NULL if
+ * not found.
+ */
 static QListEntry *nvaluelist_find_value_match(QList *l, QObject *v)
 {
     ValueRange vr = { .min = v };
     return nvaluelist_find_range_match(l, &vr);
 }
 
-/* Try to sum i to number, if it's an integer.
+/*
+ * Try to sum i to number, if it's an integer.
  * Otherwise, just return a new reference to @v
  */
 static QObject *qnum_try_int_add(QObject *v, int i)
@@ -237,24 +261,23 @@ static QObject *qnum_try_int_add(QObject *v, int i)
 /* Look for any entry that overlaps or touches @vr */
 static QListEntry *nvaluelist_find_overlap(QList *l, ValueRange *vr)
 {
-    QObject *min, *max;
     QListEntry *r = NULL;
+    QListEntry *e;
+    ValueRange key;
 
-    min = qnum_try_int_add(vr->min, -1);
-    max = qnum_try_int_add(vr->max, 1);
+    key.min = qnum_try_int_add(vr->min, -1);
+    key.max = qnum_try_int_add(vr->max, 1);
 
-    r = nvaluelist_find_value_match(l, min);
-    if (r) {
-        goto out;
+    QLIST_FOREACH_ENTRY(l, e) {
+        QObject *ev = qlist_entry_obj(e);
+        if (valuelist_entry_overlaps(ev, &key)) {
+            r = e;
+            break;
+        }
     }
-    r = nvaluelist_find_value_match(l, max);
-    if (r) {
-        goto out;
-    }
 
-out:
-    qobject_decref(min);
-    qobject_decref(max);
+    qobject_decref(key.min);
+    qobject_decref(key.max);
     return r;
 }
 
