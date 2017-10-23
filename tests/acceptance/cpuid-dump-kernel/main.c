@@ -13,6 +13,7 @@
 #include "main.h"
 
 #define PORT 0x3f8   /* COM1 */
+#define ISA_DEBUG_EXIT_PORT 0x501  /* isa-debug-exit device */
 
 static unsigned char inbyte (unsigned short _port)
 {
@@ -186,6 +187,12 @@ repeat:
     }
 }
 
+/* Exit QEMU with exit code (code << 1) | 1 */
+void exit(int code)
+{
+  outbyte(ISA_DEBUG_EXIT_PORT, code);
+}
+
 void cmain (unsigned long magic, unsigned long addr)
 {
 
@@ -193,4 +200,5 @@ void cmain (unsigned long magic, unsigned long addr)
   printf ("==START TEST==\n");
   test();
   printf ("==END TEST==\n");
+  exit(15);
 }
