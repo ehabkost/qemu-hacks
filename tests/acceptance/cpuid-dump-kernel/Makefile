@@ -1,4 +1,4 @@
-CFLAGS  := -m32 -fno-stack-protector -fno-builtin -nostdinc -O -g -Wall -I.
+CFLAGS  := -m32 -march=i486 -fno-stack-protector -fno-builtin -nostdinc -O -g -Wall -I.
 LDFLAGS := -nostdlib -Wl,-N -Wl,-T -Wl,kernel.lds
 
 all: cpuid_dump_kernel.bin
