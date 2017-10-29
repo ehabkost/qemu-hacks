@@ -82,7 +82,7 @@ class QEMUMachine(object):
 
     def __init__(self, binary, args=None, wrapper=None, name=None,
                  test_dir="/var/tmp", monitor_address=None,
-                 socket_scm_helper=None):
+                 socket_scm_helper=None, cwd=None):
         '''
         Initialize a QEMUMachine
 
@@ -93,6 +93,7 @@ class QEMUMachine(object):
         @param test_dir: where to create socket and log file
         @param monitor_address: address for QMP monitor
         @param socket_scm_helper: helper program, required for send_fd_scm()
+        @param cwd: set current working directory before executing QEMU
         @note: Qemu process is not started until launch() is used.
         '''
         if args is None:
@@ -123,6 +124,7 @@ class QEMUMachine(object):
         self._console_device_type = None
         self._console_address = None
         self._console_socket = None
+        self._cwd = cwd
 
         # just in case logging wasn't configured by the main script:
         logging.basicConfig()
@@ -320,7 +322,8 @@ class QEMUMachine(object):
                                        stdout=self._qemu_log_file,
                                        stderr=subprocess.STDOUT,
                                        shell=False,
-                                       close_fds=False)
+                                       close_fds=False,
+                                       cwd=self._cwd)
         self._post_launch()
 
     def wait(self):
