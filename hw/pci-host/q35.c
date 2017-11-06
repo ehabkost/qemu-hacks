@@ -33,6 +33,35 @@
 #include "qapi/error.h"
 #include "qapi/visitor.h"
 
+struct MCHPCIState {
+    /*< private >*/
+    PCIDevice parent_obj;
+    /*< public >*/
+
+    MemoryRegion *ram_memory;
+    MemoryRegion *pci_address_space;
+    MemoryRegion *system_memory;
+    MemoryRegion *address_space_io;
+    PAMMemoryRegion pam_regions[13];
+    MemoryRegion smram_region, open_high_smram;
+    MemoryRegion smram, low_smram, high_smram;
+    MemoryRegion tseg_blackhole, tseg_window;
+    Range pci_hole;
+    uint64_t below_4g_mem_size;
+    uint64_t above_4g_mem_size;
+    uint64_t pci_hole64_size;
+    uint32_t short_root_bus;
+    uint16_t ext_tseg_mbytes;
+};
+
+struct Q35PCIHost {
+    /*< private >*/
+    PCIExpressHost parent_obj;
+    /*< public >*/
+
+    MCHPCIState mch;
+};
+
 /****************************************************************************
  * Q35 host
  */
