@@ -42,7 +42,7 @@
 #define MCH_PCI_DEVICE(obj) \
      OBJECT_CHECK(MCHPCIState, (obj), TYPE_MCH_PCI_DEVICE)
 
-typedef struct MCHPCIState {
+struct MCHPCIState {
     /*< private >*/
     PCIDevice parent_obj;
     /*< public >*/
@@ -61,15 +61,15 @@ typedef struct MCHPCIState {
     uint64_t pci_hole64_size;
     uint32_t short_root_bus;
     uint16_t ext_tseg_mbytes;
-} MCHPCIState;
+};
 
-typedef struct Q35PCIHost {
+struct Q35PCIHost {
     /*< private >*/
     PCIExpressHost parent_obj;
     /*< public >*/
 
     MCHPCIState mch;
-} Q35PCIHost;
+};
 
 #define Q35_MASK(bit, ms_bit, ls_bit) \
 ((uint##bit##_t)(((1ULL << ((ms_bit) + 1)) - 1) & ~((1ULL << ls_bit) - 1)))
