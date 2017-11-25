@@ -565,13 +565,10 @@ static void xen_set_dynamic_sysbus(void)
     MachineClass *mc = MACHINE_CLASS(oc);
 
     /*
-     * Emulate old mc->has_dynamic_sysbus=true assignment
-     *
-     *TODO: add only Xen devices to the list
      *TODO: don't change MachineClass at runtime, move this to PC's
      *      class_init function.
      */
-    machine_class_allow_dynamic_sysbus_dev(mc, TYPE_SYS_BUS_DEVICE);
+    machine_class_allow_dynamic_sysbus_dev(mc, TYPE_XENBACKEND);
 }
 
 int xen_be_register(const char *type, struct XenDevOps *ops)
