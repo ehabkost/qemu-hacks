@@ -2,6 +2,24 @@
 # using all combinations of -machine and -device.
 # This replaces scripts/device-crash-test.
 # TODO: use a $MACHINE_OPT variable to make -machine optional
-command-line: '$QEMU -S -machine $MACHINE,accel=$ACCEL -device $DEVICE'
+command-line: '$QEMU $S_OPT $DEFAULTS_OPT $MACHINE_OPT -device $DEVICE'
 
 #TODO: represent the whitelist from device-crash-test script somehow
+
+defaults:
+  MACHINE_OPT:
+  - ''
+  DEFAULTS_OPT:
+  - ''
+  S_OPT:
+  - '-S'
+full:
+  MACHINE_OPT:
+  - '-machine $MACHINE$ACCEL_OPT'
+  ACCEL_OPT:
+  - ''
+  - ',accel=$ACCEL'
+  DEFAULTS_OPT:
+  - '-nodefaults'
+  S_OPT:
+  - ''
