@@ -104,7 +104,6 @@ Example::
 
 TODO: whitelist
 TODO: validate output against reference output
-TODO: configure defaults for variables
 TODO: compatibility with Avocado multiplexer?
 """
 
