@@ -295,6 +295,8 @@ typedef struct FeatureWordInfo {
     uint32_t tcg_features; /* Feature flags supported by TCG */
     uint32_t unmigratable_flags; /* Feature flags known to be unmigratable */
     uint32_t migratable_flags; /* Feature flags known to be migratable */
+    /* Features that shouldn't be auto-enabled by "-cpu host" */
+    uint32_t no_autoenable_flags;
 } FeatureWordInfo;
 
 static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
@@ -400,6 +402,11 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
         },
         .cpuid_eax = KVM_CPUID_FEATURES, .cpuid_reg = R_EDX,
         .tcg_features = TCG_KVM_FEATURES,
+        /*
+         * KVM hints aren't auto-enabled by -cpu host, they need to be
+         * explicitly enabled in the command-line.
+         */
+        .no_autoenable_flags = ~0U,
     },
     [FEAT_HYPERV_EAX] = {
         .feat_names = {
@@ -2251,10 +2258,21 @@ static void host_x86_cpu_class_init(ObjectClass *oc, void *data)
     }
 }
 
+static void host_x86_cpu_initfn(Object *obj)
+{
+    X86CPU *xc = X86_CPU(obj);
+    FeatureWord w;
+
+    for (w = 0; w < FEATURE_WORDS; w++) {
+        xc->env.user_features[w] |= feature_word_info[w].no_autoenable_flags;
+    }
+}
+
 static const TypeInfo host_x86_cpu_type_info = {
     .name = X86_CPU_TYPE_NAME("host"),
     .parent = X86_CPU_TYPE_NAME("max"),
     .class_init = host_x86_cpu_class_init,
+    .instance_init = host_x86_cpu_initfn,
 };
 
 #endif
