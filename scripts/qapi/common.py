@@ -344,10 +344,7 @@ class QAPISchemaParser(object):
             return None
 
         try:
-            if sys.version_info[0] >= 3:
-                fobj = open(incl_fname, 'r', encoding='utf-8')
-            else:
-                fobj = open(incl_fname, 'r')
+            fobj = open(incl_fname, 'r', encoding='utf-8')
         except IOError as e:
             raise QAPISemError(info, '%s: %s' % (e.strerror, incl_fname))
         return QAPISchemaParser(fobj, previously_included, info)
@@ -1499,10 +1496,7 @@ class QAPISchemaEvent(QAPISchemaEntity):
 class QAPISchema(object):
     def __init__(self, fname):
         self._fname = fname
-        if sys.version_info[0] >= 3:
-            f = open(fname, 'r', encoding='utf-8')
-        else:
-            f = open(fname, 'r')
+        f = open(fname, 'r', encoding='utf-8')
         parser = QAPISchemaParser(f)
         exprs = check_exprs(parser.exprs)
         self.docs = parser.docs
@@ -2017,10 +2011,7 @@ class QAPIGen(object):
                 if e.errno != errno.EEXIST:
                     raise
         fd = os.open(pathname, os.O_RDWR | os.O_CREAT, 0o666)
-        if sys.version_info[0] >= 3:
-            f = open(fd, 'r+', encoding='utf-8')
-        else:
-            f = os.fdopen(fd, 'r+')
+        f = open(fd, 'r+', encoding='utf-8')
         text = (self._top(fname) + self._preamble + self._body
                 + self._bottom(fname))
         oldtext = f.read(len(text) + 1)
