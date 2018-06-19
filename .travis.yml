@@ -63,6 +63,8 @@ env:
 git:
   # we want to do this ourselves
   submodules: false
+install:
+  - pip install -r python-requirements.txt
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update ; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libffi gettext glib pixman ; fi
