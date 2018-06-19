@@ -12,6 +12,9 @@
 # See the COPYING file in the top-level directory.
 
 from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import str
+from builtins import open
 import errno
 import os
 import re
@@ -1805,6 +1808,9 @@ else:
 # '__a.b_c' -> '__a_b_c', 'x-foo' -> 'x_foo'
 # protect=True: 'int' -> 'q_int'; protect=False: 'int' -> 'int'
 def c_name(name, protect=True):
+    # Python 2.7 compatibility: convert Python 2 `str` type to
+    # `future.builtins.str`, so `name.translate()` will work
+    name = str(name)
     # ANSI X3J11/88-090, 3.1.1
     c89_words = set(['auto', 'break', 'case', 'char', 'const', 'continue',
                      'default', 'do', 'double', 'else', 'enum', 'extern',

@@ -6,6 +6,8 @@
 """This script produces the documentation of a qapi schema in texinfo format"""
 
 from __future__ import print_function
+from __future__ import unicode_literals
+from builtins import str
 import re
 import qapi.common
 
