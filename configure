@@ -30,6 +30,7 @@ TMPO="${TMPDIR1}/${TMPB}.o"
 TMPCXX="${TMPDIR1}/${TMPB}.cxx"
 TMPE="${TMPDIR1}/${TMPB}.exe"
 TMPMO="${TMPDIR1}/${TMPB}.mo"
+TMPPY="${TMPDIR1}/${TMPB}.py"
 
 rm -f config.log
 
@@ -1658,6 +1659,20 @@ fi
 
 # Suppress writing compiled files
 python="$python -B"
+
+# Note that if the Python conditional here evaluates True we will exit
+# with status 1 which is a shell 'false' value.
+cat > "$TMPPY" <<EOF
+import sys
+try:
+    from builtins import str, open
+except:
+    sys.exit(1)
+EOF
+if ! $python "$TMPPY"; then
+  error_exit "Python 'builtins' module not available." \
+      "If you are using Python 2, install the 'future' module."
+fi
 
 # Check that the C compiler works. Doing this here before testing
 # the host CPU ensures that we had a valid CC to autodetect the
