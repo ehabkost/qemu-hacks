@@ -1792,10 +1792,7 @@ def c_enum_const(type_name, const_name, prefix=None):
         type_name = prefix
     return camel_to_upper(type_name) + '_' + c_name(const_name, False).upper()
 
-if hasattr(str, 'maketrans'):
-    c_name_trans = str.maketrans('.-', '__')
-else:
-    c_name_trans = string.maketrans('.-', '__')
+c_name_trans = str.maketrans('.-', '__')
 
 
 # Map @name to a valid C identifier.
