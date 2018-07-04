@@ -1012,6 +1012,24 @@ check-decodetree:
           ./check.sh "$(PYTHON)" "$(SRC_PATH)/scripts/decodetree.py", \
           TEST, decodetree.py)
 
+
+CPUID_KERNEL = tests/acceptance/cpuid-dump-kernel/cpuid_dump_kernel.bin
+ACCEPTANCE_VARIANTS = tests/acceptance/variants.yaml
+AVOCADO = avocado
+GEN_MUX_YAML = $(SRC_PATH)/tests/acceptance/gen_mux_yaml.py
+QEMU_BINS = $(foreach TARGET, $(QTEST_TARGETS), $(TARGET)-softmmu/qemu-system-$(TARGET))
+
+$(ACCEPTANCE_VARIANTS): $(GEN_MUX_YAML) $(QEMU_BINS)
+	$(GEN_MUX_YAML) $(QEMU_BINS) > $@
+
+$(CPUID_KERNEL):
+	$(MAKE) -C tests/acceptance/cpuid-dump-kernel
+
+.PHONY: check-cpuid-compat
+check-cpuid-compat: $(CPUID_KERNEL) $(ACCEPTANCE_VARIANTS)
+	$(AVOCADO) run $(SRC_PATH)/tests/acceptance/cpuid_compat.py \
+	               -m $(ACCEPTANCE_VARIANTS)
+
 # Consolidated targets
 
 .PHONY: check-qapi-schema check-qtest check-unit check check-clean
@@ -1025,6 +1043,7 @@ check-clean:
 	rm -rf $(check-unit-y) tests/*.o $(QEMU_IOTESTS_HELPERS-y)
 	rm -rf $(sort $(foreach target,$(SYSEMU_TARGET_LIST), $(check-qtest-$(target)-y)) $(check-qtest-generic-y))
 	rm -f tests/test-qapi-gen-timestamp
+	$(MAKE) -C tests/acceptance/cpuid-dump-kernel clean
 
 clean: check-clean
 
