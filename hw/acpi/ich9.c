@@ -487,6 +487,7 @@ void ich9_pm_device_plug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
                             Error **errp)
 {
     ICH9LPCState *lpc = ICH9_LPC_DEVICE(hotplug_dev);
+    AcpiDeviceIf *acpi_dev = ACPI_DEVICE_IF(hotplug_dev);
 
     if (lpc->pm.acpi_memory_hotplug.is_enabled &&
         object_dynamic_cast(OBJECT(dev), TYPE_PC_DIMM)) {
@@ -498,9 +499,9 @@ void ich9_pm_device_plug_cb(HotplugHandler *hotplug_dev, DeviceState *dev,
         }
     } else if (object_dynamic_cast(OBJECT(dev), TYPE_CPU)) {
         if (lpc->pm.cpu_hotplug_legacy) {
-            legacy_acpi_cpu_plug_cb(hotplug_dev, &lpc->pm.gpe_cpu, dev, errp);
+            legacy_acpi_cpu_plug_cb(acpi_dev, &lpc->pm.gpe_cpu, dev, errp);
         } else {
-            acpi_cpu_plug_cb(hotplug_dev, &lpc->pm.cpuhp_state, dev, errp);
+            acpi_cpu_plug_cb(acpi_dev, &lpc->pm.cpuhp_state, dev, errp);
         }
     } else {
         error_setg(errp, "acpi: device plug request for not supported device"
@@ -512,6 +513,7 @@ void ich9_pm_device_unplug_request_cb(HotplugHandler *hotplug_dev,
                                       DeviceState *dev, Error **errp)
 {
     ICH9LPCState *lpc = ICH9_LPC_DEVICE(hotplug_dev);
+    AcpiDeviceIf *acpi_dev = ACPI_DEVICE_IF(hotplug_dev);
 
     if (lpc->pm.acpi_memory_hotplug.is_enabled &&
         object_dynamic_cast(OBJECT(dev), TYPE_PC_DIMM)) {
@@ -520,7 +522,7 @@ void ich9_pm_device_unplug_request_cb(HotplugHandler *hotplug_dev,
                                       errp);
     } else if (object_dynamic_cast(OBJECT(dev), TYPE_CPU) &&
                !lpc->pm.cpu_hotplug_legacy) {
-        acpi_cpu_unplug_request_cb(hotplug_dev, &lpc->pm.cpuhp_state,
+        acpi_cpu_unplug_request_cb(acpi_dev, &lpc->pm.cpuhp_state,
                                    dev, errp);
     } else {
         error_setg(errp, "acpi: device unplug request for not supported device"
