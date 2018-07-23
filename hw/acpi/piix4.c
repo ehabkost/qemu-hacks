@@ -381,7 +381,7 @@ static void piix4_device_plug_cb(HotplugHandler *hotplug_dev,
         if (object_dynamic_cast(OBJECT(dev), TYPE_NVDIMM)) {
             nvdimm_acpi_plug_cb(hotplug_dev, dev);
         } else {
-            acpi_memory_plug_cb(hotplug_dev, &s->acpi_memory_hotplug,
+            acpi_memory_plug_cb(acpi_dev, &s->acpi_memory_hotplug,
                                 dev, errp);
         }
     } else if (object_dynamic_cast(OBJECT(dev), TYPE_PCI_DEVICE)) {
@@ -406,7 +406,7 @@ static void piix4_device_unplug_request_cb(HotplugHandler *hotplug_dev,
 
     if (s->acpi_memory_hotplug.is_enabled &&
         object_dynamic_cast(OBJECT(dev), TYPE_PC_DIMM)) {
-        acpi_memory_unplug_request_cb(hotplug_dev, &s->acpi_memory_hotplug,
+        acpi_memory_unplug_request_cb(acpi_dev, &s->acpi_memory_hotplug,
                                       dev, errp);
     } else if (object_dynamic_cast(OBJECT(dev), TYPE_PCI_DEVICE)) {
         acpi_pcihp_device_unplug_cb(hotplug_dev, &s->acpi_pci_hotplug, dev,
