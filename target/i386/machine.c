@@ -955,6 +955,25 @@ static const VMStateDescription vmstate_svm_npt = {
     }
 };
 
+static bool phys_bits_needed(void *opaque)
+{
+    X86CPU *cpu = opaque;
+
+    /* phys_bits need to be migrated only if using host_phys_bits */
+    return cpu->host_phys_bits && cpu->stable_phys_bits;
+}
+
+static const VMStateDescription vmstate_phys_bits = {
+    .name = "cpu/phys_bits",
+    .version_id = 1,
+    .minimum_version_id = 1,
+    .needed = phys_bits_needed,
+    .fields = (VMStateField[]){
+        VMSTATE_UINT32(phys_bits, X86CPU),
+        VMSTATE_END_OF_LIST()
+    }
+};
+
 VMStateDescription vmstate_x86_cpu = {
     .name = "cpu",
     .version_id = 12,
@@ -1080,6 +1099,7 @@ VMStateDescription vmstate_x86_cpu = {
         &vmstate_msr_intel_pt,
         &vmstate_msr_virt_ssbd,
         &vmstate_svm_npt,
+        &vmstate_phys_bits,
         NULL
     }
 };

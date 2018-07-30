@@ -1437,6 +1437,9 @@ struct X86CPU {
     /* if true override the phys_bits value with a value read from the host */
     bool host_phys_bits;
 
+    /* If true try to keep phys_bits stable during migration if host-phys-bits=on */
+    bool stable_phys_bits;
+
     /* Stop SMI delivery for migration compatibility with old machines */
     bool kvm_no_smi_migration;
 
