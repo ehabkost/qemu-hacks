@@ -53,7 +53,7 @@ env:
   global:
     - SRC_DIR="."
     - BUILD_DIR="."
-    - TEST_CMD="make check"
+    - TEST_CMD="make check V=1"
     - MAKEFLAGS="-j3"
   matrix:
     - CONFIG="--disable-system"
@@ -177,7 +177,7 @@ matrix:
         - ./configure ${CONFIG} --extra-cflags="-g3 -O0 -fsanitize=thread -fuse-ld=gold" || { cat config.log && exit 1; }
     - env:
         - CONFIG="--disable-system --disable-docs"
-        - TEST_CMD="make check-tcg"
+        - TEST_CMD="make check-tcg V=1"
       script:
         - make ${MAKEFLAGS} && ${TEST_CMD} ${MAKEFLAGS}
       sudo: required
