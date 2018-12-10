@@ -4,20 +4,18 @@
  * License: GNU GPL, version 2 or later.
  *   See the COPYING file in the top-level directory.
  */
-#include "qemu/osdep.h"
+#include "qht-bench.inc.c"
 
 #define TEST_QHT_STRING "tests/qht-bench 1>/dev/null 2>&1 -R -S0.1 -D10000 -N1 "
 
-static void test_qht(int n_threads, int update_rate, int duration)
+static void test_qht(int n, int u, int d)
 {
-    char *str;
-    int rc;
+    n_rw_threads = n;
+    update_rate = u / 100.0;
+    g_assert(update_rate <= 1.0);
+    duration = d;
 
-    str = g_strdup_printf(TEST_QHT_STRING "-n %d -u %d -d %d",
-                          n_threads, update_rate, duration);
-    rc = system(str);
-    g_free(str);
-    g_assert_cmpint(rc, ==, 0);
+    qht_bench(false);
 }
 
 static void test_2th0u1s(void)
@@ -40,9 +38,20 @@ static void test_2th20u5s(void)
     test_qht(2, 20, 5);
 }
 
+static void set_common_opts(void)
+{
+    /* options common to all tests */
+    qht_mode |= QHT_MODE_AUTO_RESIZE;
+    resize_rate = 0.001;
+    resize_delay = 10000;
+    n_rz_threads = 1;
+}
+
 int main(int argc, char *argv[])
 {
     g_test_init(&argc, &argv, NULL);
+
+    set_common_opts();
 
     if (g_test_quick()) {
         g_test_add_func("/qht/parallel/2threads-0%updates-1s", test_2th0u1s);
