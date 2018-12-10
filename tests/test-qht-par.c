@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     g_test_init(&argc, &argv, NULL);
 
     if (g_test_quick()) {
-        g_test_add_func("/qht/parallel/2threads-0%updates-1s", test_2th0u1s);
+        g_test_add_func("/qht/parallel/2threads-20%updates-1s", test_2th20u1s);
     } else {
         g_test_add_func("/qht/parallel/2threads-0%updates-5s", test_2th0u5s);
         g_test_add_func("/qht/parallel/2threads-20%updates-5s", test_2th20u5s);
