@@ -250,6 +250,8 @@ struct PropertyInfo {
 /**
  * GlobalProperty:
  * @used: Set to true if property was used when initializing a device.
+ * @optional: If set to true, errors when applying the property won't be
+ *            reported by object_apply_global_props().
  *
  * An error is fatal for non-hotplugged devices, when the global is applied.
  */
@@ -258,6 +260,7 @@ typedef struct GlobalProperty {
     const char *property;
     const char *value;
     bool used;
+    bool optional;
 } GlobalProperty;
 
 static inline void

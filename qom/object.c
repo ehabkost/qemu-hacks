@@ -387,7 +387,9 @@ void object_apply_global_props(Object *obj, const GPtrArray *props, Error **errp
         }
         p->used = true;
         object_property_parse(obj, p->value, p->property, &err);
-        if (err != NULL) {
+        if (p->optional) {
+            error_free(err);
+        } else if (err != NULL) {
             error_prepend(&err, "can't apply global %s.%s=%s: ",
                           p->driver, p->property, p->value);
             /*
