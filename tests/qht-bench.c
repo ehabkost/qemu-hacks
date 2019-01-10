@@ -401,21 +401,33 @@ static void run_test(void)
     unsigned int remaining;
     int i;
 
+    printf("qht-bench: waiting for threads to be ready\n");
     while (atomic_read(&n_ready_threads) != n_rw_threads + n_rz_threads) {
         cpu_relax();
     }
+    printf("qht-bench: signaling test start\n");
     atomic_set(&test_start, true);
+    printf("qht-bench: signaled test start\n");
     do {
+        printf("qht-bench: will sleep for %d seconds:\n", duration);
         remaining = sleep(duration);
+        printf("qht-bench: %d seconds remaining\n", remaining);
     } while (remaining);
+    printf("qht-bench: signaling test stop\n");
     atomic_set(&test_stop, true);
+    printf("qht-bench: signaled test stop\n");
 
+    printf("qht-bench: joining rw threads:\n");
     for (i = 0; i < n_rw_threads; i++) {
+        printf("qht-bench: joining tw thread %d\n", i);
         qemu_thread_join(&rw_threads[i]);
     }
+    printf("qht-bench: joining rz threads:\n");
     for (i = 0; i < n_rz_threads; i++) {
+        printf("qht-bench: joining tz thread %d\n", i);
         qemu_thread_join(&rz_threads[i]);
     }
+    printf("qht-bench: run_test() finished\n");
 }
 
 static void parse_args(int argc, char *argv[])

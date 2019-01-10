@@ -6,7 +6,7 @@
  */
 #include "qemu/osdep.h"
 
-#define TEST_QHT_STRING "tests/qht-bench 1>/dev/null 2>&1 -R -S0.1 -D10000 -N1 "
+#define TEST_QHT_STRING "tests/qht-bench -R -S0.1 -D10000 -N1 "
 
 static void test_qht(int n_threads, int update_rate, int duration)
 {
