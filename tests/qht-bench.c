@@ -398,7 +398,6 @@ static void pr_stats(void)
 
 static void run_test(void)
 {
-    unsigned int remaining;
     int i;
 
     printf("qht-bench: waiting for threads to be ready\n");
@@ -408,11 +407,8 @@ static void run_test(void)
     printf("qht-bench: signaling test start\n");
     atomic_set(&test_start, true);
     printf("qht-bench: signaled test start\n");
-    do {
-        printf("qht-bench: will sleep for %d seconds:\n", duration);
-        remaining = sleep(duration);
-        printf("qht-bench: %d seconds remaining\n", remaining);
-    } while (remaining);
+    printf("qht-bench: will sleep for %d seconds:\n", duration);
+    g_usleep(duration * 1000);
     printf("qht-bench: signaling test stop\n");
     atomic_set(&test_stop, true);
     printf("qht-bench: signaled test stop\n");
