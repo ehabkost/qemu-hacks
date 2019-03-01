@@ -38,6 +38,7 @@ addons:
       - sparse
       - uuid-dev
       - gcovr
+      - gdb
   homebrew:
     packages:
       - glib
@@ -71,6 +72,7 @@ git:
 before_script:
   - mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR}
   - ${SRC_DIR}/configure ${BASE_CONFIG} ${CONFIG} || { cat config.log && exit 1; }
+  - ulimit -c unlimited -S       # enable core dumps
 script:
   - make -j3 && ${TEST_CMD}
 
@@ -252,3 +254,11 @@ matrix:
     - env:
         - CONFIG="--disable-system"
         - TEST_CMD="make -j3 check-tcg V=1"
+
+after_failure:
+  - find ./ -name 'core*' -print
+  - for core in $(find ./ -maxdepth 1 -name 'core*' -print); do
+        exe="$(gdb -q -c "$core" -ex 'info proc exe' | tee gdbinfo.txt | grep 'exe =' | sed -e "s/^.*'\(.*\)'$/\1/")";
+        cat gdbinfo.txt;
+        gdb "$exe" "$core" -ex "thread apply all bt full" -batch;
+    done;
