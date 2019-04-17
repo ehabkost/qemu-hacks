@@ -161,7 +161,19 @@ typedef struct CPUClass {
     DeviceClass parent_class;
     /*< public >*/
 
+    /* The following fields configure CPU model name -> QOM type translation: */
+
+    /*
+     * arch-specific CPU model -> QOM type translation function.
+     * Optional if @class_name_format is set.
+     */
     ObjectClass *(*class_by_name)(const char *cpu_model);
+    /*
+     * Format string for g_strdup_printf(), used to generate the CPU
+     * class name.
+     */
+    const char *class_name_format;
+
     void (*parse_features)(const char *typename, char *str, Error **errp);
 
     int reset_dump_flags;
