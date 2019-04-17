@@ -984,12 +984,12 @@ void cpu_exec_realizefn(CPUState *cpu, Error **errp)
 
 CPUClass *arch_cpu_class_by_name(const char *cpu_model, Error **errp)
 {
-    ObjectClass *oc = cpu_class_by_name(CPU_RESOLVING_TYPE, cpu_model);
-    if (oc == NULL) {
+    CPUClass *cc = cpu_class_by_name(CPU_RESOLVING_TYPE, cpu_model);
+    if (cc == NULL) {
         error_setg(errp, "unable to find CPU model '%s'", cpu_model);
         return NULL;
     }
-    return CPU_CLASS(oc);
+    return cc;
 }
 
 const char *parse_cpu_option(const char *cpu_option)

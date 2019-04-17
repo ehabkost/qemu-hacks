@@ -283,12 +283,12 @@ static bool cpu_common_has_work(CPUState *cs)
     return false;
 }
 
-ObjectClass *cpu_class_by_name(const char *typename, const char *cpu_model)
+CPUClass *cpu_class_by_name(const char *typename, const char *cpu_model)
 {
     CPUClass *cc = CPU_CLASS(object_class_by_name(typename));
 
     assert(cpu_model && cc->class_by_name);
-    return cc->class_by_name(cpu_model);
+    return CPU_CLASS(cc->class_by_name(cpu_model));
 }
 
 static void cpu_common_parse_features(const char *typename, char *features,

@@ -676,7 +676,7 @@ void cpu_reset(CPUState *cpu);
  *
  * Returns: A #CPUClass or %NULL if not matching class is found.
  */
-ObjectClass *cpu_class_by_name(const char *typename, const char *cpu_model);
+CPUClass *cpu_class_by_name(const char *typename, const char *cpu_model);
 
 /**
  * cpu_create:
