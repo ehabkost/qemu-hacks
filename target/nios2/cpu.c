@@ -77,11 +77,6 @@ static void nios2_cpu_initfn(Object *obj)
 #endif
 }
 
-static ObjectClass *nios2_cpu_class_by_name(const char *cpu_model)
-{
-    return object_class_by_name(TYPE_NIOS2_CPU);
-}
-
 static void nios2_cpu_realizefn(DeviceState *dev, Error **errp)
 {
     CPUState *cs = CPU(dev);
@@ -193,7 +188,8 @@ static void nios2_cpu_class_init(ObjectClass *oc, void *data)
     ncc->parent_reset = cc->reset;
     cc->reset = nios2_cpu_reset;
 
-    cc->class_by_name = nios2_cpu_class_by_name;
+    /* TODO: review help code */
+    cc->class_name_format = TYPE_NIOS2_CPU;
     cc->has_work = nios2_cpu_has_work;
     cc->do_interrupt = nios2_cpu_do_interrupt;
     cc->cpu_exec_interrupt = nios2_cpu_exec_interrupt;
