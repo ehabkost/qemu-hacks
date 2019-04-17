@@ -166,17 +166,6 @@ static char *mips_cpu_type_name(const char *cpu_model)
     return g_strdup_printf(MIPS_CPU_TYPE_NAME("%s"), cpu_model);
 }
 
-static ObjectClass *mips_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = mips_cpu_type_name(cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    return oc;
-}
-
 static void mips_cpu_class_init(ObjectClass *c, void *data)
 {
     MIPSCPUClass *mcc = MIPS_CPU_CLASS(c);
@@ -188,7 +177,7 @@ static void mips_cpu_class_init(ObjectClass *c, void *data)
     mcc->parent_reset = cc->reset;
     cc->reset = mips_cpu_reset;
 
-    cc->class_by_name = mips_cpu_class_by_name;
+    cc->class_name_format = MIPS_CPU_TYPE_NAME("%s");
     cc->has_work = mips_cpu_has_work;
     cc->do_interrupt = mips_cpu_do_interrupt;
     cc->cpu_exec_interrupt = mips_cpu_exec_interrupt;
