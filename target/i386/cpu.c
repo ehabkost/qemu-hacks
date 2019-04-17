@@ -1600,12 +1600,6 @@ static char *x86_cpu_type_name(const char *model_name)
     return g_strdup_printf(X86_CPU_TYPE_NAME("%s"), model_name);
 }
 
-static ObjectClass *x86_cpu_class_by_name(const char *cpu_model)
-{
-    g_autofree char *typename = x86_cpu_type_name(cpu_model);
-    return object_class_by_name(typename);
-}
-
 static char *x86_cpu_class_get_model_name(X86CPUClass *cc)
 {
     const char *class_name = object_class_get_name(OBJECT_CLASS(cc));
@@ -7293,7 +7287,7 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
     device_class_set_parent_reset(dc, x86_cpu_reset, &xcc->parent_reset);
     cc->reset_dump_flags = CPU_DUMP_FPU | CPU_DUMP_CCOP;
 
-    cc->class_by_name = x86_cpu_class_by_name;
+    cc->class_name_format = X86_CPU_TYPE_NAME("%s");
     cc->parse_features = x86_cpu_parse_featurestr;
     cc->has_work = x86_cpu_has_work;
 #ifdef CONFIG_TCG

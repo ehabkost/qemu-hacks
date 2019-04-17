@@ -79,21 +79,6 @@ static void moxie_cpu_initfn(Object *obj)
     cpu_set_cpustate_pointers(cpu);
 }
 
-static ObjectClass *moxie_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(MOXIE_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (oc != NULL && (!object_class_dynamic_cast(oc, TYPE_MOXIE_CPU) ||
-                       object_class_is_abstract(oc))) {
-        return NULL;
-    }
-    return oc;
-}
-
 static void moxie_cpu_class_init(ObjectClass *oc, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(oc);
@@ -104,7 +89,7 @@ static void moxie_cpu_class_init(ObjectClass *oc, void *data)
                                     &mcc->parent_realize);
     device_class_set_parent_reset(dc, moxie_cpu_reset, &mcc->parent_reset);
 
-    cc->class_by_name = moxie_cpu_class_by_name;
+    cc->class_name_format = MOXIE_CPU_TYPE_NAME("%s");
 
     cc->has_work = moxie_cpu_has_work;
     cc->do_interrupt = moxie_cpu_do_interrupt;

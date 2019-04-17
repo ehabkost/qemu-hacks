@@ -178,21 +178,6 @@ static void rv32_imafcu_nommu_cpu_init(Object *obj)
 
 #endif
 
-static ObjectClass *riscv_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(RISCV_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (!oc || !object_class_dynamic_cast(oc, TYPE_RISCV_CPU) ||
-        object_class_is_abstract(oc)) {
-        return NULL;
-    }
-    return oc;
-}
-
 static void riscv_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 {
     RISCVCPU *cpu = RISCV_CPU(cs);
@@ -529,7 +514,7 @@ static void riscv_cpu_class_init(ObjectClass *c, void *data)
 
     device_class_set_parent_reset(dc, riscv_cpu_reset, &mcc->parent_reset);
 
-    cc->class_by_name = riscv_cpu_class_by_name;
+    cc->class_name_format = RISCV_CPU_TYPE_NAME("%s");
     cc->has_work = riscv_cpu_has_work;
     cc->do_interrupt = riscv_cpu_do_interrupt;
     cc->cpu_exec_interrupt = riscv_cpu_exec_interrupt;

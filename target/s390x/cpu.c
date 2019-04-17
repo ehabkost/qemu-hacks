@@ -480,7 +480,7 @@ static void s390_cpu_class_init(ObjectClass *oc, void *data)
     scc->load_normal = s390_cpu_load_normal;
 #endif
     scc->reset = s390_cpu_reset;
-    cc->class_by_name = s390_cpu_class_by_name,
+    cc->class_name_format = S390_CPU_TYPE_NAME("%s");
     cc->has_work = s390_cpu_has_work;
 #ifdef CONFIG_TCG
     cc->do_interrupt = s390_cpu_do_interrupt;
