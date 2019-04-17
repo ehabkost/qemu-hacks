@@ -286,9 +286,23 @@ static bool cpu_common_has_work(CPUState *cs)
 CPUClass *cpu_class_by_name(const char *typename, const char *cpu_model)
 {
     CPUClass *cc = CPU_CLASS(object_class_by_name(typename));
+    ObjectClass *oc;
+    char *class_name;
 
-    assert(cpu_model && cc->class_by_name);
-    return CPU_CLASS(cc->class_by_name(cpu_model));
+    assert(cpu_model);
+    if (cc->class_by_name) {
+        return CPU_CLASS(cc->class_by_name(cpu_model));
+    }
+
+    assert(cc->class_name_format);
+    class_name = g_strdup_printf(cc->class_name_format, cpu_model);
+    oc = object_class_by_name(class_name);
+    g_free(class_name);
+    if (!oc || !object_class_dynamic_cast(oc, typename) ||
+        object_class_is_abstract(oc)) {
+        return NULL;
+    }
+    return CPU_CLASS(oc);
 }
 
 static void cpu_common_parse_features(const char *typename, char *features,
