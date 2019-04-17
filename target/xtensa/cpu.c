@@ -90,21 +90,6 @@ static void xtensa_cpu_reset(CPUState *s)
 #endif
 }
 
-static ObjectClass *xtensa_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(XTENSA_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (oc == NULL || !object_class_dynamic_cast(oc, TYPE_XTENSA_CPU) ||
-        object_class_is_abstract(oc)) {
-        return NULL;
-    }
-    return oc;
-}
-
 static void xtensa_cpu_disas_set_info(CPUState *cs, disassemble_info *info)
 {
     XtensaCPU *cpu = XTENSA_CPU(cs);
@@ -172,7 +157,7 @@ static void xtensa_cpu_class_init(ObjectClass *oc, void *data)
     xcc->parent_reset = cc->reset;
     cc->reset = xtensa_cpu_reset;
 
-    cc->class_by_name = xtensa_cpu_class_by_name;
+    cc->class_name_format = XTENSA_CPU_TYPE_NAME("%s");
     cc->has_work = xtensa_cpu_has_work;
     cc->do_interrupt = xtensa_cpu_do_interrupt;
     cc->cpu_exec_interrupt = xtensa_cpu_exec_interrupt;
