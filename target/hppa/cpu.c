@@ -122,11 +122,6 @@ static void hppa_cpu_initfn(Object *obj)
     cpu_hppa_put_psw(env, PSW_W);
 }
 
-static ObjectClass *hppa_cpu_class_by_name(const char *cpu_model)
-{
-    return object_class_by_name(TYPE_HPPA_CPU);
-}
-
 static void hppa_cpu_class_init(ObjectClass *oc, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(oc);
@@ -136,7 +131,7 @@ static void hppa_cpu_class_init(ObjectClass *oc, void *data)
     device_class_set_parent_realize(dc, hppa_cpu_realizefn,
                                     &acc->parent_realize);
 
-    cc->class_by_name = hppa_cpu_class_by_name;
+    cc->class_name_format = TYPE_HPPA_CPU;
     cc->has_work = hppa_cpu_has_work;
     cc->do_interrupt = hppa_cpu_do_interrupt;
     cc->cpu_exec_interrupt = hppa_cpu_exec_interrupt;
