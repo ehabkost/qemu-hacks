@@ -1278,16 +1278,6 @@ static char *s390_base_cpu_type_name(const char *model_name)
     return g_strdup_printf(S390_CPU_TYPE_NAME("%s-base"), model_name);
 }
 
-ObjectClass *s390_cpu_class_by_name(const char *name)
-{
-    char *typename = s390_cpu_type_name(name);
-    ObjectClass *oc;
-
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    return oc;
-}
-
 static const TypeInfo qemu_s390_cpu_type_info = {
     .name = S390_CPU_TYPE_NAME("qemu"),
     .parent = TYPE_S390_CPU,
