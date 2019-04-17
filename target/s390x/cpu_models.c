@@ -482,7 +482,7 @@ static void cpu_model_from_info(S390CPUModel *model, const CpuModelInfo *info,
     const QDict *qdict = NULL;
     const QDictEntry *e;
     Visitor *visitor;
-    ObjectClass *oc;
+    CPUClass *cc;
     S390CPU *cpu;
     Object *obj;
 
@@ -494,16 +494,16 @@ static void cpu_model_from_info(S390CPUModel *model, const CpuModelInfo *info,
         }
     }
 
-    oc = cpu_class_by_name(TYPE_S390_CPU, info->name);
-    if (!oc) {
+    cc = cpu_class_by_name(TYPE_S390_CPU, info->name);
+    if (!cc) {
         error_setg(errp, "The CPU definition \'%s\' is unknown.", info->name);
         return;
     }
-    if (S390_CPU_CLASS(oc)->kvm_required && !kvm_enabled()) {
+    if (S390_CPU_CLASS(cc)->kvm_required && !kvm_enabled()) {
         error_setg(errp, "The CPU definition '%s' requires KVM", info->name);
         return;
     }
-    obj = object_new(object_class_get_name(oc));
+    obj = object_new(object_class_get_name(OBJECT_CLASS(cc)));
     cpu = S390_CPU(obj);
 
     if (!cpu->model) {
