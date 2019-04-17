@@ -99,21 +99,6 @@ static void openrisc_cpu_initfn(Object *obj)
 
 /* CPU models */
 
-static ObjectClass *openrisc_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(OPENRISC_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (oc != NULL && (!object_class_dynamic_cast(oc, TYPE_OPENRISC_CPU) ||
-                       object_class_is_abstract(oc))) {
-        return NULL;
-    }
-    return oc;
-}
-
 static void or1200_initfn(Object *obj)
 {
     OpenRISCCPU *cpu = OPENRISC_CPU(obj);
@@ -140,7 +125,7 @@ static void openrisc_cpu_class_init(ObjectClass *oc, void *data)
     occ->parent_reset = cc->reset;
     cc->reset = openrisc_cpu_reset;
 
-    cc->class_by_name = openrisc_cpu_class_by_name;
+    cc->class_name_format = OPENRISC_CPU_TYPE_NAME("%s");
     cc->has_work = openrisc_cpu_has_work;
     cc->do_interrupt = openrisc_cpu_do_interrupt;
     cc->cpu_exec_interrupt = openrisc_cpu_exec_interrupt;
