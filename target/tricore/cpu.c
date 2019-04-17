@@ -111,21 +111,6 @@ static void tricore_cpu_initfn(Object *obj)
     cs->env_ptr = env;
 }
 
-static ObjectClass *tricore_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(TRICORE_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (!oc || !object_class_dynamic_cast(oc, TYPE_TRICORE_CPU) ||
-        object_class_is_abstract(oc)) {
-        return NULL;
-    }
-    return oc;
-}
-
 static void tc1796_initfn(Object *obj)
 {
     TriCoreCPU *cpu = TRICORE_CPU(obj);
@@ -158,7 +143,7 @@ static void tricore_cpu_class_init(ObjectClass *c, void *data)
 
     mcc->parent_reset = cc->reset;
     cc->reset = tricore_cpu_reset;
-    cc->class_by_name = tricore_cpu_class_by_name;
+    cc->class_name_format = TRICORE_CPU_TYPE_NAME("%s");
     cc->has_work = tricore_cpu_has_work;
 
     cc->dump_state = tricore_cpu_dump_state;
