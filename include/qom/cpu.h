@@ -700,6 +700,15 @@ CPUState *cpu_create(const char *typename);
 const char *parse_cpu_option(const char *cpu_option);
 
 /**
+ * arch_cpu_class_by_name:
+ * @cpu_model: CPU model name
+ *
+ * Arch-specific wrapper around cpu_class_by_name(), uses CPU_RESOLVING_TYPE
+ * for the current architecture.
+ */
+CPUClass *arch_cpu_class_by_name(const char *cpu_model, Error **errp);
+
+/**
  * cpu_has_work:
  * @cpu: The vCPU to check.
  *

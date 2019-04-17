@@ -982,6 +982,16 @@ void cpu_exec_realizefn(CPUState *cpu, Error **errp)
 #endif
 }
 
+CPUClass *arch_cpu_class_by_name(const char *cpu_model, Error **errp)
+{
+    CPUClass *cc = cpu_class_by_name(CPU_RESOLVING_TYPE, cpu_model);
+    if (cc == NULL) {
+        error_setg(errp, "unable to find CPU model '%s'", cpu_model);
+        return NULL;
+    }
+    return cc;
+}
+
 const char *parse_cpu_option(const char *cpu_option)
 {
     CPUClass *cc;
@@ -994,13 +1004,7 @@ const char *parse_cpu_option(const char *cpu_option)
         exit(1);
     }
 
-    cc = cpu_class_by_name(CPU_RESOLVING_TYPE, model_pieces[0]);
-    if (cc == NULL) {
-        error_report("unable to find CPU model '%s'", model_pieces[0]);
-        g_strfreev(model_pieces);
-        exit(EXIT_FAILURE);
-    }
-
+    cc = arch_cpu_class_by_name(model_pieces[0], &error_fatal);
     cpu_type = object_class_get_name(OBJECT_CLASS(cc));
     cc->parse_features(cpu_type, model_pieces[1], &error_fatal);
     g_strfreev(model_pieces);
