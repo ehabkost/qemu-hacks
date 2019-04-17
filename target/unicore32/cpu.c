@@ -40,21 +40,6 @@ static inline void set_feature(CPUUniCore32State *env, int feature)
 
 /* CPU models */
 
-static ObjectClass *uc32_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(UNICORE32_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (oc != NULL && (!object_class_dynamic_cast(oc, TYPE_UNICORE32_CPU) ||
-                       object_class_is_abstract(oc))) {
-        oc = NULL;
-    }
-    return oc;
-}
-
 static void unicore_ii_cpu_initfn(Object *obj)
 {
     UniCore32CPU *cpu = UNICORE32_CPU(obj);
@@ -132,7 +117,7 @@ static void uc32_cpu_class_init(ObjectClass *oc, void *data)
     device_class_set_parent_realize(dc, uc32_cpu_realizefn,
                                     &ucc->parent_realize);
 
-    cc->class_by_name = uc32_cpu_class_by_name;
+    cc->class_name_format = UNICORE32_CPU_TYPE_NAME("%s");
     cc->has_work = uc32_cpu_has_work;
     cc->do_interrupt = uc32_cpu_do_interrupt;
     cc->cpu_exec_interrupt = uc32_cpu_exec_interrupt;
