@@ -201,21 +201,6 @@ static void lm32_full_cpu_initfn(Object *obj)
                   | LM32_FEATURE_CYCLE_COUNT;
 }
 
-static ObjectClass *lm32_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(LM32_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (oc != NULL && (!object_class_dynamic_cast(oc, TYPE_LM32_CPU) ||
-                       object_class_is_abstract(oc))) {
-        oc = NULL;
-    }
-    return oc;
-}
-
 static void lm32_cpu_class_init(ObjectClass *oc, void *data)
 {
     LM32CPUClass *lcc = LM32_CPU_CLASS(oc);
@@ -227,7 +212,7 @@ static void lm32_cpu_class_init(ObjectClass *oc, void *data)
     lcc->parent_reset = cc->reset;
     cc->reset = lm32_cpu_reset;
 
-    cc->class_by_name = lm32_cpu_class_by_name;
+    cc->class_name_format = LM32_CPU_TYPE_NAME("%s");
     cc->has_work = lm32_cpu_has_work;
     cc->do_interrupt = lm32_cpu_do_interrupt;
     cc->cpu_exec_interrupt = lm32_cpu_exec_interrupt;
