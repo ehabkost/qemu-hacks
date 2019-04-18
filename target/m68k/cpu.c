@@ -81,21 +81,6 @@ static void m68k_cpu_disas_set_info(CPUState *s, disassemble_info *info)
 
 /* CPU models */
 
-static ObjectClass *m68k_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(M68K_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (oc != NULL && (object_class_dynamic_cast(oc, TYPE_M68K_CPU) == NULL ||
-                       object_class_is_abstract(oc))) {
-        return NULL;
-    }
-    return oc;
-}
-
 static void m5206_cpu_initfn(Object *obj)
 {
     M68kCPU *cpu = M68K_CPU(obj);
@@ -261,7 +246,7 @@ static void m68k_cpu_class_init(ObjectClass *c, void *data)
     mcc->parent_reset = cc->reset;
     cc->reset = m68k_cpu_reset;
 
-    cc->class_by_name = m68k_cpu_class_by_name;
+    cc->class_name_format = M68K_CPU_TYPE_NAME("%s");
     cc->has_work = m68k_cpu_has_work;
     cc->do_interrupt = m68k_cpu_do_interrupt;
     cc->cpu_exec_interrupt = m68k_cpu_exec_interrupt;
