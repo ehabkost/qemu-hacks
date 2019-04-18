@@ -78,6 +78,12 @@ typedef void (*CPUUnassignedAccess)(CPUState *cpu, hwaddr addr,
 
 struct TranslationBlock;
 
+/* Translation of a CPU model name to a QOM class name */
+typedef struct CPUModelTranslation {
+    const char *model_name;
+    const char *class_name;
+} CPUModelTranslation;
+
 /**
  * CPUClass:
  * @cpu_class_name: Callback to map CPU model name to QOM type name
@@ -166,14 +172,19 @@ typedef struct CPUClass {
 
     /*
      * arch-specific CPU model -> QOM type name translation function.
-     * Optional if @class_name_format is set.
+     * Optional if @class_name_format or @model_table is set.
      *
      * Implementations must return a value that can be freed using g_free().
      */
     char *(*cpu_class_name)(const char *cpu_model);
     /*
+     * Table for CPU models that don't follow @class_name_format.
+     * Terminated by by model_name == NULL.
+     */
+    const CPUModelTranslation *model_table;
+    /*
      * Format string for g_strdup_printf(), used to generate the CPU
-     * class name.
+     * class name for entries not in @model_table.
      */
     const char *class_name_format;
 

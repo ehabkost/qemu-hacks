@@ -291,6 +291,15 @@ static char *cpu_class_name_for_model(CPUClass *cc, const char *cpu_model)
         return cc->cpu_class_name(cpu_model);
     }
 
+    if (cc->model_table) {
+        const CPUModelTranslation *m;
+        for (m = cc->model_table; m->model_name; m++) {
+            if (!strcmp(cpu_model, m->model_name)) {
+                return g_strdup(m->class_name);
+            }
+        }
+    }
+
     return g_strdup_printf(cc->class_name_format, cpu_model);
 }
 
