@@ -1208,21 +1208,6 @@ static void arm_cpu_realizefn(DeviceState *dev, Error **errp)
     acc->parent_realize(dev, errp);
 }
 
-static ObjectClass *arm_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = g_strdup_printf(ARM_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (!oc || !object_class_dynamic_cast(oc, TYPE_ARM_CPU) ||
-        object_class_is_abstract(oc)) {
-        return NULL;
-    }
-    return oc;
-}
-
 /* CPU models. These are not needed for the AArch64 linux-user build. */
 #if !defined(CONFIG_USER_ONLY) || !defined(TARGET_AARCH64)
 
@@ -2142,7 +2127,7 @@ static void arm_cpu_class_init(ObjectClass *oc, void *data)
     acc->parent_reset = cc->reset;
     cc->reset = arm_cpu_reset;
 
-    cc->class_by_name = arm_cpu_class_by_name;
+    cc->class_name_format = ARM_CPU_TYPE_NAME("%s");
     cc->has_work = arm_cpu_has_work;
     cc->cpu_exec_interrupt = arm_cpu_exec_interrupt;
     cc->dump_state = arm_cpu_dump_state;
