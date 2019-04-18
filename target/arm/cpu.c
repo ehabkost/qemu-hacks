@@ -1212,22 +1212,17 @@ static ObjectClass *arm_cpu_class_by_name(const char *cpu_model)
 {
     ObjectClass *oc;
     char *typename;
-    char **cpuname;
-    const char *cpunamestr;
 
-    cpuname = g_strsplit(cpu_model, ",", 1);
-    cpunamestr = cpuname[0];
 #ifdef CONFIG_USER_ONLY
     /* For backwards compatibility usermode emulation allows "-cpu any",
      * which has the same semantics as "-cpu max".
      */
-    if (!strcmp(cpunamestr, "any")) {
-        cpunamestr = "max";
+    if (!strcmp(cpu_model, "any")) {
+        cpu_model = "max";
     }
 #endif
-    typename = g_strdup_printf(ARM_CPU_TYPE_NAME("%s"), cpunamestr);
+    typename = g_strdup_printf(ARM_CPU_TYPE_NAME("%s"), cpu_model);
     oc = object_class_by_name(typename);
-    g_strfreev(cpuname);
     g_free(typename);
     if (!oc || !object_class_dynamic_cast(oc, TYPE_ARM_CPU) ||
         object_class_is_abstract(oc)) {
