@@ -106,27 +106,21 @@ void sh4_cpu_list(FILE *f, fprintf_function cpu_fprintf)
     g_slist_free(list);
 }
 
-static ObjectClass *superh_cpu_class_by_name(const char *cpu_model)
+static char *superh_cpu_class_name(const char *cpu_model)
 {
-    ObjectClass *oc;
     char *s, *typename = NULL;
 
     s = g_ascii_strdown(cpu_model, -1);
     if (strcmp(s, "any") == 0) {
-        oc = object_class_by_name(TYPE_SH7750R_CPU);
+        typename = g_strdup(TYPE_SH7750R_CPU);
         goto out;
     }
 
     typename = g_strdup_printf(SUPERH_CPU_TYPE_NAME("%s"), s);
-    oc = object_class_by_name(typename);
-    if (oc != NULL && object_class_is_abstract(oc)) {
-        oc = NULL;
-    }
 
 out:
     g_free(s);
-    g_free(typename);
-    return oc;
+    return typename;
 }
 
 static void sh7750r_cpu_initfn(Object *obj)
@@ -229,7 +223,7 @@ static void superh_cpu_class_init(ObjectClass *oc, void *data)
     scc->parent_reset = cc->reset;
     cc->reset = superh_cpu_reset;
 
-    cc->class_by_name = superh_cpu_class_by_name;
+    cc->cpu_class_name = superh_cpu_class_name;
     cc->has_work = superh_cpu_has_work;
     cc->do_interrupt = superh_cpu_do_interrupt;
     cc->cpu_exec_interrupt = superh_cpu_exec_interrupt;

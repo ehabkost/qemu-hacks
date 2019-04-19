@@ -10086,7 +10086,7 @@ static const char *ppc_cpu_lookup_alias(const char *alias)
     return NULL;
 }
 
-static ObjectClass *ppc_cpu_class_by_name(const char *name)
+static char *ppc_cpu_class_name(const char *name)
 {
     char *cpu_model, *typename;
     ObjectClass *oc;
@@ -10100,7 +10100,8 @@ static ObjectClass *ppc_cpu_class_by_name(const char *name)
         int len = p - name;
         len = (len == 10) && (name[1] == 'x') ? len - 2 : len;
         if ((len == 8) && (*p == '\0')) {
-            return OBJECT_CLASS(ppc_cpu_class_by_pvr(pvr));
+            oc = OBJECT_CLASS(ppc_cpu_class_by_pvr(pvr));
+            return g_strdup(object_class_get_name(oc));
         }
     }
 
@@ -10109,11 +10110,8 @@ static ObjectClass *ppc_cpu_class_by_name(const char *name)
     if (!typename) {
         typename = g_strdup_printf("%s" POWERPC_CPU_TYPE_SUFFIX, cpu_model);
     }
-    oc = object_class_by_name(typename);
-    g_free(typename);
     g_free(cpu_model);
-
-    return oc;
+    return typename;
 }
 
 static void ppc_cpu_parse_featurestr(const char *type, char *features,
@@ -10530,7 +10528,7 @@ static void ppc_cpu_class_init(ObjectClass *oc, void *data)
     pcc->parent_reset = cc->reset;
     cc->reset = ppc_cpu_reset;
 
-    cc->class_by_name = ppc_cpu_class_by_name;
+    cc->cpu_class_name = ppc_cpu_class_name;
     pcc->parent_parse_features = cc->parse_features;
     cc->parse_features = ppc_cpu_parse_featurestr;
     cc->has_work = ppc_cpu_has_work;

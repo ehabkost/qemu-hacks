@@ -63,25 +63,15 @@ static void cris_cpu_reset(CPUState *s)
 #endif
 }
 
-static ObjectClass *cris_cpu_class_by_name(const char *cpu_model)
+static char *cris_cpu_class_name(const char *cpu_model)
 {
-    ObjectClass *oc;
-    char *typename;
-
 #if defined(CONFIG_USER_ONLY)
     if (strcasecmp(cpu_model, "any") == 0) {
-        return object_class_by_name(CRIS_CPU_TYPE_NAME("crisv32"));
+        return g_strdup(CRIS_CPU_TYPE_NAME("crisv32"));
     }
 #endif
 
-    typename = g_strdup_printf(CRIS_CPU_TYPE_NAME("%s"), cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    if (oc != NULL && (!object_class_dynamic_cast(oc, TYPE_CRIS_CPU) ||
-                       object_class_is_abstract(oc))) {
-        oc = NULL;
-    }
-    return oc;
+    return g_strdup_printf(CRIS_CPU_TYPE_NAME("%s"), cpu_model);
 }
 
 /* Sort alphabetically by VR. */
@@ -265,7 +255,7 @@ static void cris_cpu_class_init(ObjectClass *oc, void *data)
     ccc->parent_reset = cc->reset;
     cc->reset = cris_cpu_reset;
 
-    cc->class_by_name = cris_cpu_class_by_name;
+    cc->cpu_class_name = cris_cpu_class_name;
     cc->has_work = cris_cpu_has_work;
     cc->do_interrupt = cris_cpu_do_interrupt;
     cc->cpu_exec_interrupt = cris_cpu_exec_interrupt;

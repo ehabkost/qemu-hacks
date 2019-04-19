@@ -80,8 +80,7 @@ struct TranslationBlock;
 
 /**
  * CPUClass:
- * @class_by_name: Callback to map -cpu command line model name to an
- * instantiatable CPU type.
+ * @cpu_class_name: Callback to map CPU model name to QOM type name
  * @parse_features: Callback to parse command line arguments.
  * @reset: Callback to reset the #CPUState to its initial state.
  * @reset_dump_flags: #CPUDumpFlags to use for reset logging.
@@ -166,10 +165,12 @@ typedef struct CPUClass {
     /* The following fields configure CPU model name -> QOM type translation: */
 
     /*
-     * arch-specific CPU model -> QOM type translation function.
+     * arch-specific CPU model -> QOM type name translation function.
      * Optional if @class_name_format is set.
+     *
+     * Implementations must return a value that can be freed using g_free().
      */
-    ObjectClass *(*class_by_name)(const char *cpu_model);
+    char *(*cpu_class_name)(const char *cpu_model);
     /*
      * Format string for g_strdup_printf(), used to generate the CPU
      * class name.

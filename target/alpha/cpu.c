@@ -109,7 +109,7 @@ static const AlphaCPUAlias alpha_cpu_aliases[] = {
     { "21264a",  ALPHA_CPU_TYPE_NAME("ev67") },
 };
 
-static ObjectClass *alpha_cpu_class_by_name(const char *cpu_model)
+static char *alpha_cpu_class_name(const char *cpu_model)
 {
     ObjectClass *oc;
     char *typename;
@@ -118,20 +118,17 @@ static ObjectClass *alpha_cpu_class_by_name(const char *cpu_model)
     oc = object_class_by_name(cpu_model);
     if (oc != NULL && object_class_dynamic_cast(oc, TYPE_ALPHA_CPU) != NULL &&
         !object_class_is_abstract(oc)) {
-        return oc;
+        return g_strdup(cpu_model);
     }
 
     for (i = 0; i < ARRAY_SIZE(alpha_cpu_aliases); i++) {
         if (strcmp(cpu_model, alpha_cpu_aliases[i].alias) == 0) {
-            oc = object_class_by_name(alpha_cpu_aliases[i].typename);
-            assert(oc != NULL && !object_class_is_abstract(oc));
-            return oc;
+            return g_strdup(alpha_cpu_aliases[i].typename);
         }
     }
 
     typename = g_strdup_printf(ALPHA_CPU_TYPE_NAME("%s"), cpu_model);
     oc = object_class_by_name(typename);
-    g_free(typename);
     if (oc != NULL && object_class_is_abstract(oc)) {
         oc = NULL;
     }
@@ -139,10 +136,10 @@ static ObjectClass *alpha_cpu_class_by_name(const char *cpu_model)
     /* TODO: remove match everything nonsense */
     /* Default to ev67; no reason not to emulate insns by default. */
     if (!oc) {
-        oc = object_class_by_name(ALPHA_CPU_TYPE_NAME("ev67"));
+        g_free(typename);
+        typename = g_strdup(ALPHA_CPU_TYPE_NAME("ev67"));
     }
-
-    return oc;
+    return typename;
 }
 
 static void ev4_cpu_initfn(Object *obj)
@@ -222,7 +219,7 @@ static void alpha_cpu_class_init(ObjectClass *oc, void *data)
     device_class_set_parent_realize(dc, alpha_cpu_realizefn,
                                     &acc->parent_realize);
 
-    cc->class_by_name = alpha_cpu_class_by_name;
+    cc->cpu_class_name = alpha_cpu_class_name;
     cc->has_work = alpha_cpu_has_work;
     cc->do_interrupt = alpha_cpu_do_interrupt;
     cc->cpu_exec_interrupt = alpha_cpu_exec_interrupt;

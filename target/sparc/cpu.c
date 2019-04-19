@@ -727,17 +727,6 @@ static char *sparc_cpu_type_name(const char *cpu_model)
     return name;
 }
 
-static ObjectClass *sparc_cpu_class_by_name(const char *cpu_model)
-{
-    ObjectClass *oc;
-    char *typename;
-
-    typename = sparc_cpu_type_name(cpu_model);
-    oc = object_class_by_name(typename);
-    g_free(typename);
-    return oc;
-}
-
 static void sparc_cpu_realizefn(DeviceState *dev, Error **errp)
 {
     CPUState *cs = CPU(dev);
@@ -867,7 +856,7 @@ static void sparc_cpu_class_init(ObjectClass *oc, void *data)
     scc->parent_reset = cc->reset;
     cc->reset = sparc_cpu_reset;
 
-    cc->class_by_name = sparc_cpu_class_by_name;
+    cc->cpu_class_name = sparc_cpu_type_name;
     cc->parse_features = sparc_cpu_parse_features;
     cc->has_work = sparc_cpu_has_work;
     cc->do_interrupt = sparc_cpu_do_interrupt;
