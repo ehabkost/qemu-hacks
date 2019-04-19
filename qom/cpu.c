@@ -283,6 +283,42 @@ static bool cpu_common_has_work(CPUState *cs)
     return false;
 }
 
+/*
+ * Returns CPU model name if class name matches cc->class_name_format.
+ *
+ * The returned string should be freed using g_free()
+ */
+static char *cpu_model_name_for_class(CPUClass *cc)
+{
+    char *cpu_model = NULL;
+    const char *typename = object_class_get_name(OBJECT_CLASS(cc));
+    char *pattern = NULL;
+    GRegex *re = NULL;
+    GMatchInfo *match = NULL;
+
+    if (!cc->class_name_format) {
+        return NULL;
+    }
+
+    pattern = g_strdup_printf(cc->class_name_format, "(.*)");
+    re = g_regex_new(pattern, G_REGEX_ANCHORED, 0, NULL);
+    if (!re) {
+        goto out;
+    }
+    if (!g_regex_match(re, typename, 0, &match)) {
+        goto out;
+    }
+    cpu_model = g_strdup(g_match_info_fetch(match, 1));
+
+out:
+    g_match_info_free(match);
+    if (re) {
+        g_regex_unref(re);
+    }
+    g_free(pattern);
+    return cpu_model;
+}
+
 static char *cpu_class_name_for_model(CPUClass *cc, const char *cpu_model)
 {
     assert(cc->cpu_class_name || cc->class_name_format);
@@ -319,6 +355,54 @@ CPUClass *cpu_class_by_name(const char *typename, const char *cpu_model)
     }
     return CPU_CLASS(oc);
 }
+
+static gint generic_cpu_list_compare(gconstpointer a, gconstpointer b)
+{
+    ObjectClass *oca = (ObjectClass *)a;
+    ObjectClass *ocb = (ObjectClass *)b;
+    CPUClass *cca = CPU_CLASS(oca);
+    CPUClass *ccb = CPU_CLASS(ocb);
+    const char *name_a, *name_b;
+
+    name_a = object_class_get_name(oca);
+    name_b = object_class_get_name(ocb);
+    if (cca->sort_order < ccb->sort_order) {
+        return -1;
+    } else if (cca->sort_order > ccb->sort_order) {
+        return 1;
+    } else {
+        return strcmp(name_a, name_b);
+    }
+}
+
+static void generic_cpu_list_entry(gpointer data, gpointer user_data)
+{
+    ObjectClass *oc = data;
+    CPUListState *s = user_data;
+    char *name;
+
+    name = cpu_model_name_for_class(CPU_CLASS(oc));
+    if (name) {
+        (*s->cpu_fprintf)(s->file, "  %s\n", name);
+    }
+    g_free(name);
+}
+
+void generic_cpu_list(FILE *f, fprintf_function cpu_fprintf)
+{
+    CPUListState s = {
+        .file = f,
+        .cpu_fprintf = cpu_fprintf,
+    };
+    GSList *list;
+
+    list = object_class_get_list(TYPE_CPU, false);
+    list = g_slist_sort(list, generic_cpu_list_compare);
+    (*cpu_fprintf)(f, "Available CPUs:\n");
+    g_slist_foreach(list, generic_cpu_list_entry, &s);
+    g_slist_free(list);
+}
+
 
 static void cpu_common_parse_features(const char *typename, char *features,
                                       Error **errp)

@@ -188,6 +188,9 @@ typedef struct CPUClass {
      */
     const char *class_name_format;
 
+    /* Sort order for "-cpu help" listing */
+    int sort_order;
+
     void (*parse_features)(const char *typename, char *str, Error **errp);
 
     void (*reset)(CPUState *cpu);
@@ -701,6 +704,14 @@ void cpu_reset(CPUState *cpu);
  * Returns: A #CPUClass or %NULL if not matching class is found.
  */
 CPUClass *cpu_class_by_name(const char *typename, const char *cpu_model);
+
+/**
+ * generic_cpu_list:
+ *
+ * Generic cpu_list function that will automatically list all TYPE_CPU types
+ * whose name matches CPUClass::class_name_format.
+ */
+void generic_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 
 /**
  * cpu_create:
