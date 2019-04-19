@@ -2020,6 +2020,7 @@ struct ARMCPUInfo {
     const char *name;
     void (*initfn)(Object *obj);
     void (*class_init)(ObjectClass *oc, void *data);
+    int sort_order;
 };
 
 static const ARMCPUInfo arm_cpus[] = {
@@ -2066,10 +2067,12 @@ static const ARMCPUInfo arm_cpus[] = {
     { .name = "pxa270-c0",   .initfn = pxa270c0_initfn },
     { .name = "pxa270-c5",   .initfn = pxa270c5_initfn },
 #ifndef TARGET_AARCH64
-    { .name = "max",         .initfn = arm_max_initfn },
+    { .name = "max",         .initfn = arm_max_initfn,
+                             .sort_order = 1 },
 #endif
 #ifdef CONFIG_USER_ONLY
-    { .name = "any",         .initfn = arm_max_initfn },
+    { .name = "any",         .initfn = arm_max_initfn,
+                             .sort_order = 2 },
 #endif
 #endif
     { .name = NULL }
@@ -2197,8 +2200,10 @@ static void arm_cpu_instance_init(Object *obj)
 static void cpu_register_class_init(ObjectClass *oc, void *data)
 {
     ARMCPUClass *acc = ARM_CPU_CLASS(oc);
+    CPUClass *cc = CPU_CLASS(acc);
 
     acc->info = data;
+    cc->sort_order = acc->info->sort_order;
 }
 
 static void cpu_register(const ARMCPUInfo *info)

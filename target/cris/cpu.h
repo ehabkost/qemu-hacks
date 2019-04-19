@@ -307,7 +307,7 @@ static inline void cpu_get_tb_cpu_state(CPUCRISState *env, target_ulong *pc,
 				     | X_FLAG | PFIX_FLAG));
 }
 
-#define cpu_list cris_cpu_list
+#define cpu_list generic_cpu_list
 void cris_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 
 #endif

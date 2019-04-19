@@ -297,6 +297,7 @@ static char *cpu_model_name_for_class(CPUClass *cc)
     GMatchInfo *match = NULL;
 
     if (!cc->class_name_format) {
+        printf("no class name format?\n");
         return NULL;
     }
 
@@ -306,6 +307,7 @@ static char *cpu_model_name_for_class(CPUClass *cc)
         goto out;
     }
     if (!g_regex_match(re, typename, 0, &match)) {
+        printf("pattern: [%s], string: [%s]. no match :(\n", pattern, typename);
         goto out;
     }
     cpu_model = g_strdup(g_match_info_fetch(match, 1));
