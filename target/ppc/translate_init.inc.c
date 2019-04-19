@@ -10079,7 +10079,7 @@ static const char *ppc_cpu_lookup_alias(const char *alias)
 
     for (ai = 0; ppc_cpu_aliases[ai].alias != NULL; ai++) {
         if (strcmp(ppc_cpu_aliases[ai].alias, alias) == 0) {
-            return ppc_cpu_aliases[ai].model;
+            return ppc_cpu_aliases[ai].typename;
         }
     }
 
@@ -10105,13 +10105,10 @@ static ObjectClass *ppc_cpu_class_by_name(const char *name)
     }
 
     cpu_model = g_ascii_strdown(name, -1);
-    p = ppc_cpu_lookup_alias(cpu_model);
-    if (p) {
-        g_free(cpu_model);
-        cpu_model = g_strdup(p);
+    typename = g_strdup(ppc_cpu_lookup_alias(cpu_model));
+    if (!typename) {
+        typename = g_strdup_printf("%s" POWERPC_CPU_TYPE_SUFFIX, cpu_model);
     }
-
-    typename = g_strdup_printf("%s" POWERPC_CPU_TYPE_SUFFIX, cpu_model);
     oc = object_class_by_name(typename);
     g_free(typename);
     g_free(cpu_model);
@@ -10232,7 +10229,7 @@ static void ppc_cpu_list_entry(gpointer data, gpointer user_data)
                       name, pcc->pvr);
     for (i = 0; ppc_cpu_aliases[i].alias != NULL; i++) {
         PowerPCCPUAlias *alias = &ppc_cpu_aliases[i];
-        ObjectClass *alias_oc = ppc_cpu_class_by_name(alias->model);
+        ObjectClass *alias_oc = object_class_by_name(alias->typename);
 
         if (alias_oc != oc) {
             continue;
@@ -10307,7 +10304,7 @@ CpuDefinitionInfoList *qmp_query_cpu_definitions(Error **errp)
         CpuDefinitionInfoList *entry;
         CpuDefinitionInfo *info;
 
-        oc = ppc_cpu_class_by_name(alias->model);
+        oc = object_class_by_name(alias->typename);
         if (oc == NULL) {
             continue;
         }

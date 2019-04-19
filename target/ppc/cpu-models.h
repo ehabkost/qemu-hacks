@@ -24,13 +24,13 @@
 /**
  * PowerPCCPUAlias:
  * @alias: The alias name.
- * @model: The CPU model @alias refers to, that directly resolves into CPU type
+ * @model: The CPU QOM type name @alias refers to
  *
  * A mapping entry from CPU @alias to CPU @model.
  */
 typedef struct PowerPCCPUAlias {
     const char *alias;
-    const char *model;
+    const char *typename;
 } PowerPCCPUAlias;
 
 extern PowerPCCPUAlias ppc_cpu_aliases[];
