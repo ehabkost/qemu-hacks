@@ -1,0 +1,78 @@
+# Avocado multiplexer file for CPU model + machine type combinationscpu: !mux
+run:
+  cpu: !mux
+    qemu32:
+      cpu: "qemu32"
+    qemu64:
+      cpu: "qemu64"
+    486:
+      cpu: "486"
+    pentium3:
+      cpu: "pentium3"
+    athlon:
+      cpu: "athlon"
+    Broadwell-noTSX:
+      cpu: "Broadwell-noTSX"
+    Broadwell:
+      cpu: "Broadwell"
+    Cascadelake-Server:
+      cpu: "Cascadelake-Server"
+    Conroe:
+      cpu: "Conroe"
+    core2duo:
+      cpu: "core2duo"
+    coreduo:
+      cpu: "coreduo"
+    EPYC-IBPB:
+      cpu: "EPYC-IBPB"
+    EPYC:
+      cpu: "EPYC"
+    Haswell-noTSX:
+      cpu: "Haswell-noTSX"
+    Haswell:
+      cpu: "Haswell"
+    Icelake-Client:
+      cpu: "Icelake-Client"
+    Icelake-Server:
+      cpu: "Icelake-Server"
+    IvyBridge:
+      cpu: "IvyBridge"
+    kvm32:
+      cpu: "kvm32"
+    kvm64:
+      cpu: "kvm64"
+    n270:
+      cpu: "n270"
+    Nehalem:
+      cpu: "Nehalem"
+    Opteron_G1:
+      cpu: "Opteron_G1"
+    Opteron_G2:
+      cpu: "Opteron_G2"
+    Opteron_G3:
+      cpu: "Opteron_G3"
+    Opteron_G4:
+      cpu: "Opteron_G4"
+    Opteron_G5:
+      cpu: "Opteron_G5"
+    Penryn:
+      cpu: "Penryn"
+    SandyBridge:
+      cpu: "SandyBridge"
+    Skylake-Client-IBRS:
+      cpu: "Skylake-Client-IBRS"
+    Skylake-Client:
+      cpu: "Skylake-Client"
+    Skylake-Server-IBRS:
+      cpu: "Skylake-Server-IBRS"
+    Skylake-Server:
+      cpu: "Skylake-Server"
+    Westmere:
+      cpu: "Westmere"
+  machine: !mux
+    pc-q35-4.1:
+      machine: "pc-q35-4.1"
+    pc-i440fx-4.1:
+      machine: "pc-i440fx-4.1"
+    pc-1.0:
+      machine: "pc-1.0"
