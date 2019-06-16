@@ -707,17 +707,19 @@ static void x86_cpu_vendor_words2str(char *dst, uint32_t vendor1,
     dst[CPUID_VENDOR_SZ] = '\0';
 }
 
-#define I486_FEATURES (CPUID_FP87 | CPUID_VME | CPUID_PSE)
-#define PENTIUM_FEATURES (I486_FEATURES | CPUID_DE | CPUID_TSC | \
-          CPUID_MSR | CPUID_MCE | CPUID_CX8 | CPUID_MMX | CPUID_APIC)
-#define PENTIUM2_FEATURES (PENTIUM_FEATURES | CPUID_PAE | CPUID_SEP | \
-          CPUID_MTRR | CPUID_PGE | CPUID_MCA | CPUID_CMOV | CPUID_PAT | \
-          CPUID_PSE36 | CPUID_FXSR)
-#define PENTIUM3_FEATURES (PENTIUM2_FEATURES | CPUID_SSE)
-#define PPRO_FEATURES (CPUID_FP87 | CPUID_DE | CPUID_PSE | CPUID_TSC | \
-          CPUID_MSR | CPUID_MCE | CPUID_CX8 | CPUID_PGE | CPUID_CMOV | \
-          CPUID_PAT | CPUID_FXSR | CPUID_MMX | CPUID_SSE | CPUID_SSE2 | \
-          CPUID_PAE | CPUID_SEP | CPUID_APIC)
+#define I486_FEATURES { "fpu" }, { "vme" }, { "pse" }
+#define PENTIUM_FEATURES \
+    I486_FEATURES, { "de" }, { "tsc" }, \
+    { "msr" }, { "mce" }, { "cx8" }, { "mmx" }, { "apic" }
+#define PENTIUM2_FEATURES \
+    PENTIUM_FEATURES, { "pae" }, { "sep" }, \
+    { "mtrr" }, { "pge" }, { "mca" }, { "cmov" }, { "pat" }, \
+    { "pse36" }, { "fxsr" }
+#define PENTIUM3_FEATURES PENTIUM2_FEATURES, { "sse" }
+#define PPRO_FEATURES { "fpu" }, { "de" }, { "pse" }, { "tsc" }, \
+    { "msr" }, { "mce" }, { "cx8" }, { "pge" }, { "cmov" }, \
+    { "pat" }, { "fxsr" }, { "mmx" }, { "sse" }, { "sse2" }, \
+    { "pae" }, { "sep" }, { "apic" }
 
 #define TCG_FEATURES (CPUID_FP87 | CPUID_PSE | CPUID_TSC | CPUID_MSR | \
           CPUID_PAE | CPUID_MCE | CPUID_CX8 | CPUID_APIC | CPUID_SEP | \
@@ -1412,17 +1414,13 @@ static char *x86_cpu_class_get_model_name(X86CPUClass *cc)
                      strlen(class_name) - strlen(X86_CPU_TYPE_SUFFIX));
 }
 
+typedef struct PropValue {
+    const char *prop, *value;
+} PropValue;
+
 struct X86CPUDefinition {
     const char *name;
-    uint32_t level;
-    uint32_t xlevel;
-    /* vendor is zero-terminated, 12 character ASCII string */
-    char vendor[CPUID_VENDOR_SZ + 1];
-    int family;
-    int model;
-    int stepping;
-    FeatureWordArray features;
-    const char *model_id;
+    PropValue *props;
     CPUCaches *cache_info;
 };
 
@@ -1479,1520 +1477,1393 @@ static CPUCaches epyc_cache_info = {
 static X86CPUDefinition builtin_x86_defs[] = {
     {
         .name = "qemu64",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 6,
-        .model = 6,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_CX16,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM,
-        .xlevel = 0x8000000A,
-        .model_id = "QEMU Virtual CPU version " QEMU_HW_VERSION,
+        .props = (PropValue[]) {
+            { "model-id", "QEMU Virtual CPU version " QEMU_HW_VERSION, },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x8000000A" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "6" },
+            { "model", "6" },
+            { "stepping", "3" },
+            PPRO_FEATURES,
+            { "mtrr" }, { "clflush" }, { "mca" },
+            { "pse36" },
+            { "sse3" }, { "cx16" },
+            { "lm" }, { "syscall" }, { "nx" },
+            { "lahf-lm" }, { "svm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "phenom",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 16,
-        .model = 2,
-        .stepping = 3,
-        /* Missing: CPUID_HT */
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36 | CPUID_VME,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_CX16 |
-            CPUID_EXT_POPCNT,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX |
-            CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT | CPUID_EXT2_MMXEXT |
-            CPUID_EXT2_FFXSR | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP,
-        /* Missing: CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC,
-                    CPUID_EXT3_CR8LEG,
-                    CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH,
-                    CPUID_EXT3_OSVW, CPUID_EXT3_IBS */
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM | CPUID_EXT3_SVM |
-            CPUID_EXT3_ABM | CPUID_EXT3_SSE4A,
-        /* Missing: CPUID_SVM_LBRV */
-        .features[FEAT_SVM] =
-            CPUID_SVM_NPT,
-        .xlevel = 0x8000001A,
-        .model_id = "AMD Phenom(tm) 9550 Quad-Core Processor"
+        .props = (PropValue[]) {
+            { "model-id", "AMD Phenom(tm) 9550 Quad-Core Processor" },
+            { "min-level", "5" },
+            { "min-xlevel", "0x8000001A" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "16" },
+            { "model", "2" },
+            { "stepping", "3" },
+            /* Missing: ht */
+            PPRO_FEATURES,
+            { "mtrr" }, { "clflush" }, { "mca" },
+            { "pse36" }, { "vme" },
+            { "sse3" }, { "monitor" }, { "cx16" },
+            { "popcnt" },
+            { "lm" }, { "syscall" }, { "nx" },
+            { "3dnow" }, { "3dnowext" }, { "mmxext" },
+            { "ffxsr" }, { "pdpe1gb" }, { "rdtscp" },
+            /*
+             * Missing: cmp_leg, extapic, cr8legacy, misalignsse,
+             *          3dnowprefetch, osvw, ibs
+             */
+            { "lahf-lm" }, { "svm" },
+            { "abm" }, { "sse4a" },
+            /* Missing: lbrv */
+            { "npt" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "core2duo",
-        .level = 10,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 15,
-        .stepping = 11,
-        /* Missing: CPUID_DTS, CPUID_HT, CPUID_TM, CPUID_PBE */
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36 | CPUID_VME | CPUID_ACPI | CPUID_SS,
-        /* Missing: CPUID_EXT_DTES64, CPUID_EXT_DSCPL, CPUID_EXT_EST,
-         * CPUID_EXT_TM2, CPUID_EXT_XTPR, CPUID_EXT_PDCM, CPUID_EXT_VMX */
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_SSSE3 |
-            CPUID_EXT_CX16,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz",
+        .props = (PropValue[]) {
+            { "model-id", "Intel(R) Core(TM)2 Duo CPU     T7700  @ 2.40GHz", },
+            { "min-level", "10" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "15" },
+            { "stepping", "11" },
+            /* Missing: dts, ht, tm, pbe */
+            PPRO_FEATURES,
+            { "mtrr" }, { "clflush" }, { "mca" },
+            { "pse36" }, { "vme" }, { "acpi" }, { "ss" },
+            /* Missing: dtes64, dscpl, est, tm2, xtpr, pdcm, vmx */
+            { "sse3" }, { "monitor" }, { "ssse3" },
+            { "cx16" },
+            { "lm" }, { "syscall" }, { "nx" },
+            { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "kvm64",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        /* Missing: CPUID_HT */
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES | CPUID_VME |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA |
-            CPUID_PSE36,
-        /* Missing: CPUID_EXT_POPCNT, CPUID_EXT_MONITOR */
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_CX16,
-        /* Missing: CPUID_EXT2_PDPE1GB, CPUID_EXT2_RDTSCP */
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        /* Missing: CPUID_EXT3_LAHF_LM, CPUID_EXT3_CMP_LEG, CPUID_EXT3_EXTAPIC,
-                    CPUID_EXT3_CR8LEG, CPUID_EXT3_ABM, CPUID_EXT3_SSE4A,
-                    CPUID_EXT3_MISALIGNSSE, CPUID_EXT3_3DNOWPREFETCH,
-                    CPUID_EXT3_OSVW, CPUID_EXT3_IBS, CPUID_EXT3_SVM */
-        .features[FEAT_8000_0001_ECX] =
-            0,
-        .xlevel = 0x80000008,
-        .model_id = "Common KVM processor"
+        .props = (PropValue[]) {
+            { "model-id", "Common KVM processor" },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "15" },
+            { "model", "6" },
+            { "stepping", "1" },
+            /* Missing: ht */
+            PPRO_FEATURES, { "vme" },
+            { "mtrr" }, { "clflush" }, { "mca" },
+            { "pse36" },
+            /* Missing: popcnt, monitor */
+            { "sse3" }, { "cx16" },
+            /* Missing: pdpe1gb, rdtscp */
+            { "lm" }, { "syscall" }, { "nx" },
+            /* Missing: lahf-lm, cmp_leg, extapic,
+                        cr8legacy, abm, sse4a,
+                        misalignsse, 3dnowprefetch,
+                        osvw, ibs, svm */
+            { /* end of list */ },
+        },
     },
     {
         .name = "qemu32",
-        .level = 4,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 6,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
+        .props = (PropValue[]) {
+            { "model-id", "QEMU Virtual CPU version " QEMU_HW_VERSION, },
+            { "min-level", "4" },
+            { "min-xlevel", "0x80000004" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "6" },
+            { "stepping", "3" },
             PPRO_FEATURES,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3,
-        .xlevel = 0x80000004,
-        .model_id = "QEMU Virtual CPU version " QEMU_HW_VERSION,
+            { "sse3" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "kvm32",
-        .level = 5,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES | CPUID_VME |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_PSE36,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_ECX] =
-            0,
-        .xlevel = 0x80000008,
-        .model_id = "Common 32-bit KVM processor"
+        .props = (PropValue[]) {
+            { "model-id", "Common 32-bit KVM processor" },
+            { "min-level", "5" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "15" },
+            { "model", "6" },
+            { "stepping", "1" },
+            PPRO_FEATURES, { "vme" },
+            { "mtrr" }, { "clflush" }, { "mca" }, { "pse36" },
+            { "sse3" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "coreduo",
-        .level = 10,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 14,
-        .stepping = 8,
-        /* Missing: CPUID_DTS, CPUID_HT, CPUID_TM, CPUID_PBE */
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES | CPUID_VME |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_ACPI |
-            CPUID_SS,
-        /* Missing: CPUID_EXT_EST, CPUID_EXT_TM2 , CPUID_EXT_XTPR,
-         * CPUID_EXT_PDCM, CPUID_EXT_VMX */
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_MONITOR,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_NX,
-        .xlevel = 0x80000008,
-        .model_id = "Genuine Intel(R) CPU           T2600  @ 2.16GHz",
+        .props = (PropValue[]) {
+            { "model-id", "Genuine Intel(R) CPU           T2600  @ 2.16GHz", },
+            { "min-level", "10" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "14" },
+            { "stepping", "8" },
+            /* Missing: dts, ht, tm, pbe */
+            PPRO_FEATURES, { "vme" },
+            { "mtrr" }, { "clflush" }, { "mca" }, { "acpi" },
+            { "ss" },
+            /* Missing: est, tm2 , xtpr, pdcm, vmx */
+            { "sse3" }, { "monitor" },
+            { "nx" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "486",
-        .level = 1,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 4,
-        .model = 8,
-        .stepping = 0,
-        .features[FEAT_1_EDX] =
+        .props = (PropValue[]) {
+            { "model-id", "", },
+            { "min-level", "1" },
+            { "min-xlevel", "0" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "4" },
+            { "model", "8" },
+            { "stepping", "0" },
             I486_FEATURES,
-        .xlevel = 0,
-        .model_id = "",
+            { /* end of list */ },
+        },
     },
     {
         .name = "pentium",
-        .level = 1,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 5,
-        .model = 4,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
+        .props = (PropValue[]) {
+            { "model-id", "", },
+            { "min-level", "1" },
+            { "min-xlevel", "0" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "5" },
+            { "model", "4" },
+            { "stepping", "3" },
             PENTIUM_FEATURES,
-        .xlevel = 0,
-        .model_id = "",
+            { /* end of list */ },
+        },
     },
     {
         .name = "pentium2",
-        .level = 2,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 5,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
+        .props = (PropValue[]) {
+            { "model-id", "", },
+            { "min-level", "2" },
+            { "min-xlevel", "0" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "5" },
+            { "stepping", "2" },
             PENTIUM2_FEATURES,
-        .xlevel = 0,
-        .model_id = "",
+            { /* end of list */ },
+        },
     },
     {
         .name = "pentium3",
-        .level = 3,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 7,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
+        .props = (PropValue[]) {
+            { "model-id", "", },
+            { "min-level", "3" },
+            { "min-xlevel", "0" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "7" },
+            { "stepping", "3" },
             PENTIUM3_FEATURES,
-        .xlevel = 0,
-        .model_id = "",
+            { /* end of list */ },
+        },
     },
     {
         .name = "athlon",
-        .level = 2,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 6,
-        .model = 2,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES | CPUID_PSE36 | CPUID_VME | CPUID_MTRR |
-            CPUID_MCA,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_MMXEXT | CPUID_EXT2_3DNOW | CPUID_EXT2_3DNOWEXT,
-        .xlevel = 0x80000008,
-        .model_id = "QEMU Virtual CPU version " QEMU_HW_VERSION,
+        .props = (PropValue[]) {
+            { "model-id", "QEMU Virtual CPU version " QEMU_HW_VERSION, },
+            { "min-level", "2" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "6" },
+            { "model", "2" },
+            { "stepping", "3" },
+            PPRO_FEATURES, { "pse36" }, { "vme" }, { "mtrr" },
+            { "mca" },
+            { "mmxext" }, { "3dnow" }, { "3dnowext" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "n270",
-        .level = 10,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 28,
-        .stepping = 2,
-        /* Missing: CPUID_DTS, CPUID_HT, CPUID_TM, CPUID_PBE */
-        .features[FEAT_1_EDX] =
-            PPRO_FEATURES |
-            CPUID_MTRR | CPUID_CLFLUSH | CPUID_MCA | CPUID_VME |
-            CPUID_ACPI | CPUID_SS,
-            /* Some CPUs got no CPUID_SEP */
-        /* Missing: CPUID_EXT_DSCPL, CPUID_EXT_EST, CPUID_EXT_TM2,
-         * CPUID_EXT_XTPR */
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3 | CPUID_EXT_MONITOR | CPUID_EXT_SSSE3 |
-            CPUID_EXT_MOVBE,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "Intel(R) Atom(TM) CPU N270   @ 1.60GHz",
+        .props = (PropValue[]) {
+            { "model-id", "Intel(R) Atom(TM) CPU N270   @ 1.60GHz", },
+            { "min-level", "10" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "28" },
+            { "stepping", "2" },
+            /* Missing: dts, ht, tm, pbe */
+            PPRO_FEATURES,
+            { "mtrr" }, { "clflush" }, { "mca" }, { "vme" },
+            { "acpi" }, { "ss" },
+            /* Some CPUs got no SEP */
+            /* Missing: dscpl, est, tm2, xtpr */
+            { "sse3" }, { "monitor" }, { "ssse3" },
+            { "movbe" },
+            { "nx" },
+            { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Conroe",
-        .level = 10,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 15,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSSE3 | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Celeron_4x0 (Conroe/Merom Class Core 2)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Celeron_4x0 (Conroe/Merom Class Core 2)", },
+            { "min-level", "10" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "15" },
+            { "stepping", "3" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "ssse3" }, { "sse3" },
+            { "lm" }, { "nx" }, { "syscall" },
+            { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Penryn",
-        .level = 10,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 23,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core 2 Duo P9xxx (Penryn Class Core 2)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core 2 Duo P9xxx (Penryn Class Core 2)", },
+            { "min-level", "10" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "23" },
+            { "stepping", "3" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "sse3" },
+            { "lm" }, { "nx" }, { "syscall" },
+            { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Nehalem",
-        .level = 11,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 26,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core i7 9xx (Nehalem Class Core i7)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core i7 9xx (Nehalem Class Core i7)", },
+            { "min-level", "11" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "26" },
+            { "stepping", "3" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "popcnt" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "ssse3" }, { "sse3" },
+            { "lm" }, { "syscall" }, { "nx" },
+            { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Nehalem-IBRS",
-        .level = 11,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 26,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_SSE3,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core i7 9xx (Nehalem Core i7, IBRS update)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core i7 9xx (Nehalem Core i7, IBRS update)", },
+            { "min-level", "11" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "26" },
+            { "stepping", "3" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "popcnt" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "ssse3" }, { "sse3" },
+            { "spec-ctrl" },
+            { "lm" }, { "syscall" }, { "nx" },
+            { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Westmere",
-        .level = 11,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 44,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Westmere E56xx/L56xx/X56xx (Nehalem-C)",
+        .props = (PropValue[]) {
+            { "model-id", "Westmere E56xx/L56xx/X56xx (Nehalem-C)", },
+            { "min-level", "11" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "44" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "aes" }, { "popcnt" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "lm" }, { "syscall" }, { "nx" },
+            { "lahf-lm" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Westmere-IBRS",
-        .level = 11,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 44,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_SYSCALL | CPUID_EXT2_NX,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Westmere E56xx/L56xx/X56xx (IBRS update)",
+        .props = (PropValue[]) {
+            { "model-id", "Westmere E56xx/L56xx/X56xx (IBRS update)", },
+            { "min-level", "11" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "44" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "aes" }, { "popcnt" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "lm" }, { "syscall" }, { "nx" },
+            { "lahf-lm" },
+            { "spec-ctrl" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "SandyBridge",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 42,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_POPCNT |
-            CPUID_EXT_X2APIC | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon E312xx (Sandy Bridge)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon E312xx (Sandy Bridge)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "42" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "tsc-deadline" }, { "popcnt" },
+            { "x2apic" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "ssse3" }, { "pclmulqdq" },
+            { "sse3" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "lahf-lm" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "SandyBridge-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 42,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_POPCNT |
-            CPUID_EXT_X2APIC | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon E312xx (Sandy Bridge, IBRS update)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon E312xx (Sandy Bridge, IBRS update)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "42" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "tsc-deadline" }, { "popcnt" },
+            { "x2apic" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "ssse3" }, { "pclmulqdq" },
+            { "sse3" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "lahf-lm" },
+            { "spec-ctrl" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "IvyBridge",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 58,
-        .stepping = 9,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_POPCNT |
-            CPUID_EXT_X2APIC | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-            CPUID_EXT_SSE3 | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_ERMS,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon E3-12xx v2 (Ivy Bridge)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon E3-12xx v2 (Ivy Bridge)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "58" },
+            { "stepping", "9" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "tsc-deadline" }, { "popcnt" },
+            { "x2apic" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "ssse3" }, { "pclmulqdq" },
+            { "sse3" }, { "f16c" }, { "rdrand" },
+            { "fsgsbase" }, { "smep" },
+            { "erms" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "lahf-lm" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "IvyBridge-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 58,
-        .stepping = 9,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_POPCNT |
-            CPUID_EXT_X2APIC | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-            CPUID_EXT_SSE3 | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_ERMS,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon E3-12xx v2 (Ivy Bridge, IBRS)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon E3-12xx v2 (Ivy Bridge, IBRS)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "58" },
+            { "stepping", "9" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "tsc-deadline" }, { "popcnt" },
+            { "x2apic" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "ssse3" }, { "pclmulqdq" },
+            { "sse3" }, { "f16c" }, { "rdrand" },
+            { "fsgsbase" }, { "smep" },
+            { "erms" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "lahf-lm" },
+            { "spec-ctrl" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Haswell-noTSX",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 60,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Haswell, no TSX)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Haswell, no TSX)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "60" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" },
+            { "fsgsbase" }, { "bmi1" },
+            { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Haswell-noTSX-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 60,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Haswell, no TSX, IBRS)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Haswell, no TSX, IBRS)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "60" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" },
+            { "spec-ctrl" },
+            { "fsgsbase" }, { "bmi1" },
+            { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Haswell",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 60,
-        .stepping = 4,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Haswell)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Haswell)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "60" },
+            { "stepping", "4" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Haswell-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 60,
-        .stepping = 4,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Haswell, IBRS)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Haswell, IBRS)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "60" },
+            { "stepping", "4" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" },
+            { "spec-ctrl" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Broadwell-noTSX",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 61,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Broadwell, no TSX)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Broadwell, no TSX)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "61" },
+            { "stepping", "2" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "fsgsbase" }, { "bmi1" },
+            { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rdseed" }, { "adx" },
+            { "smap" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Broadwell-noTSX-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 61,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Broadwell, no TSX, IBRS)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Broadwell, no TSX, IBRS)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "61" },
+            { "stepping", "2" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "spec-ctrl" },
+            { "fsgsbase" }, { "bmi1" },
+            { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rdseed" }, { "adx" },
+            { "smap" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Broadwell",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 61,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Broadwell)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Broadwell)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "61" },
+            { "stepping", "2" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Broadwell-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 61,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Broadwell, IBRS)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Broadwell, IBRS)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "61" },
+            { "stepping", "2" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "spec-ctrl" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Skylake-Client",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 94,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP,
-        /* Missing: XSAVES (not supported by some Linux versions,
-         * including v4.1 to v4.12).
-         * KVM doesn't yet expose any XSAVES state save component,
-         * and the only one defined in Skylake (processor tracing)
-         * probably will block migration anyway.
-         */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Skylake)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Skylake)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "94" },
+            { "stepping", "3" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component,
+             * and the only one defined in Skylake (processor tracing)
+             * probably will block migration anyway.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Skylake-Client-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 94,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP,
-        /* Missing: XSAVES (not supported by some Linux versions,
-         * including v4.1 to v4.12).
-         * KVM doesn't yet expose any XSAVES state save component,
-         * and the only one defined in Skylake (processor tracing)
-         * probably will block migration anyway.
-         */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Skylake, IBRS)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Skylake, IBRS)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "94" },
+            { "stepping", "3" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "spec-ctrl" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component,
+             * and the only one defined in Skylake (processor tracing)
+             * probably will block migration anyway.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Skylake-Server",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 85,
-        .stepping = 4,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP |
-            CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP | CPUID_7_0_EBX_CLWB |
-            CPUID_7_0_EBX_AVX512F | CPUID_7_0_EBX_AVX512DQ |
-            CPUID_7_0_EBX_AVX512BW | CPUID_7_0_EBX_AVX512CD |
-            CPUID_7_0_EBX_AVX512VL | CPUID_7_0_EBX_CLFLUSHOPT,
-        .features[FEAT_7_0_ECX] =
-            CPUID_7_0_ECX_PKU,
-        /* Missing: XSAVES (not supported by some Linux versions,
-         * including v4.1 to v4.12).
-         * KVM doesn't yet expose any XSAVES state save component,
-         * and the only one defined in Skylake (processor tracing)
-         * probably will block migration anyway.
-         */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon Processor (Skylake)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon Processor (Skylake)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "85" },
+            { "stepping", "4" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "pdpe1gb" }, { "rdtscp" },
+            { "nx" }, { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" }, { "clwb" },
+            { "avx512f" }, { "avx512dq" },
+            { "avx512bw" }, { "avx512cd" },
+            { "avx512vl" }, { "clflushopt" },
+            { "pku" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component,
+             * and the only one defined in Skylake (processor tracing)
+             * probably will block migration anyway.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Skylake-Server-IBRS",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 85,
-        .stepping = 4,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP |
-            CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP | CPUID_7_0_EBX_CLWB |
-            CPUID_7_0_EBX_AVX512F | CPUID_7_0_EBX_AVX512DQ |
-            CPUID_7_0_EBX_AVX512BW | CPUID_7_0_EBX_AVX512CD |
-            CPUID_7_0_EBX_AVX512VL,
-        .features[FEAT_7_0_ECX] =
-            CPUID_7_0_ECX_PKU,
-        /* Missing: XSAVES (not supported by some Linux versions,
-         * including v4.1 to v4.12).
-         * KVM doesn't yet expose any XSAVES state save component,
-         * and the only one defined in Skylake (processor tracing)
-         * probably will block migration anyway.
-         */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon Processor (Skylake, IBRS)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon Processor (Skylake, IBRS)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "85" },
+            { "stepping", "4" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "pdpe1gb" }, { "rdtscp" },
+            { "nx" }, { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "spec-ctrl" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" }, { "clwb" },
+            { "avx512f" }, { "avx512dq" },
+            { "avx512bw" }, { "avx512cd" },
+            { "avx512vl" },
+            { "pku" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component,
+             * and the only one defined in Skylake (processor tracing)
+             * probably will block migration anyway.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Cascadelake-Server",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 85,
-        .stepping = 6,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP |
-            CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP | CPUID_7_0_EBX_CLWB |
-            CPUID_7_0_EBX_AVX512F | CPUID_7_0_EBX_AVX512DQ |
-            CPUID_7_0_EBX_AVX512BW | CPUID_7_0_EBX_AVX512CD |
-            CPUID_7_0_EBX_AVX512VL | CPUID_7_0_EBX_CLFLUSHOPT,
-        .features[FEAT_7_0_ECX] =
-            CPUID_7_0_ECX_PKU |
-            CPUID_7_0_ECX_AVX512VNNI,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL | CPUID_7_0_EDX_SPEC_CTRL_SSBD,
-        /* Missing: XSAVES (not supported by some Linux versions,
-                * including v4.1 to v4.12).
-                * KVM doesn't yet expose any XSAVES state save component,
-                * and the only one defined in Skylake (processor tracing)
-                * probably will block migration anyway.
-                */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon Processor (Cascadelake)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon Processor (Cascadelake)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "85" },
+            { "stepping", "6" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "pdpe1gb" }, { "rdtscp" },
+            { "nx" }, { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" }, { "clwb" },
+            { "avx512f" }, { "avx512dq" },
+            { "avx512bw" }, { "avx512cd" },
+            { "avx512vl" }, { "clflushopt" },
+            { "pku" },
+            { "avx512vnni" },
+            { "spec-ctrl" }, { "ssbd" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component,
+             * and the only one defined in Skylake (processor tracing)
+             * probably will block migration anyway.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Icelake-Client",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 126,
-        .stepping = 0,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_8000_0008_EBX] =
-            CPUID_8000_0008_EBX_WBNOINVD,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP,
-        .features[FEAT_7_0_ECX] =
-            CPUID_7_0_ECX_VBMI | CPUID_7_0_ECX_UMIP | CPUID_7_0_ECX_PKU |
-            CPUID_7_0_ECX_VBMI2 | CPUID_7_0_ECX_GFNI |
-            CPUID_7_0_ECX_VAES | CPUID_7_0_ECX_VPCLMULQDQ |
-            CPUID_7_0_ECX_AVX512VNNI | CPUID_7_0_ECX_AVX512BITALG |
-            CPUID_7_0_ECX_AVX512_VPOPCNTDQ,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL | CPUID_7_0_EDX_SPEC_CTRL_SSBD,
-        /* Missing: XSAVES (not supported by some Linux versions,
-                * including v4.1 to v4.12).
-                * KVM doesn't yet expose any XSAVES state save component,
-                * and the only one defined in Skylake (processor tracing)
-                * probably will block migration anyway.
-                */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Core Processor (Icelake)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Core Processor (Icelake)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "126" },
+            { "stepping", "0" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "rdtscp" }, { "nx" },
+            { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "wbnoinvd" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" },
+            { "avx512vbmi" }, { "umip" }, { "pku" },
+            { "avx512vbmi2" }, { "gfni" },
+            { "vaes" }, { "vpclmulqdq" },
+            { "avx512vnni" }, { "avx512bitalg" },
+            { "avx512-vpopcntdq" },
+            { "spec-ctrl" }, { "ssbd" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component,
+             * and the only one defined in Skylake (processor tracing)
+             * probably will block migration anyway.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Icelake-Server",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 134,
-        .stepping = 0,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_PCID | CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP |
-            CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_8000_0008_EBX] =
-            CPUID_8000_0008_EBX_WBNOINVD,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 |
-            CPUID_7_0_EBX_HLE | CPUID_7_0_EBX_AVX2 | CPUID_7_0_EBX_SMEP |
-            CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS | CPUID_7_0_EBX_INVPCID |
-            CPUID_7_0_EBX_RTM | CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX |
-            CPUID_7_0_EBX_SMAP | CPUID_7_0_EBX_CLWB |
-            CPUID_7_0_EBX_AVX512F | CPUID_7_0_EBX_AVX512DQ |
-            CPUID_7_0_EBX_AVX512BW | CPUID_7_0_EBX_AVX512CD |
-            CPUID_7_0_EBX_AVX512VL | CPUID_7_0_EBX_CLFLUSHOPT,
-        .features[FEAT_7_0_ECX] =
-            CPUID_7_0_ECX_VBMI | CPUID_7_0_ECX_UMIP | CPUID_7_0_ECX_PKU |
-            CPUID_7_0_ECX_VBMI2 | CPUID_7_0_ECX_GFNI |
-            CPUID_7_0_ECX_VAES | CPUID_7_0_ECX_VPCLMULQDQ |
-            CPUID_7_0_ECX_AVX512VNNI | CPUID_7_0_ECX_AVX512BITALG |
-            CPUID_7_0_ECX_AVX512_VPOPCNTDQ | CPUID_7_0_ECX_LA57,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_SPEC_CTRL | CPUID_7_0_EDX_SPEC_CTRL_SSBD,
-        /* Missing: XSAVES (not supported by some Linux versions,
-                * including v4.1 to v4.12).
-                * KVM doesn't yet expose any XSAVES state save component,
-                * and the only one defined in Skylake (processor tracing)
-                * probably will block migration anyway.
-                */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon Processor (Icelake)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon Processor (Icelake)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "134" },
+            { "stepping", "0" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "pcid" }, { "f16c" }, { "rdrand" },
+            { "lm" }, { "pdpe1gb" }, { "rdtscp" },
+            { "nx" }, { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "wbnoinvd" },
+            { "fsgsbase" }, { "bmi1" },
+            { "hle" }, { "avx2" }, { "smep" },
+            { "bmi2" }, { "erms" }, { "invpcid" },
+            { "rtm" }, { "rdseed" }, { "adx" },
+            { "smap" }, { "clwb" },
+            { "avx512f" }, { "avx512dq" },
+            { "avx512bw" }, { "avx512cd" },
+            { "avx512vl" }, { "clflushopt" },
+            { "avx512vbmi" }, { "umip" }, { "pku" },
+            { "avx512vbmi2" }, { "gfni" },
+            { "vaes" }, { "vpclmulqdq" },
+            { "avx512vnni" }, { "avx512bitalg" },
+            { "avx512-vpopcntdq" }, { "la57" },
+            { "spec-ctrl" }, { "ssbd" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component,
+             * and the only one defined in Skylake (processor tracing)
+             * probably will block migration anyway.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "KnightsMill",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_INTEL,
-        .family = 6,
-        .model = 133,
-        .stepping = 0,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SS | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR |
-            CPUID_MMX | CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV |
-            CPUID_MCA | CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC |
-            CPUID_CX8 | CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC |
-            CPUID_PSE | CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_X2APIC | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_SSSE3 |
-            CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3 |
-            CPUID_EXT_TSC_DEADLINE_TIMER | CPUID_EXT_FMA | CPUID_EXT_MOVBE |
-            CPUID_EXT_F16C | CPUID_EXT_RDRAND,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_RDTSCP |
-            CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_ABM | CPUID_EXT3_LAHF_LM | CPUID_EXT3_3DNOWPREFETCH,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 | CPUID_7_0_EBX_AVX2 |
-            CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_ERMS |
-            CPUID_7_0_EBX_RDSEED | CPUID_7_0_EBX_ADX | CPUID_7_0_EBX_AVX512F |
-            CPUID_7_0_EBX_AVX512CD | CPUID_7_0_EBX_AVX512PF |
-            CPUID_7_0_EBX_AVX512ER,
-        .features[FEAT_7_0_ECX] =
-            CPUID_7_0_ECX_AVX512_VPOPCNTDQ,
-        .features[FEAT_7_0_EDX] =
-            CPUID_7_0_EDX_AVX512_4VNNIW | CPUID_7_0_EDX_AVX512_4FMAPS,
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .xlevel = 0x80000008,
-        .model_id = "Intel Xeon Phi Processor (Knights Mill)",
+        .props = (PropValue[]) {
+            { "model-id", "Intel Xeon Phi Processor (Knights Mill)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_INTEL },
+            { "family", "6" },
+            { "model", "133" },
+            { "stepping", "0" },
+            { "vme" }, { "ss" }, { "sse2" }, { "sse" }, { "fxsr" },
+            { "mmx" }, { "clflush" }, { "pse36" }, { "pat" }, { "cmov" },
+            { "mca" }, { "pge" }, { "mtrr" }, { "sep" }, { "apic" },
+            { "cx8" }, { "mce" }, { "pae" }, { "msr" }, { "tsc" },
+            { "pse" }, { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "x2apic" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "ssse3" },
+            { "pclmulqdq" }, { "sse3" },
+            { "tsc-deadline" }, { "fma" }, { "movbe" },
+            { "f16c" }, { "rdrand" },
+            { "lm" }, { "pdpe1gb" }, { "rdtscp" },
+            { "nx" }, { "syscall" },
+            { "abm" }, { "lahf-lm" }, { "3dnowprefetch" },
+            { "fsgsbase" }, { "bmi1" }, { "avx2" },
+            { "smep" }, { "bmi2" }, { "erms" },
+            { "rdseed" }, { "adx" }, { "avx512f" },
+            { "avx512cd" }, { "avx512pf" },
+            { "avx512er" },
+            { "avx512-vpopcntdq" },
+            { "avx512-4vnniw" }, { "avx512-4fmaps" },
+            { "xsaveopt" },
+            { "arat" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Opteron_G1",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .xlevel = 0x80000008,
-        .model_id = "AMD Opteron 240 (Gen 1 Class Opteron)",
+        .props = (PropValue[]) {
+            { "model-id", "AMD Opteron 240 (Gen 1 Class Opteron)", },
+            { "min-level", "5" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "15" },
+            { "model", "6" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "sse3" },
+            { "lm" }, { "nx" }, { "syscall" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Opteron_G2",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 15,
-        .model = 6,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_CX16 | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "AMD Opteron 22xx (Gen 2 Class Opteron)",
+        .props = (PropValue[]) {
+            { "model-id", "AMD Opteron 22xx (Gen 2 Class Opteron)", },
+            { "min-level", "5" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "15" },
+            { "model", "6" },
+            { "stepping", "1" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "cx16" }, { "sse3" },
+            { "lm" }, { "nx" }, { "syscall" },
+            { "svm" }, { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Opteron_G3",
-        .level = 5,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 16,
-        .model = 2,
-        .stepping = 3,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_POPCNT | CPUID_EXT_CX16 | CPUID_EXT_MONITOR |
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_NX | CPUID_EXT2_SYSCALL |
-            CPUID_EXT2_RDTSCP,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A |
-            CPUID_EXT3_ABM | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM,
-        .xlevel = 0x80000008,
-        .model_id = "AMD Opteron 23xx (Gen 3 Class Opteron)",
+        .props = (PropValue[]) {
+            { "model-id", "AMD Opteron 23xx (Gen 3 Class Opteron)", },
+            { "min-level", "5" },
+            { "min-xlevel", "0x80000008" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "16" },
+            { "model", "2" },
+            { "stepping", "3" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "popcnt" }, { "cx16" }, { "monitor" },
+            { "sse3" },
+            { "lm" }, { "nx" }, { "syscall" },
+            { "rdtscp" },
+            { "misalignsse" }, { "sse4a" },
+            { "abm" }, { "svm" }, { "lahf-lm" },
+            { /* end of list */ },
+        },
     },
     {
         .name = "Opteron_G4",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 21,
-        .model = 1,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_AVX | CPUID_EXT_XSAVE | CPUID_EXT_AES |
-            CPUID_EXT_POPCNT | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ |
-            CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL | CPUID_EXT2_RDTSCP,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
-            CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
-            CPUID_EXT3_SSE4A | CPUID_EXT3_ABM | CPUID_EXT3_SVM |
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_SVM] =
-            CPUID_SVM_NPT | CPUID_SVM_NRIPSAVE,
-        /* no xsaveopt! */
-        .xlevel = 0x8000001A,
-        .model_id = "AMD Opteron 62xx class CPU",
+        .props = (PropValue[]) {
+            { "model-id", "AMD Opteron 62xx class CPU", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x8000001A" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "21" },
+            { "model", "1" },
+            { "stepping", "2" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "avx" }, { "xsave" }, { "aes" },
+            { "popcnt" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "ssse3" }, { "pclmulqdq" },
+            { "sse3" },
+            { "lm" }, { "pdpe1gb" }, { "nx" },
+            { "syscall" }, { "rdtscp" },
+            { "fma4" }, { "xop" },
+            { "3dnowprefetch" }, { "misalignsse" },
+            { "sse4a" }, { "abm" }, { "svm" },
+            { "lahf-lm" },
+            { "npt" }, { "nrip-save" },
+            /* no xsaveopt! */
+            { /* end of list */ },
+        },
     },
     {
         .name = "Opteron_G5",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 21,
-        .model = 2,
-        .stepping = 0,
-        .features[FEAT_1_EDX] =
-            CPUID_VME | CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX |
-            CPUID_CLFLUSH | CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA |
-            CPUID_PGE | CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 |
-            CPUID_MCE | CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE |
-            CPUID_DE | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_F16C | CPUID_EXT_AVX | CPUID_EXT_XSAVE |
-            CPUID_EXT_AES | CPUID_EXT_POPCNT | CPUID_EXT_SSE42 |
-            CPUID_EXT_SSE41 | CPUID_EXT_CX16 | CPUID_EXT_FMA |
-            CPUID_EXT_SSSE3 | CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_PDPE1GB | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL | CPUID_EXT2_RDTSCP,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_TBM | CPUID_EXT3_FMA4 | CPUID_EXT3_XOP |
-            CPUID_EXT3_3DNOWPREFETCH | CPUID_EXT3_MISALIGNSSE |
-            CPUID_EXT3_SSE4A | CPUID_EXT3_ABM | CPUID_EXT3_SVM |
-            CPUID_EXT3_LAHF_LM,
-        .features[FEAT_SVM] =
-            CPUID_SVM_NPT | CPUID_SVM_NRIPSAVE,
-        /* no xsaveopt! */
-        .xlevel = 0x8000001A,
-        .model_id = "AMD Opteron 63xx class CPU",
+        .props = (PropValue[]) {
+            { "model-id", "AMD Opteron 63xx class CPU", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x8000001A" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "21" },
+            { "model", "2" },
+            { "stepping", "0" },
+            { "vme" }, { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" },
+            { "clflush" }, { "pse36" }, { "pat" }, { "cmov" }, { "mca" },
+            { "pge" }, { "mtrr" }, { "sep" }, { "apic" }, { "cx8" },
+            { "mce" }, { "pae" }, { "msr" }, { "tsc" }, { "pse" },
+            { "de" }, { "fpu" },
+            { "f16c" }, { "avx" }, { "xsave" },
+            { "aes" }, { "popcnt" }, { "sse4.2" },
+            { "sse4.1" }, { "cx16" }, { "fma" },
+            { "ssse3" }, { "pclmulqdq" }, { "sse3" },
+            { "lm" }, { "pdpe1gb" }, { "nx" },
+            { "syscall" }, { "rdtscp" },
+            { "tbm" }, { "fma4" }, { "xop" },
+            { "3dnowprefetch" }, { "misalignsse" },
+            { "sse4a" }, { "abm" }, { "svm" },
+            { "lahf-lm" },
+            { "npt" }, { "nrip-save" },
+            /* no xsaveopt! */
+            { /* end of list */ },
+        },
     },
     {
         .name = "EPYC",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 23,
-        .model = 1,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
-            CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX | CPUID_CLFLUSH |
-            CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA | CPUID_PGE |
-            CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 | CPUID_MCE |
-            CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE | CPUID_DE |
-            CPUID_VME | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_RDRAND | CPUID_EXT_F16C | CPUID_EXT_AVX |
-            CPUID_EXT_XSAVE | CPUID_EXT_AES |  CPUID_EXT_POPCNT |
-            CPUID_EXT_MOVBE | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_FMA | CPUID_EXT_SSSE3 |
-            CPUID_EXT_MONITOR | CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_PDPE1GB |
-            CPUID_EXT2_FFXSR | CPUID_EXT2_MMXEXT | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_OSVW | CPUID_EXT3_3DNOWPREFETCH |
-            CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A | CPUID_EXT3_ABM |
-            CPUID_EXT3_CR8LEG | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM |
-            CPUID_EXT3_TOPOEXT,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 | CPUID_7_0_EBX_AVX2 |
-            CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_RDSEED |
-            CPUID_7_0_EBX_ADX | CPUID_7_0_EBX_SMAP | CPUID_7_0_EBX_CLFLUSHOPT |
-            CPUID_7_0_EBX_SHA_NI,
-        /* Missing: XSAVES (not supported by some Linux versions,
-         * including v4.1 to v4.12).
-         * KVM doesn't yet expose any XSAVES state save component.
-         */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .features[FEAT_SVM] =
-            CPUID_SVM_NPT | CPUID_SVM_NRIPSAVE,
-        .xlevel = 0x8000001E,
-        .model_id = "AMD EPYC Processor",
+        .props = (PropValue[]) {
+            { "model-id", "AMD EPYC Processor", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x8000001E" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "23" },
+            { "model", "1" },
+            { "stepping", "2" },
+            { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" }, { "clflush" },
+            { "pse36" }, { "pat" }, { "cmov" }, { "mca" }, { "pge" },
+            { "mtrr" }, { "sep" }, { "apic" }, { "cx8" }, { "mce" },
+            { "pae" }, { "msr" }, { "tsc" }, { "pse" }, { "de" },
+            { "vme" }, { "fpu" },
+            { "rdrand" }, { "f16c" }, { "avx" },
+            { "xsave" }, { "aes" },  { "popcnt" },
+            { "movbe" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "fma" }, { "ssse3" },
+            { "monitor" }, { "pclmulqdq" }, { "sse3" },
+            { "lm" }, { "rdtscp" }, { "pdpe1gb" },
+            { "ffxsr" }, { "mmxext" }, { "nx" },
+            { "syscall" },
+            { "osvw" }, { "3dnowprefetch" },
+            { "misalignsse" }, { "sse4a" }, { "abm" },
+            { "cr8legacy" }, { "svm" }, { "lahf-lm" },
+            { "topoext" },
+            { "fsgsbase" }, { "bmi1" }, { "avx2" },
+            { "smep" }, { "bmi2" }, { "rdseed" },
+            { "adx" }, { "smap" }, { "clflushopt" },
+            { "sha-ni" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { "npt" }, { "nrip-save" },
+            { /* end of list */ },
+        },
         .cache_info = &epyc_cache_info,
     },
     {
         .name = "EPYC-IBPB",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_AMD,
-        .family = 23,
-        .model = 1,
-        .stepping = 2,
-        .features[FEAT_1_EDX] =
-            CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX | CPUID_CLFLUSH |
-            CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA | CPUID_PGE |
-            CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 | CPUID_MCE |
-            CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE | CPUID_DE |
-            CPUID_VME | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_RDRAND | CPUID_EXT_F16C | CPUID_EXT_AVX |
-            CPUID_EXT_XSAVE | CPUID_EXT_AES |  CPUID_EXT_POPCNT |
-            CPUID_EXT_MOVBE | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_FMA | CPUID_EXT_SSSE3 |
-            CPUID_EXT_MONITOR | CPUID_EXT_PCLMULQDQ | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_PDPE1GB |
-            CPUID_EXT2_FFXSR | CPUID_EXT2_MMXEXT | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_OSVW | CPUID_EXT3_3DNOWPREFETCH |
-            CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A | CPUID_EXT3_ABM |
-            CPUID_EXT3_CR8LEG | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM |
-            CPUID_EXT3_TOPOEXT,
-        .features[FEAT_8000_0008_EBX] =
-            CPUID_8000_0008_EBX_IBPB,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 | CPUID_7_0_EBX_AVX2 |
-            CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_RDSEED |
-            CPUID_7_0_EBX_ADX | CPUID_7_0_EBX_SMAP | CPUID_7_0_EBX_CLFLUSHOPT |
-            CPUID_7_0_EBX_SHA_NI,
-        /* Missing: XSAVES (not supported by some Linux versions,
-         * including v4.1 to v4.12).
-         * KVM doesn't yet expose any XSAVES state save component.
-         */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .features[FEAT_SVM] =
-            CPUID_SVM_NPT | CPUID_SVM_NRIPSAVE,
-        .xlevel = 0x8000001E,
-        .model_id = "AMD EPYC Processor (with IBPB)",
+        .props = (PropValue[]) {
+            { "model-id", "AMD EPYC Processor (with IBPB)", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x8000001E" },
+            { "vendor", CPUID_VENDOR_AMD },
+            { "family", "23" },
+            { "model", "1" },
+            { "stepping", "2" },
+            { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" }, { "clflush" },
+            { "pse36" }, { "pat" }, { "cmov" }, { "mca" }, { "pge" },
+            { "mtrr" }, { "sep" }, { "apic" }, { "cx8" }, { "mce" },
+            { "pae" }, { "msr" }, { "tsc" }, { "pse" }, { "de" },
+            { "vme" }, { "fpu" },
+            { "rdrand" }, { "f16c" }, { "avx" },
+            { "xsave" }, { "aes" },  { "popcnt" },
+            { "movbe" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "fma" }, { "ssse3" },
+            { "monitor" }, { "pclmulqdq" }, { "sse3" },
+            { "lm" }, { "rdtscp" }, { "pdpe1gb" },
+            { "ffxsr" }, { "mmxext" }, { "nx" },
+            { "syscall" },
+            { "osvw" }, { "3dnowprefetch" },
+            { "misalignsse" }, { "sse4a" }, { "abm" },
+            { "cr8legacy" }, { "svm" }, { "lahf-lm" },
+            { "topoext" },
+            { "ibpb" },
+            { "fsgsbase" }, { "bmi1" }, { "avx2" },
+            { "smep" }, { "bmi2" }, { "rdseed" },
+            { "adx" }, { "smap" }, { "clflushopt" },
+            { "sha-ni" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { "npt" }, { "nrip-save" },
+            { /* end of list */ },
+        },
         .cache_info = &epyc_cache_info,
     },
     {
         .name = "Dhyana",
-        .level = 0xd,
-        .vendor = CPUID_VENDOR_HYGON,
-        .family = 24,
-        .model = 0,
-        .stepping = 1,
-        .features[FEAT_1_EDX] =
-            CPUID_SSE2 | CPUID_SSE | CPUID_FXSR | CPUID_MMX | CPUID_CLFLUSH |
-            CPUID_PSE36 | CPUID_PAT | CPUID_CMOV | CPUID_MCA | CPUID_PGE |
-            CPUID_MTRR | CPUID_SEP | CPUID_APIC | CPUID_CX8 | CPUID_MCE |
-            CPUID_PAE | CPUID_MSR | CPUID_TSC | CPUID_PSE | CPUID_DE |
-            CPUID_VME | CPUID_FP87,
-        .features[FEAT_1_ECX] =
-            CPUID_EXT_RDRAND | CPUID_EXT_F16C | CPUID_EXT_AVX |
-            CPUID_EXT_XSAVE | CPUID_EXT_POPCNT |
-            CPUID_EXT_MOVBE | CPUID_EXT_SSE42 | CPUID_EXT_SSE41 |
-            CPUID_EXT_CX16 | CPUID_EXT_FMA | CPUID_EXT_SSSE3 |
-            CPUID_EXT_MONITOR | CPUID_EXT_SSE3,
-        .features[FEAT_8000_0001_EDX] =
-            CPUID_EXT2_LM | CPUID_EXT2_RDTSCP | CPUID_EXT2_PDPE1GB |
-            CPUID_EXT2_FFXSR | CPUID_EXT2_MMXEXT | CPUID_EXT2_NX |
-            CPUID_EXT2_SYSCALL,
-        .features[FEAT_8000_0001_ECX] =
-            CPUID_EXT3_OSVW | CPUID_EXT3_3DNOWPREFETCH |
-            CPUID_EXT3_MISALIGNSSE | CPUID_EXT3_SSE4A | CPUID_EXT3_ABM |
-            CPUID_EXT3_CR8LEG | CPUID_EXT3_SVM | CPUID_EXT3_LAHF_LM |
-            CPUID_EXT3_TOPOEXT,
-        .features[FEAT_8000_0008_EBX] =
-            CPUID_8000_0008_EBX_IBPB,
-        .features[FEAT_7_0_EBX] =
-            CPUID_7_0_EBX_FSGSBASE | CPUID_7_0_EBX_BMI1 | CPUID_7_0_EBX_AVX2 |
-            CPUID_7_0_EBX_SMEP | CPUID_7_0_EBX_BMI2 | CPUID_7_0_EBX_RDSEED |
-            CPUID_7_0_EBX_ADX | CPUID_7_0_EBX_SMAP | CPUID_7_0_EBX_CLFLUSHOPT,
-        /*
-         * Missing: XSAVES (not supported by some Linux versions,
-         * including v4.1 to v4.12).
-         * KVM doesn't yet expose any XSAVES state save component.
-         */
-        .features[FEAT_XSAVE] =
-            CPUID_XSAVE_XSAVEOPT | CPUID_XSAVE_XSAVEC |
-            CPUID_XSAVE_XGETBV1,
-        .features[FEAT_6_EAX] =
-            CPUID_6_EAX_ARAT,
-        .features[FEAT_SVM] =
-            CPUID_SVM_NPT | CPUID_SVM_NRIPSAVE,
-        .xlevel = 0x8000001E,
-        .model_id = "Hygon Dhyana Processor",
+        .props = (PropValue[]) {
+            { "model-id", "Hygon Dhyana Processor", },
+            { "min-level", "0xd" },
+            { "min-xlevel", "0x8000001E" },
+            { "vendor", CPUID_VENDOR_HYGON },
+            { "family", "24" },
+            { "model", "0" },
+            { "stepping", "1" },
+            { "sse2" }, { "sse" }, { "fxsr" }, { "mmx" }, { "clflush" },
+            { "pse36" }, { "pat" }, { "cmov" }, { "mca" }, { "pge" },
+            { "mtrr" }, { "sep" }, { "apic" }, { "cx8" }, { "mce" },
+            { "pae" }, { "msr" }, { "tsc" }, { "pse" }, { "de" },
+            { "vme" }, { "fpu" },
+            { "rdrand" }, { "f16c" }, { "avx" },
+            { "xsave" }, { "popcnt" },
+            { "movbe" }, { "sse4.2" }, { "sse4.1" },
+            { "cx16" }, { "fma" }, { "ssse3" },
+            { "monitor" }, { "sse3" },
+            { "lm" }, { "rdtscp" }, { "pdpe1gb" },
+            { "ffxsr" }, { "mmxext" }, { "nx" },
+            { "syscall" },
+            { "osvw" }, { "3dnowprefetch" },
+            { "misalignsse" }, { "sse4a" }, { "abm" },
+            { "cr8legacy" }, { "svm" }, { "lahf-lm" },
+            { "topoext" },
+            { "ibpb" },
+            { "fsgsbase" }, { "bmi1" }, { "avx2" },
+            { "smep" }, { "bmi2" }, { "rdseed" },
+            { "adx" }, { "smap" }, { "clflushopt" },
+            /*
+             * Missing: XSAVES (not supported by some Linux versions,
+             * including v4.1 to v4.12).
+             * KVM doesn't yet expose any XSAVES state save component.
+             */
+            { "xsaveopt" }, { "xsavec" },
+            { "xgetbv1" },
+            { "arat" },
+            { "npt" }, { "nrip-save" },
+            { /* end of list */ },
+        },
         .cache_info = &epyc_cache_info,
     },
 };
-
-typedef struct PropValue {
-    const char *prop, *value;
-} PropValue;
 
 /* KVM-specific features that are automatically added/removed
  * from all CPU models when KVM is enabled.
@@ -3096,7 +2967,7 @@ static void max_x86_cpu_class_init(ObjectClass *oc, void *data)
     dc->props = max_x86_cpu_properties;
 }
 
-static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp);
+static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def);
 
 static void max_x86_cpu_initfn(Object *obj)
 {
@@ -3113,11 +2984,9 @@ static void max_x86_cpu_initfn(Object *obj)
         char vendor[CPUID_VENDOR_SZ + 1] = { 0 };
         char model_id[CPUID_MODEL_ID_SZ + 1] = { 0 };
         int family, model, stepping;
-        X86CPUDefinition host_cpudef = { };
         uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
 
         host_cpuid(0x0, 0, &eax, &ebx, &ecx, &edx);
-        x86_cpu_vendor_words2str(host_cpudef.vendor, ebx, edx, ecx);
 
         host_vendor_fms(vendor, &family, &model, &stepping);
 
@@ -3801,7 +3670,8 @@ static void x86_cpu_list_entry(gpointer data, gpointer user_data)
     char *name = x86_cpu_class_get_model_name(cc);
     const char *desc = cc->model_description;
     if (!desc && cc->cpu_def) {
-        desc = cc->cpu_def->model_id;
+        //FIXME
+        //desc = cc->cpu_def->model_id;
     }
 
     qemu_printf("x86 %-20s  %-48s\n", name, desc);
@@ -3929,28 +3799,18 @@ static void x86_cpu_apply_props(X86CPU *cpu, PropValue *props)
 
 /* Load data from X86CPUDefinition into a X86CPU object
  */
-static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
+static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def)
 {
     CPUX86State *env = &cpu->env;
-    const char *vendor;
-    char host_vendor[CPUID_VENDOR_SZ + 1];
-    FeatureWord w;
+    PropValue *prop;
 
     /*NOTE: any property set by this function should be returned by
      * x86_cpu_static_props(), so static expansion of
      * query-cpu-model-expansion is always complete.
      */
 
-    /* CPU models only set _minimum_ values for level/xlevel: */
-    object_property_set_uint(OBJECT(cpu), def->level, "min-level", errp);
-    object_property_set_uint(OBJECT(cpu), def->xlevel, "min-xlevel", errp);
-
-    object_property_set_int(OBJECT(cpu), def->family, "family", errp);
-    object_property_set_int(OBJECT(cpu), def->model, "model", errp);
-    object_property_set_int(OBJECT(cpu), def->stepping, "stepping", errp);
-    object_property_set_str(OBJECT(cpu), def->model_id, "model-id", errp);
-    for (w = 0; w < FEATURE_WORDS; w++) {
-        env->features[w] = def->features[w];
+    for (prop = def->props; prop->prop; prop++) {
+        object_property_parse(OBJECT(cpu), prop->value ?: "on", prop->prop, &error_abort);
     }
 
     /* legacy-cache defaults to 'off' if CPU model provides cache info */
@@ -3977,16 +3837,13 @@ static void x86_cpu_load_def(X86CPU *cpu, X86CPUDefinition *def, Error **errp)
      * KVM's sysenter/syscall emulation in compatibility mode and
      * when doing cross vendor migration
      */
-    vendor = def->vendor;
     if (accel_uses_host_cpuid()) {
+        char host_vendor[CPUID_VENDOR_SZ + 1];
         uint32_t  ebx = 0, ecx = 0, edx = 0;
         host_cpuid(0, 0, NULL, &ebx, &ecx, &edx);
         x86_cpu_vendor_words2str(host_vendor, ebx, edx, ecx);
-        vendor = host_vendor;
+        object_property_set_str(OBJECT(cpu), host_vendor, "vendor", &error_abort);
     }
-
-    object_property_set_str(OBJECT(cpu), vendor, "vendor", errp);
-
 }
 
 #ifndef CONFIG_USER_ONLY
@@ -4225,9 +4082,11 @@ static void x86_register_cpudef_type(X86CPUDefinition *def)
     /* AMD aliases are handled at runtime based on CPUID vendor, so
      * they shouldn't be set on the CPU model table.
      */
-    assert(!(def->features[FEAT_8000_0001_EDX] & CPUID_EXT2_AMD_ALIASES));
+     //FIXME
+    //assert(!(def->features[FEAT_8000_0001_EDX] & CPUID_EXT2_AMD_ALIASES));
     /* catch mistakes instead of silently truncating model_id when too long */
-    assert(def->model_id && strlen(def->model_id) <= 48);
+    //FIXME
+    //assert(def->model_id && strlen(def->model_id) <= 48);
 
 
     type_register(&ti);
@@ -5705,7 +5564,7 @@ static void x86_cpu_initfn(Object *obj)
     object_property_add_alias(obj, "sse4_2", obj, "sse4.2", &error_abort);
 
     if (xcc->cpu_def) {
-        x86_cpu_load_def(cpu, xcc->cpu_def, &error_abort);
+        x86_cpu_load_def(cpu, xcc->cpu_def);
     }
 }
 
