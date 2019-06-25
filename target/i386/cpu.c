@@ -1468,7 +1468,12 @@ typedef struct X86CPUDefinition {
 struct X86CPUModel {
     /* Base CPU definition */
     X86CPUDefinition *cpudef;
-    /* CPU model version from the list at cpudef.versions. */
+    /*
+     * CPU model version from the list at cpudef.versions.
+     *
+     * If 0, this is a machine-type-dependent alias configured by
+     * x86_cpu_set_default_version().
+     */
     int version;
 
     /*
@@ -2759,6 +2764,35 @@ static PropValue tcg_default_props[] = {
 };
 
 
+int default_cpu_version = CPU_VERSION_LATEST;
+
+void x86_cpu_set_default_version(int version)
+{
+    default_cpu_version = version;
+}
+
+static int x86_cpu_model_last_version(const X86CPUModel *model)
+{
+    int v = 0;
+    const X86CPUVersionDefinition *vdef =
+        x86_cpu_def_get_versions(model->cpudef);
+    while (vdef->version) {
+        v = vdef->version;
+        vdef++;
+    }
+    return v;
+}
+
+/* Return the actual version being used for a specific CPU model */
+static int x86_cpu_model_resolve_version(const X86CPUModel *model)
+{
+    int v = model->version ?: default_cpu_version;
+    if (v == CPU_VERSION_LATEST) {
+        return x86_cpu_model_last_version(model);
+    }
+    return v;
+}
+
 void x86_cpu_change_kvm_default(const char *prop, const char *value)
 {
     PropValue *pv;
@@ -3499,8 +3533,9 @@ static void x86_cpu_list_entry(gpointer data, gpointer user_data)
     char *desc = g_strdup(cc->model_description);
     if (!desc && cc->model) {
         if (cc->model->is_alias) {
+            int version = x86_cpu_model_resolve_version(cc->model);
             char *alias_of = x86_cpu_versioned_model_name(cc->model->cpudef,
-                                                          cc->model->version);
+                                                          version);
             desc = g_strdup_printf("(alias of %s)", alias_of);
             g_free(alias_of);
         } else {
@@ -3559,6 +3594,13 @@ static void x86_cpu_definition_entry(gpointer data, gpointer user_data)
     info->migration_safe = cc->migration_safe;
     info->has_migration_safe = true;
     info->q_static = cc->static_model;
+
+    if (cc->model && cc->model->is_alias && default_cpu_version) {
+        int version = x86_cpu_model_resolve_version(cc->model);
+        info->has_alias_of = true;
+        info->alias_of = x86_cpu_versioned_model_name(cc->model->cpudef,
+                                                      version);
+    }
 
     entry = g_malloc0(sizeof(*entry));
     entry->value = info;
@@ -3633,12 +3675,16 @@ static void x86_cpu_apply_props(X86CPU *cpu, PropValue *props)
 }
 
 /* Apply properties for the CPU model version specified in model */
-static void x86_cpu_apply_version_props(X86CPU *cpu, X86CPUDefinition *def,
-                                        int version)
+static void x86_cpu_apply_version_props(X86CPU *cpu, X86CPUModel *model)
 {
     const X86CPUVersionDefinition *vdef;
+    int version = x86_cpu_model_resolve_version(model);
 
-    for (vdef = x86_cpu_def_get_versions(def); vdef->version; vdef++) {
+    if (!version) {
+        return;
+    }
+
+    for (vdef = x86_cpu_def_get_versions(model->cpudef); vdef->version; vdef++) {
         PropValue *p;
 
         for (p = vdef->props; p && p->prop; p++) {
@@ -3719,7 +3765,7 @@ static void x86_cpu_load_model(X86CPU *cpu, X86CPUModel *model, Error **errp)
 
     object_property_set_str(OBJECT(cpu), vendor, "vendor", errp);
 
-    x86_cpu_apply_version_props(cpu, def, model->version);
+    x86_cpu_apply_version_props(cpu, model);
 }
 
 #ifndef CONFIG_USER_ONLY
@@ -3972,10 +4018,9 @@ static void x86_register_cpudef_types(X86CPUDefinition *def)
     /* catch mistakes instead of silently truncating model_id when too long */
     assert(def->model_id && strlen(def->model_id) <= 48);
 
-    /* Unversioned model will be translated to v1: */
+    /* Unversioned model: */
     m = g_new0(X86CPUModel, 1);
     m->cpudef = def;
-    m->version = 1;
     m->is_alias = true;
     x86_register_cpu_model_type(def->name, m);
 

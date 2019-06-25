@@ -1929,6 +1929,19 @@ void apic_handle_tpr_access_report(DeviceState *d, target_ulong ip,
  */
 void x86_cpu_change_kvm_default(const char *prop, const char *value);
 
+#define CPU_VERSION_LATEST (-1)
+
+/*
+ * Set default CPU model version for all CPU models
+ *
+ * If set to 0, the old unversioned CPU models will be kept, to
+ * keep compatibility with old QEMU versions.
+ *
+ * If set to CPU_VERSION_LATEST, the latest version of each CPU
+ * model will be used by default.
+ */
+void x86_cpu_set_default_version(int version);
+
 /* Return name of 32-bit register, from a R_* constant */
 const char *get_register_name_32(unsigned int reg);
 
