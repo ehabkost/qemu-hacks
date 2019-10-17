@@ -190,6 +190,11 @@ class NetBSDVM(basevm.BaseVM):
         self.print_step("Configuration finished, rebooting")
         self.console_wait_send(prompt, "reboot\n")
         self.console_wait("login:")
+
+        # QEMU VCPU threads may hang if we stop reading from the console socket.
+        # Work around this issue by closing the console socket as soon as we
+        # stop waiting for new console messages
+        self.console_close()
         self.wait_ssh()
 
         self.print_step("Installing packages")
@@ -198,7 +203,6 @@ class NetBSDVM(basevm.BaseVM):
 
         # shutdown
         self.ssh_root(self.poweroff)
-        self.console_wait("entering state S5")
         self.wait()
 
         if os.path.exists(img):

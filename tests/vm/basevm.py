@@ -269,6 +269,9 @@ class BaseVM(object):
             self.console_wait(prompt)
             self.console_send("echo 'AcceptEnv %s' >> /etc/ssh/sshd_config\n" % var)
 
+    def console_close(self):
+        self._guest.console_socket.close()
+
     def print_step(self, text):
         sys.stderr.write("### %s ...\n" % text)
 
