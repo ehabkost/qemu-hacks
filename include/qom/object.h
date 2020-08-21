@@ -324,8 +324,7 @@ struct Object
  * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
  * @PARENT_MODULE_OBJ_NAME: the parent object name in uppercase with underscore
  *                          separators
- * @ABSTRACT: boolean flag to indicate whether the object can be instantiated
- * @...: list of initializers for "InterfaceInfo" to declare implemented interfaces
+ * @...: list of initializers for TypeInfo fields
  *
  * This macro is typically used in a source file, and will:
  *
@@ -342,7 +341,7 @@ struct Object
  */
 #define OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, module_obj_name, \
                                     MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
-                                    ABSTRACT, ...) \
+                                    ...) \
     static void \
     module_obj_name##_finalize(Object *obj); \
     static void \
@@ -359,8 +358,7 @@ struct Object
         .instance_finalize = module_obj_name##_finalize, \
         .class_size = sizeof(ModuleObjName##Class), \
         .class_init = module_obj_name##_class_init, \
-        .abstract = ABSTRACT, \
-        .interfaces = (InterfaceInfo[]) { __VA_ARGS__ } , \
+        __VA_ARGS__ \
     }; \
     \
     TYPE_INFO(module_obj_name##_info)
@@ -372,55 +370,17 @@ struct Object
  * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
  * @PARENT_MODULE_OBJ_NAME: the parent object name in uppercase with underscore
  *                          separators
+ * @...: list of initializers for TypeInfo fields
  *
  * This is a specialization of OBJECT_DEFINE_TYPE_EXTENDED, which is suitable
  * for the common case of a non-abstract type, without any interfaces.
  */
 #define OBJECT_DEFINE_TYPE(ModuleObjName, module_obj_name, MODULE_OBJ_NAME, \
-                           PARENT_MODULE_OBJ_NAME) \
+                           PARENT_MODULE_OBJ_NAME, ...) \
     OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, module_obj_name, \
-                                MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
-                                false, { NULL })
+                                MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME,
+                                __VA_ARGS__)
 
-/**
- * OBJECT_DEFINE_TYPE_WITH_INTERFACES:
- * @ModuleObjName: the object name with initial caps
- * @module_obj_name: the object name in lowercase with underscore separators
- * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
- * @PARENT_MODULE_OBJ_NAME: the parent object name in uppercase with underscore
- *                          separators
- * @...: list of initializers for "InterfaceInfo" to declare implemented interfaces
- *
- * This is a specialization of OBJECT_DEFINE_TYPE_EXTENDED, which is suitable
- * for the common case of a non-abstract type, with one or more implemented
- * interfaces.
- *
- * Note when passing the list of interfaces, be sure to include the final
- * NULL entry, e.g.  { TYPE_USER_CREATABLE }, { NULL }
- */
-#define OBJECT_DEFINE_TYPE_WITH_INTERFACES(ModuleObjName, module_obj_name, \
-                                           MODULE_OBJ_NAME, \
-                                           PARENT_MODULE_OBJ_NAME, ...) \
-    OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, module_obj_name, \
-                                MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
-                                false, __VA_ARGS__)
-
-/**
- * OBJECT_DEFINE_ABSTRACT_TYPE:
- * @ModuleObjName: the object name with initial caps
- * @module_obj_name: the object name in lowercase with underscore separators
- * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
- * @PARENT_MODULE_OBJ_NAME: the parent object name in uppercase with underscore
- *                          separators
- *
- * This is a specialization of OBJECT_DEFINE_TYPE_EXTENDED, which is suitable
- * for defining an abstract type, without any interfaces.
- */
-#define OBJECT_DEFINE_ABSTRACT_TYPE(ModuleObjName, module_obj_name, \
-                                    MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME) \
-    OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, module_obj_name, \
-                                MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
-                                true, { NULL })
 
 /**
  * TypeInfo:
