@@ -33,7 +33,4 @@ void hvf_vcpu_destroy(CPUState *);
 
 #define TYPE_HVF_ACCEL ACCEL_CLASS_NAME("hvf")
 
-#define HVF_STATE(obj) \
-    OBJECT_CHECK(HVFState, (obj), TYPE_HVF_ACCEL)
-
 #endif
