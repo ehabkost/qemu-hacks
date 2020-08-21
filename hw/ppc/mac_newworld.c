@@ -635,7 +635,7 @@ static void core99_instance_init(Object *obj)
 }
 
 static const TypeInfo core99_machine_info = {
-    .name          = MACHINE_TYPE_NAME("mac99"),
+    .name          = TYPE_CORE99_MACHINE,
     .parent        = TYPE_MACHINE,
     .class_init    = core99_machine_class_init,
     .instance_init = core99_instance_init,
