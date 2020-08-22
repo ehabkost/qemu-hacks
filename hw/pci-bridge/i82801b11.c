@@ -53,12 +53,6 @@
 #define I82801ba_SSVID_SVID     0
 #define I82801ba_SSVID_SSID     0
 
-typedef struct I82801b11Bridge {
-    /*< private >*/
-    PCIBridge parent_obj;
-    /*< public >*/
-} I82801b11Bridge;
-
 static void i82801b11_bridge_realize(PCIDevice *d, Error **errp)
 {
     int rc;
@@ -106,7 +100,6 @@ static void i82801b11_bridge_class_init(ObjectClass *klass, void *data)
 static const TypeInfo i82801b11_bridge_info = {
     .name          = "i82801b11-bridge",
     .parent        = TYPE_PCI_BRIDGE,
-    .instance_size = sizeof(I82801b11Bridge),
     .class_init    = i82801b11_bridge_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
