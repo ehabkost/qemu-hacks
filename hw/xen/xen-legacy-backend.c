@@ -795,7 +795,7 @@ static const TypeInfo xendev_type_info = {
     .name          = TYPE_XENBACKEND,
     .parent        = TYPE_DEVICE,
     .class_init    = xendev_class_init,
-    .instance_size = sizeof(struct XenLegacyDevice),
+    .instance_size = sizeof(XenLegacyDevice),
 };
 TYPE_INFO(xendev_type_info)
 
