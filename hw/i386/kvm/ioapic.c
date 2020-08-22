@@ -49,6 +49,7 @@ void kvm_pc_setup_irq_routing(bool pci_enabled)
 }
 
 typedef struct KVMIOAPICState KVMIOAPICState;
+DECLARE_INSTANCE_CHECKER(KVMIOAPICState, KVM_IOAPIC, TYPE_KVM_IOAPIC)
 
 struct KVMIOAPICState {
     IOAPICCommonState ioapic;
