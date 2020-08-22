@@ -36,6 +36,7 @@ typedef struct PCINE2000State {
 } PCINE2000State;
 
 #define TYPE_NE2K_PCI "ne2k_pci"
+DECLARE_INSTANCE_CHECKER(PCINE2000State, NE2K_PCI, TYPE_NE2K_PCI)
 
 static const VMStateDescription vmstate_pci_ne2000 = {
     .name = "ne2000",
