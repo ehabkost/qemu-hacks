@@ -520,7 +520,6 @@ static void aspeed_2400_scu_class_init(ObjectClass *klass, void *data)
 static const TypeInfo aspeed_2400_scu_info = {
     .name = TYPE_ASPEED_2400_SCU,
     .parent = TYPE_ASPEED_SCU,
-    .instance_size = sizeof(AspeedSCUState),
     .class_init = aspeed_2400_scu_class_init,
 };
 TYPE_INFO(aspeed_2400_scu_info)
@@ -541,7 +540,6 @@ static void aspeed_2500_scu_class_init(ObjectClass *klass, void *data)
 static const TypeInfo aspeed_2500_scu_info = {
     .name = TYPE_ASPEED_2500_SCU,
     .parent = TYPE_ASPEED_SCU,
-    .instance_size = sizeof(AspeedSCUState),
     .class_init = aspeed_2500_scu_class_init,
 };
 TYPE_INFO(aspeed_2500_scu_info)
@@ -697,7 +695,6 @@ static void aspeed_2600_scu_class_init(ObjectClass *klass, void *data)
 static const TypeInfo aspeed_2600_scu_info = {
     .name = TYPE_ASPEED_2600_SCU,
     .parent = TYPE_ASPEED_SCU,
-    .instance_size = sizeof(AspeedSCUState),
     .class_init = aspeed_2600_scu_class_init,
 };
 TYPE_INFO(aspeed_2600_scu_info)

@@ -443,7 +443,6 @@ static const TypeInfo aspeed_soc_ast2400_type_info = {
     .name           = "ast2400-a1",
     .parent         = TYPE_ASPEED_SOC,
     .instance_init  = aspeed_soc_init,
-    .instance_size  = sizeof(AspeedSoCState),
     .class_init     = aspeed_soc_ast2400_class_init,
 };
 TYPE_INFO(aspeed_soc_ast2400_type_info)
@@ -469,7 +468,6 @@ static const TypeInfo aspeed_soc_ast2500_type_info = {
     .name           = "ast2500-a1",
     .parent         = TYPE_ASPEED_SOC,
     .instance_init  = aspeed_soc_init,
-    .instance_size  = sizeof(AspeedSoCState),
     .class_init     = aspeed_soc_ast2500_class_init,
 };
 TYPE_INFO(aspeed_soc_ast2500_type_info)
