@@ -45,11 +45,11 @@
 #include "can_sja1000.h"
 #include "qom/object.h"
 
-#define TYPE_CAN_PCI_DEV "kvaser_pci"
+#define TYPE_KVASER_PCI "kvaser_pci"
 
 typedef struct KvaserPCIState KvaserPCIState;
 DECLARE_INSTANCE_CHECKER(KvaserPCIState, KVASER_PCI_DEV,
-                         TYPE_CAN_PCI_DEV)
+                         TYPE_KVASER_PCI)
 
 #ifndef KVASER_PCI_VENDOR_ID1
 #define KVASER_PCI_VENDOR_ID1     0x10e8    /* the PCI device and vendor IDs */
@@ -305,7 +305,7 @@ static void kvaser_pci_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo kvaser_pci_info = {
-    .name          = TYPE_CAN_PCI_DEV,
+    .name          = TYPE_KVASER_PCI,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(KvaserPCIState),
     .class_init    = kvaser_pci_class_init,

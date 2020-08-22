@@ -41,11 +41,11 @@
 #include "can_sja1000.h"
 #include "qom/object.h"
 
-#define TYPE_CAN_PCI_DEV "mioe3680_pci"
+#define TYPE_MIOE3680_PCI "mioe3680_pci"
 
 typedef struct Mioe3680PCIState Mioe3680PCIState;
 DECLARE_INSTANCE_CHECKER(Mioe3680PCIState, MIOe3680_PCI_DEV,
-                         TYPE_CAN_PCI_DEV)
+                         TYPE_MIOE3680_PCI)
 
 /* the PCI device and vendor IDs */
 #ifndef MIOe3680_PCI_VENDOR_ID1
@@ -248,7 +248,7 @@ static void mioe3680_pci_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo mioe3680_pci_info = {
-    .name          = TYPE_CAN_PCI_DEV,
+    .name          = TYPE_MIOE3680_PCI,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(Mioe3680PCIState),
     .class_init    = mioe3680_pci_class_init,
