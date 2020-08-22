@@ -300,15 +300,18 @@ struct irte_ga {
 OBJECT_DECLARE_SIMPLE_TYPE(AMDVIState, AMD_IOMMU_DEVICE)
 
 #define TYPE_AMD_IOMMU_PCI "AMDVI-PCI"
+typedef struct AMDVIPCIState AMDVIPCIState;
+DECLARE_INSTANCE_CHECKER(AMDVIPCIState, AMD_IOMMU_PCI,
+                         TYPE_AMD_IOMMU_PCI)
 
 #define TYPE_AMD_IOMMU_MEMORY_REGION "amd-iommu-iommu-memory-region"
 
 typedef struct AMDVIAddressSpace AMDVIAddressSpace;
 
 /* functions to steal PCI config space */
-typedef struct AMDVIPCIState {
+struct AMDVIPCIState {
     PCIDevice dev;               /* The PCI device itself        */
-} AMDVIPCIState;
+};
 
 struct AMDVIState {
     X86IOMMUState iommu;        /* IOMMU bus device             */
