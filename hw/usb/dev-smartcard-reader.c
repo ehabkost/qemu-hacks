@@ -1182,6 +1182,7 @@ static const TypeInfo ccid_bus_info = {
     .parent = TYPE_BUS,
     .instance_size = sizeof(CCIDBus),
 };
+TYPE_INFO(ccid_bus_info)
 
 void ccid_card_send_apdu_to_guest(CCIDCardState *card,
                                   uint8_t *apdu, uint32_t len)
@@ -1468,6 +1469,7 @@ static const TypeInfo ccid_info = {
         { }
     }
 };
+TYPE_INFO(ccid_info)
 
 static void ccid_card_class_init(ObjectClass *klass, void *data)
 {
@@ -1486,12 +1488,10 @@ static const TypeInfo ccid_card_type_info = {
     .class_size = sizeof(CCIDCardClass),
     .class_init = ccid_card_class_init,
 };
+TYPE_INFO(ccid_card_type_info)
 
 static void ccid_register_types(void)
 {
-    type_register_static(&ccid_bus_info);
-    type_register_static(&ccid_card_type_info);
-    type_register_static(&ccid_info);
     usb_legacy_register(TYPE_USB_CCID_DEV, "ccid", NULL);
 }
 

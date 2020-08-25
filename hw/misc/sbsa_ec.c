@@ -89,10 +89,6 @@ static const TypeInfo sbsa_ec_info = {
     .instance_init = sbsa_ec_init,
     .class_init    = sbsa_ec_class_init,
 };
+TYPE_INFO(sbsa_ec_info)
 
-static void sbsa_ec_register_type(void)
-{
-    type_register_static(&sbsa_ec_info);
-}
 
-type_init(sbsa_ec_register_type);

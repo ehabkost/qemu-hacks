@@ -1398,8 +1398,6 @@ static void register_types(void)
         g_free(name);
     }
 
-#ifdef CONFIG_KVM
-#endif
 }
 
 type_init(register_types)

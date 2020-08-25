@@ -7453,8 +7453,6 @@ static void x86_cpu_register_types(void)
     for (i = 0; i < ARRAY_SIZE(builtin_x86_defs); i++) {
         x86_register_cpudef_types(&builtin_x86_defs[i]);
     }
-#if defined(CONFIG_KVM) || defined(CONFIG_HVF)
-#endif
 }
 
 type_init(x86_cpu_register_types)

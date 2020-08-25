@@ -164,9 +164,5 @@ static const TypeInfo gen_rp_dev_info = {
     .instance_size = sizeof(GenPCIERootPort),
     .class_init    = gen_rp_dev_class_init,
 };
+TYPE_INFO(gen_rp_dev_info)
 
-static void gen_rp_register_types(void)
-{
-   type_register_static(&gen_rp_dev_info);
-}
-type_init(gen_rp_register_types)
