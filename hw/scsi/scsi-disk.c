@@ -3155,10 +3155,4 @@ static const TypeInfo scsi_disk_info = {
 };
 TYPE_INFO(scsi_disk_info)
 
-static void scsi_disk_register_types(void)
-{
-#ifdef __linux__
-#endif
-}
 
-type_init(scsi_disk_register_types)

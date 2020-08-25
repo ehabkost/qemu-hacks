@@ -618,10 +618,6 @@ static const TypeInfo mcf5206_mbar_info = {
     .instance_size = sizeof(m5206_mbar_state),
     .class_init    = mcf5206_mbar_class_init,
 };
+TYPE_INFO(mcf5206_mbar_info)
 
-static void mcf5206_mbar_register_types(void)
-{
-    type_register_static(&mcf5206_mbar_info);
-}
 
-type_init(mcf5206_mbar_register_types)

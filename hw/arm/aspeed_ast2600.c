@@ -499,10 +499,6 @@ static const TypeInfo aspeed_soc_ast2600_type_info = {
     .class_init     = aspeed_soc_ast2600_class_init,
     .class_size     = sizeof(AspeedSoCClass),
 };
+TYPE_INFO(aspeed_soc_ast2600_type_info)
 
-static void aspeed_soc_register_types(void)
-{
-    type_register_static(&aspeed_soc_ast2600_type_info);
-};
 
-type_init(aspeed_soc_register_types)

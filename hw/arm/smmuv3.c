@@ -1527,18 +1527,14 @@ static const TypeInfo smmuv3_type_info = {
     .class_size    = sizeof(SMMUv3Class),
     .class_init    = smmuv3_class_init,
 };
+TYPE_INFO(smmuv3_type_info)
 
 static const TypeInfo smmuv3_iommu_memory_region_info = {
     .parent = TYPE_IOMMU_MEMORY_REGION,
     .name = TYPE_SMMUV3_IOMMU_MEMORY_REGION,
     .class_init = smmuv3_iommu_memory_region_class_init,
 };
+TYPE_INFO(smmuv3_iommu_memory_region_info)
 
-static void smmuv3_register_types(void)
-{
-    type_register_static(&smmuv3_type_info);
-    type_register_static(&smmuv3_iommu_memory_region_info);
-}
 
-type_init(smmuv3_register_types)
 
