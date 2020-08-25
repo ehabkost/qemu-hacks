@@ -420,6 +420,7 @@ static const TypeInfo aspeed_soc_type_info = {
     .class_init     = aspeed_soc_class_init,
     .abstract       = true,
 };
+TYPE_INFO(aspeed_soc_type_info)
 
 static void aspeed_soc_ast2400_class_init(ObjectClass *oc, void *data)
 {
@@ -445,6 +446,7 @@ static const TypeInfo aspeed_soc_ast2400_type_info = {
     .instance_size  = sizeof(AspeedSoCState),
     .class_init     = aspeed_soc_ast2400_class_init,
 };
+TYPE_INFO(aspeed_soc_ast2400_type_info)
 
 static void aspeed_soc_ast2500_class_init(ObjectClass *oc, void *data)
 {
@@ -470,11 +472,5 @@ static const TypeInfo aspeed_soc_ast2500_type_info = {
     .instance_size  = sizeof(AspeedSoCState),
     .class_init     = aspeed_soc_ast2500_class_init,
 };
-static void aspeed_soc_register_types(void)
-{
-    type_register_static(&aspeed_soc_type_info);
-    type_register_static(&aspeed_soc_ast2400_type_info);
-    type_register_static(&aspeed_soc_ast2500_type_info);
-};
+TYPE_INFO(aspeed_soc_ast2500_type_info)
 
-type_init(aspeed_soc_register_types)

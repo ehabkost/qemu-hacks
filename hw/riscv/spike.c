@@ -325,10 +325,6 @@ static const TypeInfo spike_machine_typeinfo = {
     .instance_init = spike_machine_instance_init,
     .instance_size = sizeof(SpikeState),
 };
+TYPE_INFO(spike_machine_typeinfo)
 
-static void spike_machine_init_register_types(void)
-{
-    type_register_static(&spike_machine_typeinfo);
-}
 
-type_init(spike_machine_init_register_types)

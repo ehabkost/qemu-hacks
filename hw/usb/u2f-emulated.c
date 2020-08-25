@@ -397,10 +397,6 @@ static const TypeInfo u2f_key_emulated_info = {
     .instance_size = sizeof(U2FEmulatedState),
     .class_init = u2f_emulated_class_init
 };
+TYPE_INFO(u2f_key_emulated_info)
 
-static void u2f_key_emulated_register_types(void)
-{
-    type_register_static(&u2f_key_emulated_info);
-}
 
-type_init(u2f_key_emulated_register_types)

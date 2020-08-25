@@ -116,10 +116,4 @@ TYPE_INFO(vhost_ccw_scsi)
 
 #endif
 
-static void virtio_ccw_scsi_register(void)
-{
-#ifdef CONFIG_VHOST_SCSI
-#endif
-}
 
-type_init(virtio_ccw_scsi_register)
