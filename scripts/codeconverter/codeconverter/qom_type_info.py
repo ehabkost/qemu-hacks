@@ -78,7 +78,7 @@ class TypeDefinition(FileMatch):
         return self.group('uppercase')
 
     @property
-    def parent_uppercase(self) -> str:
+    def parent_uppercase(self) -> Optional[str]:
         return self.group('parent_uppercase')
 
     @property
@@ -86,11 +86,11 @@ class TypeDefinition(FileMatch):
         if getattr(self, '_inititalizers', None):
             self._initializers: TypeInfoInitializers
             return self._initializers
+        d = None
         fields = self.group('fields')
-        if fields is None:
-            return None
-        d = dict((fm.group('field'), fm)
-                  for fm in self.group_finditer(FieldInitializer, 'fields'))
+        if fields:
+            d = dict((fm.group('field'), fm)
+                      for fm in self.group_finditer(FieldInitializer, 'fields'))
         self._initializers = d # type: ignore
         return self._initializers
 
@@ -132,6 +132,15 @@ class TypeInfoVar(TypeDefinition):
     @property
     def uppercase(self) -> Optional[str]:
         typename = self.typename
+        if not typename:
+            return None
+        if not typename.startswith('TYPE_'):
+            return None
+        return typename[len('TYPE_'):]
+
+    @property
+    def parent_uppercase(self) -> Optional[str]:
+        typename = self.get_raw_initializer_value('parent')
         if not typename:
             return None
         if not typename.startswith('TYPE_'):
@@ -343,6 +352,13 @@ class UseDeclareTypeExtended(TypeInfoVar):
 
         ok = True
 
+        if is_interface_type(self):
+            decl = self.allfiles.find_match(ObjectDeclareInterfaceType, uppercase, 'uppercase')
+            if decl:
+                instancetype = decl.instancetype
+            else:
+                self.warn("can't find OBJECT_DECLARE_INTERFACE_TYPE for interface type (%s)", uppercase)
+
         #checkers: List[TypeCheckerDeclaration] = list(find_type_checkers(self.allfiles, uppercase))
         #for c in checkers:
         #    c.info("instance type checker declaration (%s) is here", c.group('uppercase'))
@@ -449,9 +465,9 @@ class ObjectDefineType(TypeDefinition):
 
 def find_type_definitions(files: FileList, uppercase: str) -> Iterable[TypeDefinition]:
     types: List[Type[TypeDefinition]] = [TypeInfoVar, ObjectDefineType, ObjectDefineTypeExtended]
-    for t in types:
-        for m in files.matches_of_type(t):
-            m.debug("uppercase: %s", m.uppercase)
+    #for t in types:
+    #    for m in files.matches_of_type(t):
+    #        m.debug("uppercase: %s", m.uppercase)
     yield from (m for t in types
                   for m in files.matches_of_type(t)
                 if m.uppercase == uppercase)
@@ -554,7 +570,7 @@ class AddObjectDeclareType(DeclareObjCheckers):
             if not self.file.force:
                 return
 
-        decl_types: List[Type[TypeDeclaration]] = [DeclareClassCheckers, DeclareObjCheckers]
+        decl_types: List[Type[TypeDeclaration]] = [DeclareClassCheckers, DeclareObjCheckers, DeclareInterfaceCheckers]
         class_decls = [m for t in decl_types
                        for m in self.allfiles.find_matches(t, uppercase, 'uppercase')]
 
@@ -600,7 +616,89 @@ class AddObjectDeclareType(DeclareObjCheckers):
         c = (f'OBJECT_DECLARE_TYPE({instancetype}, {classtype}, {uppercase})\n')
         yield self.make_patch(c)
 
-class AddObjectDeclareSimpleType(DeclareInstanceChecker):
+class AddObjectDeclareInterface(DeclareInterfaceCheckers):
+    """Will add OBJECT_DECLARE_INTERFACE(...) if possible"""
+    def gen_patches(self) -> Iterable[Patch]:
+        uppercase = self.uppercase
+        typename = self.group('typename')
+        instancetype = self.group('instancetype')
+        classtype = self.group('classtype')
+
+        if typename != f'TYPE_{uppercase}':
+            self.warn("type name mismatch: %s vs %s", typename, uppercase)
+            return
+
+        typedefs = [(t,self.allfiles.find_matches(SimpleTypedefMatch, t))
+                    for t in (instancetype, classtype)]
+        for t,tds in typedefs:
+            if not tds:
+                self.warn("typedef %s not found", t)
+                return
+            for td in tds:
+                td_type = td.group('typedef_type')
+                if td_type != f'struct {t}':
+                    self.warn("typedef mismatch: %s is defined as %s", t, td_type)
+                    td.warn("typedef is here")
+                    return
+
+        # look for reuse of same struct type
+        other_instance_checkers = [c for c in find_type_checkers(self.allfiles, instancetype, 'instancetype')
+                                if c.uppercase != uppercase]
+        if other_instance_checkers:
+            self.warn("typedef %s is being reused", instancetype)
+            for ic in other_instance_checkers:
+                ic.warn("%s is reused here", instancetype)
+            if not self.file.force:
+                return
+
+        decl_types: List[Type[TypeDeclaration]] = [DeclareClassCheckers, DeclareObjCheckers, DeclareInterfaceCheckers]
+        class_decls = [m for t in decl_types
+                       for m in self.allfiles.find_matches(t, uppercase, 'uppercase')]
+
+        defs = list(find_type_definitions(self.allfiles, uppercase))
+        if len(defs) > 1:
+            self.warn("multiple definitions for %s", uppercase)
+            for d in defs:
+                d.warn("definition found here")
+            if not self.file.force:
+                return
+        elif len(defs) == 0:
+            self.warn("type definition for %s not found", uppercase)
+            if not self.file.force:
+                return
+        else:
+            d = defs[0]
+            if d.instancetype and d.instancetype != 'void':
+                self.warn("instance type shouldn't be set for interface type %s (%s)", uppercase, instancetype)
+                d.warn("instance type declared here (%s)", d.instancetype)
+                if not self.file.force:
+                    return
+            if d.classtype != classtype:
+                self.warn("mismatching class type for %s (%s)", uppercase, classtype)
+                d.warn("class type declared here (%s)", d.classtype)
+                if not self.file.force:
+                    return
+
+        assert self.file.original_content
+        for t,tds in typedefs:
+            assert tds
+            for td in tds:
+                if td.file is not self.file:
+                    continue
+
+                # delete typedefs that are truly redundant:
+                # 1) defined after DECLARE_INTERFACE_CHECKERS
+                if td.start() > self.start():
+                    yield td.make_removal_patch()
+                # 2) defined before DECLARE_INTERFACE_CHECKERS, but unused
+                elif not re.search(r'\b'+t+r'\b', self.file.original_content[td.end():self.start()]):
+                    yield td.make_removal_patch()
+
+        c = (f'OBJECT_DECLARE_INTERFACE({instancetype}, {classtype}, {uppercase})\n')
+        yield self.make_patch(c)
+
+
+class AddObjectDeclareSimpleType(DeclareObjCheckers):
     """Will add OBJECT_DECLARE_SIMPLE_TYPE(...) if possible"""
     def gen_patches(self) -> Iterable[Patch]:
         uppercase = self.uppercase
@@ -634,7 +732,7 @@ class AddObjectDeclareSimpleType(DeclareInstanceChecker):
             if not self.file.force:
                 return
 
-        decl_types: List[Type[TypeDeclaration]] = [DeclareClassCheckers, DeclareObjCheckers]
+        decl_types: List[Type[TypeDeclaration]] = [DeclareClassCheckers, DeclareObjCheckers, DeclareInterfaceCheckers]
         class_decls = [m for t in decl_types
                        for m in self.allfiles.find_matches(t, uppercase, 'uppercase')]
         if class_decls:
@@ -683,6 +781,104 @@ class AddObjectDeclareSimpleType(DeclareInstanceChecker):
                     yield td.make_removal_patch()
 
         c = (f'OBJECT_DECLARE_SIMPLE_TYPE({instancetype}, {uppercase})\n')
+        yield self.make_patch(c)
+
+
+def is_interface_type(d: TypeDefinition) -> bool:
+    uppercase = d.uppercase
+    while True:
+        if not d.parent_uppercase:
+            return False
+        if d.parent_uppercase == 'INTERFACE':
+            return True
+        parents = list(find_type_definitions(d.allfiles, d.parent_uppercase))
+        if len(parents) != 1:
+            d.warn("type definition for %s (parent of %s) not found",
+                   d.parent_uppercase, uppercase)
+            for p in parents:
+                p.warn("multiple matches found for %s", d.parent_uppercase)
+            return False
+        d = parents[0]
+
+class AddObjectDeclareInterfaceType(DeclareInterfaceCheckers):
+    """Will add OBJECT_DECLARE_INTERFACE_TYPE(...) if possible"""
+    def gen_patches(self) -> Iterable[Patch]:
+        uppercase = self.uppercase
+        typename = self.group('typename')
+        instancetype = self.group('instancetype')
+        classtype = self.group('classtype')
+
+        if typename != f'TYPE_{uppercase}':
+            self.warn("type name mismatch: %s vs %s", typename, uppercase)
+            return
+
+        typedefs = [(t,self.allfiles.find_matches(SimpleTypedefMatch, t))
+                    for t in (instancetype, classtype)]
+        for t,tds in typedefs:
+            if not tds:
+                self.warn("typedef %s not found", t)
+                return
+            for td in tds:
+                td_type = td.group('typedef_type')
+                if td_type != f'struct {t}':
+                    self.warn("typedef mismatch: %s is defined as %s", t, td_type)
+                    td.warn("typedef is here")
+                    return
+
+        # look for reuse of same struct type
+        other_instance_checkers = [c for c in find_type_checkers(self.allfiles, instancetype, 'instancetype')
+                                if c.uppercase != uppercase]
+        if other_instance_checkers:
+            self.warn("typedef %s is being reused", instancetype)
+            for ic in other_instance_checkers:
+                ic.warn("%s is reused here", instancetype)
+            if not self.file.force:
+                return
+
+        decl_types: List[Type[TypeDeclaration]] = [DeclareClassCheckers, DeclareObjCheckers]
+        class_decls = [m for t in decl_types
+                       for m in self.allfiles.find_matches(t, uppercase, 'uppercase')]
+
+        defs = list(find_type_definitions(self.allfiles, uppercase))
+        if len(defs) > 1:
+            self.warn("multiple definitions for %s", uppercase)
+            for d in defs:
+                d.warn("definition found here")
+            if not self.file.force:
+                return
+        elif len(defs) == 0:
+            self.warn("type definition for %s not found", uppercase)
+            if not self.file.force:
+                return
+        else:
+            d = defs[0]
+            if not is_interface_type(d):
+                self.info("%s is not declared as interface type")
+                return
+
+            if d.classtype != classtype:
+                self.warn("mismatching class type for %s (%s)", uppercase, classtype)
+                d.warn("class type declared here (%s)", d.classtype)
+                if not self.file.force:
+                    return
+
+        assert self.file.original_content
+        for t,tds in typedefs:
+            assert tds
+            for td in tds:
+                if td.file is not self.file:
+                    continue
+
+                # delete typedefs that are truly redundant:
+                # 1) defined after DECLARE_OBJ_CHECKERS
+                if td.start() > self.start():
+                    yield td.make_removal_patch()
+                # 2) defined before DECLARE_OBJ_CHECKERS, but unused
+                elif not re.search(r'\b'+t+r'\b', self.file.original_content[td.end():self.start()]):
+                    yield td.make_removal_patch()
+
+        c = (f'OBJECT_DECLARE_INTERFACE_TYPE({instancetype}, {classtype},\n'
+             f'                              {uppercase})\n')
         yield self.make_patch(c)
 
 
@@ -958,6 +1154,25 @@ class CreateClassStruct(DeclareInstanceChecker):
         #c = (f'OBJECT_DECLARE_SIMPLE_TYPE({instancetype}, {lowercase},\n'
         #     f'                           MODULE_OBJ_NAME, ParentClassType)\n')
         #yield self.make_patch(c)
+
+class SetInstanceSizeInterfaces(TypeInfoVar):
+    """Set instance type for interface TypeInfo variables"""
+    def gen_patches(self) -> Iterable[Patch]:
+        if not is_interface_type(self):
+            return
+        if 'instance_size' in self.get_initializers():
+            return
+
+        uppercase = self.uppercase
+        if not uppercase:
+            self.info("no uppercase name")
+            return
+
+        decl = self.allfiles.find_match(ObjectDeclareInterfaceType, uppercase, 'uppercase')
+        if not decl:
+            self.warn("can't find OBJECT_DECLARE_INTERFACE_TYPE for interface type (%s)", uppercase)
+            return
+        yield self.append_field('instance_size', f'sizeof({decl.instancetype})')
 
 def type_infos(file: FileInfo) -> Iterable[TypeInfoVar]:
     return file.matches_of_type(TypeInfoVar)

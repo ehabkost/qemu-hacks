@@ -194,7 +194,7 @@ class DuplicatedTypedefs(SimpleTypedefMatch):
 class QOMDuplicatedTypedefs(DuplicatedTypedefs):
     """Delete duplicate typedefs if used by QOM type"""
     def gen_patches(self) -> Iterable[Patch]:
-        qom_macros = [TypeCheckMacro, DeclareInstanceChecker, DeclareClassCheckers, DeclareObjCheckers]
+        qom_macros = [TypeCheckMacro, DeclareInstanceChecker, DeclareInterfaceChecker, DeclareClassCheckers, DeclareObjCheckers, DeclareInterfaceCheckers]
         qom_matches = chain(*(self.file.matches_of_type(t) for t in qom_macros))
         in_use = any(RequiredIdentifier('type', self.name) in m.required_identifiers()
                      for m in qom_matches)
@@ -204,7 +204,7 @@ class QOMDuplicatedTypedefs(DuplicatedTypedefs):
 class QOMStructTypedefSplit(FullStructTypedefMatch):
     """split struct+typedef declaration if used by QOM type"""
     def gen_patches(self) -> Iterator[Patch]:
-        qom_macros = [TypeCheckMacro, DeclareInstanceChecker, DeclareClassCheckers, DeclareObjCheckers]
+        qom_macros = [TypeCheckMacro, DeclareInstanceChecker, DeclareInterfaceChecker, DeclareClassCheckers, DeclareObjCheckers, DeclareInterfaceCheckers]
         qom_matches = chain(*(self.file.matches_of_type(t) for t in qom_macros))
         in_use = any(RequiredIdentifier('type', self.name) in m.required_identifiers()
                      for m in qom_matches)
@@ -441,7 +441,7 @@ class InterfaceCheckMacro(FileMatch):
     """
     regexp = S(RE_MACRO_DEFINE,
                'INTERFACE_CHECK',
-               r'\s*\(\s*', OR(NAMED('instancetype', RE_IDENTIFIER), RE_TYPE, name='c_type'),
+               r'\s*\(\s*', NAMED('instancetype', RE_IDENTIFIER),
                r'\s*,', CPP_SPACE,
                OPTIONAL_PARS(RE_IDENTIFIER), r',', CPP_SPACE,
                NAMED('qom_typename', RE_IDENTIFIER), r'\s*\)\n')
@@ -571,6 +571,21 @@ class DeclareObjCheckers(TypeCheckerDeclaration):
         yield RequiredIdentifier('type', self.group('classtype'))
         yield RequiredIdentifier('type', self.group('instancetype'))
 
+class DeclareInterfaceCheckers(TypeCheckerDeclaration):
+    """DECLARE_INTERFACE_CHECKERS use"""
+    regexp = S(r'^[ \t]*DECLARE_INTERFACE_CHECKERS\s*\(\s*',
+               NAMED('instancetype', RE_TYPE), r'\s*,\s*',
+               NAMED('classtype', RE_TYPE), r'\s*,\s*',
+               NAMED('uppercase', RE_IDENTIFIER), r'\s*,\s*',
+               OR(RE_IDENTIFIER, RE_STRING, RE_MACRO_CONCAT, RE_FUN_CALL, name='typename'), SP,
+               r'\)[ \t]*;?[ \t]*\n')
+
+    def required_identifiers(self) -> Iterable[RequiredIdentifier]:
+        yield RequiredIdentifier('include', '"qom/object.h"')
+        yield RequiredIdentifier('constant', self.group('typename'))
+        yield RequiredIdentifier('type', self.group('classtype'))
+        yield RequiredIdentifier('type', self.group('instancetype'))
+
 class TypeDeclarationFixup(FileMatch):
     """Common base class for code that will look at a set of type declarations"""
     regexp = RE_FILE_BEGIN
@@ -581,8 +596,9 @@ class TypeDeclarationFixup(FileMatch):
 
         # group checkers by uppercase name:
         decl_types: List[Type[TypeDeclaration]] = [DeclareInstanceChecker, DeclareInstanceType,
+                                                   DeclareInterfaceChecker,
                                                    DeclareClassCheckers, DeclareClassType,
-                                                   DeclareObjCheckers]
+                                                   DeclareObjCheckers, DeclareInterfaceCheckers]
         checker_dict: Dict[str, List[TypeDeclaration]] = {}
         for t in decl_types:
             for m in self.file.matches_of_type(t):
@@ -607,19 +623,19 @@ class TypeDeclarationFixup(FileMatch):
         conflicting: List[FileMatch] = []
         # conflicts in the same file:
         conflicting.extend(chain(self.file.find_matches(DefineDirective, uppercase),
-                                 self.file.find_matches(DeclareInterfaceChecker, uppercase, 'uppercase'),
                                  self.file.find_matches(DeclareClassType, uppercase, 'uppercase'),
                                  self.file.find_matches(DeclareInstanceType, uppercase, 'uppercase')))
 
         # conflicts in another file:
         conflicting.extend(o for o in chain(self.allfiles.find_matches(DeclareInstanceChecker, uppercase, 'uppercase'),
+                                            self.allfiles.find_matches(DeclareInterfaceChecker, uppercase, 'uppercase'),
                                             self.allfiles.find_matches(DeclareClassCheckers, uppercase, 'uppercase'),
                                             self.allfiles.find_matches(DeclareInterfaceChecker, uppercase, 'uppercase'),
                                             self.allfiles.find_matches(DefineDirective, uppercase))
-                           if o is not None and o.file != self.file
+                           if o is not None and o.file.filename != self.file.filename
                                # if both are .c files, there's no conflict at all:
                                and not (o.file.filename.suffix == '.c' and
-                                       self.file.filename.suffix == '.c'))
+                                        self.file.filename.suffix == '.c'))
 
         if conflicting:
             for c in checkers:
@@ -666,6 +682,84 @@ class DeclareVoidTypes(TypeDeclarationFixup):
         #for c in checkers:
         #    yield c.make_removal_patch()
         #yield last_checker.append(s)
+
+class AddDeclareObjCheckers(TypeDeclarationFixup):
+    """Replace DECLARE_INSTANCE_CHECKER/DECLARE_CLASS_CHECKERS with DECLARE_OBJ_CHECKERS"""
+    regexp = RE_FILE_BEGIN
+    def gen_patches_for_type(self, uppercase: str,
+                             checkers: List[TypeDeclaration],
+                             fields: Dict[str, Optional[str]]) -> Iterable[Patch]:
+        if self.find_conflicts(uppercase, checkers):
+            return
+
+        if not fields.get('instancetype') or not fields.get('classtype'):
+            self.info("skipping %s", uppercase)
+            return
+
+        if any(isinstance(c, DeclareObjCheckers) for c in checkers):
+            self.info("DECLARE_OBJ_CHECKERS already in use for %s", uppercase)
+            return
+
+        _,first_checker = min((m.start(), m) for m in checkers)
+        _,last_checker = max((m.start(), m) for m in checkers)
+
+        assert self.file.original_content
+        macro_re = r'\b'+OR(uppercase, f'{uppercase}_CLASS', f'{uppercase}_GET_CLASS')+r'\b'
+        # make sure the macros are not used between the first declaration and the last one
+        if re.search(macro_re, self.file.original_content[first_checker.end():last_checker.start()]):
+            self.info("macro %s is used", uppercase)
+            return
+
+        for c in checkers:
+            if isinstance(c, DeclareClassCheckers):
+                yield c.make_removal_patch()
+            if isinstance(c, DeclareInstanceChecker):
+                yield c.make_removal_patch()
+
+        s = (f"DECLARE_OBJ_CHECKERS({fields['instancetype']}, {fields['classtype']},\n"+
+             f"                     {fields['uppercase']}, {fields['typename']})\n")
+        yield last_checker.append(s)
+
+
+class AddDeclareInterfaceCheckers(TypeDeclarationFixup):
+    """Replace DECLARE_INTERFACE_CHECKER/DECLARE_CLASS_CHECKERS with DECLARE_INTERFACE_CHECKERS"""
+    regexp = RE_FILE_BEGIN
+    def gen_patches_for_type(self, uppercase: str,
+                             checkers: List[TypeDeclaration],
+                             fields: Dict[str, Optional[str]]) -> Iterable[Patch]:
+        if not any(isinstance(c, DeclareInterfaceChecker) for c in checkers):
+            return
+
+        if self.find_conflicts(uppercase, checkers):
+            return
+
+        if not fields.get('instancetype') or not fields.get('classtype'):
+            self.info("skipping %s", uppercase)
+            return
+
+        if any(isinstance(c, DeclareInterfaceCheckers) for c in checkers):
+            self.info("DECLARE_INTERFACE_CHECKERS already in use for %s", uppercase)
+            return
+
+        _,first_checker = min((m.start(), m) for m in checkers)
+        _,last_checker = max((m.start(), m) for m in checkers)
+
+        assert self.file.original_content
+        macro_re = r'\b'+OR(uppercase, f'{uppercase}_CLASS', f'{uppercase}_GET_CLASS')+r'\b'
+        # make sure the macros are not used between the first declaration and the last one
+        if re.search(macro_re, self.file.original_content[first_checker.end():last_checker.start()]):
+            self.info("macro %s is used", uppercase)
+            return
+
+        for c in checkers:
+            if isinstance(c, DeclareClassCheckers):
+                yield c.make_removal_patch()
+            if isinstance(c, DeclareInterfaceChecker):
+                yield c.make_removal_patch()
+
+        s = (f"DECLARE_INTERFACE_CHECKERS({fields['instancetype']}, {fields['classtype']},\n"+
+             f"                           {fields['uppercase']}, {fields['typename']})\n")
+        yield last_checker.append(s)
 
 
 class AddDeclareTypeName(TypeDeclarationFixup):
@@ -727,6 +821,14 @@ class ObjectDeclareSimpleType(TypeCheckerDeclaration):
                NAMED('uppercase', RE_IDENTIFIER), SP,
                r'\)[ \t]*;?[ \t]*\n')
 
+class ObjectDeclareInterfaceType(TypeCheckerDeclaration):
+    """OBJECT_DECLARE_INTERFACE_TYPE usage"""
+    regexp = S(r'^[ \t]*OBJECT_DECLARE_INTERFACE_TYPE\s*\(',
+               NAMED('instancetype', RE_TYPE), r'\s*,\s*',
+               NAMED('classtype', RE_TYPE), r'\s*,\s*',
+               NAMED('uppercase', RE_IDENTIFIER), SP,
+               r'\)[ \t]*;?[ \t]*\n')
+
 class OldStyleObjectDeclareSimpleType(TypeCheckerDeclaration):
     """OBJECT_DECLARE_SIMPLE_TYPE usage (old API)"""
     regexp = S(r'^[ \t]*OBJECT_DECLARE_SIMPLE_TYPE\s*\(',
@@ -754,7 +856,8 @@ def find_typename_uppercase(files: FileList, typename: str) -> Optional[str]:
 def find_type_checkers(files:FileList, name:str, group:str='uppercase') -> Iterable[TypeCheckerDeclaration]:
     """Find usage of DECLARE*CHECKER macro"""
     c: Type[TypeCheckerDeclaration]
-    for c in (DeclareInstanceChecker, DeclareClassCheckers, DeclareObjCheckers, ObjectDeclareType, ObjectDeclareSimpleType):
+    for c in (DeclareInstanceChecker, DeclareClassCheckers, DeclareObjCheckers,
+              ObjectDeclareType, ObjectDeclareSimpleType, ObjectDeclareInterfaceType):
         yield from files.find_matches(c, name=name, group=group)
 
 class Include(FileMatch):

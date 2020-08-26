@@ -377,8 +377,8 @@ class FileInfo(RegexpScanner):
         DBG("class_names: %r", class_names)
         for cn in class_names:
             matches = self.matches_of_type(class_dict[cn])
-            DBG('%d matches found for %s: %s',
-                    len(matches), cn, ' '.join(names(matches)))
+            INFO('%d matches found for %s: %s',
+                 len(matches), cn, ' '.join(names(matches)))
             yield from matches
 
     def apply_patches(self) -> None:
