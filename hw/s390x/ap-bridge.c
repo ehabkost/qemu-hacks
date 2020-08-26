@@ -34,7 +34,6 @@ static void ap_bus_class_init(ObjectClass *oc, void *data)
 static const TypeInfo ap_bus_info = {
     .name = TYPE_AP_BUS,
     .parent = TYPE_BUS,
-    .instance_size = 0,
     .class_init = ap_bus_class_init,
 };
 TYPE_INFO(ap_bus_info)
@@ -74,7 +73,6 @@ static void ap_bridge_class_init(ObjectClass *oc, void *data)
 static const TypeInfo ap_bridge_info = {
     .name          = TYPE_AP_BRIDGE,
     .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = 0,
     .class_init    = ap_bridge_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
