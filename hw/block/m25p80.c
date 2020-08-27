@@ -50,8 +50,13 @@
 
 #define SPI_NOR_MAX_ID_LEN 6
 
+#define TYPE_M25P80 "m25p80-generic"
+typedef struct Flash Flash;
+typedef struct M25P80Class M25P80Class;
+DECLARE_OBJ_CHECKERS(Flash, M25P80Class,
+                     M25P80, TYPE_M25P80)
+
 typedef struct FlashPartInfo {
-    const char *part_name;
     /*
      * This array stores the ID bytes.
      * The first three bytes are the JEDIC ID.
@@ -78,7 +83,9 @@ typedef struct FlashPartInfo {
 /* adapted from linux */
 /* Used when the "_ext_id" is two bytes at most */
 #define INFO(_part_name, _jedec_id, _ext_id, _sector_size, _n_sectors, _flags)\
-    .part_name = _part_name,\
+    .name = _part_name,\
+    .parent = TYPE_M25P80,\
+    .class_data = &(FlashPartInfo) {\
     .id = {\
         ((_jedec_id) >> 16) & 0xff,\
         ((_jedec_id) >> 8) & 0xff,\
@@ -91,10 +98,13 @@ typedef struct FlashPartInfo {
     .n_sectors = (_n_sectors),\
     .page_size = 256,\
     .flags = (_flags),\
-    .die_cnt = 0
+    .die_cnt = 0 \
+    }
 
 #define INFO6(_part_name, _jedec_id, _ext_id, _sector_size, _n_sectors, _flags)\
-    .part_name = _part_name,\
+    .name = _part_name,\
+    .parent = TYPE_M25P80,\
+    .class_data = &(FlashPartInfo) {\
     .id = {\
         ((_jedec_id) >> 16) & 0xff,\
         ((_jedec_id) >> 8) & 0xff,\
@@ -108,11 +118,14 @@ typedef struct FlashPartInfo {
     .n_sectors = (_n_sectors),\
     .page_size = 256,\
     .flags = (_flags),\
-    .die_cnt = 0
+    .die_cnt = 0 \
+    }
 
 #define INFO_STACKED(_part_name, _jedec_id, _ext_id, _sector_size, _n_sectors,\
                     _flags, _die_cnt)\
-    .part_name = _part_name,\
+    .name = _part_name,\
+    .parent = TYPE_M25P80,\
+    .class_data = &(FlashPartInfo) {\
     .id = {\
         ((_jedec_id) >> 16) & 0xff,\
         ((_jedec_id) >> 8) & 0xff,\
@@ -125,7 +138,8 @@ typedef struct FlashPartInfo {
     .n_sectors = (_n_sectors),\
     .page_size = 256,\
     .flags = (_flags),\
-    .die_cnt = _die_cnt
+    .die_cnt = _die_cnt \
+    }
 
 #define JEDEC_NUMONYX 0x20
 #define JEDEC_WINBOND 0xEF
@@ -170,7 +184,7 @@ typedef struct FlashPartInfo {
 #define SPANSION_CONTINUOUS_READ_MODE_CMD_LEN 1
 #define WINBOND_CONTINUOUS_READ_MODE_CMD_LEN 1
 
-static const FlashPartInfo known_devices[] = {
+static const TypeInfo known_devices[] = {
     /* Atmel -- some are (confusingly) marketed as "DataFlash" */
     { INFO("at25fs010",   0x1f6601,      0,  32 << 10,   4, ER_4K) },
     { INFO("at25fs040",   0x1f6604,      0,  64 << 10,   8, ER_4K) },
@@ -323,6 +337,7 @@ static const FlashPartInfo known_devices[] = {
     { INFO("w25q256",     0xef4019,      0,  64 << 10, 512, ER_4K) },
     { INFO("w25q512jv",   0xef4020,      0,  64 << 10, 1024, ER_4K) },
 };
+DEFINE_TYPES(known_devices)
 
 typedef enum {
     NOP = 0,
@@ -456,17 +471,11 @@ struct Flash {
     const FlashPartInfo *pi;
 
 };
-typedef struct Flash Flash;
 
 struct M25P80Class {
     SSISlaveClass parent_class;
     FlashPartInfo *pi;
 };
-typedef struct M25P80Class M25P80Class;
-
-#define TYPE_M25P80 "m25p80-generic"
-DECLARE_OBJ_CHECKERS(Flash, M25P80Class,
-                     M25P80, TYPE_M25P80)
 
 static inline Manufacturer get_man(Flash *s)
 {
@@ -1411,19 +1420,3 @@ static const TypeInfo m25p80_info = {
     .abstract       = true,
 };
 TYPE_INFO(m25p80_info)
-
-static void m25p80_register_types(void)
-{
-    int i;
-
-    for (i = 0; i < ARRAY_SIZE(known_devices); ++i) {
-        TypeInfo ti = {
-            .name       = known_devices[i].part_name,
-            .parent     = TYPE_M25P80,
-            .class_data = (void *)&known_devices[i],
-        };
-        type_register(&ti);
-    }
-}
-
-type_init(m25p80_register_types)
