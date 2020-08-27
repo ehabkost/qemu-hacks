@@ -40,14 +40,7 @@
 
 typedef struct DeviceInfo {
     int model;
-    const char *name;
 } DeviceInfo;
-
-static const DeviceInfo devices[] = {
-    { TMP421_DEVICE_ID, "tmp421" },
-    { TMP422_DEVICE_ID, "tmp422" },
-    { TMP423_DEVICE_ID, "tmp423" },
-};
 
 struct TMP421State {
     /*< private >*/
@@ -76,6 +69,19 @@ typedef struct TMP421Class TMP421Class;
 #define TYPE_TMP421 "tmp421-generic"
 DECLARE_OBJ_CHECKERS(TMP421State, TMP421Class,
                      TMP421, TYPE_TMP421)
+
+#define DEVICE_TYPE(model_id, typename) \
+    { .name = typename, \
+      .parent = TYPE_TMP421, \
+      .class_data = &(DeviceInfo) { .model = model_id }, \
+    }
+
+static const TypeInfo devices[] = {
+    DEVICE_TYPE(TMP421_DEVICE_ID, "tmp421"),
+    DEVICE_TYPE(TMP422_DEVICE_ID, "tmp422"),
+    DEVICE_TYPE(TMP423_DEVICE_ID, "tmp423"),
+};
+DEFINE_TYPES(devices)
 
 
 /* the TMP421 registers */
@@ -380,19 +386,3 @@ static const TypeInfo tmp421_info = {
     .abstract      = true,
 };
 TYPE_INFO(tmp421_info)
-
-static void tmp421_register_types(void)
-{
-    int i;
-
-    for (i = 0; i < ARRAY_SIZE(devices); ++i) {
-        TypeInfo ti = {
-            .name       = devices[i].name,
-            .parent     = TYPE_TMP421,
-            .class_data = (void *) &devices[i],
-        };
-        type_register(&ti);
-    }
-}
-
-type_init(tmp421_register_types)
