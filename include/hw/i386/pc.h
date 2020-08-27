@@ -280,11 +280,7 @@ extern const size_t pc_compat_1_4_len;
         .parent     = TYPE_PC_MACHINE, \
         .class_init = pc_machine_##suffix##_class_init, \
     }; \
-    static void pc_machine_init_##suffix(void) \
-    { \
-        type_register(&pc_machine_type_##suffix); \
-    } \
-    type_init(pc_machine_init_##suffix)
+    TYPE_INFO(pc_machine_type_##suffix)
 
 extern void igd_passthrough_isa_bridge_create(PCIBus *bus, uint16_t gpu_dev_id);
 #endif
