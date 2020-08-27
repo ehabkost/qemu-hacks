@@ -1386,7 +1386,7 @@ static const VMStateDescription vmstate_m25p80 = {
     }
 };
 
-static void m25p80_class_init(ObjectClass *klass, void *data)
+static void m25p80_class_base_init(ObjectClass *klass, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(klass);
     SSISlaveClass *k = SSI_SLAVE_CLASS(klass);
@@ -1407,6 +1407,7 @@ static const TypeInfo m25p80_info = {
     .parent         = TYPE_SSI_SLAVE,
     .instance_size  = sizeof(Flash),
     .class_size     = sizeof(M25P80Class),
+    .class_base_init = m25p80_class_base_init,
     .abstract       = true,
 };
 TYPE_INFO(m25p80_info)
@@ -1419,7 +1420,6 @@ static void m25p80_register_types(void)
         TypeInfo ti = {
             .name       = known_devices[i].part_name,
             .parent     = TYPE_M25P80,
-            .class_init = m25p80_class_init,
             .class_data = (void *)&known_devices[i],
         };
         type_register(&ti);
