@@ -1746,13 +1746,14 @@ typedef struct E1000Info {
     uint16_t   phy_id2;
 } E1000Info;
 
-static void e1000_class_init(ObjectClass *klass, void *data)
+static void e1000_class_base_init(ObjectClass *klass, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(klass);
     PCIDeviceClass *k = PCI_DEVICE_CLASS(klass);
     E1000BaseClass *e = E1000_CLASS(klass);
     const E1000Info *info = data;
 
+    assert(info);
     k->realize = pci_e1000_realize;
     k->exit = pci_e1000_uninit;
     k->romfile = "efi-e1000.rom";
@@ -1782,6 +1783,7 @@ static const TypeInfo e1000_base_info = {
     .instance_size = sizeof(E1000State),
     .instance_init = e1000_instance_init,
     .class_size    = sizeof(E1000BaseClass),
+    .class_base_init = e1000_class_base_init,
     .abstract      = true,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
@@ -1822,7 +1824,6 @@ static void e1000_register_types(void)
         type_info.name = info->name;
         type_info.parent = TYPE_E1000_BASE;
         type_info.class_data = (void *)info;
-        type_info.class_init = e1000_class_init;
 
         type_register(&type_info);
     }
