@@ -148,11 +148,12 @@ static Property bcm2836_props[] = {
     DEFINE_PROP_END_OF_LIST()
 };
 
-static void bcm283x_class_init(ObjectClass *oc, void *data)
+static void bcm283x_class_base_init(ObjectClass *oc, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(oc);
     BCM283XClass *bc = BCM283X_CLASS(oc);
 
+    assert(data);
     bc->info = data;
     dc->realize = bcm2836_realize;
     device_class_set_props(dc, bcm2836_props);
@@ -166,6 +167,7 @@ static const TypeInfo bcm283x_type_info = {
     .instance_size = sizeof(BCM283XState),
     .instance_init = bcm2836_init,
     .class_size = sizeof(BCM283XClass),
+    .class_base_init = bcm283x_class_base_init,
     .abstract = true,
 };
 TYPE_INFO(bcm283x_type_info)
@@ -178,7 +180,6 @@ static void bcm2836_register_types(void)
         TypeInfo ti = {
             .name = bcm283x_socs[i].name,
             .parent = TYPE_BCM283X,
-            .class_init = bcm283x_class_init,
             .class_data = (void *) &bcm283x_socs[i],
         };
         type_register(&ti);
