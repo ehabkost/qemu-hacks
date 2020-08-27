@@ -29,7 +29,6 @@ typedef enum SysConfigFormat {
 } SysConfigFormat;
 
 struct ARMSSEInfo {
-    const char *name;
     int sram_banks;
     int num_cpus;
     uint32_t sys_version;
@@ -69,36 +68,43 @@ static Property armsse_properties[] = {
     DEFINE_PROP_END_OF_LIST()
 };
 
-static const ARMSSEInfo armsse_variants[] = {
+static const TypeInfo armsse_variants[] = {
     {
         .name = TYPE_IOTKIT,
-        .sram_banks = 1,
-        .num_cpus = 1,
-        .sys_version = 0x41743,
-        .cpuwait_rst = 0,
-        .sys_config_format = IoTKitFormat,
-        .has_mhus = false,
-        .has_ppus = false,
-        .has_cachectrl = false,
-        .has_cpusecctrl = false,
-        .has_cpuid = false,
-        .props = iotkit_properties,
+        .parent = TYPE_ARM_SSE,
+        .class_data = &(ARMSSEInfo) {
+            .sram_banks = 1,
+            .num_cpus = 1,
+            .sys_version = 0x41743,
+            .cpuwait_rst = 0,
+            .sys_config_format = IoTKitFormat,
+            .has_mhus = false,
+            .has_ppus = false,
+            .has_cachectrl = false,
+            .has_cpusecctrl = false,
+            .has_cpuid = false,
+            .props = iotkit_properties,
+        },
     },
     {
         .name = TYPE_SSE200,
-        .sram_banks = 4,
-        .num_cpus = 2,
-        .sys_version = 0x22041743,
-        .cpuwait_rst = 2,
-        .sys_config_format = SSE200Format,
-        .has_mhus = true,
-        .has_ppus = true,
-        .has_cachectrl = true,
-        .has_cpusecctrl = true,
-        .has_cpuid = true,
-        .props = armsse_properties,
+        .parent = TYPE_ARM_SSE,
+        .class_data = &(ARMSSEInfo) {
+            .sram_banks = 4,
+            .num_cpus = 2,
+            .sys_version = 0x22041743,
+            .cpuwait_rst = 2,
+            .sys_config_format = SSE200Format,
+            .has_mhus = true,
+            .has_ppus = true,
+            .has_cachectrl = true,
+            .has_cpusecctrl = true,
+            .has_cpuid = true,
+            .props = armsse_properties,
+        },
     },
 };
+DEFINE_TYPES(armsse_variants)
 
 static uint32_t armsse_sys_config_value(ARMSSE *s, const ARMSSEInfo *info)
 {
@@ -1171,20 +1177,3 @@ static const TypeInfo armsse_info = {
     }
 };
 TYPE_INFO(armsse_info)
-
-static void armsse_register_types(void)
-{
-    int i;
-
-
-    for (i = 0; i < ARRAY_SIZE(armsse_variants); i++) {
-        TypeInfo ti = {
-            .name = armsse_variants[i].name,
-            .parent = TYPE_ARM_SSE,
-            .class_data = (void *)&armsse_variants[i],
-        };
-        type_register(&ti);
-    }
-}
-
-type_init(armsse_register_types);
