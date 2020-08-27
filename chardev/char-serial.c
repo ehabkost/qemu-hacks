@@ -316,12 +316,8 @@ static const TypeInfo char_serial_type_info = {
 #endif
     .class_init = char_serial_class_init,
 };
+TYPE_INFO(char_serial_type_info)
 
-static void register_types(void)
-{
-    type_register_static(&char_serial_type_info);
-}
 
-type_init(register_types);
 
 #endif
