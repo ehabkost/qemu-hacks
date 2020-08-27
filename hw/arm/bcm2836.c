@@ -18,31 +18,37 @@
 #include "hw/sysbus.h"
 
 struct BCM283XInfo {
-    const char *name;
     const char *cpu_type;
     hwaddr peri_base; /* Peripheral base address seen by the CPU */
     hwaddr ctrl_base; /* Interrupt controller and mailboxes etc. */
     int clusterid;
 };
 
-static const BCM283XInfo bcm283x_socs[] = {
+static const TypeInfo bcm283x_socs[] = {
     {
         .name = TYPE_BCM2836,
-        .cpu_type = ARM_CPU_TYPE_NAME("cortex-a7"),
-        .peri_base = 0x3f000000,
-        .ctrl_base = 0x40000000,
-        .clusterid = 0xf,
+        .parent = TYPE_BCM283X,
+        .class_data = &(BCM283XInfo) {
+            .cpu_type = ARM_CPU_TYPE_NAME("cortex-a7"),
+            .peri_base = 0x3f000000,
+            .ctrl_base = 0x40000000,
+            .clusterid = 0xf,
+        },
     },
 #ifdef TARGET_AARCH64
     {
         .name = TYPE_BCM2837,
-        .cpu_type = ARM_CPU_TYPE_NAME("cortex-a53"),
-        .peri_base = 0x3f000000,
-        .ctrl_base = 0x40000000,
-        .clusterid = 0x0,
+        .parent = TYPE_BCM283X,
+        .class_data = &(BCM283XInfo) {
+            .cpu_type = ARM_CPU_TYPE_NAME("cortex-a53"),
+            .peri_base = 0x3f000000,
+            .ctrl_base = 0x40000000,
+            .clusterid = 0x0,
+        },
     },
 #endif
 };
+DEFINE_TYPES(bcm283x_socs)
 
 static void bcm2836_init(Object *obj)
 {
@@ -171,19 +177,3 @@ static const TypeInfo bcm283x_type_info = {
     .abstract = true,
 };
 TYPE_INFO(bcm283x_type_info)
-
-static void bcm2836_register_types(void)
-{
-    int i;
-
-    for (i = 0; i < ARRAY_SIZE(bcm283x_socs); i++) {
-        TypeInfo ti = {
-            .name = bcm283x_socs[i].name,
-            .parent = TYPE_BCM283X,
-            .class_data = (void *) &bcm283x_socs[i],
-        };
-        type_register(&ti);
-    }
-}
-
-type_init(bcm2836_register_types)
