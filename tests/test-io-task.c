@@ -44,6 +44,7 @@ static const TypeInfo dummy_info = {
     .instance_size = sizeof(DummyObject),
     .class_size = sizeof(DummyObjectClass),
 };
+TYPE_INFO(dummy_info)
 
 struct TestTaskData {
     Object *source;
@@ -258,7 +259,6 @@ int main(int argc, char **argv)
 {
     g_test_init(&argc, &argv, NULL);
     module_call_init(MODULE_INIT_QOM);
-    type_register_static(&dummy_info);
     g_test_add_func("/crypto/task/complete", test_task_complete);
     g_test_add_func("/crypto/task/datafree", test_task_data_free);
     g_test_add_func("/crypto/task/failure", test_task_failure);

@@ -35,6 +35,7 @@ static const TypeInfo test_if_info = {
     .parent        = TYPE_INTERFACE,
     .class_size = sizeof(TestIfClass),
 };
+TYPE_INFO(test_if_info)
 
 #define PATTERN 0xFAFBFCFD
 
@@ -57,6 +58,7 @@ static const TypeInfo direct_impl_info = {
         { }
     }
 };
+TYPE_INFO(direct_impl_info)
 
 #define TYPE_INTERMEDIATE_IMPL "intermediate-impl"
 
@@ -64,6 +66,7 @@ static const TypeInfo intermediate_impl_info = {
     .name = TYPE_INTERMEDIATE_IMPL,
     .parent = TYPE_DIRECT_IMPL,
 };
+TYPE_INFO(intermediate_impl_info)
 
 static void test_interface_impl(const char *type)
 {
@@ -91,9 +94,6 @@ int main(int argc, char **argv)
     g_test_init(&argc, &argv, NULL);
 
     module_call_init(MODULE_INIT_QOM);
-    type_register_static(&test_if_info);
-    type_register_static(&direct_impl_info);
-    type_register_static(&intermediate_impl_info);
 
     g_test_add_func("/qom/interface/direct_impl", interface_direct_test);
     g_test_add_func("/qom/interface/intermediate_impl",
