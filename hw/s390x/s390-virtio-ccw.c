@@ -796,11 +796,7 @@ bool css_migration_enabled(void)
         .class_init = ccw_machine_##suffix##_class_init,                      \
         .instance_init = ccw_machine_##suffix##_instance_init,                \
     };                                                                        \
-    static void ccw_machine_register_##suffix(void)                           \
-    {                                                                         \
-        type_register_static(&ccw_machine_##suffix##_info);                   \
-    }                                                                         \
-    type_init(ccw_machine_register_##suffix)
+    TYPE_INFO(ccw_machine_##suffix##_info)
 
 static void ccw_machine_5_2_instance_options(MachineState *machine)
 {
