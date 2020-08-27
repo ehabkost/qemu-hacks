@@ -308,11 +308,7 @@ struct MachineState {
         .parent     = TYPE_MACHINE, \
         .class_init = machine_initfn##_class_init, \
     }; \
-    static void machine_initfn##_register_types(void) \
-    { \
-        type_register_static(&machine_initfn##_typeinfo); \
-    } \
-    type_init(machine_initfn##_register_types)
+    TYPE_INFO(machine_initfn##_typeinfo)
 
 extern GlobalProperty hw_compat_5_1[];
 extern const size_t hw_compat_5_1_len;
