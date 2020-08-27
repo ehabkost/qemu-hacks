@@ -4576,11 +4576,7 @@ static void spapr_machine_latest_class_options(MachineClass *mc)
         .parent = TYPE_SPAPR_MACHINE,                                \
         .class_init = spapr_machine_##suffix##_class_init,           \
     };                                                               \
-    static void spapr_machine_register_##suffix(void)                \
-    {                                                                \
-        type_register(&spapr_machine_##suffix##_info);               \
-    }                                                                \
-    type_init(spapr_machine_register_##suffix)
+    TYPE_INFO(&spapr_machine_##suffix##_info)
 
 /*
  * pseries-5.2
