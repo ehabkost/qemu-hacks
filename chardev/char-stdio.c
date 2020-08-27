@@ -159,10 +159,6 @@ static const TypeInfo char_stdio_type_info = {
     .instance_finalize = char_stdio_finalize,
     .class_init = char_stdio_class_init,
 };
+TYPE_INFO(char_stdio_type_info)
 
-static void register_types(void)
-{
-    type_register_static(&char_stdio_type_info);
-}
 
-type_init(register_types);
