@@ -165,6 +165,7 @@ static const TypeInfo dummy_info = {
         { }
     }
 };
+TYPE_INFO(dummy_info)
 
 
 /*
@@ -303,6 +304,7 @@ static const TypeInfo dummy_dev_info = {
     .class_size = sizeof(DummyDevClass),
     .class_init = dummy_dev_class_init,
 };
+TYPE_INFO(dummy_dev_info)
 
 static const TypeInfo dummy_bus_info = {
     .name          = TYPE_DUMMY_BUS,
@@ -313,6 +315,7 @@ static const TypeInfo dummy_bus_info = {
     .class_size = sizeof(DummyBusClass),
     .class_init = dummy_bus_class_init,
 };
+TYPE_INFO(dummy_bus_info)
 
 static const TypeInfo dummy_backend_info = {
     .name          = TYPE_DUMMY_BACKEND,
@@ -321,6 +324,7 @@ static const TypeInfo dummy_backend_info = {
     .instance_init = dummy_backend_init,
     .class_size = sizeof(DummyBackendClass),
 };
+TYPE_INFO(dummy_backend_info)
 
 static QemuOptsList qemu_object_opts = {
     .name = "object",
@@ -617,10 +621,6 @@ int main(int argc, char **argv)
     g_test_init(&argc, &argv, NULL);
 
     module_call_init(MODULE_INIT_QOM);
-    type_register_static(&dummy_info);
-    type_register_static(&dummy_dev_info);
-    type_register_static(&dummy_bus_info);
-    type_register_static(&dummy_backend_info);
 
     g_test_add_func("/qom/proplist/createlist", test_dummy_createlist);
     g_test_add_func("/qom/proplist/createv", test_dummy_createv);

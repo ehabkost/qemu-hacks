@@ -66,11 +66,13 @@ static const TypeInfo static_prop_type = {
     .instance_size = sizeof(MyType),
     .class_init = static_prop_class_init,
 };
+TYPE_INFO(static_prop_type)
 
 static const TypeInfo subclass_type = {
     .name = TYPE_SUBCLASS,
     .parent = TYPE_STATIC_PROPS,
 };
+TYPE_INFO(subclass_type)
 
 /* Test simple static property setting to default value */
 static void test_static_prop_subprocess(void)
@@ -173,6 +175,7 @@ static const TypeInfo dynamic_prop_type = {
     .instance_init = dynamic_instance_init,
     .class_init = dynamic_class_init,
 };
+TYPE_INFO(dynamic_prop_type)
 
 static void hotplug_class_init(ObjectClass *oc, void *data)
 {
@@ -189,6 +192,7 @@ static const TypeInfo hotplug_type = {
     .instance_init = dynamic_instance_init,
     .class_init = hotplug_class_init,
 };
+TYPE_INFO(hotplug_type)
 
 static void nohotplug_class_init(ObjectClass *oc, void *data)
 {
@@ -205,6 +209,7 @@ static const TypeInfo nohotplug_type = {
     .instance_init = dynamic_instance_init,
     .class_init = nohotplug_class_init,
 };
+TYPE_INFO(nohotplug_type)
 
 #define TYPE_NONDEVICE "nondevice-type"
 
@@ -212,6 +217,7 @@ static const TypeInfo nondevice_type = {
     .name = TYPE_NONDEVICE,
     .parent = TYPE_OBJECT,
 };
+TYPE_INFO(nondevice_type)
 
 /* Test setting of dynamic properties using global properties */
 static void test_dynamic_globalprop_subprocess(void)
@@ -285,12 +291,6 @@ int main(int argc, char **argv)
     g_test_init(&argc, &argv, NULL);
 
     module_call_init(MODULE_INIT_QOM);
-    type_register_static(&static_prop_type);
-    type_register_static(&subclass_type);
-    type_register_static(&dynamic_prop_type);
-    type_register_static(&hotplug_type);
-    type_register_static(&nohotplug_type);
-    type_register_static(&nondevice_type);
 
     g_test_add_func("/qdev/properties/static/default/subprocess",
                     test_static_prop_subprocess);
