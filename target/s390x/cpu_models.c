@@ -1392,8 +1392,8 @@ static void register_types(void)
             .class_data = (void *) &s390_cpu_defs[i],
         };
 
-        type_register_static(&ti_base);
-        type_register_static(&ti);
+        type_register(&ti_base);
+        type_register(&ti);
         g_free(base_name);
         g_free(name);
     }
