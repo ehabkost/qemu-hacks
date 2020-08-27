@@ -1141,7 +1141,7 @@ static void armsse_reset(DeviceState *dev)
     s->nsccfg = 0;
 }
 
-static void armsse_class_init(ObjectClass *klass, void *data)
+static void armsse_class_base_init(ObjectClass *klass, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(klass);
     IDAUInterfaceClass *iic = IDAU_INTERFACE_CLASS(klass);
@@ -1153,6 +1153,7 @@ static void armsse_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, info->props);
     dc->reset = armsse_reset;
     iic->check = armsse_idau_check;
+    assert(info);
     asc->info = info;
 }
 
@@ -1162,6 +1163,7 @@ static const TypeInfo armsse_info = {
     .instance_size = sizeof(ARMSSE),
     .class_size = sizeof(ARMSSEClass),
     .instance_init = armsse_init,
+    .class_base_init = armsse_class_base_init,
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_IDAU_INTERFACE },
@@ -1179,7 +1181,6 @@ static void armsse_register_types(void)
         TypeInfo ti = {
             .name = armsse_variants[i].name,
             .parent = TYPE_ARM_SSE,
-            .class_init = armsse_class_init,
             .class_data = (void *)&armsse_variants[i],
         };
         type_register(&ti);
