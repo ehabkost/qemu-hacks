@@ -52,16 +52,7 @@
         .class_init =                                                       \
             glue(POWERPC_DEF_PREFIX(_pvr, _svr, _type), _cpu_class_init),   \
     };                                                                      \
-                                                                            \
-    static void                                                             \
-    glue(POWERPC_DEF_PREFIX(_pvr, _svr, _type), _cpu_register_types)(void)  \
-    {                                                                       \
-        type_register_static(                                               \
-            &glue(POWERPC_DEF_PREFIX(_pvr, _svr, _type), _cpu_type_info));  \
-    }                                                                       \
-                                                                            \
-    type_init(                                                              \
-        glue(POWERPC_DEF_PREFIX(_pvr, _svr, _type), _cpu_register_types))
+    TYPE_INFO(glue(POWERPC_DEF_PREFIX(_pvr, _svr, _type), _cpu_type_info))
 
 #define POWERPC_DEF(_name, _pvr, _type, _desc)                              \
     POWERPC_DEF_SVR(_name, _desc, _pvr, POWERPC_SVR_NONE, _type)
