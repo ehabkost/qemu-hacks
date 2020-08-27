@@ -184,10 +184,6 @@ static TypeInfo cadence_sdhci_info = {
     .instance_init = cadence_sdhci_instance_init,
     .class_init    = cadence_sdhci_class_init,
 };
+TYPE_INFO(cadence_sdhci_info)
 
-static void cadence_sdhci_register_types(void)
-{
-    type_register_static(&cadence_sdhci_info);
-}
 
-type_init(cadence_sdhci_register_types)

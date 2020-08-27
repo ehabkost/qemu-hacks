@@ -258,9 +258,5 @@ static const TypeInfo npcm7xx_clk_info = {
     .instance_init      = npcm7xx_clk_init,
     .class_init         = npcm7xx_clk_class_init,
 };
+TYPE_INFO(npcm7xx_clk_info)
 
-static void npcm7xx_clk_register_type(void)
-{
-    type_register_static(&npcm7xx_clk_info);
-}
-type_init(npcm7xx_clk_register_type);
