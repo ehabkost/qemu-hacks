@@ -196,6 +196,7 @@ static const TypeInfo zipit_lcd_info = {
     .instance_size = sizeof(ZipitLCD),
     .class_init    = zipit_lcd_class_init,
 };
+TYPE_INFO(zipit_lcd_info)
 
 #define TYPE_AER915 "aer915"
 typedef struct AER915State AER915State;
@@ -301,6 +302,7 @@ static const TypeInfo aer915_info = {
     .instance_size = sizeof(AER915State),
     .class_init    = aer915_class_init,
 };
+TYPE_INFO(aer915_info)
 
 static void z2_init(MachineState *machine)
 {
@@ -331,8 +333,6 @@ static void z2_init(MachineState *machine)
         NULL,
         qdev_get_gpio_in(mpu->gpio, Z2_GPIO_SD_DETECT));
 
-    type_register_static(&zipit_lcd_info);
-    type_register_static(&aer915_info);
     z2_lcd = ssi_create_slave(mpu->ssp[1], TYPE_ZIPIT_LCD);
     bus = pxa2xx_i2c_bus(mpu->i2c[0]);
     i2c_slave_create_simple(bus, TYPE_AER915, 0x55);
