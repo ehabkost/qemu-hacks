@@ -95,11 +95,7 @@
         .parent = TYPE_VIRT_MACHINE, \
         .class_init = virt_##major##_##minor##_class_init, \
     }; \
-    static void machvirt_machine_##major##_##minor##_init(void) \
-    { \
-        type_register_static(&machvirt_##major##_##minor##_info); \
-    } \
-    type_init(machvirt_machine_##major##_##minor##_init);
+    TYPE_INFO(machvirt_##major##_##minor##_info)
 
 #define DEFINE_VIRT_MACHINE_AS_LATEST(major, minor) \
     DEFINE_VIRT_MACHINE_LATEST(major, minor, true)
