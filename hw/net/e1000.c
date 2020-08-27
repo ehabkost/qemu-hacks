@@ -1740,7 +1740,6 @@ static Property e1000_properties[] = {
 };
 
 typedef struct E1000Info {
-    const char *name;
     uint16_t   device_id;
     uint8_t    revision;
     uint16_t   phy_id2;
@@ -1792,41 +1791,33 @@ static const TypeInfo e1000_base_info = {
 };
 TYPE_INFO(e1000_base_info)
 
-static const E1000Info e1000_devices[] = {
+static const TypeInfo e1000_devices[] = {
     {
         .name      = "e1000",
-        .device_id = E1000_DEV_ID_82540EM,
-        .revision  = 0x03,
-        .phy_id2   = E1000_PHY_ID2_8254xx_DEFAULT,
+        .parent    = TYPE_E1000_BASE,
+        .class_data = &(E1000Info) {
+            .device_id = E1000_DEV_ID_82540EM,
+            .revision  = 0x03,
+            .phy_id2   = E1000_PHY_ID2_8254xx_DEFAULT,
+        },
     },
     {
         .name      = "e1000-82544gc",
-        .device_id = E1000_DEV_ID_82544GC_COPPER,
-        .revision  = 0x03,
-        .phy_id2   = E1000_PHY_ID2_82544x,
+        .parent    = TYPE_E1000_BASE,
+        .class_data = &(E1000Info) {
+            .device_id = E1000_DEV_ID_82544GC_COPPER,
+            .revision  = 0x03,
+            .phy_id2   = E1000_PHY_ID2_82544x,
+        },
     },
     {
         .name      = "e1000-82545em",
-        .device_id = E1000_DEV_ID_82545EM_COPPER,
-        .revision  = 0x03,
-        .phy_id2   = E1000_PHY_ID2_8254xx_DEFAULT,
+        .parent    = TYPE_E1000_BASE,
+        .class_data = &(E1000Info) {
+            .device_id = E1000_DEV_ID_82545EM_COPPER,
+            .revision  = 0x03,
+            .phy_id2   = E1000_PHY_ID2_8254xx_DEFAULT,
+        },
     },
 };
-
-static void e1000_register_types(void)
-{
-    int i;
-
-    for (i = 0; i < ARRAY_SIZE(e1000_devices); i++) {
-        const E1000Info *info = &e1000_devices[i];
-        TypeInfo type_info = {};
-
-        type_info.name = info->name;
-        type_info.parent = TYPE_E1000_BASE;
-        type_info.class_data = (void *)info;
-
-        type_register(&type_info);
-    }
-}
-
-type_init(e1000_register_types)
+DEFINE_TYPES(e1000_devices)
