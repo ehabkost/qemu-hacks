@@ -167,8 +167,8 @@ static const TypeInfo gen_rp_dev_info = {
     .class_init    = gen_rp_dev_class_init,
 };
 
- static void gen_rp_register_types(void)
- {
-    type_register_static(&gen_rp_dev_info);
- }
- type_init(gen_rp_register_types)
+static void gen_rp_register_types(void)
+{
+   type_register_static(&gen_rp_dev_info);
+}
+type_init(gen_rp_register_types)
