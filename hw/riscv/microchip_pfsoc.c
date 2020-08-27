@@ -359,13 +359,9 @@ static const TypeInfo microchip_pfsoc_soc_type_info = {
     .instance_init = microchip_pfsoc_soc_instance_init,
     .class_init = microchip_pfsoc_soc_class_init,
 };
+TYPE_INFO(microchip_pfsoc_soc_type_info)
 
-static void microchip_pfsoc_soc_register_types(void)
-{
-    type_register_static(&microchip_pfsoc_soc_type_info);
-}
 
-type_init(microchip_pfsoc_soc_register_types)
 
 static void microchip_icicle_kit_machine_init(MachineState *machine)
 {
@@ -428,10 +424,6 @@ static const TypeInfo microchip_icicle_kit_machine_typeinfo = {
     .class_init = microchip_icicle_kit_machine_class_init,
     .instance_size = sizeof(MicrochipIcicleKitState),
 };
+TYPE_INFO(microchip_icicle_kit_machine_typeinfo)
 
-static void microchip_icicle_kit_machine_init_register_types(void)
-{
-    type_register_static(&microchip_icicle_kit_machine_typeinfo);
-}
 
-type_init(microchip_icicle_kit_machine_init_register_types)

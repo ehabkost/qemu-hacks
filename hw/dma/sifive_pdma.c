@@ -304,10 +304,6 @@ static const TypeInfo sifive_pdma_info = {
     .instance_size = sizeof(SiFivePDMAState),
     .class_init    = sifive_pdma_class_init,
 };
+TYPE_INFO(sifive_pdma_info)
 
-static void sifive_pdma_register_types(void)
-{
-    type_register_static(&sifive_pdma_info);
-}
 
-type_init(sifive_pdma_register_types)

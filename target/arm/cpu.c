@@ -2267,6 +2267,7 @@ static const TypeInfo host_arm_cpu_type_info = {
     .parent = TYPE_AARCH64_CPU,
     .instance_init = arm_host_initfn,
 };
+TYPE_INFO(host_arm_cpu_type_info)
 
 #endif
 
@@ -2327,9 +2328,6 @@ static void arm_cpu_register_types(void)
     const size_t cpu_count = ARRAY_SIZE(arm_cpus);
 
 
-#ifdef CONFIG_KVM
-    type_register_static(&host_arm_cpu_type_info);
-#endif
 
     if (cpu_count) {
         size_t i;

@@ -535,9 +535,5 @@ static const TypeInfo npcm7xx_timer_info = {
     .instance_size      = sizeof(NPCM7xxTimerCtrlState),
     .class_init         = npcm7xx_timer_class_init,
 };
+TYPE_INFO(npcm7xx_timer_info)
 
-static void npcm7xx_timer_register_type(void)
-{
-    type_register_static(&npcm7xx_timer_info);
-}
-type_init(npcm7xx_timer_register_type);

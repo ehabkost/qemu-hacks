@@ -261,9 +261,5 @@ static const TypeInfo npcm7xx_gcr_info = {
     .instance_init      = npcm7xx_gcr_init,
     .class_init         = npcm7xx_gcr_class_init,
 };
+TYPE_INFO(npcm7xx_gcr_info)
 
-static void npcm7xx_gcr_register_type(void)
-{
-    type_register_static(&npcm7xx_gcr_info);
-}
-type_init(npcm7xx_gcr_register_type);
