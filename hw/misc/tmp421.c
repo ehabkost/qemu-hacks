@@ -356,7 +356,7 @@ static void tmp421_initfn(Object *obj)
                         tmp421_set_temperature, NULL, NULL);
 }
 
-static void tmp421_class_init(ObjectClass *klass, void *data)
+static void tmp421_class_base_init(ObjectClass *klass, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(klass);
     I2CSlaveClass *k = I2C_SLAVE_CLASS(klass);
@@ -376,6 +376,7 @@ static const TypeInfo tmp421_info = {
     .instance_size = sizeof(TMP421State),
     .class_size    = sizeof(TMP421Class),
     .instance_init = tmp421_initfn,
+    .class_base_init = tmp421_class_base_init,
     .abstract      = true,
 };
 TYPE_INFO(tmp421_info)
@@ -388,7 +389,6 @@ static void tmp421_register_types(void)
         TypeInfo ti = {
             .name       = devices[i].name,
             .parent     = TYPE_TMP421,
-            .class_init = tmp421_class_init,
             .class_data = (void *) &devices[i],
         };
         type_register(&ti);
