@@ -99,8 +99,8 @@ struct U2FEmulatedState {
 };
 
 #define TYPE_U2F_EMULATED "u2f-emulated"
-#define EMULATED_U2F_KEY(obj) \
-    OBJECT_CHECK(U2FEmulatedState, (obj), TYPE_U2F_EMULATED)
+DECLARE_INSTANCE_CHECKER(U2FEmulatedState, EMULATED_U2F_KEY,
+                         TYPE_U2F_EMULATED)
 
 static void u2f_emulated_reset(U2FEmulatedState *key)
 {

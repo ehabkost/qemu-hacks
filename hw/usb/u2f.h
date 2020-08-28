@@ -37,12 +37,8 @@ typedef struct U2FKeyInfo U2FKeyInfo;
 
 #define TYPE_U2F_KEY "u2f-key"
 typedef struct U2FKeyClass U2FKeyClass;
-#define U2F_KEY(obj) \
-    OBJECT_CHECK(U2FKeyState, (obj), TYPE_U2F_KEY)
-#define U2F_KEY_CLASS(klass) \
-    OBJECT_CLASS_CHECK(U2FKeyClass, (klass), TYPE_U2F_KEY)
-#define U2F_KEY_GET_CLASS(obj) \
-    OBJECT_GET_CLASS(U2FKeyClass, (obj), TYPE_U2F_KEY)
+DECLARE_OBJ_CHECKERS(U2FKeyState, U2FKeyClass,
+                     U2F_KEY, TYPE_U2F_KEY)
 
 /*
  * Callbacks to be used by the U2F key base device (i.e. hw/u2f.c)
