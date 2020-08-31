@@ -162,6 +162,44 @@ struct Object
 };
 
 /**
+ * INSTANCE_TYPE:
+ * @OBJ_NAME: the object name in uppercase with underscore separators
+ *
+ * This can be used instead of InstanceType when OBJ_NAME is known.
+ */
+#define INSTANCE_TYPE(OBJ_NAME) \
+    OBJ_NAME##_INSTANCE_TYPE
+
+/**
+ * CLASS_TYPE:
+ * @OBJ_NAME: the object name in uppercase with underscore separators
+ *
+ * This can be used instead of ClassType when OBJ_NAME is known.
+ */
+#define CLASS_TYPE(OBJ_NAME) \
+    OBJ_NAME##_CLASS_TYPE
+
+/**
+ * DECLARE_INSTANCE_TYPE:
+ * @OBJ_NAME: the object name in uppercase with underscore separators
+ * @InstanceType: instance type
+ *
+ * This will declare the expected instance type of a given QOM type.
+ */
+#define DECLARE_INSTANCE_TYPE(OBJ_NAME, InstanceType) \
+    typedef InstanceType INSTANCE_TYPE(OBJ_NAME);
+
+/**
+ * DECLARE_CLASS_TYPE:
+ * @OBJ_NAME: the object name in uppercase with underscore separators
+ * @ClassType: class type
+ *
+ * This will declare the expected class type of a given QOM type.
+ */
+#define DECLARE_CLASS_TYPE(OBJ_NAME, ClassType) \
+    typedef ClassType CLASS_TYPE(OBJ_NAME);
+
+/**
  * DECLARE_INSTANCE_CHECKER:
  * @InstanceType: instance struct name
  * @OBJ_NAME: the object name in uppercase with underscore separators
