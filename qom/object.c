@@ -2810,3 +2810,8 @@ static void register_types(void)
 }
 
 type_init(register_types)
+
+/* Sanity check size functions */
+QEMU_BUILD_BUG_ON(QOM_TYPE_SIZE(Object) != sizeof(Object));
+QEMU_BUILD_BUG_ON(QOM_TYPE_SIZE(ObjectClass) != sizeof(ObjectClass));
+QEMU_BUILD_BUG_ON(QOM_TYPE_SIZE(void) != 0);
