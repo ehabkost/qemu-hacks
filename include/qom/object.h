@@ -212,6 +212,8 @@ struct Object
  * QOM type.
  */
 #define DECLARE_INSTANCE_CHECKER(InstanceType, OBJ_NAME, TYPENAME) \
+    DECLARE_INSTANCE_TYPE(OBJ_NAME, InstanceType) \
+    \
     static inline G_GNUC_UNUSED InstanceType * \
     OBJ_NAME(const void *obj) \
     { return OBJECT_CHECK(InstanceType, obj, TYPENAME); }
@@ -243,6 +245,8 @@ struct Object
  * QOM type.
  */
 #define DECLARE_CLASS_CHECKERS(ClassType, OBJ_NAME, TYPENAME) \
+    DECLARE_CLASS_TYPE(OBJ_NAME, ClassType) \
+    \
     static inline G_GNUC_UNUSED ClassType * \
     OBJ_NAME##_GET_CLASS(const void *obj) \
     { return OBJECT_GET_CLASS(ClassType, obj, TYPENAME); } \
@@ -297,6 +301,8 @@ struct Object
  *   - create the typedefs for the object and class structs
  *   - register the type for use with g_autoptr
  *   - provide three standard type cast functions
+ *   - declare the instance and class types so CLASS_TYPE(MODULE_OBJ_NAME)
+ *     and INSTANCE_TYPE(MODULE_OBJ_NAME) work.
  *
  * The object struct and class struct need to be declared manually.
  */
@@ -343,6 +349,8 @@ struct Object
     typedef struct InstanceType InstanceType; \
     \
     G_DEFINE_AUTOPTR_CLEANUP_FUNC(InstanceType, object_unref) \
+    \
+    DECLARE_CLASS_TYPE(MODULE_OBJ_NAME, void) \
     \
     DECLARE_INSTANCE_CHECKER(InstanceType, MODULE_OBJ_NAME, TYPE_##MODULE_OBJ_NAME)
 
