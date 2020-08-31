@@ -690,8 +690,13 @@ struct Object
  *   - declare the TypeInfo struct instance
  *   - provide the constructor to register the type
  *
+ * InstanceType and ClassType can be void, which indicates there's no
+ * specific class or instance struct defined for the type and the parent
+ * type struct sizes will be used.
+ *
  * This macro should rarely be used, instead one of the more specialized
  * macros is usually a better choice.
+ *
  */
 #define OBJECT_DEFINE_TYPE_EXTENDED(InstanceType, ClassType, module_obj_name, \
                                     MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
@@ -699,8 +704,8 @@ struct Object
     static const TypeInfo module_obj_name##_info = { \
         .parent = TYPE_##PARENT_MODULE_OBJ_NAME, \
         .name = TYPE_##MODULE_OBJ_NAME, \
-        .instance_size = sizeof(InstanceType), \
-        .class_size = sizeof(ClassType), \
+        .instance_size = QOM_TYPE_SIZE(InstanceType), \
+        .class_size = QOM_TYPE_SIZE(ClassType), \
         __VA_ARGS__ \
     }; \
     \
