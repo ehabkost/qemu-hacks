@@ -31,6 +31,7 @@ typedef struct NPCM7xxMCState {
 } NPCM7xxMCState;
 
 #define TYPE_NPCM7XX_MC "npcm7xx-mc"
-#define NPCM7XX_MC(obj) OBJECT_CHECK(NPCM7xxMCState, (obj), TYPE_NPCM7XX_MC)
+DECLARE_INSTANCE_CHECKER(NPCM7xxMCState, NPCM7XX_MC,
+                         TYPE_NPCM7XX_MC)
 
 #endif /* NPCM7XX_MC_H */

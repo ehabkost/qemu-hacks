@@ -43,6 +43,7 @@ typedef struct NPCM7xxCLKState {
 } NPCM7xxCLKState;
 
 #define TYPE_NPCM7XX_CLK "npcm7xx-clk"
-#define NPCM7XX_CLK(obj) OBJECT_CHECK(NPCM7xxCLKState, (obj), TYPE_NPCM7XX_CLK)
+DECLARE_INSTANCE_CHECKER(NPCM7xxCLKState, NPCM7XX_CLK,
+                         TYPE_NPCM7XX_CLK)
 
 #endif /* NPCM7XX_CLK_H */

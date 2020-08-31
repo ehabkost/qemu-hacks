@@ -55,8 +55,8 @@ typedef struct {
     int mode;
 } ParallelChardev;
 
-#define PARALLEL_CHARDEV(obj) \
-    OBJECT_CHECK(ParallelChardev, (obj), TYPE_CHARDEV_PARALLEL)
+DECLARE_INSTANCE_CHECKER(ParallelChardev, PARALLEL_CHARDEV,
+                         TYPE_CHARDEV_PARALLEL)
 
 static int pp_hw_mode(ParallelChardev *s, uint16_t mode)
 {
@@ -182,8 +182,6 @@ typedef struct {
     int fd;
 } ParallelChardev;
 
-#define PARALLEL_CHARDEV(obj)                                   \
-    OBJECT_CHECK(ParallelChardev, (obj), TYPE_CHARDEV_PARALLEL)
 
 static int pp_ioctl(Chardev *chr, int cmd, void *arg)
 {

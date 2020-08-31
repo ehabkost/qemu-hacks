@@ -41,7 +41,7 @@ typedef struct CadenceSDHCIState {
 } CadenceSDHCIState;
 
 #define TYPE_CADENCE_SDHCI  "cadence.sdhci"
-#define CADENCE_SDHCI(obj)  OBJECT_CHECK(CadenceSDHCIState, (obj), \
-                                         TYPE_CADENCE_SDHCI)
+DECLARE_INSTANCE_CHECKER(CadenceSDHCIState, CADENCE_SDHCI,
+                         TYPE_CADENCE_SDHCI)
 
 #endif /* CADENCE_SDHCI_H */

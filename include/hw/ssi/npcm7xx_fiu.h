@@ -68,6 +68,7 @@ struct NPCM7xxFIUState {
 };
 
 #define TYPE_NPCM7XX_FIU "npcm7xx-fiu"
-#define NPCM7XX_FIU(obj) OBJECT_CHECK(NPCM7xxFIUState, (obj), TYPE_NPCM7XX_FIU)
+DECLARE_INSTANCE_CHECKER(NPCM7xxFIUState, NPCM7XX_FIU,
+                         TYPE_NPCM7XX_FIU)
 
 #endif /* NPCM7XX_FIU_H */

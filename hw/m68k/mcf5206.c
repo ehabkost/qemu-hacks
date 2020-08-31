@@ -177,7 +177,8 @@ typedef struct {
     uint8_t uivr[2];
 } m5206_mbar_state;
 
-#define MCF5206_MBAR(obj) OBJECT_CHECK(m5206_mbar_state, (obj), TYPE_MCF5206_MBAR)
+DECLARE_INSTANCE_CHECKER(m5206_mbar_state, MCF5206_MBAR,
+                         TYPE_MCF5206_MBAR)
 
 /* Interrupt controller.  */
 

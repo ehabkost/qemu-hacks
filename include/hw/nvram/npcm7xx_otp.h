@@ -56,7 +56,8 @@ typedef struct NPCM7xxOTPState {
 } NPCM7xxOTPState;
 
 #define TYPE_NPCM7XX_OTP "npcm7xx-otp"
-#define NPCM7XX_OTP(obj) OBJECT_CHECK(NPCM7xxOTPState, (obj), TYPE_NPCM7XX_OTP)
+DECLARE_INSTANCE_CHECKER(NPCM7xxOTPState, NPCM7XX_OTP,
+                         TYPE_NPCM7XX_OTP)
 
 #define TYPE_NPCM7XX_KEY_STORAGE "npcm7xx-key-storage"
 #define TYPE_NPCM7XX_FUSE_ARRAY "npcm7xx-fuse-array"

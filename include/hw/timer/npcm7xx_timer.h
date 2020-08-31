@@ -72,7 +72,7 @@ struct NPCM7xxTimerCtrlState {
 };
 
 #define TYPE_NPCM7XX_TIMER "npcm7xx-timer"
-#define NPCM7XX_TIMER(obj)                                              \
-    OBJECT_CHECK(NPCM7xxTimerCtrlState, (obj), TYPE_NPCM7XX_TIMER)
+DECLARE_INSTANCE_CHECKER(NPCM7xxTimerCtrlState, NPCM7XX_TIMER,
+                         TYPE_NPCM7XX_TIMER)
 
 #endif /* NPCM7XX_TIMER_H */

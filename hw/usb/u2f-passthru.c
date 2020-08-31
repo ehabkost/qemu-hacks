@@ -76,8 +76,8 @@ struct U2FPassthruState {
 };
 
 #define TYPE_U2F_PASSTHRU "u2f-passthru"
-#define PASSTHRU_U2F_KEY(obj) \
-    OBJECT_CHECK(U2FPassthruState, (obj), TYPE_U2F_PASSTHRU)
+DECLARE_INSTANCE_CHECKER(U2FPassthruState, PASSTHRU_U2F_KEY,
+                         TYPE_U2F_PASSTHRU)
 
 /* Init packet sizes */
 #define PACKET_INIT_HEADER_SIZE 7

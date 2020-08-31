@@ -38,6 +38,7 @@ typedef struct NPCM7xxGCRState {
 } NPCM7xxGCRState;
 
 #define TYPE_NPCM7XX_GCR "npcm7xx-gcr"
-#define NPCM7XX_GCR(obj) OBJECT_CHECK(NPCM7xxGCRState, (obj), TYPE_NPCM7XX_GCR)
+DECLARE_INSTANCE_CHECKER(NPCM7xxGCRState, NPCM7XX_GCR,
+                         TYPE_NPCM7XX_GCR)
 
 #endif /* NPCM7XX_GCR_H */

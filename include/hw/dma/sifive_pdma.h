@@ -51,7 +51,7 @@ typedef struct SiFivePDMAState {
 
 #define TYPE_SIFIVE_PDMA    "sifive.pdma"
 
-#define SIFIVE_PDMA(obj)    \
-    OBJECT_CHECK(SiFivePDMAState, (obj), TYPE_SIFIVE_PDMA)
+DECLARE_INSTANCE_CHECKER(SiFivePDMAState, SIFIVE_PDMA,
+                         TYPE_SIFIVE_PDMA)
 
 #endif /* SIFIVE_PDMA_H */

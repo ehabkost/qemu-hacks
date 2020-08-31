@@ -49,8 +49,8 @@ typedef struct MicrochipPFSoCState {
 } MicrochipPFSoCState;
 
 #define TYPE_MICROCHIP_PFSOC    "microchip.pfsoc"
-#define MICROCHIP_PFSOC(obj) \
-    OBJECT_CHECK(MicrochipPFSoCState, (obj), TYPE_MICROCHIP_PFSOC)
+DECLARE_INSTANCE_CHECKER(MicrochipPFSoCState, MICROCHIP_PFSOC,
+                         TYPE_MICROCHIP_PFSOC)
 
 typedef struct MicrochipIcicleKitState {
     /*< private >*/
@@ -62,9 +62,8 @@ typedef struct MicrochipIcicleKitState {
 
 #define TYPE_MICROCHIP_ICICLE_KIT_MACHINE \
     MACHINE_TYPE_NAME("microchip-icicle-kit")
-#define MICROCHIP_ICICLE_KIT_MACHINE(obj) \
-    OBJECT_CHECK(MicrochipIcicleKitState, (obj), \
-                 TYPE_MICROCHIP_ICICLE_KIT_MACHINE)
+DECLARE_INSTANCE_CHECKER(MicrochipIcicleKitState, MICROCHIP_ICICLE_KIT_MACHINE,
+                         TYPE_MICROCHIP_ICICLE_KIT_MACHINE)
 
 enum {
     MICROCHIP_PFSOC_DEBUG,
