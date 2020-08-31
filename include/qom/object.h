@@ -654,6 +654,18 @@ struct Object
     DECLARE_INSTANCE_CHECKER(InstanceType, MODULE_OBJ_NAME, TYPE_##MODULE_OBJ_NAME)
 
 
+/*
+ * QOM_TYPE_SIZE:
+ * @T: a C type
+ *
+ * Similar to sizeof(T), but return 0 if T is void.  Useful when used
+ * with DECLARE_*_TYPE and *_TYPE macros.
+ */
+#define QOM_TYPE_SIZE(T) \
+    QEMU_GENERIC(((T *)0), \
+                 (void *, 0), \
+                 sizeof(*((T *)0)))
+
 #define TYPE_INFO(type_info_var) \
     static void \
     register_type_info_##type_info_var(void) \
