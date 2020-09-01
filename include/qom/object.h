@@ -179,6 +179,20 @@ struct Object
     { return OBJECT_CHECK(InstanceType, obj, TYPENAME); }
 
 /**
+ * DECLARE_INTERFACE_CHECKER:
+ * @InstanceType: instance type
+ * @OBJ_NAME: the object name in uppercase with underscore separators
+ * @TYPENAME: type name
+ *
+ * This macro will provide the instance type cast functions for a
+ * QOM interface type.
+ */
+#define DECLARE_INTERFACE_CHECKER(InstanceType, OBJ_NAME, TYPENAME) \
+    static inline G_GNUC_UNUSED InstanceType * \
+    OBJ_NAME(const void *obj) \
+    { return INTERFACE_CHECK(InstanceType, obj, TYPENAME); }
+
+/**
  * DECLARE_CLASS_CHECKERS:
  * @ClassType: class struct name
  * @OBJ_NAME: the object name in uppercase with underscore separators
