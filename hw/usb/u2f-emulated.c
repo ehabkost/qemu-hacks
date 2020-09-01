@@ -34,6 +34,7 @@
 #include <u2f-emu/u2f-emu.h>
 
 #include "u2f.h"
+#include "qom/object.h"
 
 /* Counter which sync with a file */
 struct synced_counter {

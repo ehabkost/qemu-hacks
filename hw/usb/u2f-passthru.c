@@ -33,6 +33,7 @@
 #include "migration/vmstate.h"
 
 #include "u2f.h"
+#include "qom/object.h"
 
 #ifdef CONFIG_LIBUDEV
 #include <libudev.h>

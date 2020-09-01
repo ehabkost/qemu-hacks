@@ -25,10 +25,10 @@
 typedef struct FWPathProviderClass FWPathProviderClass;
 DECLARE_CLASS_CHECKERS(FWPathProviderClass, FW_PATH_PROVIDER,
                        TYPE_FW_PATH_PROVIDER)
+typedef struct FWPathProvider FWPathProvider;
 #define FW_PATH_PROVIDER(obj) \
      INTERFACE_CHECK(FWPathProvider, (obj), TYPE_FW_PATH_PROVIDER)
 
-typedef struct FWPathProvider FWPathProvider;
 
 struct FWPathProviderClass {
     InterfaceClass parent_class;

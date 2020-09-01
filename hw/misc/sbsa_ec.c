@@ -15,11 +15,13 @@
 #include "qemu/log.h"
 #include "hw/sysbus.h"
 #include "sysemu/runstate.h"
+#include "qom/object.h"
 
-typedef struct {
+struct SECUREECState {
     SysBusDevice parent_obj;
     MemoryRegion iomem;
-} SECUREECState;
+};
+typedef struct SECUREECState SECUREECState;
 
 #define TYPE_SBSA_EC      "sbsa-ec"
 #define SECURE_EC(obj) OBJECT_CHECK(SECUREECState, (obj), TYPE_SBSA_EC)

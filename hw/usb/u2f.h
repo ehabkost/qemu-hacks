@@ -27,6 +27,7 @@
 #define U2F_H
 
 #include "hw/qdev-core.h"
+#include "qom/object.h"
 
 #define U2FHID_PACKET_SIZE 64
 #define U2FHID_PENDING_IN_NUM 32
@@ -35,6 +36,7 @@ typedef struct U2FKeyState U2FKeyState;
 typedef struct U2FKeyInfo U2FKeyInfo;
 
 #define TYPE_U2F_KEY "u2f-key"
+typedef struct U2FKeyClass U2FKeyClass;
 #define U2F_KEY(obj) \
     OBJECT_CHECK(U2FKeyState, (obj), TYPE_U2F_KEY)
 #define U2F_KEY_CLASS(klass) \
@@ -46,7 +48,7 @@ typedef struct U2FKeyInfo U2FKeyInfo;
  * Callbacks to be used by the U2F key base device (i.e. hw/u2f.c)
  * to interact with its variants (i.e. hw/u2f-*.c)
  */
-typedef struct U2FKeyClass {
+struct U2FKeyClass {
     /*< private >*/
     USBDeviceClass parent_class;
 
@@ -55,12 +57,12 @@ typedef struct U2FKeyClass {
                             const uint8_t packet[U2FHID_PACKET_SIZE]);
     void (*realize)(U2FKeyState *key, Error **errp);
     void (*unrealize)(U2FKeyState *key);
-} U2FKeyClass;
+};
 
 /*
  * State of the U2F key base device (i.e. hw/u2f.c)
  */
-typedef struct U2FKeyState {
+struct U2FKeyState {
     USBDevice dev;
     USBEndpoint *ep;
     uint8_t idle;
@@ -70,7 +72,8 @@ typedef struct U2FKeyState {
     uint8_t pending_in_start;
     uint8_t pending_in_end;
     uint8_t pending_in_num;
-} U2FKeyState;
+};
+typedef struct U2FKeyState U2FKeyState;
 
 /*
  * API to be used by the U2F key device variants (i.e. hw/u2f-*.c)

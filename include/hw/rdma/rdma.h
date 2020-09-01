@@ -22,11 +22,11 @@
 typedef struct RdmaProviderClass RdmaProviderClass;
 DECLARE_CLASS_CHECKERS(RdmaProviderClass, RDMA_PROVIDER,
                        INTERFACE_RDMA_PROVIDER)
+typedef struct RdmaProvider RdmaProvider;
 #define RDMA_PROVIDER(obj) \
     INTERFACE_CHECK(RdmaProvider, (obj), \
                     INTERFACE_RDMA_PROVIDER)
 
-typedef struct RdmaProvider RdmaProvider;
 
 struct RdmaProviderClass {
     InterfaceClass parent;

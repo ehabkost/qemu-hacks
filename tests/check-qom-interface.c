@@ -19,10 +19,10 @@
 typedef struct TestIfClass TestIfClass;
 DECLARE_CLASS_CHECKERS(TestIfClass, TEST_IF,
                        TYPE_TEST_IF)
+typedef struct TestIf TestIf;
 #define TEST_IF(obj) \
      INTERFACE_CHECK(TestIf, (obj), TYPE_TEST_IF)
 
-typedef struct TestIf TestIf;
 
 struct TestIfClass {
     InterfaceClass parent_class;
