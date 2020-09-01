@@ -36,6 +36,9 @@
 typedef struct RX62NState RX62NState;
 DECLARE_INSTANCE_CHECKER(RX62NState, RX62N_MCU,
                          TYPE_RX62N_MCU)
+typedef struct RX62NClass RX62NClass;
+DECLARE_CLASS_CHECKERS(RX62NClass, RX62N_MCU,
+                       TYPE_RX62N_MCU)
 
 #define TYPE_R5F562N7_MCU "r5f562n7-mcu"
 #define TYPE_R5F562N8_MCU "r5f562n8-mcu"
