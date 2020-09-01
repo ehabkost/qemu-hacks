@@ -43,6 +43,11 @@ typedef struct IOThread IOThread;
 DECLARE_INSTANCE_CHECKER(IOThread, IOTHREAD,
                          TYPE_IOTHREAD)
 
+typedef ObjectClass IOThreadClass;
+
+DECLARE_CLASS_CHECKERS(IOThreadClass, IOTHREAD,
+                       TYPE_IOTHREAD)
+
 char *iothread_get_id(IOThread *iothread);
 IOThread *iothread_by_id(const char *id);
 AioContext *iothread_get_aio_context(IOThread *iothread);
