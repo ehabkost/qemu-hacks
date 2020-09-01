@@ -61,10 +61,6 @@ struct AtmegaMcuClass {
     const uint8_t *irq;
     const peripheral_cfg *dev;
 };
-typedef struct AtmegaMcuClass AtmegaMcuClass;
-
-DECLARE_CLASS_CHECKERS(AtmegaMcuClass, ATMEGA_MCU,
-                       TYPE_ATMEGA_MCU)
 
 static const peripheral_cfg dev168_328[PERIFMAX] = {
     [USART0]        = {  0xc0, POWER0, 1 },
