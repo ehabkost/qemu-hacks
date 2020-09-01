@@ -70,10 +70,6 @@ struct RX62NClass {
     uint64_t rom_flash_size;
     uint64_t data_flash_size;
 };
-typedef struct RX62NClass RX62NClass;
-
-DECLARE_CLASS_CHECKERS(RX62NClass, RX62N_MCU,
-                       TYPE_RX62N_MCU)
 
 /*
  * IRQ -> IPR mapping table
