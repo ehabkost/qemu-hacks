@@ -35,6 +35,8 @@ typedef struct PCINE2000State {
     NE2000State ne2000;
 } PCINE2000State;
 
+#define TYPE_NE2K_PCI "ne2k_pci"
+
 static const VMStateDescription vmstate_pci_ne2000 = {
     .name = "ne2000",
     .version_id = 3,
@@ -117,7 +119,7 @@ static void ne2000_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo ne2000_info = {
-    .name          = "ne2k_pci",
+    .name          = TYPE_NE2K_PCI,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PCINE2000State),
     .class_init    = ne2000_class_init,
