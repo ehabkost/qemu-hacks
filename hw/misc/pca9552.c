@@ -32,10 +32,6 @@ struct PCA955xClass {
     uint8_t pin_count;
     uint8_t max_reg;
 };
-typedef struct PCA955xClass PCA955xClass;
-
-DECLARE_CLASS_CHECKERS(PCA955xClass, PCA955X,
-                       TYPE_PCA955X)
 
 #define PCA9552_LED_ON   0x0
 #define PCA9552_LED_OFF  0x1
