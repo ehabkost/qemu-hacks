@@ -17,6 +17,9 @@
 typedef struct PCA955xState PCA955xState;
 DECLARE_INSTANCE_CHECKER(PCA955xState, PCA955X,
                          TYPE_PCA955X)
+typedef struct PCA955xClass PCA955xClass;
+DECLARE_CLASS_CHECKERS(PCA955xClass, PCA955X,
+                       TYPE_PCA955X)
 
 #define PCA955X_NR_REGS 10
 #define PCA955X_PIN_COUNT_MAX 16
