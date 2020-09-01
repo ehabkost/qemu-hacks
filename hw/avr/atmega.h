@@ -26,6 +26,9 @@
 typedef struct AtmegaMcuState AtmegaMcuState;
 DECLARE_INSTANCE_CHECKER(AtmegaMcuState, ATMEGA_MCU,
                          TYPE_ATMEGA_MCU)
+typedef struct AtmegaMcuClass AtmegaMcuClass;
+DECLARE_CLASS_CHECKERS(AtmegaMcuClass, ATMEGA_MCU,
+                       TYPE_ATMEGA_MCU)
 
 #define POWER_MAX 2
 #define USART_MAX 4
