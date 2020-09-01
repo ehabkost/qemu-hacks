@@ -574,10 +574,6 @@ struct KVMS390FLICStateClass {
     S390FLICStateClass parent_class;
     DeviceRealize parent_realize;
 };
-typedef struct KVMS390FLICStateClass KVMS390FLICStateClass;
-
-DECLARE_CLASS_CHECKERS(KVMS390FLICStateClass, KVM_S390_FLIC,
-                       TYPE_KVM_S390_FLIC)
 
 
 static void kvm_s390_flic_realize(DeviceState *dev, Error **errp)
