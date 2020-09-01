@@ -502,6 +502,9 @@ struct TypeInfo
     InterfaceInfo *interfaces;
 };
 
+DECLARE_INSTANCE_TYPE(OBJECT, Object)
+DECLARE_CLASS_TYPE(OBJECT, ObjectClass)
+
 /**
  * OBJECT:
  * @obj: A derivative of #Object
