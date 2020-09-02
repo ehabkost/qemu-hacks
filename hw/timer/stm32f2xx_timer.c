@@ -96,7 +96,7 @@ static void stm32f2xx_timer_set_alarm(STM32F2XXTimerState *s, int64_t now)
 
 static void stm32f2xx_timer_reset(DeviceState *dev)
 {
-    STM32F2XXTimerState *s = STM32F2XXTIMER(dev);
+    STM32F2XXTimerState *s = STM32F2XX_TIMER(dev);
     int64_t now = qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL);
 
     s->tim_cr1 = 0;
@@ -306,7 +306,7 @@ static Property stm32f2xx_timer_properties[] = {
 
 static void stm32f2xx_timer_init(Object *obj)
 {
-    STM32F2XXTimerState *s = STM32F2XXTIMER(obj);
+    STM32F2XXTimerState *s = STM32F2XX_TIMER(obj);
 
     sysbus_init_irq(SYS_BUS_DEVICE(obj), &s->irq);
 
@@ -317,7 +317,7 @@ static void stm32f2xx_timer_init(Object *obj)
 
 static void stm32f2xx_timer_realize(DeviceState *dev, Error **errp)
 {
-    STM32F2XXTimerState *s = STM32F2XXTIMER(dev);
+    STM32F2XXTimerState *s = STM32F2XX_TIMER(dev);
     s->timer = timer_new_ns(QEMU_CLOCK_VIRTUAL, stm32f2xx_timer_interrupt, s);
 }
 
