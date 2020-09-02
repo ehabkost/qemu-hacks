@@ -39,7 +39,7 @@
 
 typedef struct PITClass PITClass;
 DECLARE_CLASS_CHECKERS(PITClass, PIT,
-                       TYPE_I8254)
+                       TYPE_ISA_PIT)
 
 struct PITClass {
     PITCommonClass parent_class;
@@ -370,7 +370,7 @@ static void pit_class_initfn(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo pit_info = {
-    .name          = TYPE_I8254,
+    .name          = TYPE_ISA_PIT,
     .parent        = TYPE_PIT_COMMON,
     .instance_size = sizeof(PITCommonState),
     .class_init    = pit_class_initfn,
