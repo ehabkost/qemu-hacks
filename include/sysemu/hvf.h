@@ -37,7 +37,7 @@ void hvf_vcpu_destroy(CPUState *);
 #define TYPE_HVF_ACCEL ACCEL_CLASS_NAME("hvf")
 
 typedef struct HVFState HVFState;
-DECLARE_INSTANCE_CHECKER(HVFState, HVF_STATE,
+DECLARE_INSTANCE_CHECKER(HVFState, HVF_ACCEL,
                          TYPE_HVF_ACCEL)
 
 #endif
