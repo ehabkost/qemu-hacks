@@ -30,10 +30,10 @@
 #include "hw/sysbus.h"
 #include "qom/object.h"
 
-#define TYPE_TUSB6010 "tusb6010"
+#define TYPE_TUSB "tusb6010"
 typedef struct TUSBState TUSBState;
 DECLARE_INSTANCE_CHECKER(TUSBState, TUSB,
-                         TYPE_TUSB6010)
+                         TYPE_TUSB)
 
 struct TUSBState {
     SysBusDevice parent_obj;
@@ -838,7 +838,7 @@ static void tusb6010_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo tusb6010_info = {
-    .name          = TYPE_TUSB6010,
+    .name          = TYPE_TUSB,
     .parent        = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(TUSBState),
     .class_init    = tusb6010_class_init,
