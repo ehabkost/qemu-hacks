@@ -2414,7 +2414,7 @@ void qemu_console_early_init(void)
 {
     /* set the default vc driver */
     if (!object_class_by_name(TYPE_VC_CHARDEV)) {
-        type_register(&char_vc_type_info);
+        type_register_static(&char_vc_type_info);
     }
 }
 
