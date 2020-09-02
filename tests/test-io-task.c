@@ -25,7 +25,7 @@
 #include "qapi/error.h"
 #include "qemu/module.h"
 
-#define TYPE_DUMMY "qemu:dummy"
+#define TYPE_DUMMY_OBJECT "qemu:dummy"
 
 typedef struct DummyObject DummyObject;
 typedef struct DummyObjectClass DummyObjectClass;
@@ -40,7 +40,7 @@ struct DummyObjectClass {
 
 static const TypeInfo dummy_info = {
     .parent = TYPE_OBJECT,
-    .name = TYPE_DUMMY,
+    .name = TYPE_DUMMY_OBJECT,
     .instance_size = sizeof(DummyObject),
     .class_size = sizeof(DummyObjectClass),
 };
@@ -65,7 +65,7 @@ static void task_callback(QIOTask *task,
 static void test_task_complete(void)
 {
     QIOTask *task;
-    Object *obj = object_new(TYPE_DUMMY);
+    Object *obj = object_new(TYPE_DUMMY_OBJECT);
     Object *src;
     struct TestTaskData data = { NULL, NULL, false };
 
@@ -95,7 +95,7 @@ static void task_data_free(gpointer opaque)
 static void test_task_data_free(void)
 {
     QIOTask *task;
-    Object *obj = object_new(TYPE_DUMMY);
+    Object *obj = object_new(TYPE_DUMMY_OBJECT);
     struct TestTaskData data = { NULL, NULL, false };
 
     task = qio_task_new(obj, task_callback, &data, task_data_free);
@@ -113,7 +113,7 @@ static void test_task_data_free(void)
 static void test_task_failure(void)
 {
     QIOTask *task;
-    Object *obj = object_new(TYPE_DUMMY);
+    Object *obj = object_new(TYPE_DUMMY_OBJECT);
     struct TestTaskData data = { NULL, NULL, false };
     Error *err = NULL;
 
@@ -174,7 +174,7 @@ static void test_task_thread_callback(QIOTask *task,
 static void test_task_thread_complete(void)
 {
     QIOTask *task;
-    Object *obj = object_new(TYPE_DUMMY);
+    Object *obj = object_new(TYPE_DUMMY_OBJECT);
     struct TestThreadWorkerData data = { 0 };
     GThread *self;
 
@@ -215,7 +215,7 @@ static void test_task_thread_complete(void)
 static void test_task_thread_failure(void)
 {
     QIOTask *task;
-    Object *obj = object_new(TYPE_DUMMY);
+    Object *obj = object_new(TYPE_DUMMY_OBJECT);
     struct TestThreadWorkerData data = { 0 };
     GThread *self;
 
