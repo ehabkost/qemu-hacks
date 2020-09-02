@@ -3873,6 +3873,7 @@ static const TypeInfo vtd_info = {
     .instance_size = sizeof(IntelIOMMUState),
     .class_init    = vtd_class_init,
 };
+TYPE_INFO(vtd_info)
 
 static void vtd_iommu_memory_region_class_init(ObjectClass *klass,
                                                      void *data)
@@ -3889,11 +3890,6 @@ static const TypeInfo vtd_iommu_memory_region_info = {
     .name = TYPE_INTEL_IOMMU_MEMORY_REGION,
     .class_init = vtd_iommu_memory_region_class_init,
 };
+TYPE_INFO(vtd_iommu_memory_region_info)
 
-static void vtd_register_types(void)
-{
-    type_register_static(&vtd_info);
-    type_register_static(&vtd_iommu_memory_region_info);
-}
 
-type_init(vtd_register_types)

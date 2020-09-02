@@ -97,6 +97,7 @@ static const TypeInfo pxb_bus_info = {
     .instance_size = sizeof(PXBBus),
     .class_init    = pxb_bus_class_init,
 };
+TYPE_INFO(pxb_bus_info)
 
 static const TypeInfo pxb_pcie_bus_info = {
     .name          = TYPE_PXB_PCIE_BUS,
@@ -104,6 +105,7 @@ static const TypeInfo pxb_pcie_bus_info = {
     .instance_size = sizeof(PXBBus),
     .class_init    = pxb_bus_class_init,
 };
+TYPE_INFO(pxb_pcie_bus_info)
 
 static const char *pxb_host_root_bus_path(PCIHostState *host_bridge,
                                           PCIBus *rootbus)
@@ -164,6 +166,7 @@ static const TypeInfo pxb_host_info = {
     .parent        = TYPE_PCI_HOST_BRIDGE,
     .class_init    = pxb_host_class_init,
 };
+TYPE_INFO(pxb_host_info)
 
 /*
  * Registers the PXB bus as a child of pci host root bus.
@@ -331,6 +334,7 @@ static const TypeInfo pxb_dev_info = {
         { },
     },
 };
+TYPE_INFO(pxb_dev_info)
 
 static void pxb_pcie_dev_realize(PCIDevice *dev, Error **errp)
 {
@@ -369,14 +373,6 @@ static const TypeInfo pxb_pcie_dev_info = {
         { },
     },
 };
+TYPE_INFO(pxb_pcie_dev_info)
 
-static void pxb_register_types(void)
-{
-    type_register_static(&pxb_bus_info);
-    type_register_static(&pxb_pcie_bus_info);
-    type_register_static(&pxb_host_info);
-    type_register_static(&pxb_dev_info);
-    type_register_static(&pxb_pcie_dev_info);
-}
 
-type_init(pxb_register_types)

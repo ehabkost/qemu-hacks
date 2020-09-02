@@ -2347,6 +2347,7 @@ static const TypeInfo lsi_info = {
         { },
     },
 };
+TYPE_INFO(lsi_info)
 
 static void lsi53c810_class_init(ObjectClass *klass, void *data)
 {
@@ -2360,14 +2361,9 @@ static TypeInfo lsi53c810_info = {
     .parent        = TYPE_LSI53C895A,
     .class_init    = lsi53c810_class_init,
 };
+TYPE_INFO(lsi53c810_info)
 
-static void lsi53c895a_register_types(void)
-{
-    type_register_static(&lsi_info);
-    type_register_static(&lsi53c810_info);
-}
 
-type_init(lsi53c895a_register_types)
 
 void lsi53c8xx_handle_legacy_cmdline(DeviceState *lsi_dev)
 {

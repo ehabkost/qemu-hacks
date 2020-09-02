@@ -464,6 +464,7 @@ static const TypeInfo mv88w8618_eth_info = {
     .instance_init = mv88w8618_eth_init,
     .class_init    = mv88w8618_eth_class_init,
 };
+TYPE_INFO(mv88w8618_eth_info)
 
 /* LCD register offsets */
 #define MP_LCD_IRQCTRL          0x180
@@ -696,6 +697,7 @@ static const TypeInfo musicpal_lcd_info = {
     .instance_init = musicpal_lcd_init,
     .class_init    = musicpal_lcd_class_init,
 };
+TYPE_INFO(musicpal_lcd_info)
 
 /* PIC register offsets */
 #define MP_PIC_STATUS           0x00
@@ -819,6 +821,7 @@ static const TypeInfo mv88w8618_pic_info = {
     .instance_init = mv88w8618_pic_init,
     .class_init    = mv88w8618_pic_class_init,
 };
+TYPE_INFO(mv88w8618_pic_info)
 
 /* PIT register offsets */
 #define MP_PIT_TIMER1_LENGTH    0x00
@@ -1004,6 +1007,7 @@ static const TypeInfo mv88w8618_pit_info = {
     .instance_init = mv88w8618_pit_init,
     .class_init    = mv88w8618_pit_class_init,
 };
+TYPE_INFO(mv88w8618_pit_info)
 
 /* Flash config register offsets */
 #define MP_FLASHCFG_CFGR0    0x04
@@ -1090,6 +1094,7 @@ static const TypeInfo mv88w8618_flashcfg_info = {
     .instance_init = mv88w8618_flashcfg_init,
     .class_init    = mv88w8618_flashcfg_class_init,
 };
+TYPE_INFO(mv88w8618_flashcfg_info)
 
 /* Misc register offsets */
 #define MP_MISC_BOARD_REVISION  0x18
@@ -1145,6 +1150,7 @@ static const TypeInfo musicpal_misc_info = {
     .instance_init = musicpal_misc_init,
     .instance_size = sizeof(MusicPalMiscState),
 };
+TYPE_INFO(musicpal_misc_info)
 
 /* WLAN register offsets */
 #define MP_WLAN_MAGIC1          0x11c
@@ -1434,6 +1440,7 @@ static const TypeInfo musicpal_gpio_info = {
     .instance_init = musicpal_gpio_init,
     .class_init    = musicpal_gpio_class_init,
 };
+TYPE_INFO(musicpal_gpio_info)
 
 /* Keyboard codes & masks */
 #define KEY_RELEASED            0x80
@@ -1594,6 +1601,7 @@ static const TypeInfo musicpal_key_info = {
     .instance_init = musicpal_key_init,
     .class_init    = musicpal_key_class_init,
 };
+TYPE_INFO(musicpal_key_info)
 
 static struct arm_boot_info musicpal_binfo = {
     .loader_start = 0x0,
@@ -1751,18 +1759,6 @@ static const TypeInfo mv88w8618_wlan_info = {
     .instance_size = sizeof(SysBusDevice),
     .class_init    = mv88w8618_wlan_class_init,
 };
+TYPE_INFO(mv88w8618_wlan_info)
 
-static void musicpal_register_types(void)
-{
-    type_register_static(&mv88w8618_pic_info);
-    type_register_static(&mv88w8618_pit_info);
-    type_register_static(&mv88w8618_flashcfg_info);
-    type_register_static(&mv88w8618_eth_info);
-    type_register_static(&mv88w8618_wlan_info);
-    type_register_static(&musicpal_lcd_info);
-    type_register_static(&musicpal_gpio_info);
-    type_register_static(&musicpal_key_info);
-    type_register_static(&musicpal_misc_info);
-}
 
-type_init(musicpal_register_types)

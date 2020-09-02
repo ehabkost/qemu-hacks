@@ -1486,6 +1486,7 @@ static const TypeInfo lm3s811evb_type = {
     .parent = TYPE_MACHINE,
     .class_init = lm3s811evb_class_init,
 };
+TYPE_INFO(lm3s811evb_type)
 
 static void lm3s6965evb_class_init(ObjectClass *oc, void *data)
 {
@@ -1502,14 +1503,9 @@ static const TypeInfo lm3s6965evb_type = {
     .parent = TYPE_MACHINE,
     .class_init = lm3s6965evb_class_init,
 };
+TYPE_INFO(lm3s6965evb_type)
 
-static void stellaris_machine_init(void)
-{
-    type_register_static(&lm3s811evb_type);
-    type_register_static(&lm3s6965evb_type);
-}
 
-type_init(stellaris_machine_init)
 
 static void stellaris_i2c_class_init(ObjectClass *klass, void *data)
 {
@@ -1525,6 +1521,7 @@ static const TypeInfo stellaris_i2c_info = {
     .instance_init = stellaris_i2c_init,
     .class_init    = stellaris_i2c_class_init,
 };
+TYPE_INFO(stellaris_i2c_info)
 
 static void stellaris_gptm_class_init(ObjectClass *klass, void *data)
 {
@@ -1541,6 +1538,7 @@ static const TypeInfo stellaris_gptm_info = {
     .instance_init = stellaris_gptm_init,
     .class_init    = stellaris_gptm_class_init,
 };
+TYPE_INFO(stellaris_gptm_info)
 
 static void stellaris_adc_class_init(ObjectClass *klass, void *data)
 {
@@ -1556,12 +1554,6 @@ static const TypeInfo stellaris_adc_info = {
     .instance_init = stellaris_adc_init,
     .class_init    = stellaris_adc_class_init,
 };
+TYPE_INFO(stellaris_adc_info)
 
-static void stellaris_register_types(void)
-{
-    type_register_static(&stellaris_i2c_info);
-    type_register_static(&stellaris_gptm_info);
-    type_register_static(&stellaris_adc_info);
-}
 
-type_init(stellaris_register_types)

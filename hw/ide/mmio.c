@@ -168,11 +168,8 @@ static const TypeInfo mmio_ide_type_info = {
     .instance_init = mmio_ide_initfn,
     .class_init = mmio_ide_class_init,
 };
+TYPE_INFO(mmio_ide_type_info)
 
-static void mmio_ide_register_types(void)
-{
-    type_register_static(&mmio_ide_type_info);
-}
 
 void mmio_ide_init_drives(DeviceState *dev, DriveInfo *hd0, DriveInfo *hd1)
 {
@@ -186,4 +183,3 @@ void mmio_ide_init_drives(DeviceState *dev, DriveInfo *hd0, DriveInfo *hd1)
     }
 }
 
-type_init(mmio_ide_register_types)

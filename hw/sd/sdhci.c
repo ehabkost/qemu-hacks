@@ -1487,6 +1487,7 @@ static const TypeInfo sdhci_sysbus_info = {
     .instance_finalize = sdhci_sysbus_finalize,
     .class_init = sdhci_sysbus_class_init,
 };
+TYPE_INFO(sdhci_sysbus_info)
 
 /* --- qdev bus master --- */
 
@@ -1504,6 +1505,7 @@ static const TypeInfo sdhci_bus_info = {
     .instance_size = sizeof(SDBus),
     .class_init = sdhci_bus_class_init,
 };
+TYPE_INFO(sdhci_bus_info)
 
 /* --- qdev i.MX eSDHC --- */
 
@@ -1749,6 +1751,7 @@ static const TypeInfo imx_usdhc_info = {
     .parent = TYPE_SYSBUS_SDHCI,
     .instance_init = imx_usdhc_init,
 };
+TYPE_INFO(imx_usdhc_info)
 
 /* --- qdev Samsung s3c --- */
 
@@ -1813,13 +1816,6 @@ static const TypeInfo sdhci_s3c_info = {
     .parent = TYPE_SYSBUS_SDHCI,
     .instance_init = sdhci_s3c_init,
 };
+TYPE_INFO(sdhci_s3c_info)
 
-static void sdhci_register_types(void)
-{
-    type_register_static(&sdhci_sysbus_info);
-    type_register_static(&sdhci_bus_info);
-    type_register_static(&imx_usdhc_info);
-    type_register_static(&sdhci_s3c_info);
-}
 
-type_init(sdhci_register_types)

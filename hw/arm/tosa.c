@@ -303,6 +303,7 @@ static const TypeInfo tosa_dac_info = {
     .instance_size = sizeof(TosaDACState),
     .class_init    = tosa_dac_class_init,
 };
+TYPE_INFO(tosa_dac_info)
 
 static void tosa_ssp_class_init(ObjectClass *klass, void *data)
 {
@@ -318,6 +319,7 @@ static const TypeInfo tosa_ssp_info = {
     .instance_size = sizeof(SSISlave),
     .class_init    = tosa_ssp_class_init,
 };
+TYPE_INFO(tosa_ssp_info)
 
 static const TypeInfo tosa_misc_gpio_info = {
     .name          = TYPE_TOSA_MISC_GPIO,
@@ -329,12 +331,6 @@ static const TypeInfo tosa_misc_gpio_info = {
      * need to set up reset or vmstate, and has no realize method.
      */
 };
+TYPE_INFO(tosa_misc_gpio_info)
 
-static void tosa_register_types(void)
-{
-    type_register_static(&tosa_dac_info);
-    type_register_static(&tosa_ssp_info);
-    type_register_static(&tosa_misc_gpio_info);
-}
 
-type_init(tosa_register_types)

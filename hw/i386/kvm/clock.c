@@ -329,6 +329,7 @@ static const TypeInfo kvmclock_info = {
     .instance_size = sizeof(KVMClockState),
     .class_init    = kvmclock_class_init,
 };
+TYPE_INFO(kvmclock_info)
 
 /* Note: Must be called after VCPU initialization. */
 void kvmclock_create(void)
@@ -342,9 +343,4 @@ void kvmclock_create(void)
     }
 }
 
-static void kvmclock_register_types(void)
-{
-    type_register_static(&kvmclock_info);
-}
 
-type_init(kvmclock_register_types)
