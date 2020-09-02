@@ -32,7 +32,7 @@
 
 #define TYPE_STATIC_PROPS "static_prop_type"
 typedef struct MyType MyType;
-DECLARE_INSTANCE_CHECKER(MyType, STATIC_TYPE,
+DECLARE_INSTANCE_CHECKER(MyType, STATIC_PROPS,
                          TYPE_STATIC_PROPS)
 
 #define TYPE_SUBCLASS "static_prop_subtype"
@@ -77,7 +77,7 @@ static void test_static_prop_subprocess(void)
 {
     MyType *mt;
 
-    mt = STATIC_TYPE(object_new(TYPE_STATIC_PROPS));
+    mt = STATIC_PROPS(object_new(TYPE_STATIC_PROPS));
     qdev_realize(DEVICE(mt), NULL, &error_fatal);
 
     g_assert_cmpuint(mt->prop1, ==, PROP_DEFAULT);
@@ -112,7 +112,7 @@ static void test_static_globalprop_subprocess(void)
 
     register_global_properties(props);
 
-    mt = STATIC_TYPE(object_new(TYPE_STATIC_PROPS));
+    mt = STATIC_PROPS(object_new(TYPE_STATIC_PROPS));
     qdev_realize(DEVICE(mt), NULL, &error_fatal);
 
     g_assert_cmpuint(mt->prop1, ==, 200);
@@ -273,7 +273,7 @@ static void test_subclass_global_props(void)
 
     register_global_properties(props);
 
-    mt = STATIC_TYPE(object_new(TYPE_SUBCLASS));
+    mt = STATIC_PROPS(object_new(TYPE_SUBCLASS));
     qdev_realize(DEVICE(mt), NULL, &error_fatal);
 
     g_assert_cmpuint(mt->prop1, ==, 102);
