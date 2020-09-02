@@ -31,7 +31,7 @@
 #define PVPANIC_CRASHLOADED     (1 << PVPANIC_F_CRASHLOADED)
 
 typedef struct PVPanicState PVPanicState;
-DECLARE_INSTANCE_CHECKER(PVPanicState, ISA_PVPANIC_DEVICE,
+DECLARE_INSTANCE_CHECKER(PVPanicState, PVPANIC,
                          TYPE_PVPANIC)
 
 static void handle_event(int event)
@@ -86,7 +86,7 @@ static const MemoryRegionOps pvpanic_ops = {
 
 static void pvpanic_isa_initfn(Object *obj)
 {
-    PVPanicState *s = ISA_PVPANIC_DEVICE(obj);
+    PVPanicState *s = PVPANIC(obj);
 
     memory_region_init_io(&s->io, OBJECT(s), &pvpanic_ops, s, "pvpanic", 1);
 }
@@ -94,7 +94,7 @@ static void pvpanic_isa_initfn(Object *obj)
 static void pvpanic_isa_realizefn(DeviceState *dev, Error **errp)
 {
     ISADevice *d = ISA_DEVICE(dev);
-    PVPanicState *s = ISA_PVPANIC_DEVICE(dev);
+    PVPanicState *s = PVPANIC(dev);
     FWCfgState *fw_cfg = fw_cfg_find();
     uint16_t *pvpanic_port;
 
