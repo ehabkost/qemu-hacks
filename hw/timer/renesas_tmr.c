@@ -396,7 +396,7 @@ static void timer_event1(void *opaque)
 
 static void rtmr_reset(DeviceState *dev)
 {
-    RTMRState *tmr = RTMR(dev);
+    RTMRState *tmr = RENESAS_TMR(dev);
     tmr->tcr[0]   = tmr->tcr[1]   = 0x00;
     tmr->tcsr[0]  = 0x00;
     tmr->tcsr[1]  = 0x10;
@@ -411,7 +411,7 @@ static void rtmr_reset(DeviceState *dev)
 static void rtmr_init(Object *obj)
 {
     SysBusDevice *d = SYS_BUS_DEVICE(obj);
-    RTMRState *tmr = RTMR(obj);
+    RTMRState *tmr = RENESAS_TMR(obj);
     int i;
 
     memory_region_init_io(&tmr->memory, OBJECT(tmr), &tmr_ops,
@@ -462,7 +462,7 @@ static void rtmr_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo rtmr_info = {
-    .name = TYPE_RENESAS_TMR,
+    .name = TYPE_RTMR,
     .parent = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(RTMRState),
     .instance_init = rtmr_init,
