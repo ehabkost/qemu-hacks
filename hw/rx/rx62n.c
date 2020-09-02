@@ -166,7 +166,7 @@ static void register_tmr(RX62NState *s, int unit)
     int i, irqbase;
 
     object_initialize_child(OBJECT(s), "tmr[*]",
-                            &s->tmr[unit], TYPE_RENESAS_TMR);
+                            &s->tmr[unit], TYPE_RTMR);
     tmr = SYS_BUS_DEVICE(&s->tmr[unit]);
     qdev_prop_set_uint64(DEVICE(tmr), "input-freq", s->pclk_freq_hz);
     sysbus_realize(tmr, &error_abort);
