@@ -46,9 +46,9 @@ typedef struct PXBDev PXBDev;
 DECLARE_INSTANCE_CHECKER(PXBDev, PXB_DEV,
                          TYPE_PXB_DEV)
 
-#define TYPE_PXB_PCIE_DEVICE "pxb-pcie"
+#define TYPE_PXB_PCIE_DEV "pxb-pcie"
 DECLARE_INSTANCE_CHECKER(PXBDev, PXB_PCIE_DEV,
-                         TYPE_PXB_PCIE_DEVICE)
+                         TYPE_PXB_PCIE_DEV)
 
 struct PXBDev {
     /*< private >*/
@@ -360,7 +360,7 @@ static void pxb_pcie_dev_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo pxb_pcie_dev_info = {
-    .name          = TYPE_PXB_PCIE_DEVICE,
+    .name          = TYPE_PXB_PCIE_DEV,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PXBDev),
     .class_init    = pxb_pcie_dev_class_init,
