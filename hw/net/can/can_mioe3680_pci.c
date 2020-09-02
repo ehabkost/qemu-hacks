@@ -44,7 +44,7 @@
 #define TYPE_MIOE3680_PCI "mioe3680_pci"
 
 typedef struct Mioe3680PCIState Mioe3680PCIState;
-DECLARE_INSTANCE_CHECKER(Mioe3680PCIState, MIOe3680_PCI_DEV,
+DECLARE_INSTANCE_CHECKER(Mioe3680PCIState, MIOE3680_PCI,
                          TYPE_MIOE3680_PCI)
 
 /* the PCI device and vendor IDs */
@@ -76,7 +76,7 @@ struct Mioe3680PCIState {
 
 static void mioe3680_pci_reset(DeviceState *dev)
 {
-    Mioe3680PCIState *d = MIOe3680_PCI_DEV(dev);
+    Mioe3680PCIState *d = MIOE3680_PCI(dev);
     int i;
 
     for (i = 0 ; i < MIOe3680_PCI_SJA_COUNT; i++) {
@@ -156,7 +156,7 @@ static const MemoryRegionOps mioe3680_pci_sja2_io_ops = {
 
 static void mioe3680_pci_realize(PCIDevice *pci_dev, Error **errp)
 {
-    Mioe3680PCIState *d = MIOe3680_PCI_DEV(pci_dev);
+    Mioe3680PCIState *d = MIOE3680_PCI(pci_dev);
     uint8_t *pci_conf;
     int i;
 
@@ -189,7 +189,7 @@ static void mioe3680_pci_realize(PCIDevice *pci_dev, Error **errp)
 
 static void mioe3680_pci_exit(PCIDevice *pci_dev)
 {
-    Mioe3680PCIState *d = MIOe3680_PCI_DEV(pci_dev);
+    Mioe3680PCIState *d = MIOE3680_PCI(pci_dev);
     int i;
 
     for (i = 0 ; i < MIOe3680_PCI_SJA_COUNT; i++) {
@@ -216,7 +216,7 @@ static const VMStateDescription vmstate_mioe3680_pci = {
 
 static void mioe3680_pci_instance_init(Object *obj)
 {
-    Mioe3680PCIState *d = MIOe3680_PCI_DEV(obj);
+    Mioe3680PCIState *d = MIOE3680_PCI(obj);
 
     object_property_add_link(obj, "canbus0", TYPE_CAN_BUS,
                              (Object **)&d->canbus[0],
