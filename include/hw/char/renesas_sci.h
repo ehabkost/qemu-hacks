@@ -15,7 +15,7 @@
 
 #define TYPE_RENESAS_SCI "renesas-sci"
 typedef struct RSCIState RSCIState;
-DECLARE_INSTANCE_CHECKER(RSCIState, RSCI,
+DECLARE_INSTANCE_CHECKER(RSCIState, RENESAS_SCI,
                          TYPE_RENESAS_SCI)
 
 enum {
