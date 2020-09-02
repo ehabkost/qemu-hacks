@@ -128,7 +128,7 @@ static void test_static_globalprop(void)
 }
 
 #define TYPE_DYNAMIC_PROPS "dynamic-prop-type"
-DECLARE_INSTANCE_CHECKER(MyType, DYNAMIC_TYPE,
+DECLARE_INSTANCE_CHECKER(MyType, DYNAMIC_PROPS,
                          TYPE_DYNAMIC_PROPS)
 
 #define TYPE_UNUSED_HOTPLUG   "hotplug-type"
@@ -137,7 +137,7 @@ DECLARE_INSTANCE_CHECKER(MyType, DYNAMIC_TYPE,
 static void prop1_accessor(Object *obj, Visitor *v, const char *name,
                            void *opaque, Error **errp)
 {
-    MyType *mt = DYNAMIC_TYPE(obj);
+    MyType *mt = DYNAMIC_PROPS(obj);
 
     visit_type_uint32(v, name, &mt->prop1, errp);
 }
@@ -145,7 +145,7 @@ static void prop1_accessor(Object *obj, Visitor *v, const char *name,
 static void prop2_accessor(Object *obj, Visitor *v, const char *name,
                            void *opaque, Error **errp)
 {
-    MyType *mt = DYNAMIC_TYPE(obj);
+    MyType *mt = DYNAMIC_PROPS(obj);
 
     visit_type_uint32(v, name, &mt->prop2, errp);
 }
@@ -230,7 +230,7 @@ static void test_dynamic_globalprop_subprocess(void)
 
     register_global_properties(props);
 
-    mt = DYNAMIC_TYPE(object_new(TYPE_DYNAMIC_PROPS));
+    mt = DYNAMIC_PROPS(object_new(TYPE_DYNAMIC_PROPS));
     qdev_realize(DEVICE(mt), NULL, &error_fatal);
 
     g_assert_cmpuint(mt->prop1, ==, 101);
