@@ -47,7 +47,7 @@ struct CRBState {
 };
 typedef struct CRBState CRBState;
 
-DECLARE_INSTANCE_CHECKER(CRBState, CRB,
+DECLARE_INSTANCE_CHECKER(CRBState, TPM_CRB,
                          TYPE_TPM_CRB)
 
 #define CRB_INTF_TYPE_CRB_ACTIVE 0b1
@@ -86,7 +86,7 @@ enum crb_cancel {
 static uint64_t tpm_crb_mmio_read(void *opaque, hwaddr addr,
                                   unsigned size)
 {
-    CRBState *s = CRB(opaque);
+    CRBState *s = TPM_CRB(opaque);
     void *regs = (void *)&s->regs + (addr & ~3);
     unsigned offset = addr & 3;
     uint32_t val = *(uint32_t *)regs >> (8 * offset);
@@ -113,7 +113,7 @@ static uint8_t tpm_crb_get_active_locty(CRBState *s)
 static void tpm_crb_mmio_write(void *opaque, hwaddr addr,
                                uint64_t val, unsigned size)
 {
-    CRBState *s = CRB(opaque);
+    CRBState *s = TPM_CRB(opaque);
     uint8_t locty =  addr >> 12;
 
     trace_tpm_crb_mmio_write(addr, size, val);
@@ -190,7 +190,7 @@ static const MemoryRegionOps tpm_crb_memory_ops = {
 
 static void tpm_crb_request_completed(TPMIf *ti, int ret)
 {
-    CRBState *s = CRB(ti);
+    CRBState *s = TPM_CRB(ti);
 
     s->regs[R_CRB_CTRL_START] &= ~CRB_START_INVOKE;
     if (ret != 0) {
@@ -201,7 +201,7 @@ static void tpm_crb_request_completed(TPMIf *ti, int ret)
 
 static enum TPMVersion tpm_crb_get_version(TPMIf *ti)
 {
-    CRBState *s = CRB(ti);
+    CRBState *s = TPM_CRB(ti);
 
     return tpm_backend_get_tpm_version(s->tpmbe);
 }
@@ -232,7 +232,7 @@ static Property tpm_crb_properties[] = {
 
 static void tpm_crb_reset(void *dev)
 {
-    CRBState *s = CRB(dev);
+    CRBState *s = TPM_CRB(dev);
 
     if (s->ppi_enabled) {
         tpm_ppi_reset(&s->ppi);
@@ -281,7 +281,7 @@ static void tpm_crb_reset(void *dev)
 
 static void tpm_crb_realize(DeviceState *dev, Error **errp)
 {
-    CRBState *s = CRB(dev);
+    CRBState *s = TPM_CRB(dev);
 
     if (!tpm_find()) {
         error_setg(errp, "at most one TPM device is permitted");
