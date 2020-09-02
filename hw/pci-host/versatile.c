@@ -161,9 +161,9 @@ static const VMStateDescription pci_vpb_vmstate = {
 DECLARE_INSTANCE_CHECKER(PCIVPBState, PCI_VPB,
                          TYPE_VERSATILE_PCI)
 
-#define TYPE_VERSATILE_PCI_HOST "versatile_pci_host"
+#define TYPE_PCI_VPB_HOST "versatile_pci_host"
 DECLARE_INSTANCE_CHECKER(PCIDevice, PCI_VPB_HOST,
-                         TYPE_VERSATILE_PCI_HOST)
+                         TYPE_PCI_VPB_HOST)
 
 typedef enum {
     PCI_IMAP0 = 0x0,
@@ -410,7 +410,7 @@ static void pci_vpb_realize(DeviceState *dev, Error **errp)
                              PCI_DEVFN(11, 0), TYPE_PCI_BUS);
     h->bus = &s->pci_bus;
 
-    object_initialize(&s->pci_dev, sizeof(s->pci_dev), TYPE_VERSATILE_PCI_HOST);
+    object_initialize(&s->pci_dev, sizeof(s->pci_dev), TYPE_PCI_VPB_HOST);
 
     for (i = 0; i < 4; i++) {
         sysbus_init_irq(sbd, &s->irq[i]);
@@ -487,7 +487,7 @@ static void versatile_pci_host_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo versatile_pci_host_info = {
-    .name          = TYPE_VERSATILE_PCI_HOST,
+    .name          = TYPE_PCI_VPB_HOST,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PCIDevice),
     .class_init    = versatile_pci_host_class_init,
