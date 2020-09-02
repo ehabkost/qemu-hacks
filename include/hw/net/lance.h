@@ -36,7 +36,7 @@
 
 #define TYPE_LANCE "lance"
 typedef struct SysBusPCNetState SysBusPCNetState;
-DECLARE_INSTANCE_CHECKER(SysBusPCNetState, SYSBUS_PCNET,
+DECLARE_INSTANCE_CHECKER(SysBusPCNetState, LANCE,
                          TYPE_LANCE)
 
 struct SysBusPCNetState {
