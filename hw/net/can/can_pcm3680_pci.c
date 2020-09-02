@@ -44,7 +44,7 @@
 #define TYPE_PCM3680_PCI "pcm3680_pci"
 
 typedef struct Pcm3680iPCIState Pcm3680iPCIState;
-DECLARE_INSTANCE_CHECKER(Pcm3680iPCIState, PCM3680i_PCI_DEV,
+DECLARE_INSTANCE_CHECKER(Pcm3680iPCIState, PCM3680_PCI,
                          TYPE_PCM3680_PCI)
 
 /* the PCI device and vendor IDs */
@@ -76,7 +76,7 @@ struct Pcm3680iPCIState {
 
 static void pcm3680i_pci_reset(DeviceState *dev)
 {
-    Pcm3680iPCIState *d = PCM3680i_PCI_DEV(dev);
+    Pcm3680iPCIState *d = PCM3680_PCI(dev);
     int i;
 
     for (i = 0; i < PCM3680i_PCI_SJA_COUNT; i++) {
@@ -156,7 +156,7 @@ static const MemoryRegionOps pcm3680i_pci_sja2_io_ops = {
 
 static void pcm3680i_pci_realize(PCIDevice *pci_dev, Error **errp)
 {
-    Pcm3680iPCIState *d = PCM3680i_PCI_DEV(pci_dev);
+    Pcm3680iPCIState *d = PCM3680_PCI(pci_dev);
     uint8_t *pci_conf;
     int i;
 
@@ -190,7 +190,7 @@ static void pcm3680i_pci_realize(PCIDevice *pci_dev, Error **errp)
 
 static void pcm3680i_pci_exit(PCIDevice *pci_dev)
 {
-    Pcm3680iPCIState *d = PCM3680i_PCI_DEV(pci_dev);
+    Pcm3680iPCIState *d = PCM3680_PCI(pci_dev);
     int i;
 
     for (i = 0; i < PCM3680i_PCI_SJA_COUNT; i++) {
@@ -217,7 +217,7 @@ static const VMStateDescription vmstate_pcm3680i_pci = {
 
 static void pcm3680i_pci_instance_init(Object *obj)
 {
-    Pcm3680iPCIState *d = PCM3680i_PCI_DEV(obj);
+    Pcm3680iPCIState *d = PCM3680_PCI(obj);
 
     object_property_add_link(obj, "canbus0", TYPE_CAN_BUS,
                              (Object **)&d->canbus[0],
