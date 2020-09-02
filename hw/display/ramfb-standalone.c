@@ -9,7 +9,7 @@
 
 typedef struct RAMFBStandaloneState RAMFBStandaloneState;
 DECLARE_INSTANCE_CHECKER(RAMFBStandaloneState, RAMFB,
-                         TYPE_RAMFB_DEVICE)
+                         TYPE_RAMFB)
 
 struct RAMFBStandaloneState {
     SysBusDevice parent_obj;
@@ -51,7 +51,7 @@ static void ramfb_class_initfn(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo ramfb_info = {
-    .name          = TYPE_RAMFB_DEVICE,
+    .name          = TYPE_RAMFB,
     .parent        = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(RAMFBStandaloneState),
     .class_init    = ramfb_class_initfn,

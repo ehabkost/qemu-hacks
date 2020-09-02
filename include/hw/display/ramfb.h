@@ -7,6 +7,6 @@ void ramfb_display_update(QemuConsole *con, RAMFBState *s);
 RAMFBState *ramfb_setup(Error **errp);
 
 /* ramfb-standalone.c */
-#define TYPE_RAMFB_DEVICE "ramfb"
+#define TYPE_RAMFB "ramfb"
 
 #endif /* RAMFB_H */
