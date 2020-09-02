@@ -14,10 +14,10 @@
 
 typedef struct MPTSASRequest MPTSASRequest;
 
-#define TYPE_MPTSAS1068 "mptsas1068"
+#define TYPE_MPT_SAS "mptsas1068"
 typedef struct MPTSASState MPTSASState;
 DECLARE_INSTANCE_CHECKER(MPTSASState, MPT_SAS,
-                         TYPE_MPTSAS1068)
+                         TYPE_MPT_SAS)
 
 enum {
     DOORBELL_NONE,
