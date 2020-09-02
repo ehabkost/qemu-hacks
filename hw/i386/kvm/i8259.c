@@ -19,10 +19,10 @@
 #include "sysemu/kvm.h"
 #include "qom/object.h"
 
-#define TYPE_KVM_I8259 "kvm-i8259"
+#define TYPE_KVM_PIC "kvm-i8259"
 typedef struct KVMPICClass KVMPICClass;
 DECLARE_CLASS_CHECKERS(KVMPICClass, KVM_PIC,
-                       TYPE_KVM_I8259)
+                       TYPE_KVM_PIC)
 
 /**
  * KVMPICClass:
@@ -133,8 +133,8 @@ static void kvm_pic_realize(DeviceState *dev, Error **errp)
 
 qemu_irq *kvm_i8259_init(ISABus *bus)
 {
-    i8259_init_chip(TYPE_KVM_I8259, bus, true);
-    i8259_init_chip(TYPE_KVM_I8259, bus, false);
+    i8259_init_chip(TYPE_KVM_PIC, bus, true);
+    i8259_init_chip(TYPE_KVM_PIC, bus, false);
 
     return qemu_allocate_irqs(kvm_pic_set_irq, NULL, ISA_NUM_IRQS);
 }
@@ -152,7 +152,7 @@ static void kvm_i8259_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo kvm_i8259_info = {
-    .name = TYPE_KVM_I8259,
+    .name = TYPE_KVM_PIC,
     .parent = TYPE_PIC_COMMON,
     .instance_size = sizeof(PICCommonState),
     .class_init = kvm_i8259_class_init,
