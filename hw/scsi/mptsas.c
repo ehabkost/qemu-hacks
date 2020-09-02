@@ -1434,7 +1434,7 @@ static void mptsas1068_class_init(ObjectClass *oc, void *data)
 }
 
 static const TypeInfo mptsas_info = {
-    .name = TYPE_MPTSAS1068,
+    .name = TYPE_MPT_SAS,
     .parent = TYPE_PCI_DEVICE,
     .instance_size = sizeof(MPTSASState),
     .class_init = mptsas1068_class_init,
