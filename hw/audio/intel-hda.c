@@ -202,10 +202,10 @@ struct IntelHDAState {
     bool old_msi_addr;
 };
 
-#define TYPE_INTEL_HDA_GENERIC "intel-hda-generic"
+#define TYPE_INTEL_HDA "intel-hda-generic"
 
 DECLARE_INSTANCE_CHECKER(IntelHDAState, INTEL_HDA,
-                         TYPE_INTEL_HDA_GENERIC)
+                         TYPE_INTEL_HDA)
 
 struct IntelHDAReg {
     const char *name;      /* register name */
@@ -1257,7 +1257,7 @@ static void intel_hda_class_init_ich9(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo intel_hda_info = {
-    .name          = TYPE_INTEL_HDA_GENERIC,
+    .name          = TYPE_INTEL_HDA,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(IntelHDAState),
     .class_init    = intel_hda_class_init,
@@ -1270,13 +1270,13 @@ static const TypeInfo intel_hda_info = {
 
 static const TypeInfo intel_hda_info_ich6 = {
     .name          = "intel-hda",
-    .parent        = TYPE_INTEL_HDA_GENERIC,
+    .parent        = TYPE_INTEL_HDA,
     .class_init    = intel_hda_class_init_ich6,
 };
 
 static const TypeInfo intel_hda_info_ich9 = {
     .name          = "ich9-intel-hda",
-    .parent        = TYPE_INTEL_HDA_GENERIC,
+    .parent        = TYPE_INTEL_HDA,
     .class_init    = intel_hda_class_init_ich9,
 };
 
