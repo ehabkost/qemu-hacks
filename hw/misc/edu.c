@@ -33,10 +33,10 @@
 #include "qemu/module.h"
 #include "qapi/visitor.h"
 
-#define TYPE_PCI_EDU_DEVICE "edu"
+#define TYPE_EDU "edu"
 typedef struct EduState EduState;
 DECLARE_INSTANCE_CHECKER(EduState, EDU,
-                         TYPE_PCI_EDU_DEVICE)
+                         TYPE_EDU)
 
 #define FACT_IRQ        0x00000001
 #define DMA_IRQ         0x00000100
@@ -429,7 +429,7 @@ static void pci_edu_register_types(void)
         { },
     };
     static const TypeInfo edu_info = {
-        .name          = TYPE_PCI_EDU_DEVICE,
+        .name          = TYPE_EDU,
         .parent        = TYPE_PCI_DEVICE,
         .instance_size = sizeof(EduState),
         .instance_init = edu_instance_init,
