@@ -416,9 +416,9 @@ struct DC390State {
 };
 typedef struct DC390State DC390State;
 
-#define TYPE_DC390_DEVICE "dc390"
+#define TYPE_DC390 "dc390"
 DECLARE_INSTANCE_CHECKER(DC390State, DC390,
-                         TYPE_DC390_DEVICE)
+                         TYPE_DC390)
 
 #define EE_ADAPT_SCSI_ID 64
 #define EE_MODE2         65
@@ -524,7 +524,7 @@ static void dc390_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo dc390_info = {
-    .name = TYPE_DC390_DEVICE,
+    .name = TYPE_DC390,
     .parent = TYPE_AM53C974,
     .instance_size = sizeof(DC390State),
     .class_init = dc390_class_init,
