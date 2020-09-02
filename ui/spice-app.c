@@ -152,7 +152,7 @@ static void spice_app_display_early_init(DisplayOptions *opts)
         }
     }
 
-    type_register(&char_vc_type_info);
+    type_register_static(&char_vc_type_info);
 
     sock_path = g_strjoin("", app_dir, "/", "spice.sock", NULL);
     qopts = qemu_opts_create(qemu_find_opts("spice"), NULL, 0, &error_abort);
