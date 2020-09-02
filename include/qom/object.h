@@ -317,9 +317,11 @@ struct Object
     } \
     type_init(register_type_info_##type_info_var);
 
+
 /**
  * OBJECT_DEFINE_TYPE_EXTENDED:
- * @ModuleObjName: the object name with initial caps
+ * @InstanceType: instance type
+ * @ClassType: class type
  * @module_obj_name: the object name in lowercase with underscore separators
  * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
  * @PARENT_MODULE_OBJ_NAME: the parent object name in uppercase with underscore
@@ -334,16 +336,16 @@ struct Object
  * This macro should rarely be used, instead one of the more specialized
  * macros is usually a better choice.
  */
-#define OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, module_obj_name, \
+#define OBJECT_DEFINE_TYPE_EXTENDED(InstanceType, ClassType, module_obj_name, \
                                     MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
                                     ...) \
     static const TypeInfo module_obj_name##_info = { \
         .parent = TYPE_##PARENT_MODULE_OBJ_NAME, \
         .name = TYPE_##MODULE_OBJ_NAME, \
-        .instance_size = sizeof(ModuleObjName), \
-        .instance_align = __alignof__(ModuleObjName), \
+        .instance_size = sizeof(InstanceType), \
+        .instance_align = __alignof__(InstanceType), \
         .instance_finalize = module_obj_name##_finalize, \
-        .class_size = sizeof(ModuleObjName##Class), \
+        .class_size = sizeof(ClassType), \
         __VA_ARGS__ \
     }; \
     \
@@ -359,12 +361,13 @@ struct Object
  * @...: list of initializers for TypeInfo fields
  *
  * This is a specialization of OBJECT_DEFINE_TYPE_EXTENDED, which is suitable
- * for the common case of a non-abstract type, without any interfaces.
+ * for the common case where the instance and class types for the type
+ * follow the usual <ModuleObjName> and <ModuleObjName>Class pattern.
  */
 #define OBJECT_DEFINE_TYPE(ModuleObjName, module_obj_name, MODULE_OBJ_NAME, \
                            PARENT_MODULE_OBJ_NAME, ...) \
-    OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, module_obj_name, \
-                                MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME,
+    OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, ModuleObjName##Class, module_obj_name, \
+                                MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
                                 __VA_ARGS__)
 
 
