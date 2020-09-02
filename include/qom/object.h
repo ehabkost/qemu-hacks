@@ -404,6 +404,9 @@ struct Object
 #define OBJECT_DEFINE_TYPE_EXTENDED(var_name, InstanceType, ClassType, \
                                     MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
                                     ...) \
+    DECLARE_INSTANCE_TYPE(MODULE_OBJ_NAME, InstanceType) \
+    DECLARE_CLASS_TYPE(MODULE_OBJ_NAME, ClassType) \
+    \
     static const TypeInfo var_name = { \
         .parent = TYPE_##PARENT_MODULE_OBJ_NAME, \
         .name = TYPE_##MODULE_OBJ_NAME, \
