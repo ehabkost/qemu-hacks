@@ -65,7 +65,7 @@ struct PassthruState {
 };
 
 #define TYPE_CCID_PASSTHRU "ccid-card-passthru"
-DECLARE_INSTANCE_CHECKER(PassthruState, PASSTHRU_CCID_CARD,
+DECLARE_INSTANCE_CHECKER(PassthruState, CCID_PASSTHRU,
                          TYPE_CCID_PASSTHRU)
 
 /*
@@ -332,7 +332,7 @@ static void ccid_card_vscard_event(void *opaque, QEMUChrEvent event)
 static void passthru_apdu_from_guest(
     CCIDCardState *base, const uint8_t *apdu, uint32_t len)
 {
-    PassthruState *card = PASSTHRU_CCID_CARD(base);
+    PassthruState *card = CCID_PASSTHRU(base);
 
     if (!qemu_chr_fe_backend_connected(&card->cs)) {
         printf("ccid-passthru: no chardev, discarding apdu length %d\n", len);
@@ -343,7 +343,7 @@ static void passthru_apdu_from_guest(
 
 static const uint8_t *passthru_get_atr(CCIDCardState *base, uint32_t *len)
 {
-    PassthruState *card = PASSTHRU_CCID_CARD(base);
+    PassthruState *card = CCID_PASSTHRU(base);
 
     *len = card->atr_length;
     return card->atr;
@@ -351,7 +351,7 @@ static const uint8_t *passthru_get_atr(CCIDCardState *base, uint32_t *len)
 
 static void passthru_realize(CCIDCardState *base, Error **errp)
 {
-    PassthruState *card = PASSTHRU_CCID_CARD(base);
+    PassthruState *card = CCID_PASSTHRU(base);
 
     card->vscard_in_pos = 0;
     card->vscard_in_hdr = 0;
