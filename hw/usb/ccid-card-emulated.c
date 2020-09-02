@@ -47,7 +47,7 @@ do {\
 
 #define TYPE_EMULATED_CCID "ccid-card-emulated"
 typedef struct EmulatedState EmulatedState;
-DECLARE_INSTANCE_CHECKER(EmulatedState, EMULATED_CCID_CARD,
+DECLARE_INSTANCE_CHECKER(EmulatedState, EMULATED_CCID,
                          TYPE_EMULATED_CCID)
 
 #define BACKEND_NSS_EMULATED_NAME "nss-emulated"
@@ -138,7 +138,7 @@ struct EmulatedState {
 static void emulated_apdu_from_guest(CCIDCardState *base,
     const uint8_t *apdu, uint32_t len)
 {
-    EmulatedState *card = EMULATED_CCID_CARD(base);
+    EmulatedState *card = EMULATED_CCID(base);
     EmulEvent *event = (EmulEvent *)g_malloc(sizeof(EmulEvent) + len);
 
     assert(event);
@@ -155,7 +155,7 @@ static void emulated_apdu_from_guest(CCIDCardState *base,
 
 static const uint8_t *emulated_get_atr(CCIDCardState *base, uint32_t *len)
 {
-    EmulatedState *card = EMULATED_CCID_CARD(base);
+    EmulatedState *card = EMULATED_CCID(base);
 
     *len = card->atr_length;
     return card->atr;
@@ -488,7 +488,7 @@ static uint32_t parse_enumeration(char *str,
 
 static void emulated_realize(CCIDCardState *base, Error **errp)
 {
-    EmulatedState *card = EMULATED_CCID_CARD(base);
+    EmulatedState *card = EMULATED_CCID(base);
     VCardEmulError ret;
     const EnumTable *ptable;
 
@@ -564,7 +564,7 @@ out1:
 
 static void emulated_unrealize(CCIDCardState *base)
 {
-    EmulatedState *card = EMULATED_CCID_CARD(base);
+    EmulatedState *card = EMULATED_CCID(base);
     VEvent *vevent = vevent_new(VEVENT_LAST, NULL, NULL);
 
     vevent_queue_vevent(vevent); /* stop vevent thread */
