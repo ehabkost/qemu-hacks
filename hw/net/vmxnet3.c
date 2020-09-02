@@ -135,7 +135,7 @@ struct VMXNET3Class {
 };
 typedef struct VMXNET3Class VMXNET3Class;
 
-DECLARE_CLASS_CHECKERS(VMXNET3Class, VMXNET3_DEVICE,
+DECLARE_CLASS_CHECKERS(VMXNET3Class, VMXNET3,
                        TYPE_VMXNET3)
 
 static inline void vmxnet3_ring_init(PCIDevice *d,
@@ -2475,7 +2475,7 @@ static Property vmxnet3_properties[] = {
 
 static void vmxnet3_realize(DeviceState *qdev, Error **errp)
 {
-    VMXNET3Class *vc = VMXNET3_DEVICE_GET_CLASS(qdev);
+    VMXNET3Class *vc = VMXNET3_GET_CLASS(qdev);
     PCIDevice *pci_dev = PCI_DEVICE(qdev);
     VMXNET3State *s = VMXNET3(qdev);
 
@@ -2490,7 +2490,7 @@ static void vmxnet3_class_init(ObjectClass *class, void *data)
 {
     DeviceClass *dc = DEVICE_CLASS(class);
     PCIDeviceClass *c = PCI_DEVICE_CLASS(class);
-    VMXNET3Class *vc = VMXNET3_DEVICE_CLASS(class);
+    VMXNET3Class *vc = VMXNET3_CLASS(class);
 
     c->realize = vmxnet3_pci_realize;
     c->exit = vmxnet3_pci_uninit;
