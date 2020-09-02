@@ -70,7 +70,7 @@ struct MSDState {
 typedef struct MSDState MSDState;
 
 #define TYPE_USB_STORAGE "usb-storage-dev"
-DECLARE_INSTANCE_CHECKER(MSDState, USB_STORAGE_DEV,
+DECLARE_INSTANCE_CHECKER(MSDState, USB_STORAGE,
                          TYPE_USB_STORAGE)
 
 struct usb_msd_cbw {
@@ -400,7 +400,7 @@ static void usb_msd_handle_control(USBDevice *dev, USBPacket *p,
 
 static void usb_msd_cancel_io(USBDevice *dev, USBPacket *p)
 {
-    MSDState *s = USB_STORAGE_DEV(dev);
+    MSDState *s = USB_STORAGE(dev);
 
     assert(s->packet == p);
     s->packet = NULL;
@@ -605,7 +605,7 @@ static const struct SCSIBusInfo usb_msd_scsi_info_bot = {
 
 static void usb_msd_storage_realize(USBDevice *dev, Error **errp)
 {
-    MSDState *s = USB_STORAGE_DEV(dev);
+    MSDState *s = USB_STORAGE(dev);
     BlockBackend *blk = s->conf.blk;
     SCSIDevice *scsi_dev;
 
@@ -656,7 +656,7 @@ static void usb_msd_storage_realize(USBDevice *dev, Error **errp)
 
 static void usb_msd_bot_realize(USBDevice *dev, Error **errp)
 {
-    MSDState *s = USB_STORAGE_DEV(dev);
+    MSDState *s = USB_STORAGE(dev);
     DeviceState *d = DEVICE(dev);
 
     usb_desc_create_serial(dev);
@@ -725,7 +725,7 @@ static void usb_msd_get_bootindex(Object *obj, Visitor *v, const char *name,
                                   void *opaque, Error **errp)
 {
     USBDevice *dev = USB_DEVICE(obj);
-    MSDState *s = USB_STORAGE_DEV(dev);
+    MSDState *s = USB_STORAGE(dev);
 
     visit_type_int32(v, name, &s->conf.bootindex, errp);
 }
@@ -734,7 +734,7 @@ static void usb_msd_set_bootindex(Object *obj, Visitor *v, const char *name,
                                   void *opaque, Error **errp)
 {
     USBDevice *dev = USB_DEVICE(obj);
-    MSDState *s = USB_STORAGE_DEV(dev);
+    MSDState *s = USB_STORAGE(dev);
     int32_t boot_index;
     Error *local_err = NULL;
 
