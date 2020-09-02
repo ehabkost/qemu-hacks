@@ -145,7 +145,7 @@ struct USBRedirDevice {
 };
 
 #define TYPE_USB_REDIR "usb-redir"
-DECLARE_INSTANCE_CHECKER(USBRedirDevice, USB_REDIRECT,
+DECLARE_INSTANCE_CHECKER(USBRedirDevice, USB_REDIR,
                          TYPE_USB_REDIR)
 
 static void usbredir_hello(void *priv, struct usb_redir_hello_header *h);
@@ -375,7 +375,7 @@ static void packet_id_queue_empty(struct PacketIdQueue *q)
 
 static void usbredir_cancel_packet(USBDevice *udev, USBPacket *p)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
     int i = USBEP2I(p->ep);
 
     if (p->combined) {
@@ -516,7 +516,7 @@ static void usbredir_free_bufpq(USBRedirDevice *dev, uint8_t ep)
 
 static void usbredir_handle_reset(USBDevice *udev)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
 
     DPRINTF("reset device\n");
     usbredirparser_send_reset(dev->parser);
@@ -955,7 +955,7 @@ static void usbredir_stop_interrupt_receiving(USBRedirDevice *dev,
 
 static void usbredir_handle_data(USBDevice *udev, USBPacket *p)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
     uint8_t ep;
 
     ep = p->ep->nr;
@@ -1024,7 +1024,7 @@ static void usbredir_stop_ep(USBRedirDevice *dev, int i)
 
 static void usbredir_ep_stopped(USBDevice *udev, USBEndpoint *uep)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
 
     usbredir_stop_ep(dev, USBEP2I(uep));
     usbredirparser_do_write(dev->parser);
@@ -1094,7 +1094,7 @@ static void usbredir_get_interface(USBRedirDevice *dev, USBPacket *p,
 static void usbredir_handle_control(USBDevice *udev, USBPacket *p,
         int request, int value, int index, int length, uint8_t *data)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
     struct usb_redir_control_packet_header control_packet;
 
     if (usbredir_already_in_flight(dev, p->id)) {
@@ -1149,7 +1149,7 @@ static void usbredir_handle_control(USBDevice *udev, USBPacket *p,
 static int usbredir_alloc_streams(USBDevice *udev, USBEndpoint **eps,
                                   int nr_eps, int streams)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
 #if USBREDIR_VERSION >= 0x000700
     struct usb_redir_alloc_bulk_streams_header alloc_streams;
     int i;
@@ -1188,7 +1188,7 @@ static void usbredir_free_streams(USBDevice *udev, USBEndpoint **eps,
                                   int nr_eps)
 {
 #if USBREDIR_VERSION >= 0x000700
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
     struct usb_redir_free_bulk_streams_header free_streams;
     int i;
 
@@ -1417,7 +1417,7 @@ static void usbredir_init_endpoints(USBRedirDevice *dev)
 
 static void usbredir_realize(USBDevice *udev, Error **errp)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
     int i;
 
     if (!qemu_chr_fe_backend_connected(&dev->cs)) {
@@ -1472,7 +1472,7 @@ static void usbredir_cleanup_device_queues(USBRedirDevice *dev)
 
 static void usbredir_unrealize(USBDevice *udev)
 {
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
 
     qemu_chr_fe_deinit(&dev->cs, true);
 
@@ -2593,7 +2593,7 @@ static void usbredir_class_initfn(ObjectClass *klass, void *data)
 static void usbredir_instance_init(Object *obj)
 {
     USBDevice *udev = USB_DEVICE(obj);
-    USBRedirDevice *dev = USB_REDIRECT(udev);
+    USBRedirDevice *dev = USB_REDIR(udev);
 
     device_add_bootindex_property(obj, &dev->bootindex,
                                   "bootindex", NULL,
