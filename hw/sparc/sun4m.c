@@ -779,10 +779,10 @@ static const TypeInfo prom_info = {
     .class_init    = prom_class_init,
 };
 
-#define TYPE_SUN4M_MEMORY "memory"
+#define TYPE_SUN4M_RAM "memory"
 typedef struct RamDevice RamDevice;
 DECLARE_INSTANCE_CHECKER(RamDevice, SUN4M_RAM,
-                         TYPE_SUN4M_MEMORY)
+                         TYPE_SUN4M_RAM)
 
 struct RamDevice {
     SysBusDevice parent_obj;
@@ -817,7 +817,7 @@ static void ram_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo ram_info = {
-    .name          = TYPE_SUN4M_MEMORY,
+    .name          = TYPE_SUN4M_RAM,
     .parent        = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(RamDevice),
     .instance_init = ram_initfn,
