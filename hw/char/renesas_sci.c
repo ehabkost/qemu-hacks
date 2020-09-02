@@ -70,7 +70,7 @@ REG8(SEMR, 7)
 
 static int can_receive(void *opaque)
 {
-    RSCIState *sci = RSCI(opaque);
+    RSCIState *sci = RENESAS_SCI(opaque);
     if (sci->rx_next > qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL)) {
         return 0;
     } else {
@@ -80,7 +80,7 @@ static int can_receive(void *opaque)
 
 static void receive(void *opaque, const uint8_t *buf, int size)
 {
-    RSCIState *sci = RSCI(opaque);
+    RSCIState *sci = RENESAS_SCI(opaque);
     sci->rx_next = qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL) + sci->trtime;
     if (FIELD_EX8(sci->ssr, SSR, RDRF) || size > 1) {
         sci->ssr = FIELD_DP8(sci->ssr, SSR, ORER, 1);
@@ -112,7 +112,7 @@ static void send_byte(RSCIState *sci)
 
 static void txend(void *opaque)
 {
-    RSCIState *sci = RSCI(opaque);
+    RSCIState *sci = RENESAS_SCI(opaque);
     if (!FIELD_EX8(sci->ssr, SSR, TDRE)) {
         send_byte(sci);
     } else {
@@ -143,7 +143,7 @@ static bool sci_is_tr_enabled(RSCIState *sci)
 
 static void sci_write(void *opaque, hwaddr offset, uint64_t val, unsigned size)
 {
-    RSCIState *sci = RSCI(opaque);
+    RSCIState *sci = RENESAS_SCI(opaque);
 
     switch (offset) {
     case A_SMR:
@@ -208,7 +208,7 @@ static void sci_write(void *opaque, hwaddr offset, uint64_t val, unsigned size)
 
 static uint64_t sci_read(void *opaque, hwaddr offset, unsigned size)
 {
-    RSCIState *sci = RSCI(opaque);
+    RSCIState *sci = RENESAS_SCI(opaque);
 
     switch (offset) {
     case A_SMR:
@@ -246,7 +246,7 @@ static const MemoryRegionOps sci_ops = {
 
 static void rsci_reset(DeviceState *dev)
 {
-    RSCIState *sci = RSCI(dev);
+    RSCIState *sci = RENESAS_SCI(dev);
     sci->smr = sci->scr = 0x00;
     sci->brr = 0xff;
     sci->tdr = 0xff;
@@ -259,7 +259,7 @@ static void rsci_reset(DeviceState *dev)
 
 static void sci_event(void *opaque, QEMUChrEvent event)
 {
-    RSCIState *sci = RSCI(opaque);
+    RSCIState *sci = RENESAS_SCI(opaque);
     if (event == CHR_EVENT_BREAK) {
         sci->ssr = FIELD_DP8(sci->ssr, SSR, FER, 1);
         if (FIELD_EX8(sci->scr, SCR, RIE)) {
@@ -270,7 +270,7 @@ static void sci_event(void *opaque, QEMUChrEvent event)
 
 static void rsci_realize(DeviceState *dev, Error **errp)
 {
-    RSCIState *sci = RSCI(dev);
+    RSCIState *sci = RENESAS_SCI(dev);
 
     if (sci->input_freq == 0) {
         qemu_log_mask(LOG_GUEST_ERROR,
@@ -284,7 +284,7 @@ static void rsci_realize(DeviceState *dev, Error **errp)
 static void rsci_init(Object *obj)
 {
     SysBusDevice *d = SYS_BUS_DEVICE(obj);
-    RSCIState *sci = RSCI(obj);
+    RSCIState *sci = RENESAS_SCI(obj);
     int i;
 
     memory_region_init_io(&sci->memory, OBJECT(sci), &sci_ops,
