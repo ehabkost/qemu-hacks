@@ -45,7 +45,7 @@ typedef struct PITCommonClass PITCommonClass;
 DECLARE_OBJ_CHECKERS(PITCommonState, PITCommonClass,
                      PIT_COMMON, TYPE_PIT_COMMON)
 
-#define TYPE_I8254 "isa-pit"
+#define TYPE_PIT "isa-pit"
 #define TYPE_KVM_I8254 "kvm-pit"
 
 static inline ISADevice *i8254_pit_init(ISABus *bus, int base, int isa_irq,
@@ -54,7 +54,7 @@ static inline ISADevice *i8254_pit_init(ISABus *bus, int base, int isa_irq,
     DeviceState *dev;
     ISADevice *d;
 
-    d = isa_new(TYPE_I8254);
+    d = isa_new(TYPE_PIT);
     dev = DEVICE(d);
     qdev_prop_set_uint32(dev, "iobase", base);
     isa_realize_and_unref(d, bus, &error_fatal);
