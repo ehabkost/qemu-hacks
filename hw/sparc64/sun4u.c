@@ -493,10 +493,10 @@ static const TypeInfo prom_info = {
 };
 
 
-#define TYPE_SUN4U_MEMORY "memory"
+#define TYPE_SUN4U_RAM "memory"
 typedef struct RamDevice RamDevice;
 DECLARE_INSTANCE_CHECKER(RamDevice, SUN4U_RAM,
-                         TYPE_SUN4U_MEMORY)
+                         TYPE_SUN4U_RAM)
 
 struct RamDevice {
     SysBusDevice parent_obj;
@@ -524,7 +524,7 @@ static void ram_init(hwaddr addr, ram_addr_t RAM_size)
     RamDevice *d;
 
     /* allocate RAM */
-    dev = qdev_new(TYPE_SUN4U_MEMORY);
+    dev = qdev_new(TYPE_SUN4U_RAM);
     s = SYS_BUS_DEVICE(dev);
 
     d = SUN4U_RAM(dev);
@@ -548,7 +548,7 @@ static void ram_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo ram_info = {
-    .name          = TYPE_SUN4U_MEMORY,
+    .name          = TYPE_SUN4U_RAM,
     .parent        = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(RamDevice),
     .class_init    = ram_class_init,
