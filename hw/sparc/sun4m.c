@@ -353,7 +353,7 @@ static void *sparc32_dma_init(hwaddr dma_base,
                                  OBJECT(dma), "ledma"));
     sysbus_connect_irq(SYS_BUS_DEVICE(ledma), 0, ledma_irq);
 
-    lance = SYSBUS_PCNET(object_resolve_path_component(
+    lance = LANCE(object_resolve_path_component(
                          OBJECT(ledma), "lance"));
     sysbus_mmio_map(SYS_BUS_DEVICE(lance), 0, le_base);
 

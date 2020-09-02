@@ -103,7 +103,7 @@ static const VMStateDescription vmstate_lance = {
 static void lance_realize(DeviceState *dev, Error **errp)
 {
     SysBusDevice *sbd = SYS_BUS_DEVICE(dev);
-    SysBusPCNetState *d = SYSBUS_PCNET(dev);
+    SysBusPCNetState *d = LANCE(dev);
     PCNetState *s = &d->state;
 
     memory_region_init_io(&s->mmio, OBJECT(d), &lance_mem_ops, d,
@@ -122,14 +122,14 @@ static void lance_realize(DeviceState *dev, Error **errp)
 
 static void lance_reset(DeviceState *dev)
 {
-    SysBusPCNetState *d = SYSBUS_PCNET(dev);
+    SysBusPCNetState *d = LANCE(dev);
 
     pcnet_h_reset(&d->state);
 }
 
 static void lance_instance_init(Object *obj)
 {
-    SysBusPCNetState *d = SYSBUS_PCNET(obj);
+    SysBusPCNetState *d = LANCE(obj);
     PCNetState *s = &d->state;
 
     device_add_bootindex_property(obj, &s->conf.bootindex,
