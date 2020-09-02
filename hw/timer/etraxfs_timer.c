@@ -48,10 +48,10 @@
 #define R_INTR        0x50
 #define R_MASKED_INTR 0x54
 
-#define TYPE_ETRAX_FS_TIMER "etraxfs,timer"
+#define TYPE_ETRAX_TIMER "etraxfs,timer"
 typedef struct ETRAXTimerState ETRAXTimerState;
 DECLARE_INSTANCE_CHECKER(ETRAXTimerState, ETRAX_TIMER,
-                         TYPE_ETRAX_FS_TIMER)
+                         TYPE_ETRAX_TIMER)
 
 struct ETRAXTimerState {
     SysBusDevice parent_obj;
@@ -354,7 +354,7 @@ static void etraxfs_timer_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo etraxfs_timer_info = {
-    .name          = TYPE_ETRAX_FS_TIMER,
+    .name          = TYPE_ETRAX_TIMER,
     .parent        = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(ETRAXTimerState),
     .class_init    = etraxfs_timer_class_init,
