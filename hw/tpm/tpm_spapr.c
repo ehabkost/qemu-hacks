@@ -31,7 +31,7 @@
 #define DEBUG_SPAPR 0
 
 typedef struct SpaprTpmState SpaprTpmState;
-DECLARE_INSTANCE_CHECKER(SpaprTpmState, VIO_SPAPR_VTPM,
+DECLARE_INSTANCE_CHECKER(SpaprTpmState, TPM_SPAPR,
                          TYPE_TPM_SPAPR)
 
 typedef struct TpmCrq {
@@ -132,7 +132,7 @@ static inline int spapr_tpm_send_crq(struct SpaprVioDevice *dev, TpmCrq *crq)
 
 static int tpm_spapr_do_crq(struct SpaprVioDevice *dev, uint8_t *crq_data)
 {
-    SpaprTpmState *s = VIO_SPAPR_VTPM(dev);
+    SpaprTpmState *s = TPM_SPAPR(dev);
     TpmCrq local_crq;
     TpmCrq *crq = &s->crq; /* requests only */
     int rc;
@@ -235,7 +235,7 @@ static int tpm_spapr_do_crq(struct SpaprVioDevice *dev, uint8_t *crq_data)
 
 static void tpm_spapr_request_completed(TPMIf *ti, int ret)
 {
-    SpaprTpmState *s = VIO_SPAPR_VTPM(ti);
+    SpaprTpmState *s = TPM_SPAPR(ti);
     TpmCrq *crq = &s->crq;
     uint32_t len;
     int rc;
@@ -283,7 +283,7 @@ static int tpm_spapr_do_startup_tpm(SpaprTpmState *s, size_t buffersize)
 
 static const char *tpm_spapr_get_dt_compatible(SpaprVioDevice *dev)
 {
-    SpaprTpmState *s = VIO_SPAPR_VTPM(dev);
+    SpaprTpmState *s = TPM_SPAPR(dev);
 
     switch (s->be_tpm_version) {
     case TPM_VERSION_1_2:
@@ -297,7 +297,7 @@ static const char *tpm_spapr_get_dt_compatible(SpaprVioDevice *dev)
 
 static void tpm_spapr_reset(SpaprVioDevice *dev)
 {
-    SpaprTpmState *s = VIO_SPAPR_VTPM(dev);
+    SpaprTpmState *s = TPM_SPAPR(dev);
 
     s->state = SPAPR_VTPM_STATE_NONE;
     s->numbytes = 0;
@@ -316,7 +316,7 @@ static void tpm_spapr_reset(SpaprVioDevice *dev)
 
 static enum TPMVersion tpm_spapr_get_version(TPMIf *ti)
 {
-    SpaprTpmState *s = VIO_SPAPR_VTPM(ti);
+    SpaprTpmState *s = TPM_SPAPR(ti);
 
     if (tpm_backend_had_startup_error(s->be_driver)) {
         return TPM_VERSION_UNSPEC;
@@ -377,7 +377,7 @@ static Property tpm_spapr_properties[] = {
 
 static void tpm_spapr_realizefn(SpaprVioDevice *dev, Error **errp)
 {
-    SpaprTpmState *s = VIO_SPAPR_VTPM(dev);
+    SpaprTpmState *s = TPM_SPAPR(dev);
 
     if (!tpm_find()) {
         error_setg(errp, "at most one TPM device is permitted");
