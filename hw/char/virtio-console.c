@@ -21,10 +21,10 @@
 #include "qapi/qapi-events-char.h"
 #include "qom/object.h"
 
-#define TYPE_VIRTIO_CONSOLE_SERIAL_PORT "virtserialport"
+#define TYPE_VIRTIO_CONSOLE "virtserialport"
 typedef struct VirtConsole VirtConsole;
 DECLARE_INSTANCE_CHECKER(VirtConsole, VIRTIO_CONSOLE,
-                         TYPE_VIRTIO_CONSOLE_SERIAL_PORT)
+                         TYPE_VIRTIO_CONSOLE)
 
 struct VirtConsole {
     VirtIOSerialPort parent_obj;
@@ -269,7 +269,7 @@ static void virtconsole_class_init(ObjectClass *klass, void *data)
 
 static const TypeInfo virtconsole_info = {
     .name          = "virtconsole",
-    .parent        = TYPE_VIRTIO_CONSOLE_SERIAL_PORT,
+    .parent        = TYPE_VIRTIO_CONSOLE,
     .class_init    = virtconsole_class_init,
 };
 
@@ -293,7 +293,7 @@ static void virtserialport_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo virtserialport_info = {
-    .name          = TYPE_VIRTIO_CONSOLE_SERIAL_PORT,
+    .name          = TYPE_VIRTIO_CONSOLE,
     .parent        = TYPE_VIRTIO_SERIAL_PORT,
     .instance_size = sizeof(VirtConsole),
     .class_init    = virtserialport_class_init,
