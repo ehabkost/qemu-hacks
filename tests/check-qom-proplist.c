@@ -28,13 +28,13 @@
 #include "qom/object_interfaces.h"
 
 
-#define TYPE_DUMMY "qemu-dummy"
+#define TYPE_DUMMY_OBJECT "qemu-dummy"
 
 typedef struct DummyObject DummyObject;
 typedef struct DummyObjectClass DummyObjectClass;
 
 DECLARE_INSTANCE_CHECKER(DummyObject, DUMMY_OBJECT,
-                         TYPE_DUMMY)
+                         TYPE_DUMMY_OBJECT)
 
 typedef enum DummyAnimal DummyAnimal;
 
@@ -153,7 +153,7 @@ static void dummy_finalize(Object *obj)
 
 
 static const TypeInfo dummy_info = {
-    .name          = TYPE_DUMMY,
+    .name          = TYPE_DUMMY_OBJECT,
     .parent        = TYPE_OBJECT,
     .instance_size = sizeof(DummyObject),
     .instance_init = dummy_init,
@@ -337,7 +337,7 @@ static void test_dummy_createv(void)
     Error *err = NULL;
     Object *parent = object_get_objects_root();
     DummyObject *dobj = DUMMY_OBJECT(
-        object_new_with_props(TYPE_DUMMY,
+        object_new_with_props(TYPE_DUMMY_OBJECT,
                               parent,
                               "dummy0",
                               &err,
@@ -366,7 +366,7 @@ static Object *new_helper(Error **errp,
     Object *obj;
 
     va_start(vargs, parent);
-    obj = object_new_with_propv(TYPE_DUMMY,
+    obj = object_new_with_propv(TYPE_DUMMY_OBJECT,
                                 parent,
                                 "dummy0",
                                 errp,
@@ -403,7 +403,7 @@ static void test_dummy_createcmdl(void)
     QemuOpts *opts;
     DummyObject *dobj;
     Error *err = NULL;
-    const char *params = TYPE_DUMMY \
+    const char *params = TYPE_DUMMY_OBJECT \
                          ",id=dev0," \
                          "bv=yes,sv=Hiss hiss hiss,av=platypus";
 
@@ -443,7 +443,7 @@ static void test_dummy_badenum(void)
     Error *err = NULL;
     Object *parent = object_get_objects_root();
     Object *dobj =
-        object_new_with_props(TYPE_DUMMY,
+        object_new_with_props(TYPE_DUMMY_OBJECT,
                               parent,
                               "dummy0",
                               &err,
@@ -470,7 +470,7 @@ static void test_dummy_getenum(void)
     int val;
     Object *parent = object_get_objects_root();
     DummyObject *dobj = DUMMY_OBJECT(
-        object_new_with_props(TYPE_DUMMY,
+        object_new_with_props(TYPE_DUMMY_OBJECT,
                          parent,
                          "dummy0",
                          &err,
@@ -533,7 +533,7 @@ static void test_dummy_iterator(void)
         "bv"};                  /* instance property */
     Object *parent = object_get_objects_root();
     DummyObject *dobj = DUMMY_OBJECT(
-        object_new_with_props(TYPE_DUMMY,
+        object_new_with_props(TYPE_DUMMY_OBJECT,
                               parent,
                               "dummy0",
                               &error_abort,
@@ -552,7 +552,7 @@ static void test_dummy_class_iterator(void)
 {
     const char *expected[] = { "type", "av", "sv" };
     ObjectPropertyIterator iter;
-    ObjectClass *klass = object_class_by_name(TYPE_DUMMY);
+    ObjectClass *klass = object_class_by_name(TYPE_DUMMY_OBJECT);
 
     object_class_property_iter_init(&iter, klass);
     test_dummy_prop_iterator(&iter, expected, ARRAY_SIZE(expected));
@@ -575,9 +575,9 @@ static void test_qom_partial_path(void)
 {
     Object *root  = object_get_objects_root();
     Object *cont1 = container_get(root, "/cont1");
-    Object *obj1  = object_new(TYPE_DUMMY);
-    Object *obj2a = object_new(TYPE_DUMMY);
-    Object *obj2b = object_new(TYPE_DUMMY);
+    Object *obj1  = object_new(TYPE_DUMMY_OBJECT);
+    Object *obj2a = object_new(TYPE_DUMMY_OBJECT);
+    Object *obj2b = object_new(TYPE_DUMMY_OBJECT);
     bool ambiguous;
 
     /* Objects created:
@@ -594,9 +594,9 @@ static void test_qom_partial_path(void)
     object_unref(obj2b);
 
     ambiguous = false;
-    g_assert(!object_resolve_path_type("", TYPE_DUMMY, &ambiguous));
+    g_assert(!object_resolve_path_type("", TYPE_DUMMY_OBJECT, &ambiguous));
     g_assert(ambiguous);
-    g_assert(!object_resolve_path_type("", TYPE_DUMMY, NULL));
+    g_assert(!object_resolve_path_type("", TYPE_DUMMY_OBJECT, NULL));
 
     ambiguous = false;
     g_assert(!object_resolve_path("obj2", &ambiguous));
