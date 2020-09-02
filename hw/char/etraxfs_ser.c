@@ -49,10 +49,10 @@
 #define STAT_TR_IDLE 22
 #define STAT_TR_RDY  24
 
-#define TYPE_ETRAX_FS_SERIAL "etraxfs,serial"
+#define TYPE_ETRAX_SERIAL "etraxfs,serial"
 typedef struct ETRAXSerial ETRAXSerial;
 DECLARE_INSTANCE_CHECKER(ETRAXSerial, ETRAX_SERIAL,
-                         TYPE_ETRAX_FS_SERIAL)
+                         TYPE_ETRAX_SERIAL)
 
 struct ETRAXSerial {
     SysBusDevice parent_obj;
@@ -251,7 +251,7 @@ static void etraxfs_ser_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo etraxfs_ser_info = {
-    .name          = TYPE_ETRAX_FS_SERIAL,
+    .name          = TYPE_ETRAX_SERIAL,
     .parent        = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(ETRAXSerial),
     .instance_init = etraxfs_ser_init,
