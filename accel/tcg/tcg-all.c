@@ -46,7 +46,7 @@ typedef struct TCGState TCGState;
 
 #define TYPE_TCG_ACCEL ACCEL_CLASS_NAME("tcg")
 
-DECLARE_INSTANCE_CHECKER(TCGState, TCG_STATE,
+DECLARE_INSTANCE_CHECKER(TCGState, TCG_ACCEL,
                          TYPE_TCG_ACCEL)
 
 /* mask must never be zero, except for A20 change call */
@@ -118,14 +118,14 @@ static bool default_mttcg_enabled(void)
 
 static void tcg_accel_instance_init(Object *obj)
 {
-    TCGState *s = TCG_STATE(obj);
+    TCGState *s = TCG_ACCEL(obj);
 
     s->mttcg_enabled = default_mttcg_enabled();
 }
 
 static int tcg_init(MachineState *ms)
 {
-    TCGState *s = TCG_STATE(current_accel());
+    TCGState *s = TCG_ACCEL(current_accel());
 
     tcg_exec_init(s->tb_size * 1024 * 1024);
     cpu_interrupt_handler = tcg_handle_interrupt;
@@ -135,14 +135,14 @@ static int tcg_init(MachineState *ms)
 
 static char *tcg_get_thread(Object *obj, Error **errp)
 {
-    TCGState *s = TCG_STATE(obj);
+    TCGState *s = TCG_ACCEL(obj);
 
     return g_strdup(s->mttcg_enabled ? "multi" : "single");
 }
 
 static void tcg_set_thread(Object *obj, const char *value, Error **errp)
 {
-    TCGState *s = TCG_STATE(obj);
+    TCGState *s = TCG_ACCEL(obj);
 
     if (strcmp(value, "multi") == 0) {
         if (TCG_OVERSIZED_GUEST) {
@@ -172,7 +172,7 @@ static void tcg_get_tb_size(Object *obj, Visitor *v,
                             const char *name, void *opaque,
                             Error **errp)
 {
-    TCGState *s = TCG_STATE(obj);
+    TCGState *s = TCG_ACCEL(obj);
     uint32_t value = s->tb_size;
 
     visit_type_uint32(v, name, &value, errp);
@@ -182,7 +182,7 @@ static void tcg_set_tb_size(Object *obj, Visitor *v,
                             const char *name, void *opaque,
                             Error **errp)
 {
-    TCGState *s = TCG_STATE(obj);
+    TCGState *s = TCG_ACCEL(obj);
     uint32_t value;
 
     if (!visit_type_uint32(v, name, &value, errp)) {
