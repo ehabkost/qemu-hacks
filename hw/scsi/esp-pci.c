@@ -35,11 +35,11 @@
 #include "qemu/module.h"
 #include "qom/object.h"
 
-#define TYPE_AM53C974_DEVICE "am53c974"
+#define TYPE_PCI_ESP "am53c974"
 
 typedef struct PCIESPState PCIESPState;
 DECLARE_INSTANCE_CHECKER(PCIESPState, PCI_ESP,
-                         TYPE_AM53C974_DEVICE)
+                         TYPE_PCI_ESP)
 
 #define DMA_CMD   0x0
 #define DMA_STC   0x1
@@ -400,7 +400,7 @@ static void esp_pci_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo esp_pci_info = {
-    .name = TYPE_AM53C974_DEVICE,
+    .name = TYPE_PCI_ESP,
     .parent = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PCIESPState),
     .class_init = esp_pci_class_init,
@@ -525,7 +525,7 @@ static void dc390_class_init(ObjectClass *klass, void *data)
 
 static const TypeInfo dc390_info = {
     .name = TYPE_DC390_DEVICE,
-    .parent = TYPE_AM53C974_DEVICE,
+    .parent = TYPE_PCI_ESP,
     .instance_size = sizeof(DC390State),
     .class_init = dc390_class_init,
 };
