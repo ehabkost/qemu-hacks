@@ -157,9 +157,9 @@ static const VMStateDescription pci_vpb_vmstate = {
     }
 };
 
-#define TYPE_VERSATILE_PCI "versatile_pci"
+#define TYPE_PCI_VPB "versatile_pci"
 DECLARE_INSTANCE_CHECKER(PCIVPBState, PCI_VPB,
-                         TYPE_VERSATILE_PCI)
+                         TYPE_PCI_VPB)
 
 #define TYPE_PCI_VPB_HOST "versatile_pci_host"
 DECLARE_INSTANCE_CHECKER(PCIDevice, PCI_VPB_HOST,
@@ -514,7 +514,7 @@ static void pci_vpb_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo pci_vpb_info = {
-    .name          = TYPE_VERSATILE_PCI,
+    .name          = TYPE_PCI_VPB,
     .parent        = TYPE_PCI_HOST_BRIDGE,
     .instance_size = sizeof(PCIVPBState),
     .instance_init = pci_vpb_init,
@@ -534,7 +534,7 @@ static void pci_realview_init(Object *obj)
 
 static const TypeInfo pci_realview_info = {
     .name          = "realview_pci",
-    .parent        = TYPE_VERSATILE_PCI,
+    .parent        = TYPE_PCI_VPB,
     .instance_init = pci_realview_init,
 };
 
