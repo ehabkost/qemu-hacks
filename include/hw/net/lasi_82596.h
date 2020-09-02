@@ -14,7 +14,7 @@
 
 #define TYPE_LASI_82596 "lasi_82596"
 typedef struct SysBusI82596State SysBusI82596State;
-DECLARE_INSTANCE_CHECKER(SysBusI82596State, SYSBUS_I82596,
+DECLARE_INSTANCE_CHECKER(SysBusI82596State, LASI_82596,
                          TYPE_LASI_82596)
 
 struct SysBusI82596State {

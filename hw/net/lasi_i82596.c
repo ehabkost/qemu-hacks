@@ -109,7 +109,7 @@ static const VMStateDescription vmstate_lasi_82596 = {
 
 static void lasi_82596_realize(DeviceState *dev, Error **errp)
 {
-    SysBusI82596State *d = SYSBUS_I82596(dev);
+    SysBusI82596State *d = LASI_82596(dev);
     I82596State *s = &d->state;
 
     memory_region_init_io(&s->mmio, OBJECT(d), &lasi_82596_mem_ops, d,
@@ -128,7 +128,7 @@ SysBusI82596State *lasi_82596_init(MemoryRegion *addr_space,
 
     qemu_check_nic_model(&nd_table[0], TYPE_LASI_82596);
     dev = qdev_new(TYPE_LASI_82596);
-    s = SYSBUS_I82596(dev);
+    s = LASI_82596(dev);
     s->state.irq = lan_irq;
     qdev_set_nic_properties(dev, &nd_table[0]);
     sysbus_realize_and_unref(SYS_BUS_DEVICE(dev), &error_fatal);
@@ -141,14 +141,14 @@ SysBusI82596State *lasi_82596_init(MemoryRegion *addr_space,
 
 static void lasi_82596_reset(DeviceState *dev)
 {
-    SysBusI82596State *d = SYSBUS_I82596(dev);
+    SysBusI82596State *d = LASI_82596(dev);
 
     i82596_h_reset(&d->state);
 }
 
 static void lasi_82596_instance_init(Object *obj)
 {
-    SysBusI82596State *d = SYSBUS_I82596(obj);
+    SysBusI82596State *d = LASI_82596(obj);
     I82596State *s = &d->state;
 
     device_add_bootindex_property(obj, &s->conf.bootindex,
