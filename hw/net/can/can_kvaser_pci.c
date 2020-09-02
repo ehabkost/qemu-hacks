@@ -48,7 +48,7 @@
 #define TYPE_KVASER_PCI "kvaser_pci"
 
 typedef struct KvaserPCIState KvaserPCIState;
-DECLARE_INSTANCE_CHECKER(KvaserPCIState, KVASER_PCI_DEV,
+DECLARE_INSTANCE_CHECKER(KvaserPCIState, KVASER_PCI,
                          TYPE_KVASER_PCI)
 
 #ifndef KVASER_PCI_VENDOR_ID1
@@ -109,7 +109,7 @@ static void kvaser_pci_irq_handler(void *opaque, int irq_num, int level)
 
 static void kvaser_pci_reset(DeviceState *dev)
 {
-    KvaserPCIState *d = KVASER_PCI_DEV(dev);
+    KvaserPCIState *d = KVASER_PCI(dev);
     CanSJA1000State *s = &d->sja_state;
 
     can_sja_hardware_reset(s);
@@ -221,7 +221,7 @@ static const MemoryRegionOps kvaser_pci_xilinx_io_ops = {
 
 static void kvaser_pci_realize(PCIDevice *pci_dev, Error **errp)
 {
-    KvaserPCIState *d = KVASER_PCI_DEV(pci_dev);
+    KvaserPCIState *d = KVASER_PCI(pci_dev);
     CanSJA1000State *s = &d->sja_state;
     uint8_t *pci_conf;
 
@@ -254,7 +254,7 @@ static void kvaser_pci_realize(PCIDevice *pci_dev, Error **errp)
 
 static void kvaser_pci_exit(PCIDevice *pci_dev)
 {
-    KvaserPCIState *d = KVASER_PCI_DEV(pci_dev);
+    KvaserPCIState *d = KVASER_PCI(pci_dev);
     CanSJA1000State *s = &d->sja_state;
 
     can_sja_disconnect(s);
@@ -279,7 +279,7 @@ static const VMStateDescription vmstate_kvaser_pci = {
 
 static void kvaser_pci_instance_init(Object *obj)
 {
-    KvaserPCIState *d = KVASER_PCI_DEV(obj);
+    KvaserPCIState *d = KVASER_PCI(obj);
 
     object_property_add_link(obj, "canbus", TYPE_CAN_BUS,
                              (Object **)&d->canbus,
