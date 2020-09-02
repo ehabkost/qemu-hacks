@@ -41,10 +41,10 @@ struct PXBBus {
     char bus_path[8];
 };
 
-#define TYPE_PXB_DEVICE "pxb"
+#define TYPE_PXB_DEV "pxb"
 typedef struct PXBDev PXBDev;
 DECLARE_INSTANCE_CHECKER(PXBDev, PXB_DEV,
-                         TYPE_PXB_DEVICE)
+                         TYPE_PXB_DEV)
 
 #define TYPE_PXB_PCIE_DEVICE "pxb-pcie"
 DECLARE_INSTANCE_CHECKER(PXBDev, PXB_PCIE_DEV,
@@ -322,7 +322,7 @@ static void pxb_dev_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo pxb_dev_info = {
-    .name          = TYPE_PXB_DEVICE,
+    .name          = TYPE_PXB_DEV,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PXBDev),
     .class_init    = pxb_dev_class_init,
