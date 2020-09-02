@@ -214,7 +214,7 @@ void kvm_resample_fd_notify(int gsi)
 
 int kvm_get_max_memslots(void)
 {
-    KVMState *s = KVM_STATE(current_accel());
+    KVMState *s = KVM_ACCEL(current_accel());
 
     return s->nr_slots;
 }
@@ -256,7 +256,7 @@ static KVMSlot *kvm_get_free_slot(KVMMemoryListener *kml)
 
 bool kvm_has_free_slot(MachineState *ms)
 {
-    KVMState *s = KVM_STATE(ms->accelerator);
+    KVMState *s = KVM_ACCEL(ms->accelerator);
     bool result;
     KVMMemoryListener *kml = &s->memory_listener;
 
@@ -1970,7 +1970,7 @@ static int kvm_max_vcpu_id(KVMState *s)
 
 bool kvm_vcpu_id_is_valid(int vcpu_id)
 {
-    KVMState *s = KVM_STATE(current_accel());
+    KVMState *s = KVM_ACCEL(current_accel());
     return vcpu_id >= 0 && vcpu_id < kvm_max_vcpu_id(s);
 }
 
@@ -1996,7 +1996,7 @@ static int kvm_init(MachineState *ms)
     const char *kvm_type;
     uint64_t dirty_log_manual_caps;
 
-    s = KVM_STATE(ms->accelerator);
+    s = KVM_ACCEL(ms->accelerator);
 
     /*
      * On systems where the kernel can support different base page
@@ -3084,7 +3084,7 @@ int kvm_get_one_reg(CPUState *cs, uint64_t id, void *target)
 static bool kvm_accel_has_memory(MachineState *ms, AddressSpace *as,
                                  hwaddr start_addr, hwaddr size)
 {
-    KVMState *kvm = KVM_STATE(ms->accelerator);
+    KVMState *kvm = KVM_ACCEL(ms->accelerator);
     int i;
 
     for (i = 0; i < kvm->nr_as; ++i) {
@@ -3102,7 +3102,7 @@ static void kvm_get_kvm_shadow_mem(Object *obj, Visitor *v,
                                    const char *name, void *opaque,
                                    Error **errp)
 {
-    KVMState *s = KVM_STATE(obj);
+    KVMState *s = KVM_ACCEL(obj);
     int64_t value = s->kvm_shadow_mem;
 
     visit_type_int(v, name, &value, errp);
@@ -3112,7 +3112,7 @@ static void kvm_set_kvm_shadow_mem(Object *obj, Visitor *v,
                                    const char *name, void *opaque,
                                    Error **errp)
 {
-    KVMState *s = KVM_STATE(obj);
+    KVMState *s = KVM_ACCEL(obj);
     int64_t value;
 
     if (!visit_type_int(v, name, &value, errp)) {
@@ -3126,7 +3126,7 @@ static void kvm_set_kernel_irqchip(Object *obj, Visitor *v,
                                    const char *name, void *opaque,
                                    Error **errp)
 {
-    KVMState *s = KVM_STATE(obj);
+    KVMState *s = KVM_ACCEL(obj);
     OnOffSplit mode;
 
     if (!visit_type_OnOffSplit(v, name, &mode, errp)) {
@@ -3173,7 +3173,7 @@ bool kvm_kernel_irqchip_split(void)
 
 static void kvm_accel_instance_init(Object *obj)
 {
-    KVMState *s = KVM_STATE(obj);
+    KVMState *s = KVM_ACCEL(obj);
 
     s->kvm_shadow_mem = -1;
     s->kernel_irqchip_allowed = true;

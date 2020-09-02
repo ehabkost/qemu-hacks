@@ -1277,7 +1277,7 @@ int mips_kvm_type(MachineState *machine, const char *vm_type)
 {
 #if defined(KVM_CAP_MIPS_VZ) || defined(KVM_CAP_MIPS_TE)
     int r;
-    KVMState *s = KVM_STATE(machine->accelerator);
+    KVMState *s = KVM_ACCEL(machine->accelerator);
 #endif
 
 #if defined(KVM_CAP_MIPS_VZ)

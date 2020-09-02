@@ -216,7 +216,7 @@ bool kvm_arm_pmu_supported(void)
 
 int kvm_arm_get_max_vm_ipa_size(MachineState *ms)
 {
-    KVMState *s = KVM_STATE(ms->accelerator);
+    KVMState *s = KVM_ACCEL(ms->accelerator);
     int ret;
 
     ret = kvm_check_extension(s, KVM_CAP_ARM_VM_IPA_SIZE);
