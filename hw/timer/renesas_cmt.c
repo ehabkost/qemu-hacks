@@ -214,7 +214,7 @@ static void timer_event1(void *opaque)
 
 static void rcmt_reset(DeviceState *dev)
 {
-    RCMTState *cmt = RCMT(dev);
+    RCMTState *cmt = RENESAS_CMT(dev);
     cmt->cmstr = 0;
     cmt->cmcr[0] = cmt->cmcr[1] = 0;
     cmt->cmcnt[0] = cmt->cmcnt[1] = 0;
@@ -224,7 +224,7 @@ static void rcmt_reset(DeviceState *dev)
 static void rcmt_init(Object *obj)
 {
     SysBusDevice *d = SYS_BUS_DEVICE(obj);
-    RCMTState *cmt = RCMT(obj);
+    RCMTState *cmt = RENESAS_CMT(obj);
     int i;
 
     memory_region_init_io(&cmt->memory, OBJECT(cmt), &cmt_ops,

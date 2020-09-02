@@ -15,7 +15,7 @@
 
 #define TYPE_RENESAS_CMT "renesas-cmt"
 typedef struct RCMTState RCMTState;
-DECLARE_INSTANCE_CHECKER(RCMTState, RCMT,
+DECLARE_INSTANCE_CHECKER(RCMTState, RENESAS_CMT,
                          TYPE_RENESAS_CMT)
 
 enum {
