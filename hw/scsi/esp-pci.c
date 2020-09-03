@@ -38,7 +38,7 @@
 #define TYPE_AM53C974 "am53c974"
 
 typedef struct PCIESPState PCIESPState;
-DECLARE_INSTANCE_CHECKER(PCIESPState, PCI_ESP,
+DECLARE_INSTANCE_CHECKER(PCIESPState, AM53C974,
                          TYPE_AM53C974)
 
 #define DMA_CMD   0x0
@@ -305,7 +305,7 @@ static const MemoryRegionOps esp_pci_io_ops = {
 
 static void esp_pci_hard_reset(DeviceState *dev)
 {
-    PCIESPState *pci = PCI_ESP(dev);
+    PCIESPState *pci = AM53C974(dev);
     esp_hard_reset(&pci->esp);
     pci->dma_regs[DMA_CMD] &= ~(DMA_CMD_DIR | DMA_CMD_INTE_D | DMA_CMD_INTE_P
                               | DMA_CMD_MDL | DMA_CMD_DIAG | DMA_CMD_MASK);
@@ -352,7 +352,7 @@ static const struct SCSIBusInfo esp_pci_scsi_info = {
 
 static void esp_pci_scsi_realize(PCIDevice *dev, Error **errp)
 {
-    PCIESPState *pci = PCI_ESP(dev);
+    PCIESPState *pci = AM53C974(dev);
     DeviceState *d = DEVICE(dev);
     ESPState *s = &pci->esp;
     uint8_t *pci_conf;
@@ -377,7 +377,7 @@ static void esp_pci_scsi_realize(PCIDevice *dev, Error **errp)
 
 static void esp_pci_scsi_uninit(PCIDevice *d)
 {
-    PCIESPState *pci = PCI_ESP(d);
+    PCIESPState *pci = AM53C974(d);
 
     qemu_free_irq(pci->esp.irq);
 }
