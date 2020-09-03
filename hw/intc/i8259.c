@@ -39,7 +39,7 @@
 
 #define TYPE_ISA_I8259 "isa-i8259"
 typedef struct PICClass PICClass;
-DECLARE_CLASS_CHECKERS(PICClass, PIC,
+DECLARE_CLASS_CHECKERS(PICClass, ISA_I8259,
                        TYPE_ISA_I8259)
 
 /**
@@ -396,7 +396,7 @@ static const MemoryRegionOps pic_elcr_ioport_ops = {
 static void pic_realize(DeviceState *dev, Error **errp)
 {
     PICCommonState *s = PIC_COMMON(dev);
-    PICClass *pc = PIC_GET_CLASS(dev);
+    PICClass *pc = ISA_I8259_GET_CLASS(dev);
 
     memory_region_init_io(&s->base_io, OBJECT(s), &pic_base_ioport_ops, s,
                           "pic", 2);
@@ -443,7 +443,7 @@ qemu_irq *i8259_init(ISABus *bus, qemu_irq parent_irq)
 
 static void i8259_class_init(ObjectClass *klass, void *data)
 {
-    PICClass *k = PIC_CLASS(klass);
+    PICClass *k = ISA_I8259_CLASS(klass);
     DeviceClass *dc = DEVICE_CLASS(klass);
 
     device_class_set_parent_realize(dc, pic_realize, &k->parent_realize);
