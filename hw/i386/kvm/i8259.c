@@ -21,7 +21,7 @@
 
 #define TYPE_KVM_I8259 "kvm-i8259"
 typedef struct KVMPICClass KVMPICClass;
-DECLARE_CLASS_CHECKERS(KVMPICClass, KVM_PIC,
+DECLARE_CLASS_CHECKERS(KVMPICClass, KVM_I8259,
                        TYPE_KVM_I8259)
 
 /**
@@ -123,7 +123,7 @@ static void kvm_pic_set_irq(void *opaque, int irq, int level)
 static void kvm_pic_realize(DeviceState *dev, Error **errp)
 {
     PICCommonState *s = PIC_COMMON(dev);
-    KVMPICClass *kpc = KVM_PIC_GET_CLASS(dev);
+    KVMPICClass *kpc = KVM_I8259_GET_CLASS(dev);
 
     memory_region_init_io(&s->base_io, OBJECT(dev), NULL, NULL, "kvm-pic", 2);
     memory_region_init_io(&s->elcr_io, OBJECT(dev), NULL, NULL, "kvm-elcr", 1);
@@ -141,7 +141,7 @@ qemu_irq *kvm_i8259_init(ISABus *bus)
 
 static void kvm_i8259_class_init(ObjectClass *klass, void *data)
 {
-    KVMPICClass *kpc = KVM_PIC_CLASS(klass);
+    KVMPICClass *kpc = KVM_I8259_CLASS(klass);
     PICCommonClass *k = PIC_COMMON_CLASS(klass);
     DeviceClass *dc = DEVICE_CLASS(klass);
 
