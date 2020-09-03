@@ -38,7 +38,7 @@
 #define RW_STATE_WORD1 4
 
 typedef struct PITClass PITClass;
-DECLARE_CLASS_CHECKERS(PITClass, PIT,
+DECLARE_CLASS_CHECKERS(PITClass, ISA_PIT,
                        TYPE_ISA_PIT)
 
 struct PITClass {
@@ -334,7 +334,7 @@ static void pit_post_load(PITCommonState *s)
 static void pit_realizefn(DeviceState *dev, Error **errp)
 {
     PITCommonState *pit = PIT_COMMON(dev);
-    PITClass *pc = PIT_GET_CLASS(dev);
+    PITClass *pc = ISA_PIT_GET_CLASS(dev);
     PITChannelState *s;
 
     s = &pit->channels[0];
@@ -357,7 +357,7 @@ static Property pit_properties[] = {
 
 static void pit_class_initfn(ObjectClass *klass, void *data)
 {
-    PITClass *pc = PIT_CLASS(klass);
+    PITClass *pc = ISA_PIT_CLASS(klass);
     PITCommonClass *k = PIT_COMMON_CLASS(klass);
     DeviceClass *dc = DEVICE_CLASS(klass);
 
