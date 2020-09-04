@@ -377,7 +377,7 @@ static void sclp_init(Object *obj)
     new = object_new(TYPE_SCLP_EVENT_FACILITY);
     object_property_add_child(obj, TYPE_SCLP_EVENT_FACILITY, new);
     object_unref(new);
-    sclp->event_facility = EVENT_FACILITY(new);
+    sclp->event_facility = SCLP_EVENT_FACILITY(new);
 
     sclp_memory_init(sclp);
 }

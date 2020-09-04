@@ -195,7 +195,7 @@ struct SCLPEventClass {
 typedef struct SCLPEventFacility SCLPEventFacility;
 typedef struct SCLPEventFacilityClass SCLPEventFacilityClass;
 DECLARE_OBJ_CHECKERS(SCLPEventFacility, SCLPEventFacilityClass,
-                     EVENT_FACILITY, TYPE_SCLP_EVENT_FACILITY)
+                     SCLP_EVENT_FACILITY, TYPE_SCLP_EVENT_FACILITY)
 
 struct SCLPEventFacilityClass {
     SysBusDeviceClass parent_class;

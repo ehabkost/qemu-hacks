@@ -417,7 +417,7 @@ static bool sclp_event_get_allow_all_mask_sizes(Object *obj, Error **errp)
 
 static void init_event_facility(Object *obj)
 {
-    SCLPEventFacility *event_facility = EVENT_FACILITY(obj);
+    SCLPEventFacility *event_facility = SCLP_EVENT_FACILITY(obj);
     DeviceState *sdev = DEVICE(obj);
 
     event_facility->mask_length = 4;
@@ -441,7 +441,7 @@ static void init_event_facility(Object *obj)
 
 static void realize_event_facility(DeviceState *dev, Error **errp)
 {
-    SCLPEventFacility *event_facility = EVENT_FACILITY(dev);
+    SCLPEventFacility *event_facility = SCLP_EVENT_FACILITY(dev);
 
     if (!qdev_realize(DEVICE(&event_facility->quiesce),
                       BUS(&event_facility->sbus), errp)) {
@@ -456,7 +456,7 @@ static void realize_event_facility(DeviceState *dev, Error **errp)
 
 static void reset_event_facility(DeviceState *dev)
 {
-    SCLPEventFacility *sdev = EVENT_FACILITY(dev);
+    SCLPEventFacility *sdev = SCLP_EVENT_FACILITY(dev);
 
     sdev->receive_mask = 0;
 }
