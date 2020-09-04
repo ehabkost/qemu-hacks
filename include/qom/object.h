@@ -421,7 +421,6 @@ struct Object
 
 /**
  * OBJECT_DEFINE_TYPE:
- * @ModuleObjName: the object name with initial caps
  * @module_obj_name: the object name in lowercase with underscore separators
  * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
  * @PARENT_MODULE_OBJ_NAME: the parent object name in uppercase with underscore
@@ -432,10 +431,11 @@ struct Object
  * for the common case where the instance and class types for the type
  * follow the usual <ModuleObjName> and <ModuleObjName>Class pattern.
  */
-#define OBJECT_DEFINE_TYPE(ModuleObjName, module_obj_name, MODULE_OBJ_NAME, \
+#define OBJECT_DEFINE_TYPE(module_obj_name, MODULE_OBJ_NAME, \
                            PARENT_MODULE_OBJ_NAME, ...) \
     OBJECT_DEFINE_TYPE_EXTENDED(module_obj_name##_info, \
-                                ModuleObjName, ModuleObjName##Class, \
+                                INSTANCE_TYPE(MODULE_OBJ_NAME), \
+                                CLASS_TYPE(MODULE_OBJ_NAME), \
                                 MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
                                 __VA_ARGS__)
 
