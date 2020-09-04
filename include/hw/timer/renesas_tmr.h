@@ -13,10 +13,10 @@
 #include "hw/sysbus.h"
 #include "qom/object.h"
 
-#define TYPE_RTMR "renesas-tmr"
+#define TYPE_RENESAS_TMR "renesas-tmr"
 typedef struct RTMRState RTMRState;
-DECLARE_INSTANCE_CHECKER(RTMRState, RENESAS_TMR,
-                         TYPE_RTMR)
+DECLARE_INSTANCE_CHECKER(RTMRState, RTMR,
+                         TYPE_RENESAS_TMR)
 
 enum timer_event {
     cmia = 0,
