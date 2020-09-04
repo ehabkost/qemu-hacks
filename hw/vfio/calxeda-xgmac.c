@@ -47,7 +47,7 @@ static void vfio_calxeda_xgmac_class_init(ObjectClass *klass, void *data)
 
 static const TypeInfo vfio_calxeda_xgmac_dev_info = {
     .name = TYPE_VFIO_CALXEDA_XGMAC,
-    .parent = TYPE_VFIO_PLATFORM,
+    .parent = TYPE_VFIO_PLATFORM_DEVICE,
     .instance_size = sizeof(VFIOCalxedaXgmacDevice),
     .class_init = vfio_calxeda_xgmac_class_init,
     .class_size = sizeof(VFIOCalxedaXgmacDeviceClass),

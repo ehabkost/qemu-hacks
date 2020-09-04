@@ -47,7 +47,7 @@ static void vfio_amd_xgbe_class_init(ObjectClass *klass, void *data)
 
 static const TypeInfo vfio_amd_xgbe_dev_info = {
     .name = TYPE_VFIO_AMD_XGBE,
-    .parent = TYPE_VFIO_PLATFORM,
+    .parent = TYPE_VFIO_PLATFORM_DEVICE,
     .instance_size = sizeof(VFIOAmdXgbeDevice),
     .class_init = vfio_amd_xgbe_class_init,
     .class_size = sizeof(VFIOAmdXgbeDeviceClass),

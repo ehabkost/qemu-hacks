@@ -433,7 +433,7 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
 }
 
 #define VFIO_PLATFORM_BINDING(compat, add_fn) \
-    {TYPE_VFIO_PLATFORM, (compat), (add_fn), vfio_platform_match}
+    {TYPE_VFIO_PLATFORM_DEVICE, (compat), (add_fn), vfio_platform_match}
 
 #endif /* CONFIG_LINUX */
 

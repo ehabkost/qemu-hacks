@@ -22,7 +22,7 @@
 #include "qemu/queue.h"
 #include "qom/object.h"
 
-#define TYPE_VFIO_PLATFORM "vfio-platform"
+#define TYPE_VFIO_PLATFORM_DEVICE "vfio-platform"
 
 enum {
     VFIO_IRQ_INACTIVE = 0,
@@ -71,6 +71,6 @@ struct VFIOPlatformDeviceClass {
 typedef struct VFIOPlatformDeviceClass VFIOPlatformDeviceClass;
 
 DECLARE_OBJ_CHECKERS(VFIOPlatformDevice, VFIOPlatformDeviceClass,
-                     VFIO_PLATFORM_DEVICE, TYPE_VFIO_PLATFORM)
+                     VFIO_PLATFORM_DEVICE, TYPE_VFIO_PLATFORM_DEVICE)
 
 #endif /* HW_VFIO_VFIO_PLATFORM_H */

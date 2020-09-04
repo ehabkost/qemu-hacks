@@ -708,7 +708,7 @@ static void vfio_platform_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo vfio_platform_dev_info = {
-    .name = TYPE_VFIO_PLATFORM,
+    .name = TYPE_VFIO_PLATFORM_DEVICE,
     .parent = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(VFIOPlatformDevice),
     .class_init = vfio_platform_class_init,
