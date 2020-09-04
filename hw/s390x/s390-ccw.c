@@ -61,7 +61,7 @@ IOInstEnding s390_ccw_store(SubchDev *sch)
      * but only applies to to the latter.  This ugly check makes that
      * distinction for us.
      */
-    if (object_dynamic_cast(OBJECT(sch->driver_data), TYPE_S390_CCW)) {
+    if (object_dynamic_cast(OBJECT(sch->driver_data), TYPE_S390_CCW_DEVICE)) {
         cdc = S390_CCW_DEVICE_GET_CLASS(sch->driver_data);
     }
 
@@ -186,7 +186,7 @@ static void s390_ccw_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo s390_ccw_info = {
-    .name          = TYPE_S390_CCW,
+    .name          = TYPE_S390_CCW_DEVICE,
     .parent        = TYPE_CCW_DEVICE,
     .instance_init = s390_ccw_instance_init,
     .instance_size = sizeof(S390CCWDevice),

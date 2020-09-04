@@ -736,7 +736,7 @@ static void vfio_ccw_class_init(ObjectClass *klass, void *data)
 
 static const TypeInfo vfio_ccw_info = {
     .name = TYPE_VFIO_CCW,
-    .parent = TYPE_S390_CCW,
+    .parent = TYPE_S390_CCW_DEVICE,
     .instance_size = sizeof(VFIOCCWDevice),
     .class_init = vfio_ccw_class_init,
 };

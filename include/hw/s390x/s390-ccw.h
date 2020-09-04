@@ -16,11 +16,11 @@
 #include "hw/s390x/ccw-device.h"
 #include "qom/object.h"
 
-#define TYPE_S390_CCW "s390-ccw"
+#define TYPE_S390_CCW_DEVICE "s390-ccw"
 typedef struct S390CCWDevice S390CCWDevice;
 typedef struct S390CCWDeviceClass S390CCWDeviceClass;
 DECLARE_OBJ_CHECKERS(S390CCWDevice, S390CCWDeviceClass,
-                     S390_CCW_DEVICE, TYPE_S390_CCW)
+                     S390_CCW_DEVICE, TYPE_S390_CCW_DEVICE)
 
 struct S390CCWDevice {
     CcwDevice parent_obj;
