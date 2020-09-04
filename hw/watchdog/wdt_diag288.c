@@ -22,7 +22,7 @@
 #include "qemu/module.h"
 
 static WatchdogTimerModel model = {
-    .wdt_name = TYPE_WDT_DIAG288,
+    .wdt_name = TYPE_DIAG288,
     .wdt_description = "diag288 device for s390x platform",
 };
 
@@ -133,7 +133,7 @@ static void wdt_diag288_class_init(ObjectClass *klass, void *data)
 static const TypeInfo wdt_diag288_info = {
     .class_init = wdt_diag288_class_init,
     .parent = TYPE_DEVICE,
-    .name  = TYPE_WDT_DIAG288,
+    .name  = TYPE_DIAG288,
     .instance_size  = sizeof(DIAG288State),
     .class_size = sizeof(DIAG288Class),
 };

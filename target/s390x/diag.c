@@ -41,7 +41,7 @@ int handle_diag_288(CPUS390XState *env, uint64_t r1, uint64_t r3)
         return -1;
     }
 
-    obj = object_resolve_path_type("", TYPE_WDT_DIAG288, NULL);
+    obj = object_resolve_path_type("", TYPE_DIAG288, NULL);
     if (!obj) {
         return -1;
     }

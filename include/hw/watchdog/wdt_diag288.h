@@ -4,11 +4,11 @@
 #include "hw/qdev-core.h"
 #include "qom/object.h"
 
-#define TYPE_WDT_DIAG288 "diag288"
+#define TYPE_DIAG288 "diag288"
 typedef struct DIAG288Class DIAG288Class;
 typedef struct DIAG288State DIAG288State;
 DECLARE_OBJ_CHECKERS(DIAG288State, DIAG288Class,
-                     DIAG288, TYPE_WDT_DIAG288)
+                     DIAG288, TYPE_DIAG288)
 
 #define WDT_DIAG288_INIT      0
 #define WDT_DIAG288_CHANGE    1
