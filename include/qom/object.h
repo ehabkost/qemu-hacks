@@ -332,9 +332,9 @@ struct Object
 
 /**
  * OBJECT_DEFINE_TYPE_EXTENDED:
+ * @var_name: name for TypeInfo variable
  * @InstanceType: instance type
  * @ClassType: class type
- * @module_obj_name: the object name in lowercase with underscore separators
  * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
  * @PARENT_MODULE_OBJ_NAME: the parent object name in uppercase with underscore
  *                          separators
@@ -353,10 +353,10 @@ struct Object
  * macros is usually a better choice.
  *
  */
-#define OBJECT_DEFINE_TYPE_EXTENDED(InstanceType, ClassType, module_obj_name, \
+#define OBJECT_DEFINE_TYPE_EXTENDED(var_name, InstanceType, ClassType, \
                                     MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
                                     ...) \
-    static const TypeInfo module_obj_name##_info = { \
+    static const TypeInfo var_name = { \
         .parent = TYPE_##PARENT_MODULE_OBJ_NAME, \
         .name = TYPE_##MODULE_OBJ_NAME, \
         .instance_size = QOM_TYPE_SIZE(InstanceType), \
@@ -364,7 +364,7 @@ struct Object
         __VA_ARGS__ \
     }; \
     \
-    TYPE_INFO(module_obj_name##_info)
+    TYPE_INFO(var_name)
 
 /**
  * OBJECT_DEFINE_TYPE:
@@ -381,7 +381,8 @@ struct Object
  */
 #define OBJECT_DEFINE_TYPE(ModuleObjName, module_obj_name, MODULE_OBJ_NAME, \
                            PARENT_MODULE_OBJ_NAME, ...) \
-    OBJECT_DEFINE_TYPE_EXTENDED(ModuleObjName, ModuleObjName##Class, module_obj_name, \
+    OBJECT_DEFINE_TYPE_EXTENDED(module_obj_name##_info, \
+                                ModuleObjName, ModuleObjName##Class, \
                                 MODULE_OBJ_NAME, PARENT_MODULE_OBJ_NAME, \
                                 __VA_ARGS__)
 
