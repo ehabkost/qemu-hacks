@@ -520,7 +520,7 @@ typedef void (ObjectFree)(void *obj);
  */
 struct ObjectClass
 {
-    /*< private >*/
+    /* private: */
     Type type;
     GSList *interfaces;
 
@@ -546,7 +546,7 @@ struct ObjectClass
  */
 struct Object
 {
-    /*< private >*/
+    /* private: */
     ObjectClass *class;
     ObjectFree *free;
     GHashTable *properties;
@@ -905,7 +905,7 @@ struct InterfaceInfo {
 struct InterfaceClass
 {
     ObjectClass parent_class;
-    /*< private >*/
+    /* private: */
     ObjectClass *concrete_class;
     Type interface_type;
 };
