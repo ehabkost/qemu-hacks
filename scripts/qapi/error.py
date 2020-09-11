@@ -11,9 +11,11 @@
 # This work is licensed under the terms of the GNU GPL, version 2.
 # See the COPYING file in the top-level directory.
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from .source import QAPISourceInfo
+if TYPE_CHECKING:
+    # pylint: disable=cyclic-import
+    from .source import QAPISourceInfo
 
 
 class QAPIError(Exception):
@@ -23,7 +25,7 @@ class QAPIError(Exception):
 class QAPISourceError(QAPIError):
     """Error class for all exceptions identifying a source location."""
     def __init__(self,
-                 info: QAPISourceInfo,
+                 info: 'QAPISourceInfo',
                  msg: str,
                  col: Optional[int] = None):
         super().__init__()
