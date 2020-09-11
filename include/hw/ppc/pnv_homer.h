@@ -27,11 +27,7 @@
 OBJECT_DECLARE_TYPE(PnvHomer, PnvHomerClass,
                     PNV_HOMER)
 #define TYPE_PNV8_HOMER TYPE_PNV_HOMER "-POWER8"
-DECLARE_INSTANCE_CHECKER(PnvHomer, PNV8_HOMER,
-                         TYPE_PNV8_HOMER)
 #define TYPE_PNV9_HOMER TYPE_PNV_HOMER "-POWER9"
-DECLARE_INSTANCE_CHECKER(PnvHomer, PNV9_HOMER,
-                         TYPE_PNV9_HOMER)
 
 struct PnvHomer {
     DeviceState parent;
