@@ -878,8 +878,6 @@ static IOMMUTLBEntry pnv_phb3_translate_iommu(IOMMUMemoryRegion *iommu,
 }
 
 #define TYPE_PNV_PHB3_IOMMU_MEMORY_REGION "pnv-phb3-iommu-memory-region"
-DECLARE_INSTANCE_CHECKER(IOMMUMemoryRegion, PNV_PHB3_IOMMU_MEMORY_REGION,
-                         TYPE_PNV_PHB3_IOMMU_MEMORY_REGION)
 
 static void pnv_phb3_iommu_memory_region_class_init(ObjectClass *klass,
                                                     void *data)
