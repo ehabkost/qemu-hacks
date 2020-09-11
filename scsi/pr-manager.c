@@ -76,6 +76,7 @@ bool pr_manager_is_connected(PRManager *pr_mgr)
 static const TypeInfo pr_manager_info = {
     .parent = TYPE_OBJECT,
     .name = TYPE_PR_MANAGER,
+    .instance_size = sizeof(PRManager),
     .class_size = sizeof(PRManagerClass),
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
