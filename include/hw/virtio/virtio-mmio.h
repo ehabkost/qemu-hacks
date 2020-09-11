@@ -28,9 +28,6 @@
 /* QOM macros */
 /* virtio-mmio-bus */
 #define TYPE_VIRTIO_MMIO_BUS "virtio-mmio-bus"
-/* This is reusing the VirtioBusState typedef from TYPE_VIRTIO_BUS */
-DECLARE_OBJ_CHECKERS(VirtioBusState, VirtioBusClass,
-                     VIRTIO_MMIO_BUS, TYPE_VIRTIO_MMIO_BUS)
 
 /* virtio-mmio */
 #define TYPE_VIRTIO_MMIO "virtio-mmio"
