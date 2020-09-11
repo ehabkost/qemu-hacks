@@ -156,6 +156,7 @@ static void m48txx_isa_concrete_class_init(ObjectClass *klass, void *data)
 static const TypeInfo m48txx_isa_type_info = {
     .name = TYPE_M48TXX_ISA,
     .parent = TYPE_ISA_DEVICE,
+    .class_size = sizeof(M48txxISADeviceClass),
     .instance_size = sizeof(M48txxISAState),
     .abstract = true,
     .class_init = m48txx_isa_class_init,
@@ -170,7 +171,6 @@ static void m48t59_isa_register_types(void)
 {
     TypeInfo isa_type_info = {
         .parent = TYPE_M48TXX_ISA,
-        .class_size = sizeof(M48txxISADeviceClass),
         .class_init = m48txx_isa_concrete_class_init,
     };
     int i;

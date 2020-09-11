@@ -691,6 +691,7 @@ TYPE_INFO(nvram_info)
 static const TypeInfo m48txx_sysbus_type_info = {
     .name = TYPE_M48TXX_SYS_BUS,
     .parent = TYPE_SYS_BUS_DEVICE,
+    .class_size = sizeof(M48txxSysBusDeviceClass),
     .instance_size = sizeof(M48txxSysBusState),
     .instance_init = m48t59_init1,
     .abstract = true,
@@ -706,7 +707,6 @@ static void m48t59_register_types(void)
 {
     TypeInfo sysbus_type_info = {
         .parent = TYPE_M48TXX_SYS_BUS,
-        .class_size = sizeof(M48txxSysBusDeviceClass),
         .class_init = m48txx_sysbus_concrete_class_init,
     };
     int i;
