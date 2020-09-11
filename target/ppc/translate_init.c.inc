@@ -3479,7 +3479,16 @@ static bool ppc_cpu_interrupts_big_endian_lpcr(PowerPCCPU *cpu)
         .abstract = true,                                                   \
         .class_init = glue(glue(ppc_, _name), _cpu_family_class_init),      \
     };                                                                      \
-    TYPE_INFO(glue(glue(ppc_, _name), _cpu_family_type_info))
+                                                                            \
+    static void glue(glue(ppc_, _name), _cpu_family_register_types)(void)   \
+    {                                                                       \
+        type_register_static(                                               \
+            &glue(glue(ppc_, _name), _cpu_family_type_info));               \
+    }                                                                       \
+                                                                            \
+    type_init(glue(glue(ppc_, _name), _cpu_family_register_types))          \
+                                                                            \
+    static void glue(glue(ppc_, _name), _cpu_family_class_init)
 
 static void init_proc_401(CPUPPCState *env)
 {
