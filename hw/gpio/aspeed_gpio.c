@@ -973,32 +973,36 @@ static const TypeInfo aspeed_gpio_info = {
 };
 TYPE_INFO(aspeed_gpio_info)
 
+#define TYPE_ASPEED_GPIO_AST2400 (TYPE_ASPEED_GPIO "-ast2400")
 static const TypeInfo aspeed_gpio_ast2400_info = {
-    .name           = TYPE_ASPEED_GPIO "-ast2400",
+    .name           = TYPE_ASPEED_GPIO_AST2400,
     .parent         = TYPE_ASPEED_GPIO,
     .class_init     = aspeed_gpio_ast2400_class_init,
     .instance_init  = aspeed_gpio_init,
 };
 TYPE_INFO(aspeed_gpio_ast2400_info)
 
+#define TYPE_ASPEED_GPIO_AST2500 (TYPE_ASPEED_GPIO "-ast2500")
 static const TypeInfo aspeed_gpio_ast2500_info = {
-    .name           = TYPE_ASPEED_GPIO "-ast2500",
+    .name           = TYPE_ASPEED_GPIO_AST2500,
     .parent         = TYPE_ASPEED_GPIO,
     .class_init     = aspeed_gpio_2500_class_init,
     .instance_init  = aspeed_gpio_init,
 };
 TYPE_INFO(aspeed_gpio_ast2500_info)
 
+#define TYPE_ASPEED_GPIO_AST2600 (TYPE_ASPEED_GPIO "-ast2600")
 static const TypeInfo aspeed_gpio_ast2600_3_6v_info = {
-    .name           = TYPE_ASPEED_GPIO "-ast2600",
+    .name           = TYPE_ASPEED_GPIO_AST2600,
     .parent         = TYPE_ASPEED_GPIO,
     .class_init     = aspeed_gpio_ast2600_3_6v_class_init,
     .instance_init  = aspeed_gpio_init,
 };
 TYPE_INFO(aspeed_gpio_ast2600_3_6v_info)
 
+#define TYPE_ASPEED_GPIO_AST2600_1_8V (TYPE_ASPEED_GPIO "-ast2600-1_8v")
 static const TypeInfo aspeed_gpio_ast2600_1_8v_info = {
-    .name           = TYPE_ASPEED_GPIO "-ast2600-1_8v",
+    .name           = TYPE_ASPEED_GPIO_AST2600_1_8V,
     .parent         = TYPE_ASPEED_GPIO,
     .class_init     = aspeed_gpio_ast2600_1_8v_class_init,
     .instance_init  = aspeed_gpio_init,
