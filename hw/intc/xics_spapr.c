@@ -285,7 +285,7 @@ static void rtas_int_on(PowerPCCPU *cpu, SpaprMachineState *spapr,
 
 static void ics_spapr_realize(DeviceState *dev, Error **errp)
 {
-    ICSState *ics = ICS_SPAPR(dev);
+    ICSState *ics = ICS(dev);
     ICSStateClass *icsc = ICS_GET_CLASS(ics);
     Error *local_err = NULL;
 
@@ -333,7 +333,7 @@ static void xics_spapr_dt(SpaprInterruptController *intc, uint32_t nr_servers,
 static int xics_spapr_cpu_intc_create(SpaprInterruptController *intc,
                                        PowerPCCPU *cpu, Error **errp)
 {
-    ICSState *ics = ICS_SPAPR(intc);
+    ICSState *ics = ICS(intc);
     Object *obj;
     SpaprCpuState *spapr_cpu = spapr_cpu_state(cpu);
 
@@ -364,7 +364,7 @@ static void xics_spapr_cpu_intc_destroy(SpaprInterruptController *intc,
 static int xics_spapr_claim_irq(SpaprInterruptController *intc, int irq,
                                 bool lsi, Error **errp)
 {
-    ICSState *ics = ICS_SPAPR(intc);
+    ICSState *ics = ICS(intc);
 
     assert(ics);
     assert(ics_valid_irq(ics, irq));
@@ -380,7 +380,7 @@ static int xics_spapr_claim_irq(SpaprInterruptController *intc, int irq,
 
 static void xics_spapr_free_irq(SpaprInterruptController *intc, int irq)
 {
-    ICSState *ics = ICS_SPAPR(intc);
+    ICSState *ics = ICS(intc);
     uint32_t srcno = irq - ics->offset;
 
     assert(ics_valid_irq(ics, irq));
@@ -390,7 +390,7 @@ static void xics_spapr_free_irq(SpaprInterruptController *intc, int irq)
 
 static void xics_spapr_set_irq(SpaprInterruptController *intc, int irq, int val)
 {
-    ICSState *ics = ICS_SPAPR(intc);
+    ICSState *ics = ICS(intc);
     uint32_t srcno = irq - ics->offset;
 
     ics_set_irq(ics, srcno, val);
@@ -398,7 +398,7 @@ static void xics_spapr_set_irq(SpaprInterruptController *intc, int irq, int val)
 
 static void xics_spapr_print_info(SpaprInterruptController *intc, Monitor *mon)
 {
-    ICSState *ics = ICS_SPAPR(intc);
+    ICSState *ics = ICS(intc);
     CPUState *cs;
 
     CPU_FOREACH(cs) {

@@ -318,7 +318,7 @@ void spapr_irq_init(SpaprMachineState *spapr, Error **errp)
             return;
         }
 
-        spapr->ics = ICS_SPAPR(obj);
+        spapr->ics = ICS(obj);
     }
 
     if (spapr->irq->xive) {
