@@ -1049,6 +1049,7 @@ static const TypeInfo spitz_common_info = {
     .class_size = sizeof(SpitzMachineClass),
     .class_init = spitz_common_class_init,
 };
+TYPE_INFO(spitz_common_info)
 
 static void akitapda_class_init(ObjectClass *oc, void *data)
 {
@@ -1066,6 +1067,7 @@ static const TypeInfo akitapda_type = {
     .parent = TYPE_SPITZ_MACHINE,
     .class_init = akitapda_class_init,
 };
+TYPE_INFO(akitapda_type)
 
 static void spitzpda_class_init(ObjectClass *oc, void *data)
 {
@@ -1083,6 +1085,7 @@ static const TypeInfo spitzpda_type = {
     .parent = TYPE_SPITZ_MACHINE,
     .class_init = spitzpda_class_init,
 };
+TYPE_INFO(spitzpda_type)
 
 static void borzoipda_class_init(ObjectClass *oc, void *data)
 {
@@ -1100,6 +1103,7 @@ static const TypeInfo borzoipda_type = {
     .parent = TYPE_SPITZ_MACHINE,
     .class_init = borzoipda_class_init,
 };
+TYPE_INFO(borzoipda_type)
 
 static void terrierpda_class_init(ObjectClass *oc, void *data)
 {
@@ -1117,17 +1121,9 @@ static const TypeInfo terrierpda_type = {
     .parent = TYPE_SPITZ_MACHINE,
     .class_init = terrierpda_class_init,
 };
+TYPE_INFO(terrierpda_type)
 
-static void spitz_machine_init(void)
-{
-    type_register_static(&spitz_common_info);
-    type_register_static(&akitapda_type);
-    type_register_static(&spitzpda_type);
-    type_register_static(&borzoipda_type);
-    type_register_static(&terrierpda_type);
-}
 
-type_init(spitz_machine_init)
 
 static bool is_version_0(void *opaque, int version_id)
 {
@@ -1169,6 +1165,7 @@ static const TypeInfo sl_nand_info = {
     .instance_init = sl_nand_init,
     .class_init    = sl_nand_class_init,
 };
+TYPE_INFO(sl_nand_info)
 
 static VMStateDescription vmstate_spitz_kbd = {
     .name = "spitz-keyboard",
@@ -1198,6 +1195,7 @@ static const TypeInfo spitz_keyboard_info = {
     .instance_init = spitz_keyboard_init,
     .class_init    = spitz_keyboard_class_init,
 };
+TYPE_INFO(spitz_keyboard_info)
 
 static const VMStateDescription vmstate_corgi_ssp_regs = {
     .name = "corgi-ssp",
@@ -1226,6 +1224,7 @@ static const TypeInfo corgi_ssp_info = {
     .instance_size = sizeof(CorgiSSPState),
     .class_init    = corgi_ssp_class_init,
 };
+TYPE_INFO(corgi_ssp_info)
 
 static const VMStateDescription vmstate_spitz_lcdtg_regs = {
     .name = "spitz-lcdtg",
@@ -1255,6 +1254,7 @@ static const TypeInfo spitz_lcdtg_info = {
     .instance_size = sizeof(SpitzLCDTG),
     .class_init    = spitz_lcdtg_class_init,
 };
+TYPE_INFO(spitz_lcdtg_info)
 
 static const TypeInfo spitz_misc_gpio_info = {
     .name = TYPE_SPITZ_MISC_GPIO,
@@ -1266,14 +1266,6 @@ static const TypeInfo spitz_misc_gpio_info = {
      * need to set up reset or vmstate, and does not have a realize method.
      */
 };
+TYPE_INFO(spitz_misc_gpio_info)
 
-static void spitz_register_types(void)
-{
-    type_register_static(&corgi_ssp_info);
-    type_register_static(&spitz_lcdtg_info);
-    type_register_static(&spitz_keyboard_info);
-    type_register_static(&sl_nand_info);
-    type_register_static(&spitz_misc_gpio_info);
-}
 
-type_init(spitz_register_types)

@@ -4486,6 +4486,7 @@ static const TypeInfo spapr_machine_info = {
         { }
     },
 };
+TYPE_INFO(spapr_machine_info)
 
 static void spapr_machine_latest_class_options(MachineClass *mc)
 {
@@ -4934,9 +4935,4 @@ static void spapr_machine_2_1_class_options(MachineClass *mc)
 }
 DEFINE_SPAPR_MACHINE(2_1, "2.1", false);
 
-static void spapr_machine_register_types(void)
-{
-    type_register_static(&spapr_machine_info);
-}
 
-type_init(spapr_machine_register_types)

@@ -1788,6 +1788,7 @@ static const TypeInfo e1000_base_info = {
         { },
     },
 };
+TYPE_INFO(e1000_base_info)
 
 static const E1000Info e1000_devices[] = {
     {
@@ -1814,7 +1815,6 @@ static void e1000_register_types(void)
 {
     int i;
 
-    type_register_static(&e1000_base_info);
     for (i = 0; i < ARRAY_SIZE(e1000_devices); i++) {
         const E1000Info *info = &e1000_devices[i];
         TypeInfo type_info = {};

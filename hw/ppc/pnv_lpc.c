@@ -652,6 +652,7 @@ static const TypeInfo pnv_lpc_power8_info = {
         { }
     }
 };
+TYPE_INFO(pnv_lpc_power8_info)
 
 static void pnv_lpc_power9_realize(DeviceState *dev, Error **errp)
 {
@@ -688,6 +689,7 @@ static const TypeInfo pnv_lpc_power9_info = {
     .parent        = TYPE_PNV_LPC,
     .class_init    = pnv_lpc_power9_class_init,
 };
+TYPE_INFO(pnv_lpc_power9_info)
 
 static void pnv_lpc_power10_class_init(ObjectClass *klass, void *data)
 {
@@ -701,6 +703,7 @@ static const TypeInfo pnv_lpc_power10_info = {
     .parent        = TYPE_PNV9_LPC,
     .class_init    = pnv_lpc_power10_class_init,
 };
+TYPE_INFO(pnv_lpc_power10_info)
 
 static void pnv_lpc_realize(DeviceState *dev, Error **errp)
 {
@@ -771,16 +774,9 @@ static const TypeInfo pnv_lpc_info = {
     .class_size    = sizeof(PnvLpcClass),
     .abstract      = true,
 };
+TYPE_INFO(pnv_lpc_info)
 
-static void pnv_lpc_register_types(void)
-{
-    type_register_static(&pnv_lpc_info);
-    type_register_static(&pnv_lpc_power8_info);
-    type_register_static(&pnv_lpc_power9_info);
-    type_register_static(&pnv_lpc_power10_info);
-}
 
-type_init(pnv_lpc_register_types)
 
 /* If we don't use the built-in LPC interrupt deserializer, we need
  * to provide a set of qirqs for the ISA bus or things will go bad.

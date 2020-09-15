@@ -44,6 +44,7 @@ static const TypeInfo isa_dma_info = {
     .parent = TYPE_INTERFACE,
     .class_size = sizeof(IsaDmaClass),
 };
+TYPE_INFO(isa_dma_info)
 
 static const TypeInfo isa_bus_info = {
     .name = TYPE_ISA_BUS,
@@ -51,6 +52,7 @@ static const TypeInfo isa_bus_info = {
     .instance_size = sizeof(ISABus),
     .class_init = isa_bus_class_init,
 };
+TYPE_INFO(isa_bus_info)
 
 ISABus *isa_bus_new(DeviceState *dev, MemoryRegion* address_space,
                     MemoryRegion *address_space_io, Error **errp)
@@ -243,6 +245,7 @@ static const TypeInfo isabus_bridge_info = {
     .instance_size = sizeof(SysBusDevice),
     .class_init    = isabus_bridge_class_init,
 };
+TYPE_INFO(isabus_bridge_info)
 
 static void isa_device_class_init(ObjectClass *klass, void *data)
 {
@@ -259,14 +262,8 @@ static const TypeInfo isa_device_type_info = {
     .class_size = sizeof(ISADeviceClass),
     .class_init = isa_device_class_init,
 };
+TYPE_INFO(isa_device_type_info)
 
-static void isabus_register_types(void)
-{
-    type_register_static(&isa_dma_info);
-    type_register_static(&isa_bus_info);
-    type_register_static(&isabus_bridge_info);
-    type_register_static(&isa_device_type_info);
-}
 
 static char *isabus_get_fw_dev_path(DeviceState *dev)
 {
@@ -300,4 +297,3 @@ MemoryRegion *isa_address_space_io(ISADevice *dev)
     return isabus->address_space_io;
 }
 
-type_init(isabus_register_types)

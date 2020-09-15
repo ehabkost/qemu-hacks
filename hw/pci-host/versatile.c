@@ -496,6 +496,7 @@ static const TypeInfo versatile_pci_host_info = {
         { },
     },
 };
+TYPE_INFO(versatile_pci_host_info)
 
 static Property pci_vpb_properties[] = {
     DEFINE_PROP_UINT8("broken-irq-mapping", PCIVPBState, irq_mapping_prop,
@@ -520,6 +521,7 @@ static const TypeInfo pci_vpb_info = {
     .instance_init = pci_vpb_init,
     .class_init    = pci_vpb_class_init,
 };
+TYPE_INFO(pci_vpb_info)
 
 static void pci_realview_init(Object *obj)
 {
@@ -537,12 +539,6 @@ static const TypeInfo pci_realview_info = {
     .parent        = TYPE_VERSATILE_PCI,
     .instance_init = pci_realview_init,
 };
+TYPE_INFO(pci_realview_info)
 
-static void versatile_pci_register_types(void)
-{
-    type_register_static(&pci_vpb_info);
-    type_register_static(&pci_realview_info);
-    type_register_static(&versatile_pci_host_info);
-}
 
-type_init(versatile_pci_register_types)
