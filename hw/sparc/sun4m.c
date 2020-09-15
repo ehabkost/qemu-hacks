@@ -621,6 +621,7 @@ static const TypeInfo idreg_info = {
     .instance_size = sizeof(IDRegState),
     .class_init    = idreg_class_init,
 };
+TYPE_INFO(idreg_info)
 
 #define TYPE_TCX_AFX "tcx_afx"
 OBJECT_DECLARE_SIMPLE_TYPE(AFXState, TCX_AFX)
@@ -674,6 +675,7 @@ static const TypeInfo afx_info = {
     .instance_size = sizeof(AFXState),
     .class_init    = afx_class_init,
 };
+TYPE_INFO(afx_info)
 
 #define TYPE_OPENPROM "openprom"
 typedef struct PROMState PROMState;
@@ -764,6 +766,7 @@ static const TypeInfo prom_info = {
     .instance_size = sizeof(PROMState),
     .class_init    = prom_class_init,
 };
+TYPE_INFO(prom_info)
 
 #define TYPE_SUN4M_MEMORY "memory"
 typedef struct RamDevice RamDevice;
@@ -809,6 +812,7 @@ static const TypeInfo ram_info = {
     .instance_init = ram_initfn,
     .class_init    = ram_class_init,
 };
+TYPE_INFO(ram_info)
 
 static void cpu_devinit(const char *cpu_type, unsigned int id,
                         uint64_t prom_addr, qemu_irq **cpu_irqs)
@@ -1410,6 +1414,7 @@ static const TypeInfo ss5_type = {
     .parent = TYPE_MACHINE,
     .class_init = ss5_class_init,
 };
+TYPE_INFO(ss5_type)
 
 static void ss10_class_init(ObjectClass *oc, void *data)
 {
@@ -1430,6 +1435,7 @@ static const TypeInfo ss10_type = {
     .parent = TYPE_MACHINE,
     .class_init = ss10_class_init,
 };
+TYPE_INFO(ss10_type)
 
 static void ss600mp_class_init(ObjectClass *oc, void *data)
 {
@@ -1450,6 +1456,7 @@ static const TypeInfo ss600mp_type = {
     .parent = TYPE_MACHINE,
     .class_init = ss600mp_class_init,
 };
+TYPE_INFO(ss600mp_type)
 
 static void ss20_class_init(ObjectClass *oc, void *data)
 {
@@ -1470,6 +1477,7 @@ static const TypeInfo ss20_type = {
     .parent = TYPE_MACHINE,
     .class_init = ss20_class_init,
 };
+TYPE_INFO(ss20_type)
 
 static void voyager_class_init(ObjectClass *oc, void *data)
 {
@@ -1489,6 +1497,7 @@ static const TypeInfo voyager_type = {
     .parent = TYPE_MACHINE,
     .class_init = voyager_class_init,
 };
+TYPE_INFO(voyager_type)
 
 static void ss_lx_class_init(ObjectClass *oc, void *data)
 {
@@ -1508,6 +1517,7 @@ static const TypeInfo ss_lx_type = {
     .parent = TYPE_MACHINE,
     .class_init = ss_lx_class_init,
 };
+TYPE_INFO(ss_lx_type)
 
 static void ss4_class_init(ObjectClass *oc, void *data)
 {
@@ -1527,6 +1537,7 @@ static const TypeInfo ss4_type = {
     .parent = TYPE_MACHINE,
     .class_init = ss4_class_init,
 };
+TYPE_INFO(ss4_type)
 
 static void scls_class_init(ObjectClass *oc, void *data)
 {
@@ -1546,6 +1557,7 @@ static const TypeInfo scls_type = {
     .parent = TYPE_MACHINE,
     .class_init = scls_class_init,
 };
+TYPE_INFO(scls_type)
 
 static void sbook_class_init(ObjectClass *oc, void *data)
 {
@@ -1565,23 +1577,11 @@ static const TypeInfo sbook_type = {
     .parent = TYPE_MACHINE,
     .class_init = sbook_class_init,
 };
+TYPE_INFO(sbook_type)
 
 static void sun4m_register_types(void)
 {
-    type_register_static(&idreg_info);
-    type_register_static(&afx_info);
-    type_register_static(&prom_info);
-    type_register_static(&ram_info);
 
-    type_register_static(&ss5_type);
-    type_register_static(&ss10_type);
-    type_register_static(&ss600mp_type);
-    type_register_static(&ss20_type);
-    type_register_static(&voyager_type);
-    type_register_static(&ss_lx_type);
-    type_register_static(&ss4_type);
-    type_register_static(&scls_type);
-    type_register_static(&sbook_type);
 }
 
 type_init(sun4m_register_types)

@@ -2032,6 +2032,7 @@ static const TypeInfo sm501_sysbus_info = {
     .class_init    = sm501_sysbus_class_init,
     .instance_init = sm501_sysbus_init,
 };
+TYPE_INFO(sm501_sysbus_info)
 
 #define TYPE_PCI_SM501 "sm501"
 OBJECT_DECLARE_SIMPLE_TYPE(SM501PCIState, PCI_SM501)
@@ -2112,11 +2113,6 @@ static const TypeInfo sm501_pci_info = {
         { },
     },
 };
+TYPE_INFO(sm501_pci_info)
 
-static void sm501_register_types(void)
-{
-    type_register_static(&sm501_sysbus_info);
-    type_register_static(&sm501_pci_info);
-}
 
-type_init(sm501_register_types)

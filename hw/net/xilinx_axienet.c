@@ -1039,6 +1039,7 @@ static const TypeInfo xilinx_enet_info = {
     .class_init    = xilinx_enet_class_init,
     .instance_init = xilinx_enet_init,
 };
+TYPE_INFO(xilinx_enet_info)
 
 static const TypeInfo xilinx_enet_data_stream_info = {
     .name          = TYPE_XILINX_AXI_ENET_DATA_STREAM,
@@ -1050,6 +1051,7 @@ static const TypeInfo xilinx_enet_data_stream_info = {
             { }
     }
 };
+TYPE_INFO(xilinx_enet_data_stream_info)
 
 static const TypeInfo xilinx_enet_control_stream_info = {
     .name          = TYPE_XILINX_AXI_ENET_CONTROL_STREAM,
@@ -1061,12 +1063,6 @@ static const TypeInfo xilinx_enet_control_stream_info = {
             { }
     }
 };
+TYPE_INFO(xilinx_enet_control_stream_info)
 
-static void xilinx_enet_register_types(void)
-{
-    type_register_static(&xilinx_enet_info);
-    type_register_static(&xilinx_enet_data_stream_info);
-    type_register_static(&xilinx_enet_control_stream_info);
-}
 
-type_init(xilinx_enet_register_types)

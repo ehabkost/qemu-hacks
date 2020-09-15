@@ -1941,6 +1941,7 @@ static const TypeInfo virtio_pci_info = {
     .class_size    = sizeof(VirtioPCIClass),
     .abstract      = true,
 };
+TYPE_INFO(virtio_pci_info)
 
 static Property virtio_pci_generic_properties[] = {
     DEFINE_PROP_ON_OFF_AUTO("disable-legacy", VirtIOPCIProxy, disable_legacy,
@@ -2136,12 +2137,11 @@ static const TypeInfo virtio_pci_bus_info = {
     .class_size    = sizeof(VirtioPCIBusClass),
     .class_init    = virtio_pci_bus_class_init,
 };
+TYPE_INFO(virtio_pci_bus_info)
 
 static void virtio_pci_register_types(void)
 {
     /* Base types: */
-    type_register_static(&virtio_pci_bus_info);
-    type_register_static(&virtio_pci_info);
 }
 
 type_init(virtio_pci_register_types)

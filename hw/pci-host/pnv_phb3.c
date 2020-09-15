@@ -892,6 +892,7 @@ static const TypeInfo pnv_phb3_iommu_memory_region_info = {
     .name = TYPE_PNV_PHB3_IOMMU_MEMORY_REGION,
     .class_init = pnv_phb3_iommu_memory_region_class_init,
 };
+TYPE_INFO(pnv_phb3_iommu_memory_region_info)
 
 /*
  * MSI/MSIX memory region implementation.
@@ -1112,6 +1113,7 @@ static const TypeInfo pnv_phb3_type_info = {
     .class_init    = pnv_phb3_class_init,
     .instance_init = pnv_phb3_instance_init,
 };
+TYPE_INFO(pnv_phb3_type_info)
 
 static void pnv_phb3_root_bus_class_init(ObjectClass *klass, void *data)
 {
@@ -1133,6 +1135,7 @@ static const TypeInfo pnv_phb3_root_bus_info = {
         { }
     },
 };
+TYPE_INFO(pnv_phb3_root_bus_info)
 
 static void pnv_phb3_root_port_realize(DeviceState *dev, Error **errp)
 {
@@ -1172,13 +1175,6 @@ static const TypeInfo pnv_phb3_root_port_info = {
     .instance_size = sizeof(PnvPHB3RootPort),
     .class_init    = pnv_phb3_root_port_class_init,
 };
+TYPE_INFO(pnv_phb3_root_port_info)
 
-static void pnv_phb3_register_types(void)
-{
-    type_register_static(&pnv_phb3_root_bus_info);
-    type_register_static(&pnv_phb3_root_port_info);
-    type_register_static(&pnv_phb3_type_info);
-    type_register_static(&pnv_phb3_iommu_memory_region_info);
-}
 
-type_init(pnv_phb3_register_types)

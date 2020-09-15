@@ -235,6 +235,7 @@ static const TypeInfo strongarm_pic_info = {
     .instance_init = strongarm_pic_initfn,
     .class_init    = strongarm_pic_class_init,
 };
+TYPE_INFO(strongarm_pic_info)
 
 /* Real-Time Clock */
 #define RTAR 0x00 /* RTC Alarm register */
@@ -465,6 +466,7 @@ static const TypeInfo strongarm_rtc_sysbus_info = {
     .instance_init = strongarm_rtc_init,
     .class_init    = strongarm_rtc_sysbus_class_init,
 };
+TYPE_INFO(strongarm_rtc_sysbus_info)
 
 /* GPIO */
 #define GPLR 0x00
@@ -705,6 +707,7 @@ static const TypeInfo strongarm_gpio_info = {
     .instance_init = strongarm_gpio_initfn,
     .class_init    = strongarm_gpio_class_init,
 };
+TYPE_INFO(strongarm_gpio_info)
 
 /* Peripheral Pin Controller */
 #define PPDR 0x00
@@ -873,6 +876,7 @@ static const TypeInfo strongarm_ppc_info = {
     .instance_init = strongarm_ppc_init,
     .class_init    = strongarm_ppc_class_init,
 };
+TYPE_INFO(strongarm_ppc_info)
 
 /* UART Ports */
 #define UTCR0 0x00
@@ -1339,6 +1343,7 @@ static const TypeInfo strongarm_uart_info = {
     .instance_init = strongarm_uart_init,
     .class_init    = strongarm_uart_class_init,
 };
+TYPE_INFO(strongarm_uart_info)
 
 /* Synchronous Serial Ports */
 
@@ -1584,6 +1589,7 @@ static const TypeInfo strongarm_ssp_info = {
     .instance_init = strongarm_ssp_init,
     .class_init    = strongarm_ssp_class_init,
 };
+TYPE_INFO(strongarm_ssp_info)
 
 /* Main CPU functions */
 StrongARMState *sa1110_init(const char *cpu_type)
@@ -1636,14 +1642,4 @@ StrongARMState *sa1110_init(const char *cpu_type)
     return s;
 }
 
-static void strongarm_register_types(void)
-{
-    type_register_static(&strongarm_pic_info);
-    type_register_static(&strongarm_rtc_sysbus_info);
-    type_register_static(&strongarm_gpio_info);
-    type_register_static(&strongarm_ppc_info);
-    type_register_static(&strongarm_uart_info);
-    type_register_static(&strongarm_ssp_info);
-}
 
-type_init(strongarm_register_types)

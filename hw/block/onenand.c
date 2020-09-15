@@ -855,11 +855,8 @@ static const TypeInfo onenand_info = {
     .instance_size = sizeof(OneNANDState),
     .class_init    = onenand_class_init,
 };
+TYPE_INFO(onenand_info)
 
-static void onenand_register_types(void)
-{
-    type_register_static(&onenand_info);
-}
 
 void *onenand_raw_otp(DeviceState *onenand_device)
 {
@@ -868,4 +865,3 @@ void *onenand_raw_otp(DeviceState *onenand_device)
     return s->otp;
 }
 
-type_init(onenand_register_types)
