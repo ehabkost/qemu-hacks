@@ -35,8 +35,8 @@ static inline uint16_t applesmc_port(void)
 typedef struct IsaDmaClass IsaDmaClass;
 DECLARE_CLASS_CHECKERS(IsaDmaClass, ISADMA,
                        TYPE_ISADMA)
-#define ISADMA(obj) \
-    INTERFACE_CHECK(IsaDma, (obj), TYPE_ISADMA)
+DECLARE_INTERFACE_CHECKER(IsaDma, ISADMA,
+                          TYPE_ISADMA)
 
 typedef enum {
     ISADMA_TRANSFER_VERIFY,
