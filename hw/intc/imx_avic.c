@@ -350,13 +350,11 @@ static void imx_avic_class_init(ObjectClass *klass, void *data)
     dc->desc = "i.MX Advanced Vector Interrupt Controller";
 }
 
-static const TypeInfo imx_avic_info = {
-    .name = TYPE_IMX_AVIC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXAVICState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_avic_info,
+                            IMXAVICState, void,
+                            IMX_AVIC, SYS_BUS_DEVICE,
     .instance_init = imx_avic_init,
     .class_init = imx_avic_class_init,
-};
-TYPE_INFO(imx_avic_info)
+)
 
 

@@ -544,16 +544,13 @@ static void smmu_base_class_init(ObjectClass *klass, void *data)
     dc->reset = smmu_base_reset;
 }
 
-static const TypeInfo smmu_base_info = {
-    .name          = TYPE_ARM_SMMU,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SMMUState),
+OBJECT_DEFINE_TYPE_EXTENDED(smmu_base_info,
+                            SMMUState, SMMUBaseClass,
+                            ARM_SMMU, SYS_BUS_DEVICE,
     .class_data    = NULL,
-    .class_size    = sizeof(SMMUBaseClass),
     .class_init    = smmu_base_class_init,
     .abstract      = true,
-};
-TYPE_INFO(smmu_base_info)
+)
 
 
 

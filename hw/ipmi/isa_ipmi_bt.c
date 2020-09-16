@@ -154,17 +154,15 @@ static void isa_ipmi_bt_class_init(ObjectClass *oc, void *data)
     iic->get_fwinfo = isa_ipmi_bt_get_fwinfo;
 }
 
-static const TypeInfo isa_ipmi_bt_info = {
-    .name          = TYPE_ISA_IPMI_BT,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISAIPMIBTDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(isa_ipmi_bt_info,
+                            ISAIPMIBTDevice, void,
+                            ISA_IPMI_BT, ISA_DEVICE,
     .instance_init = isa_ipmi_bt_init,
     .class_init    = isa_ipmi_bt_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_IPMI_INTERFACE },
         { }
     }
-};
-TYPE_INFO(isa_ipmi_bt_info)
+)
 
 

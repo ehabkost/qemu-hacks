@@ -933,13 +933,11 @@ static void pflash_cfi01_class_init(ObjectClass *klass, void *data)
 }
 
 
-static const TypeInfo pflash_cfi01_info = {
-    .name           = TYPE_PFLASH_CFI01,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(PFlashCFI01),
+OBJECT_DEFINE_TYPE_EXTENDED(pflash_cfi01_info,
+                            PFlashCFI01, void,
+                            PFLASH_CFI01, SYS_BUS_DEVICE,
     .class_init     = pflash_cfi01_class_init,
-};
-TYPE_INFO(pflash_cfi01_info)
+)
 
 
 

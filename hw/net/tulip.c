@@ -1027,17 +1027,15 @@ static void tulip_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }
 
-static const TypeInfo tulip_info = {
-    .name          = TYPE_TULIP,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(TULIPState),
+OBJECT_DEFINE_TYPE_EXTENDED(tulip_info,
+                            TULIPState, void,
+                            TULIP, PCI_DEVICE,
     .class_init    = tulip_class_init,
     .instance_init = tulip_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(tulip_info)
+)
 
 

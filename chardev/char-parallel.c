@@ -301,14 +301,12 @@ static void char_parallel_finalize(Object *obj)
 #endif
 }
 
-static const TypeInfo char_parallel_type_info = {
-    .name = TYPE_CHARDEV_PARALLEL,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(ParallelChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_parallel_type_info,
+                            ParallelChardev, void,
+                            CHARDEV_PARALLEL, CHARDEV,
     .instance_finalize = char_parallel_finalize,
     .class_init = char_parallel_class_init,
-};
-TYPE_INFO(char_parallel_type_info)
+)
 
 
 

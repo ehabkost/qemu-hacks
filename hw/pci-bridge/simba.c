@@ -83,16 +83,14 @@ static void simba_pci_bridge_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_pci_device;
 }
 
-static const TypeInfo simba_pci_bridge_info = {
-    .name          = TYPE_SIMBA_PCI_BRIDGE,
-    .parent        = TYPE_PCI_BRIDGE,
+OBJECT_DEFINE_TYPE_EXTENDED(simba_pci_bridge_info,
+                            SimbaPCIBridge, void,
+                            SIMBA_PCI_BRIDGE, PCI_BRIDGE,
     .class_init    = simba_pci_bridge_class_init,
-    .instance_size = sizeof(SimbaPCIBridge),
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(simba_pci_bridge_info)
+)
 
 

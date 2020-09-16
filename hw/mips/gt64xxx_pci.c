@@ -1274,12 +1274,10 @@ static void gt64120_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_gt64120;
 }
 
-static const TypeInfo gt64120_info = {
-    .name          = TYPE_GT64120_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(GT64120State),
+OBJECT_DEFINE_TYPE_EXTENDED(gt64120_info,
+                            GT64120State, void,
+                            GT64120_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = gt64120_class_init,
-};
-TYPE_INFO(gt64120_info)
+)
 
 

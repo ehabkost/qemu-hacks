@@ -212,15 +212,12 @@ static void xtensa_cpu_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_xtensa_cpu;
 }
 
-static const TypeInfo xtensa_cpu_type_info = {
-    .name = TYPE_XTENSA_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(XtensaCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(xtensa_cpu_type_info,
+                            XtensaCPU, XtensaCPUClass,
+                            XTENSA_CPU, CPU,
     .instance_init = xtensa_cpu_initfn,
     .abstract = true,
-    .class_size = sizeof(XtensaCPUClass),
     .class_init = xtensa_cpu_class_init,
-};
-TYPE_INFO(xtensa_cpu_type_info)
+)
 
 

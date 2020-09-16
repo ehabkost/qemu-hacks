@@ -199,13 +199,11 @@ static void nubus_device_class_init(ObjectClass *oc, void *data)
     dc->bus_type = TYPE_NUBUS_BUS;
 }
 
-static const TypeInfo nubus_device_type_info = {
-    .name = TYPE_NUBUS_DEVICE,
-    .parent = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(nubus_device_type_info,
+                            NubusDevice, void,
+                            NUBUS_DEVICE, DEVICE,
     .abstract = true,
-    .instance_size = sizeof(NubusDevice),
     .class_init = nubus_device_class_init,
-};
-TYPE_INFO(nubus_device_type_info)
+)
 
 

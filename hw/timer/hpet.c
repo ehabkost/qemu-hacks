@@ -804,13 +804,11 @@ static void hpet_device_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, hpet_device_properties);
 }
 
-static const TypeInfo hpet_device_info = {
-    .name          = TYPE_HPET,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(HPETState),
+OBJECT_DEFINE_TYPE_EXTENDED(hpet_device_info,
+                            HPETState, void,
+                            HPET, SYS_BUS_DEVICE,
     .instance_init = hpet_init,
     .class_init    = hpet_device_class_init,
-};
-TYPE_INFO(hpet_device_info)
+)
 
 

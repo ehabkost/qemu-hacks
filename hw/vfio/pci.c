@@ -3194,10 +3194,9 @@ static void vfio_pci_dev_class_init(ObjectClass *klass, void *data)
     pdc->config_write = vfio_pci_write_config;
 }
 
-static const TypeInfo vfio_pci_dev_info = {
-    .name = TYPE_VFIO_PCI,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(VFIOPCIDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(vfio_pci_dev_info,
+                            VFIOPCIDevice, void,
+                            VFIO_PCI, PCI_DEVICE,
     .class_init = vfio_pci_dev_class_init,
     .instance_init = vfio_instance_init,
     .instance_finalize = vfio_instance_finalize,
@@ -3206,8 +3205,7 @@ static const TypeInfo vfio_pci_dev_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     },
-};
-TYPE_INFO(vfio_pci_dev_info)
+)
 
 static Property vfio_pci_dev_nohotplug_properties[] = {
     DEFINE_PROP_BOOL("ramfb", VFIOPCIDevice, enable_ramfb, false),
@@ -3222,11 +3220,10 @@ static void vfio_pci_nohotplug_dev_class_init(ObjectClass *klass, void *data)
     dc->hotpluggable = false;
 }
 
-static const TypeInfo vfio_pci_nohotplug_dev_info = {
-    .name = TYPE_VFIO_PCI_NOHOTPLUG,
-    .parent = TYPE_VFIO_PCI,
+OBJECT_DEFINE_TYPE_EXTENDED(vfio_pci_nohotplug_dev_info,
+                            void, void,
+                            VFIO_PCI_NOHOTPLUG, VFIO_PCI,
     .class_init = vfio_pci_nohotplug_dev_class_init,
-};
-TYPE_INFO(vfio_pci_nohotplug_dev_info)
+)
 
 

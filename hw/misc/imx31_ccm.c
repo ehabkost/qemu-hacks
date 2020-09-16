@@ -331,13 +331,11 @@ static void imx31_ccm_class_init(ObjectClass *klass, void *data)
     ccm->get_clock_frequency = imx31_ccm_get_clock_frequency;
 }
 
-static const TypeInfo imx31_ccm_info = {
-    .name          = TYPE_IMX31_CCM,
-    .parent        = TYPE_IMX_CCM,
-    .instance_size = sizeof(IMX31CCMState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx31_ccm_info,
+                            IMX31CCMState, void,
+                            IMX31_CCM, IMX_CCM,
     .instance_init = imx31_ccm_init,
     .class_init    = imx31_ccm_class_init,
-};
-TYPE_INFO(imx31_ccm_info)
+)
 
 

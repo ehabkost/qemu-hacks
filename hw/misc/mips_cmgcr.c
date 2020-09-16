@@ -239,13 +239,11 @@ static void mips_gcr_class_init(ObjectClass *klass, void *data)
     dc->realize = mips_gcr_realize;
 }
 
-static const TypeInfo mips_gcr_info = {
-    .name          = TYPE_MIPS_GCR,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MIPSGCRState),
+OBJECT_DEFINE_TYPE_EXTENDED(mips_gcr_info,
+                            MIPSGCRState, void,
+                            MIPS_GCR, SYS_BUS_DEVICE,
     .instance_init = mips_gcr_init,
     .class_init    = mips_gcr_class_init,
-};
-TYPE_INFO(mips_gcr_info)
+)
 
 

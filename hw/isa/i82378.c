@@ -131,17 +131,15 @@ static void i82378_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo i82378_type_info = {
-    .name = TYPE_I82378,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(I82378State),
+OBJECT_DEFINE_TYPE_EXTENDED(i82378_type_info,
+                            I82378State, void,
+                            I82378, PCI_DEVICE,
     .instance_init = i82378_init,
     .class_init = i82378_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(i82378_type_info)
+)
 
 

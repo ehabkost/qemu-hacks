@@ -2766,14 +2766,11 @@ static void armv7m_nvic_class_init(ObjectClass *klass, void *data)
     dc->realize = armv7m_nvic_realize;
 }
 
-static const TypeInfo armv7m_nvic_info = {
-    .name          = TYPE_NVIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(armv7m_nvic_info,
+                            NVICState, SysBusDeviceClass,
+                            NVIC, SYS_BUS_DEVICE,
     .instance_init = armv7m_nvic_instance_init,
-    .instance_size = sizeof(NVICState),
     .class_init    = armv7m_nvic_class_init,
-    .class_size    = sizeof(SysBusDeviceClass),
-};
-TYPE_INFO(armv7m_nvic_info)
+)
 
 

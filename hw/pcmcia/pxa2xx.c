@@ -248,12 +248,10 @@ void pxa2xx_pcmcia_set_irq_cb(void *opaque, qemu_irq irq, qemu_irq cd_irq)
     s->cd_irq = cd_irq;
 }
 
-static const TypeInfo pxa2xx_pcmcia_type_info = {
-    .name = TYPE_PXA2XX_PCMCIA,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxPCMCIAState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_pcmcia_type_info,
+                            PXA2xxPCMCIAState, void,
+                            PXA2XX_PCMCIA, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_pcmcia_initfn,
-};
-TYPE_INFO(pxa2xx_pcmcia_type_info)
+)
 
 

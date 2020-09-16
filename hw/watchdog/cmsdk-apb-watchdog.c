@@ -375,14 +375,12 @@ static void cmsdk_apb_watchdog_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, cmsdk_apb_watchdog_properties);
 }
 
-static const TypeInfo cmsdk_apb_watchdog_info = {
-    .name = TYPE_CMSDK_APB_WATCHDOG,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CMSDKAPBWatchdog),
+OBJECT_DEFINE_TYPE_EXTENDED(cmsdk_apb_watchdog_info,
+                            CMSDKAPBWatchdog, void,
+                            CMSDK_APB_WATCHDOG, SYS_BUS_DEVICE,
     .instance_init = cmsdk_apb_watchdog_init,
     .class_init = cmsdk_apb_watchdog_class_init,
-};
-TYPE_INFO(cmsdk_apb_watchdog_info)
+)
 
 static void luminary_watchdog_init(Object *obj)
 {
@@ -392,11 +390,10 @@ static void luminary_watchdog_init(Object *obj)
     s->id = luminary_watchdog_id;
 }
 
-static const TypeInfo luminary_watchdog_info = {
-    .name = TYPE_LUMINARY_WATCHDOG,
-    .parent = TYPE_CMSDK_APB_WATCHDOG,
+OBJECT_DEFINE_TYPE_EXTENDED(luminary_watchdog_info,
+                            void, void,
+                            LUMINARY_WATCHDOG, CMSDK_APB_WATCHDOG,
     .instance_init = luminary_watchdog_init
-};
-TYPE_INFO(luminary_watchdog_info)
+)
 
 

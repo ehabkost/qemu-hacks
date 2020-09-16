@@ -1776,19 +1776,16 @@ static void e1000_instance_init(Object *obj)
                                   DEVICE(n));
 }
 
-static const TypeInfo e1000_base_info = {
-    .name          = TYPE_E1000_BASE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(E1000State),
+OBJECT_DEFINE_TYPE_EXTENDED(e1000_base_info,
+                            E1000State, E1000BaseClass,
+                            E1000_BASE, PCI_DEVICE,
     .instance_init = e1000_instance_init,
-    .class_size    = sizeof(E1000BaseClass),
     .abstract      = true,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(e1000_base_info)
+)
 
 static const E1000Info e1000_devices[] = {
     {

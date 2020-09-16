@@ -19,12 +19,9 @@ stream_can_push(StreamSlave *sink, StreamCanPushNotifyFn notify,
     return k->can_push ? k->can_push(sink, notify, notify_opaque) : true;
 }
 
-static const TypeInfo stream_slave_info = {
-    .name          = TYPE_STREAM_SLAVE,
-    .parent        = TYPE_INTERFACE,
-    .class_size = sizeof(StreamSlaveClass),
-};
-TYPE_INFO(stream_slave_info)
+OBJECT_DEFINE_TYPE_EXTENDED(stream_slave_info,
+                            void, StreamSlaveClass,
+                            STREAM_SLAVE, INTERFACE)
 
 
 

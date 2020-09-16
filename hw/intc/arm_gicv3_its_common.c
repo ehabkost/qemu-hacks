@@ -141,14 +141,11 @@ static void gicv3_its_common_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_its;
 }
 
-static const TypeInfo gicv3_its_common_info = {
-    .name = TYPE_ARM_GICV3_ITS_COMMON,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(GICv3ITSState),
-    .class_size = sizeof(GICv3ITSCommonClass),
+OBJECT_DEFINE_TYPE_EXTENDED(gicv3_its_common_info,
+                            GICv3ITSState, GICv3ITSCommonClass,
+                            ARM_GICV3_ITS_COMMON, SYS_BUS_DEVICE,
     .class_init = gicv3_its_common_class_init,
     .abstract = true,
-};
-TYPE_INFO(gicv3_its_common_info)
+)
 
 

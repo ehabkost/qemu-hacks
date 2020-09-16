@@ -715,13 +715,11 @@ static void virtio_mmio_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, virtio_mmio_properties);
 }
 
-static const TypeInfo virtio_mmio_info = {
-    .name          = TYPE_VIRTIO_MMIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(VirtIOMMIOProxy),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_mmio_info,
+                            VirtIOMMIOProxy, void,
+                            VIRTIO_MMIO, SYS_BUS_DEVICE,
     .class_init    = virtio_mmio_class_init,
-};
-TYPE_INFO(virtio_mmio_info)
+)
 
 /* virtio-mmio-bus. */
 
@@ -785,11 +783,10 @@ static void virtio_mmio_bus_class_init(ObjectClass *klass, void *data)
     bus_class->get_dev_path = virtio_mmio_bus_get_dev_path;
 }
 
-static const TypeInfo virtio_mmio_bus_info = {
-    .name          = TYPE_VIRTIO_MMIO_BUS,
-    .parent        = TYPE_VIRTIO_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_mmio_bus_info,
+                            void, void,
+                            VIRTIO_MMIO_BUS, VIRTIO_BUS,
     .class_init    = virtio_mmio_bus_class_init,
-};
-TYPE_INFO(virtio_mmio_bus_info)
+)
 
 

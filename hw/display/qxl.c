@@ -2492,18 +2492,16 @@ static void qxl_pci_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, qxl_properties);
 }
 
-static const TypeInfo qxl_pci_type_info = {
-    .name = TYPE_PCI_QXL,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIQXLDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(qxl_pci_type_info,
+                            PCIQXLDevice, void,
+                            PCI_QXL, PCI_DEVICE,
     .abstract = true,
     .class_init = qxl_pci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(qxl_pci_type_info)
+)
 
 static void qxl_primary_class_init(ObjectClass *klass, void *data)
 {

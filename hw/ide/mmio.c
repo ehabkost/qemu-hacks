@@ -161,14 +161,12 @@ static void mmio_ide_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_ide_mmio;
 }
 
-static const TypeInfo mmio_ide_type_info = {
-    .name = TYPE_MMIO_IDE,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MMIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(mmio_ide_type_info,
+                            MMIOState, void,
+                            MMIO_IDE, SYS_BUS_DEVICE,
     .instance_init = mmio_ide_initfn,
     .class_init = mmio_ide_class_init,
-};
-TYPE_INFO(mmio_ide_type_info)
+)
 
 
 void mmio_ide_init_drives(DeviceState *dev, DriveInfo *hd0, DriveInfo *hd1)

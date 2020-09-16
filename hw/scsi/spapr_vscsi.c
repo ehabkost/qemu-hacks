@@ -1287,12 +1287,10 @@ static void spapr_vscsi_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_spapr_vscsi;
 }
 
-static const TypeInfo spapr_vscsi_info = {
-    .name          = TYPE_VIO_SPAPR_VSCSI_DEVICE,
-    .parent        = TYPE_VIO_SPAPR_DEVICE,
-    .instance_size = sizeof(VSCSIState),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_vscsi_info,
+                            VSCSIState, void,
+                            VIO_SPAPR_VSCSI_DEVICE, VIO_SPAPR_DEVICE,
     .class_init    = spapr_vscsi_class_init,
-};
-TYPE_INFO(spapr_vscsi_info)
+)
 
 

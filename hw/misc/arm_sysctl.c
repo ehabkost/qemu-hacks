@@ -645,14 +645,12 @@ static void arm_sysctl_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, arm_sysctl_properties);
 }
 
-static const TypeInfo arm_sysctl_info = {
-    .name          = TYPE_ARM_SYSCTL,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(arm_sysctl_state),
+OBJECT_DEFINE_TYPE_EXTENDED(arm_sysctl_info,
+                            arm_sysctl_state, void,
+                            ARM_SYSCTL, SYS_BUS_DEVICE,
     .instance_init = arm_sysctl_init,
     .instance_finalize = arm_sysctl_finalize,
     .class_init    = arm_sysctl_class_init,
-};
-TYPE_INFO(arm_sysctl_info)
+)
 
 

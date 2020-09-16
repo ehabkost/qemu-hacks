@@ -854,14 +854,11 @@ static void virtio_mem_class_init(ObjectClass *klass, void *data)
     vmc->remove_size_change_notifier = virtio_mem_remove_size_change_notifier;
 }
 
-static const TypeInfo virtio_mem_info = {
-    .name = TYPE_VIRTIO_MEM,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOMEM),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_mem_info,
+                            VirtIOMEM, VirtIOMEMClass,
+                            VIRTIO_MEM, VIRTIO_DEVICE,
     .instance_init = virtio_mem_instance_init,
     .class_init = virtio_mem_class_init,
-    .class_size = sizeof(VirtIOMEMClass),
-};
-TYPE_INFO(virtio_mem_info)
+)
 
 

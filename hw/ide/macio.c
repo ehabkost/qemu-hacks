@@ -479,14 +479,12 @@ static void macio_ide_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo macio_ide_type_info = {
-    .name = TYPE_MACIO_IDE,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MACIOIDEState),
+OBJECT_DEFINE_TYPE_EXTENDED(macio_ide_type_info,
+                            MACIOIDEState, void,
+                            MACIO_IDE, SYS_BUS_DEVICE,
     .instance_init = macio_ide_initfn,
     .class_init = macio_ide_class_init,
-};
-TYPE_INFO(macio_ide_type_info)
+)
 
 
 /* hd_table must contain 2 block drivers */

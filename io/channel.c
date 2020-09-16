@@ -531,15 +531,12 @@ static void qio_channel_finalize(Object *obj)
 #endif
 }
 
-static const TypeInfo qio_channel_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_QIO_CHANNEL,
-    .instance_size = sizeof(QIOChannel),
+OBJECT_DEFINE_TYPE_EXTENDED(qio_channel_info,
+                            QIOChannel, QIOChannelClass,
+                            QIO_CHANNEL, OBJECT,
     .instance_finalize = qio_channel_finalize,
     .abstract = true,
-    .class_size = sizeof(QIOChannelClass),
-};
-TYPE_INFO(qio_channel_info)
+)
 
 
 

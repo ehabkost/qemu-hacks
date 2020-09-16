@@ -161,17 +161,15 @@ static void isa_ipmi_kcs_class_init(ObjectClass *oc, void *data)
     iic->get_fwinfo = isa_ipmi_kcs_get_fwinfo;
 }
 
-static const TypeInfo isa_ipmi_kcs_info = {
-    .name          = TYPE_ISA_IPMI_KCS,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISAIPMIKCSDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(isa_ipmi_kcs_info,
+                            ISAIPMIKCSDevice, void,
+                            ISA_IPMI_KCS, ISA_DEVICE,
     .instance_init = isa_ipmi_kcs_init,
     .class_init    = isa_ipmi_kcs_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_IPMI_INTERFACE },
         { }
     }
-};
-TYPE_INFO(isa_ipmi_kcs_info)
+)
 
 

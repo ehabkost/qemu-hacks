@@ -160,17 +160,15 @@ static void pcie_pci_bridge_class_init(ObjectClass *klass, void *data)
     hc->unplug_request = pci_bridge_dev_unplug_request_cb;
 }
 
-static const TypeInfo pcie_pci_bridge_info = {
-        .name = TYPE_PCIE_PCI_BRIDGE_DEV,
-        .parent = TYPE_PCI_BRIDGE,
-        .instance_size = sizeof(PCIEPCIBridge),
+OBJECT_DEFINE_TYPE_EXTENDED(pcie_pci_bridge_info,
+                            PCIEPCIBridge, void,
+                            PCIE_PCI_BRIDGE_DEV, PCI_BRIDGE,
         .class_init = pcie_pci_bridge_class_init,
         .interfaces = (InterfaceInfo[]) {
             { TYPE_HOTPLUG_HANDLER },
             { INTERFACE_PCIE_DEVICE },
             { },
         }
-};
-TYPE_INFO(pcie_pci_bridge_info)
+)
 
 

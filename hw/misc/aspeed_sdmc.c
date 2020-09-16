@@ -263,16 +263,13 @@ static void aspeed_sdmc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, aspeed_sdmc_properties);
 }
 
-static const TypeInfo aspeed_sdmc_info = {
-    .name = TYPE_ASPEED_SDMC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedSDMCState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_sdmc_info,
+                            AspeedSDMCState, AspeedSDMCClass,
+                            ASPEED_SDMC, SYS_BUS_DEVICE,
     .instance_init = aspeed_sdmc_initfn,
     .class_init = aspeed_sdmc_class_init,
-    .class_size = sizeof(AspeedSDMCClass),
     .abstract   = true,
-};
-TYPE_INFO(aspeed_sdmc_info)
+)
 
 static int aspeed_sdmc_get_ram_bits(AspeedSDMCState *s)
 {
@@ -346,12 +343,11 @@ static void aspeed_2400_sdmc_class_init(ObjectClass *klass, void *data)
     asc->valid_ram_sizes = aspeed_2400_ram_sizes;
 }
 
-static const TypeInfo aspeed_2400_sdmc_info = {
-    .name = TYPE_ASPEED_2400_SDMC,
-    .parent = TYPE_ASPEED_SDMC,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2400_sdmc_info,
+                            void, void,
+                            ASPEED_2400_SDMC, ASPEED_SDMC,
     .class_init = aspeed_2400_sdmc_class_init,
-};
-TYPE_INFO(aspeed_2400_sdmc_info)
+)
 
 static uint32_t aspeed_2500_sdmc_compute_conf(AspeedSDMCState *s, uint32_t data)
 {
@@ -414,12 +410,11 @@ static void aspeed_2500_sdmc_class_init(ObjectClass *klass, void *data)
     asc->valid_ram_sizes = aspeed_2500_ram_sizes;
 }
 
-static const TypeInfo aspeed_2500_sdmc_info = {
-    .name = TYPE_ASPEED_2500_SDMC,
-    .parent = TYPE_ASPEED_SDMC,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2500_sdmc_info,
+                            void, void,
+                            ASPEED_2500_SDMC, ASPEED_SDMC,
     .class_init = aspeed_2500_sdmc_class_init,
-};
-TYPE_INFO(aspeed_2500_sdmc_info)
+)
 
 static uint32_t aspeed_2600_sdmc_compute_conf(AspeedSDMCState *s, uint32_t data)
 {
@@ -508,11 +503,10 @@ static void aspeed_2600_sdmc_class_init(ObjectClass *klass, void *data)
     asc->valid_ram_sizes = aspeed_2600_ram_sizes;
 }
 
-static const TypeInfo aspeed_2600_sdmc_info = {
-    .name = TYPE_ASPEED_2600_SDMC,
-    .parent = TYPE_ASPEED_SDMC,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2600_sdmc_info,
+                            void, void,
+                            ASPEED_2600_SDMC, ASPEED_SDMC,
     .class_init = aspeed_2600_sdmc_class_init,
-};
-TYPE_INFO(aspeed_2600_sdmc_info)
+)
 
 

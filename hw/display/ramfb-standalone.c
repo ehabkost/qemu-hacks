@@ -50,12 +50,10 @@ static void ramfb_class_initfn(ObjectClass *klass, void *data)
     dc->user_creatable = true;
 }
 
-static const TypeInfo ramfb_info = {
-    .name          = TYPE_RAMFB_DEVICE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RAMFBStandaloneState),
+OBJECT_DEFINE_TYPE_EXTENDED(ramfb_info,
+                            RAMFBStandaloneState, void,
+                            RAMFB_DEVICE, SYS_BUS_DEVICE,
     .class_init    = ramfb_class_initfn,
-};
-TYPE_INFO(ramfb_info)
+)
 
 

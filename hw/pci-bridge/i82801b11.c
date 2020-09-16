@@ -105,16 +105,14 @@ static void i82801b11_bridge_class_init(ObjectClass *klass, void *data)
 }
 
 #define TYPE_I82801B11_BRIDGE "i82801b11-bridge"
-static const TypeInfo i82801b11_bridge_info = {
-    .name          = TYPE_I82801B11_BRIDGE,
-    .parent        = TYPE_PCI_BRIDGE,
-    .instance_size = sizeof(I82801b11Bridge),
+OBJECT_DEFINE_TYPE_EXTENDED(i82801b11_bridge_info,
+                            I82801b11Bridge, void,
+                            I82801B11_BRIDGE, PCI_BRIDGE,
     .class_init    = i82801b11_bridge_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(i82801b11_bridge_info)
+)
 
 

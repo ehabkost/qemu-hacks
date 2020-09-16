@@ -61,14 +61,12 @@ static void rng_builtin_class_init(ObjectClass *klass, void *data)
     rbc->request_entropy = rng_builtin_request_entropy;
 }
 
-static const TypeInfo rng_builtin_info = {
-    .name = TYPE_RNG_BUILTIN,
-    .parent = TYPE_RNG_BACKEND,
-    .instance_size = sizeof(RngBuiltin),
+OBJECT_DEFINE_TYPE_EXTENDED(rng_builtin_info,
+                            RngBuiltin, void,
+                            RNG_BUILTIN, RNG_BACKEND,
     .instance_init = rng_builtin_init,
     .instance_finalize = rng_builtin_finalize,
     .class_init = rng_builtin_class_init,
-};
-TYPE_INFO(rng_builtin_info)
+)
 
 

@@ -970,12 +970,10 @@ static void next_machine_class_init(ObjectClass *oc, void *data)
     mc->default_cpu_type = M68K_CPU_TYPE_NAME("m68040");
 }
 
-static const TypeInfo next_typeinfo = {
-    .name = TYPE_NEXT_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(next_typeinfo,
+                            NeXTState, void,
+                            NEXT_MACHINE, MACHINE,
     .class_init = next_machine_class_init,
-    .instance_size = sizeof(NeXTState),
-};
-TYPE_INFO(next_typeinfo)
+)
 
 

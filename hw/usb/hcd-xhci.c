@@ -3718,10 +3718,9 @@ static void xhci_class_init(ObjectClass *klass, void *data)
     k->class_id     = PCI_CLASS_SERIAL_USB;
 }
 
-static const TypeInfo xhci_info = {
-    .name          = TYPE_XHCI,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(XHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(xhci_info,
+                            XHCIState, void,
+                            XHCI, PCI_DEVICE,
     .class_init    = xhci_class_init,
     .instance_init = xhci_instance_init,
     .abstract      = true,
@@ -3730,8 +3729,7 @@ static const TypeInfo xhci_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     },
-};
-TYPE_INFO(xhci_info)
+)
 
 static void qemu_xhci_class_init(ObjectClass *klass, void *data)
 {
@@ -3753,12 +3751,11 @@ static void qemu_xhci_instance_init(Object *obj)
     xhci_set_flag(xhci, XHCI_FLAG_SS_FIRST);
 }
 
-static const TypeInfo qemu_xhci_info = {
-    .name          = TYPE_QEMU_XHCI,
-    .parent        = TYPE_XHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(qemu_xhci_info,
+                            void, void,
+                            QEMU_XHCI, XHCI,
     .class_init    = qemu_xhci_class_init,
     .instance_init = qemu_xhci_instance_init,
-};
-TYPE_INFO(qemu_xhci_info)
+)
 
 

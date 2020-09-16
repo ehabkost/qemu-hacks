@@ -1438,14 +1438,11 @@ static void aspeed_smc_class_init(ObjectClass *klass, void *data)
     mc->ctrl = data;
 }
 
-static const TypeInfo aspeed_smc_info = {
-    .name           = TYPE_ASPEED_SMC,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(AspeedSMCState),
-    .class_size     = sizeof(AspeedSMCClass),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_smc_info,
+                            AspeedSMCState, AspeedSMCClass,
+                            ASPEED_SMC, SYS_BUS_DEVICE,
     .abstract       = true,
-};
-TYPE_INFO(aspeed_smc_info)
+)
 
 static void aspeed_smc_register_types(void)
 {

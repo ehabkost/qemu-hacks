@@ -325,13 +325,10 @@ static void kvm_pit_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, kvm_pit_properties);
 }
 
-static const TypeInfo kvm_pit_info = {
-    .name          = TYPE_KVM_I8254,
-    .parent        = TYPE_PIT_COMMON,
-    .instance_size = sizeof(KVMPITState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_pit_info,
+                            KVMPITState, KVMPITClass,
+                            KVM_I8254, PIT_COMMON,
     .class_init = kvm_pit_class_init,
-    .class_size = sizeof(KVMPITClass),
-};
-TYPE_INFO(kvm_pit_info)
+)
 
 

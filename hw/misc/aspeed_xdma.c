@@ -153,11 +153,9 @@ static void aspeed_xdma_class_init(ObjectClass *classp, void *data)
     dc->vmsd = &aspeed_xdma_vmstate;
 }
 
-static const TypeInfo aspeed_xdma_info = {
-    .name          = TYPE_ASPEED_XDMA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedXDMAState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_xdma_info,
+                            AspeedXDMAState, void,
+                            ASPEED_XDMA, SYS_BUS_DEVICE,
     .class_init    = aspeed_xdma_class_init,
-};
-TYPE_INFO(aspeed_xdma_info)
+)
 

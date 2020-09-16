@@ -3023,16 +3023,14 @@ static void cirrus_vga_class_init(ObjectClass *klass, void *data)
     dc->hotpluggable = false;
 }
 
-static const TypeInfo cirrus_vga_info = {
-    .name          = TYPE_PCI_CIRRUS_VGA,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCICirrusVGAState),
+OBJECT_DEFINE_TYPE_EXTENDED(cirrus_vga_info,
+                            PCICirrusVGAState, void,
+                            PCI_CIRRUS_VGA, PCI_DEVICE,
     .class_init    = cirrus_vga_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(cirrus_vga_info)
+)
 
 

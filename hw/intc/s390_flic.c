@@ -431,24 +431,19 @@ static void s390_flic_class_init(ObjectClass *oc, void *data)
     dc->realize = s390_flic_common_realize;
 }
 
-static const TypeInfo qemu_s390_flic_info = {
-    .name          = TYPE_QEMU_S390_FLIC,
-    .parent        = TYPE_S390_FLIC_COMMON,
-    .instance_size = sizeof(QEMUS390FLICState),
+OBJECT_DEFINE_TYPE_EXTENDED(qemu_s390_flic_info,
+                            QEMUS390FLICState, void,
+                            QEMU_S390_FLIC, S390_FLIC_COMMON,
     .instance_init = qemu_s390_flic_instance_init,
     .class_init    = qemu_s390_flic_class_init,
-};
-TYPE_INFO(qemu_s390_flic_info)
+)
 
 
-static const TypeInfo s390_flic_common_info = {
-    .name          = TYPE_S390_FLIC_COMMON,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(S390FLICState),
+OBJECT_DEFINE_TYPE_EXTENDED(s390_flic_common_info,
+                            S390FLICState, S390FLICStateClass,
+                            S390_FLIC_COMMON, SYS_BUS_DEVICE,
     .class_init    = s390_flic_class_init,
-    .class_size    = sizeof(S390FLICStateClass),
-};
-TYPE_INFO(s390_flic_common_info)
+)
 
 
 

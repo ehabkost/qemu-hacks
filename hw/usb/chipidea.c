@@ -162,12 +162,10 @@ static void chipidea_class_init(ObjectClass *klass, void *data)
     dc->desc = "Chipidea USB Module";
 }
 
-static const TypeInfo chipidea_info = {
-    .name          = TYPE_CHIPIDEA,
-    .parent        = TYPE_SYS_BUS_EHCI,
-    .instance_size = sizeof(ChipideaState),
+OBJECT_DEFINE_TYPE_EXTENDED(chipidea_info,
+                            ChipideaState, void,
+                            CHIPIDEA, SYS_BUS_EHCI,
     .instance_init = chipidea_init,
     .class_init    = chipidea_class_init,
-};
-TYPE_INFO(chipidea_info)
+)
 

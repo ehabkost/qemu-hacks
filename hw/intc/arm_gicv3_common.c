@@ -512,11 +512,9 @@ static void arm_gicv3_common_class_init(ObjectClass *klass, void *data)
     albifc->arm_linux_init = arm_gic_common_linux_init;
 }
 
-static const TypeInfo arm_gicv3_common_type = {
-    .name = TYPE_ARM_GICV3_COMMON,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(GICv3State),
-    .class_size = sizeof(ARMGICv3CommonClass),
+OBJECT_DEFINE_TYPE_EXTENDED(arm_gicv3_common_type,
+                            GICv3State, ARMGICv3CommonClass,
+                            ARM_GICV3_COMMON, SYS_BUS_DEVICE,
     .class_init = arm_gicv3_common_class_init,
     .instance_finalize = arm_gicv3_finalize,
     .abstract = true,
@@ -524,7 +522,6 @@ static const TypeInfo arm_gicv3_common_type = {
         { TYPE_ARM_LINUX_BOOT_IF },
         { },
     },
-};
-TYPE_INFO(arm_gicv3_common_type)
+)
 
 

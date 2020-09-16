@@ -232,19 +232,16 @@ cryptodev_backend_class_init(ObjectClass *oc, void *data)
     QTAILQ_INIT(&crypto_clients);
 }
 
-static const TypeInfo cryptodev_backend_info = {
-    .name = TYPE_CRYPTODEV_BACKEND,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(CryptoDevBackend),
+OBJECT_DEFINE_TYPE_EXTENDED(cryptodev_backend_info,
+                            CryptoDevBackend, CryptoDevBackendClass,
+                            CRYPTODEV_BACKEND, OBJECT,
     .instance_init = cryptodev_backend_instance_init,
     .instance_finalize = cryptodev_backend_finalize,
-    .class_size = sizeof(CryptoDevBackendClass),
     .class_init = cryptodev_backend_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(cryptodev_backend_info)
+)
 
 

@@ -40,11 +40,8 @@ char *fw_path_provider_try_get_dev_path(Object *o, BusState *bus,
     return NULL;
 }
 
-static const TypeInfo fw_path_provider_info = {
-    .name          = TYPE_FW_PATH_PROVIDER,
-    .parent        = TYPE_INTERFACE,
-    .class_size    = sizeof(FWPathProviderClass),
-};
-TYPE_INFO(fw_path_provider_info)
+OBJECT_DEFINE_TYPE_EXTENDED(fw_path_provider_info,
+                            void, FWPathProviderClass,
+                            FW_PATH_PROVIDER, INTERFACE)
 
 

@@ -128,14 +128,12 @@ static void xlnx_zynqmp_pmu_soc_class_init(ObjectClass *oc, void *data)
     dc->realize = xlnx_zynqmp_pmu_soc_realize;
 }
 
-static const TypeInfo xlnx_zynqmp_pmu_soc_type_info = {
-    .name = TYPE_XLNX_ZYNQMP_PMU_SOC,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(XlnxZynqMPPMUSoCState),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_zynqmp_pmu_soc_type_info,
+                            XlnxZynqMPPMUSoCState, void,
+                            XLNX_ZYNQMP_PMU_SOC, DEVICE,
     .instance_init = xlnx_zynqmp_pmu_soc_init,
     .class_init = xlnx_zynqmp_pmu_soc_class_init,
-};
-TYPE_INFO(xlnx_zynqmp_pmu_soc_type_info)
+)
 
 
 

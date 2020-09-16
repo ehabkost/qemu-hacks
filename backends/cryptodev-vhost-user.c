@@ -363,14 +363,12 @@ cryptodev_vhost_user_class_init(ObjectClass *oc, void *data)
     bc->do_sym_op = NULL;
 }
 
-static const TypeInfo cryptodev_vhost_user_info = {
-    .name = TYPE_CRYPTODEV_BACKEND_VHOST_USER,
-    .parent = TYPE_CRYPTODEV_BACKEND,
+OBJECT_DEFINE_TYPE_EXTENDED(cryptodev_vhost_user_info,
+                            CryptoDevBackendVhostUser, void,
+                            CRYPTODEV_BACKEND_VHOST_USER, CRYPTODEV_BACKEND,
     .class_init = cryptodev_vhost_user_class_init,
     .instance_init = cryptodev_vhost_user_instance_int,
     .instance_finalize = cryptodev_vhost_user_finalize,
-    .instance_size = sizeof(CryptoDevBackendVhostUser),
-};
-TYPE_INFO(cryptodev_vhost_user_info)
+)
 
 

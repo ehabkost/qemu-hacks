@@ -188,12 +188,10 @@ static void sh_pci_device_class_init(ObjectClass *klass, void *data)
     dc->realize = sh_pci_device_realize;
 }
 
-static const TypeInfo sh_pci_device_info = {
-    .name          = TYPE_SH_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(SHPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sh_pci_device_info,
+                            SHPCIState, void,
+                            SH_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = sh_pci_device_class_init,
-};
-TYPE_INFO(sh_pci_device_info)
+)
 
 

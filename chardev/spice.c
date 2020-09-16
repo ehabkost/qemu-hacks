@@ -375,15 +375,13 @@ static void char_spice_class_init(ObjectClass *oc, void *data)
     cc->chr_accept_input = spice_chr_accept_input;
 }
 
-static const TypeInfo char_spice_type_info = {
-    .name = TYPE_CHARDEV_SPICE,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(SpiceChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_spice_type_info,
+                            SpiceChardev, void,
+                            CHARDEV_SPICE, CHARDEV,
     .instance_finalize = char_spice_finalize,
     .class_init = char_spice_class_init,
     .abstract = true,
-};
-TYPE_INFO(char_spice_type_info)
+)
 
 static void char_spicevmc_class_init(ObjectClass *oc, void *data)
 {
@@ -394,12 +392,11 @@ static void char_spicevmc_class_init(ObjectClass *oc, void *data)
     cc->chr_set_fe_open = spice_vmc_set_fe_open;
 }
 
-static const TypeInfo char_spicevmc_type_info = {
-    .name = TYPE_CHARDEV_SPICEVMC,
-    .parent = TYPE_CHARDEV_SPICE,
+OBJECT_DEFINE_TYPE_EXTENDED(char_spicevmc_type_info,
+                            void, void,
+                            CHARDEV_SPICEVMC, CHARDEV_SPICE,
     .class_init = char_spicevmc_class_init,
-};
-TYPE_INFO(char_spicevmc_type_info)
+)
 
 static void char_spiceport_class_init(ObjectClass *oc, void *data)
 {
@@ -410,11 +407,10 @@ static void char_spiceport_class_init(ObjectClass *oc, void *data)
     cc->chr_set_fe_open = spice_port_set_fe_open;
 }
 
-static const TypeInfo char_spiceport_type_info = {
-    .name = TYPE_CHARDEV_SPICEPORT,
-    .parent = TYPE_CHARDEV_SPICE,
+OBJECT_DEFINE_TYPE_EXTENDED(char_spiceport_type_info,
+                            void, void,
+                            CHARDEV_SPICEPORT, CHARDEV_SPICE,
     .class_init = char_spiceport_class_init,
-};
-TYPE_INFO(char_spiceport_type_info)
+)
 
 

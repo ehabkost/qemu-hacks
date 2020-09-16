@@ -791,13 +791,11 @@ static void xendev_class_init(ObjectClass *klass, void *data)
     dc->bus_type = TYPE_XENSYSBUS;
 }
 
-static const TypeInfo xendev_type_info = {
-    .name          = TYPE_XENBACKEND,
-    .parent        = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(xendev_type_info,
+                            XenLegacyDevice, void,
+                            XENBACKEND, DEVICE,
     .class_init    = xendev_class_init,
-    .instance_size = sizeof(XenLegacyDevice),
-};
-TYPE_INFO(xendev_type_info)
+)
 
 static void xen_sysbus_class_init(ObjectClass *klass, void *data)
 {
@@ -806,16 +804,15 @@ static void xen_sysbus_class_init(ObjectClass *klass, void *data)
     hc->unplug = qdev_simple_device_unplug_cb;
 }
 
-static const TypeInfo xensysbus_info = {
-    .name       = TYPE_XENSYSBUS,
-    .parent     = TYPE_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(xensysbus_info,
+                            void, void,
+                            XENSYSBUS, BUS,
     .class_init = xen_sysbus_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(xensysbus_info)
+)
 
 static Property xen_sysdev_properties[] = {
     {/* end of property list */},
@@ -828,11 +825,10 @@ static void xen_sysdev_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, xen_sysdev_properties);
 }
 
-static const TypeInfo xensysdev_info = {
-    .name          = TYPE_XENSYSDEV,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(xensysdev_info,
+                            void, void,
+                            XENSYSDEV, SYS_BUS_DEVICE,
     .class_init    = xen_sysdev_class_init,
-};
-TYPE_INFO(xensysdev_info)
+)
 
 

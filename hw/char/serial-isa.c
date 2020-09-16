@@ -140,14 +140,12 @@ static void serial_isa_initfn(Object *o)
     object_initialize_child(o, "serial", &self->state, TYPE_SERIAL);
 }
 
-static const TypeInfo serial_isa_info = {
-    .name          = TYPE_ISA_SERIAL,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISASerialState),
+OBJECT_DEFINE_TYPE_EXTENDED(serial_isa_info,
+                            ISASerialState, void,
+                            ISA_SERIAL, ISA_DEVICE,
     .instance_init = serial_isa_initfn,
     .class_init    = serial_isa_class_initfn,
-};
-TYPE_INFO(serial_isa_info)
+)
 
 
 

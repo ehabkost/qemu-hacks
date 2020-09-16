@@ -883,12 +883,10 @@ static void twl92230_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_menelaus;
 }
 
-static const TypeInfo twl92230_info = {
-    .name          = TYPE_TWL92230,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(MenelausState),
+OBJECT_DEFINE_TYPE_EXTENDED(twl92230_info,
+                            MenelausState, void,
+                            TWL92230, I2C_SLAVE,
     .class_init    = twl92230_class_init,
-};
-TYPE_INFO(twl92230_info)
+)
 
 

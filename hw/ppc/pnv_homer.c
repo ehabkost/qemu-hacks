@@ -182,12 +182,11 @@ static void pnv_homer_power8_class_init(ObjectClass *klass, void *data)
     homer->core_max_base = PNV8_CORE_MAX_BASE;
 }
 
-static const TypeInfo pnv_homer_power8_type_info = {
-    .name          = TYPE_PNV8_HOMER,
-    .parent        = TYPE_PNV_HOMER,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_homer_power8_type_info,
+                            void, void,
+                            PNV8_HOMER, PNV_HOMER,
     .class_init    = pnv_homer_power8_class_init,
-};
-TYPE_INFO(pnv_homer_power8_type_info)
+)
 
 /* P9 Pstate table */
 
@@ -325,12 +324,11 @@ static void pnv_homer_power9_class_init(ObjectClass *klass, void *data)
     homer->core_max_base = PNV9_CORE_MAX_BASE;
 }
 
-static const TypeInfo pnv_homer_power9_type_info = {
-    .name          = TYPE_PNV9_HOMER,
-    .parent        = TYPE_PNV_HOMER,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_homer_power9_type_info,
+                            void, void,
+                            PNV9_HOMER, PNV_HOMER,
     .class_init    = pnv_homer_power9_class_init,
-};
-TYPE_INFO(pnv_homer_power9_type_info)
+)
 
 static void pnv_homer_realize(DeviceState *dev, Error **errp)
 {
@@ -363,14 +361,11 @@ static void pnv_homer_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pnv_homer_type_info = {
-    .name          = TYPE_PNV_HOMER,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvHomer),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_homer_type_info,
+                            PnvHomer, PnvHomerClass,
+                            PNV_HOMER, DEVICE,
     .class_init    = pnv_homer_class_init,
-    .class_size    = sizeof(PnvHomerClass),
     .abstract      = true,
-};
-TYPE_INFO(pnv_homer_type_info)
+)
 
 

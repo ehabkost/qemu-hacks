@@ -386,13 +386,11 @@ static void xlnx_zynq_devcfg_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_xlnx_zynq_devcfg;
 }
 
-static const TypeInfo xlnx_zynq_devcfg_info = {
-    .name           = TYPE_XLNX_ZYNQ_DEVCFG,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(XlnxZynqDevcfg),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_zynq_devcfg_info,
+                            XlnxZynqDevcfg, void,
+                            XLNX_ZYNQ_DEVCFG, SYS_BUS_DEVICE,
     .instance_init  = xlnx_zynq_devcfg_init,
     .class_init     = xlnx_zynq_devcfg_class_init,
-};
-TYPE_INFO(xlnx_zynq_devcfg_info)
+)
 
 

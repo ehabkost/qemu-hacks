@@ -322,13 +322,11 @@ static void tz_ppc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, tz_ppc_properties);
 }
 
-static const TypeInfo tz_ppc_info = {
-    .name = TYPE_TZ_PPC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(TZPPC),
+OBJECT_DEFINE_TYPE_EXTENDED(tz_ppc_info,
+                            TZPPC, void,
+                            TZ_PPC, SYS_BUS_DEVICE,
     .instance_init = tz_ppc_init,
     .class_init = tz_ppc_class_init,
-};
-TYPE_INFO(tz_ppc_info)
+)
 
 

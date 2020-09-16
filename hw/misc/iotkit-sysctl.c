@@ -512,13 +512,11 @@ static void iotkit_sysctl_class_init(ObjectClass *klass, void *data)
     dc->realize = iotkit_sysctl_realize;
 }
 
-static const TypeInfo iotkit_sysctl_info = {
-    .name = TYPE_IOTKIT_SYSCTL,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IoTKitSysCtl),
+OBJECT_DEFINE_TYPE_EXTENDED(iotkit_sysctl_info,
+                            IoTKitSysCtl, void,
+                            IOTKIT_SYSCTL, SYS_BUS_DEVICE,
     .instance_init = iotkit_sysctl_init,
     .class_init = iotkit_sysctl_class_init,
-};
-TYPE_INFO(iotkit_sysctl_info)
+)
 
 

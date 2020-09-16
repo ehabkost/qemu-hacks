@@ -231,13 +231,11 @@ static void vmgenid_device_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo vmgenid_device_info = {
-    .name          = TYPE_VMGENID,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(VmGenIdState),
+OBJECT_DEFINE_TYPE_EXTENDED(vmgenid_device_info,
+                            VmGenIdState, void,
+                            VMGENID, DEVICE,
     .class_init    = vmgenid_device_class_init,
-};
-TYPE_INFO(vmgenid_device_info)
+)
 
 
 

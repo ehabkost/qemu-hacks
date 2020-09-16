@@ -136,16 +136,14 @@ I2CBus *ich9_smb_init(PCIBus *bus, int devfn, uint32_t smb_io_base)
     return s->smb.smbus;
 }
 
-static const TypeInfo ich9_smb_info = {
-    .name   = TYPE_ICH9_SMB_DEVICE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(ICH9SMBState),
+OBJECT_DEFINE_TYPE_EXTENDED(ich9_smb_info,
+                            ICH9SMBState, void,
+                            ICH9_SMB_DEVICE, PCI_DEVICE,
     .class_init = ich9_smb_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(ich9_smb_info)
+)
 
 

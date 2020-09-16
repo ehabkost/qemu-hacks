@@ -482,14 +482,12 @@ static void pci_unin_main_class_init(ObjectClass *klass, void *data)
     sbc->explicit_ofw_unit_address = pci_unin_main_ofw_unit_address;
 }
 
-static const TypeInfo pci_unin_main_info = {
-    .name          = TYPE_UNI_NORTH_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(UNINHostState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_unin_main_info,
+                            UNINHostState, void,
+                            UNI_NORTH_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_init = pci_unin_main_init,
     .class_init    = pci_unin_main_class_init,
-};
-TYPE_INFO(pci_unin_main_info)
+)
 
 static void pci_u3_agp_class_init(ObjectClass *klass, void *data)
 {
@@ -499,14 +497,12 @@ static void pci_u3_agp_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo pci_u3_agp_info = {
-    .name          = TYPE_U3_AGP_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(UNINHostState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_u3_agp_info,
+                            UNINHostState, void,
+                            U3_AGP_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_init = pci_u3_agp_init,
     .class_init    = pci_u3_agp_class_init,
-};
-TYPE_INFO(pci_u3_agp_info)
+)
 
 static void pci_unin_agp_class_init(ObjectClass *klass, void *data)
 {
@@ -516,14 +512,12 @@ static void pci_unin_agp_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo pci_unin_agp_info = {
-    .name          = TYPE_UNI_NORTH_AGP_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(UNINHostState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_unin_agp_info,
+                            UNINHostState, void,
+                            UNI_NORTH_AGP_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_init = pci_unin_agp_init,
     .class_init    = pci_unin_agp_class_init,
-};
-TYPE_INFO(pci_unin_agp_info)
+)
 
 static void pci_unin_internal_class_init(ObjectClass *klass, void *data)
 {
@@ -533,14 +527,12 @@ static void pci_unin_internal_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo pci_unin_internal_info = {
-    .name          = TYPE_UNI_NORTH_INTERNAL_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(UNINHostState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_unin_internal_info,
+                            UNINHostState, void,
+                            UNI_NORTH_INTERNAL_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_init = pci_unin_internal_init,
     .class_init    = pci_unin_internal_class_init,
-};
-TYPE_INFO(pci_unin_internal_info)
+)
 
 /* UniN device */
 static void unin_write(void *opaque, hwaddr addr, uint64_t value,
@@ -589,14 +581,12 @@ static void unin_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo unin_info = {
-    .name          = TYPE_UNI_NORTH,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(UNINState),
+OBJECT_DEFINE_TYPE_EXTENDED(unin_info,
+                            UNINState, void,
+                            UNI_NORTH, SYS_BUS_DEVICE,
     .instance_init = unin_init,
     .class_init    = unin_class_init,
-};
-TYPE_INFO(unin_info)
+)
 
 static void unin_register_types(void)
 {

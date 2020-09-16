@@ -536,12 +536,10 @@ static void u2f_passthru_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, u2f_passthru_properties);
 }
 
-static const TypeInfo u2f_key_passthru_info = {
-    .name = TYPE_U2F_PASSTHRU,
-    .parent = TYPE_U2F_KEY,
-    .instance_size = sizeof(U2FPassthruState),
+OBJECT_DEFINE_TYPE_EXTENDED(u2f_key_passthru_info,
+                            U2FPassthruState, void,
+                            U2F_PASSTHRU, U2F_KEY,
     .class_init = u2f_passthru_class_init
-};
-TYPE_INFO(u2f_key_passthru_info)
+)
 
 

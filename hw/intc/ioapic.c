@@ -499,11 +499,10 @@ static void ioapic_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, ioapic_properties);
 }
 
-static const TypeInfo ioapic_info = {
-    .name          = TYPE_IOAPIC,
-    .parent        = TYPE_IOAPIC_COMMON,
+OBJECT_DEFINE_TYPE_EXTENDED(ioapic_info,
+                            void, void,
+                            IOAPIC, IOAPIC_COMMON,
     .class_init    = ioapic_class_init,
-};
-TYPE_INFO(ioapic_info)
+)
 
 

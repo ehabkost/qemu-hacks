@@ -45,13 +45,10 @@ static void vfio_amd_xgbe_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = true;
 }
 
-static const TypeInfo vfio_amd_xgbe_dev_info = {
-    .name = TYPE_VFIO_AMD_XGBE,
-    .parent = TYPE_VFIO_PLATFORM,
-    .instance_size = sizeof(VFIOAmdXgbeDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(vfio_amd_xgbe_dev_info,
+                            VFIOAmdXgbeDevice, VFIOAmdXgbeDeviceClass,
+                            VFIO_AMD_XGBE, VFIO_PLATFORM,
     .class_init = vfio_amd_xgbe_class_init,
-    .class_size = sizeof(VFIOAmdXgbeDeviceClass),
-};
-TYPE_INFO(vfio_amd_xgbe_dev_info)
+)
 
 

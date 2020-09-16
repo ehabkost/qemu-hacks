@@ -88,13 +88,11 @@ static void arm11_scu_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, arm11_scu_properties);
 }
 
-static const TypeInfo arm11_scu_type_info = {
-    .name          = TYPE_ARM11_SCU,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARM11SCUState),
+OBJECT_DEFINE_TYPE_EXTENDED(arm11_scu_type_info,
+                            ARM11SCUState, void,
+                            ARM11_SCU, SYS_BUS_DEVICE,
     .instance_init = arm11_scu_init,
     .class_init    = arm11_scu_class_init,
-};
-TYPE_INFO(arm11_scu_type_info)
+)
 
 

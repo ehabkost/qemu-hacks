@@ -218,12 +218,10 @@ static void vhost_vsock_class_init(ObjectClass *klass, void *data)
     vdc->set_status = vhost_vsock_set_status;
 }
 
-static const TypeInfo vhost_vsock_info = {
-    .name = TYPE_VHOST_VSOCK,
-    .parent = TYPE_VHOST_VSOCK_COMMON,
-    .instance_size = sizeof(VHostVSock),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_vsock_info,
+                            VHostVSock, void,
+                            VHOST_VSOCK, VHOST_VSOCK_COMMON,
     .class_init = vhost_vsock_class_init,
-};
-TYPE_INFO(vhost_vsock_info)
+)
 
 

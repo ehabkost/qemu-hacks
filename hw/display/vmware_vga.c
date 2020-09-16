@@ -1348,16 +1348,14 @@ static void vmsvga_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_DISPLAY, dc->categories);
 }
 
-static const TypeInfo vmsvga_info = {
-    .name          = TYPE_VMWARE_SVGA,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(struct pci_vmsvga_state_s),
+OBJECT_DEFINE_TYPE_EXTENDED(vmsvga_info,
+                            struct pci_vmsvga_state_s, void,
+                            VMWARE_SVGA, PCI_DEVICE,
     .class_init    = vmsvga_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(vmsvga_info)
+)
 
 

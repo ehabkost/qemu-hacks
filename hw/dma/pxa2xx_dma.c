@@ -575,13 +575,11 @@ static void pxa2xx_dma_class_init(ObjectClass *klass, void *data)
     dc->realize = pxa2xx_dma_realize;
 }
 
-static const TypeInfo pxa2xx_dma_info = {
-    .name          = TYPE_PXA2XX_DMA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxDMAState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_dma_info,
+                            PXA2xxDMAState, void,
+                            PXA2XX_DMA, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_dma_init,
     .class_init    = pxa2xx_dma_class_init,
-};
-TYPE_INFO(pxa2xx_dma_info)
+)
 
 

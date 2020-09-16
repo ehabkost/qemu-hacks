@@ -375,13 +375,11 @@ static void nrf51_nvm_class_init(ObjectClass *klass, void *data)
     dc->reset = nrf51_nvm_reset;
 }
 
-static const TypeInfo nrf51_nvm_info = {
-    .name = TYPE_NRF51_NVM,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NRF51NVMState),
+OBJECT_DEFINE_TYPE_EXTENDED(nrf51_nvm_info,
+                            NRF51NVMState, void,
+                            NRF51_NVM, SYS_BUS_DEVICE,
     .instance_init = nrf51_nvm_init,
     .class_init = nrf51_nvm_class_init
-};
-TYPE_INFO(nrf51_nvm_info)
+)
 
 

@@ -162,13 +162,11 @@ static void spapr_tpm_proxy_class_init(ObjectClass *k, void *data)
     device_class_set_props(dk, spapr_tpm_proxy_properties);
 }
 
-static const TypeInfo spapr_tpm_proxy_info = {
-    .name          = TYPE_SPAPR_TPM_PROXY,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(SpaprTpmProxy),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_tpm_proxy_info,
+                            SpaprTpmProxy, void,
+                            SPAPR_TPM_PROXY, DEVICE,
     .class_init    = spapr_tpm_proxy_class_init,
-};
-TYPE_INFO(spapr_tpm_proxy_info)
+)
 
 static void spapr_tpm_proxy_register_types(void)
 {

@@ -302,13 +302,11 @@ static void nrf51_gpio_class_init(ObjectClass *klass, void *data)
     dc->desc = "nRF51 GPIO";
 }
 
-static const TypeInfo nrf51_gpio_info = {
-    .name = TYPE_NRF51_GPIO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NRF51GPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(nrf51_gpio_info,
+                            NRF51GPIOState, void,
+                            NRF51_GPIO, SYS_BUS_DEVICE,
     .instance_init = nrf51_gpio_init,
     .class_init = nrf51_gpio_class_init
-};
-TYPE_INFO(nrf51_gpio_info)
+)
 
 

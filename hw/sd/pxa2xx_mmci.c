@@ -580,21 +580,17 @@ static void pxa2xx_mmci_bus_class_init(ObjectClass *klass, void *data)
     sbc->set_readonly = pxa2xx_mmci_set_readonly;
 }
 
-static const TypeInfo pxa2xx_mmci_info = {
-    .name = TYPE_PXA2XX_MMCI,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxMMCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_mmci_info,
+                            PXA2xxMMCIState, void,
+                            PXA2XX_MMCI, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_mmci_instance_init,
     .class_init = pxa2xx_mmci_class_init,
-};
-TYPE_INFO(pxa2xx_mmci_info)
+)
 
-static const TypeInfo pxa2xx_mmci_bus_info = {
-    .name = TYPE_PXA2XX_MMCI_BUS,
-    .parent = TYPE_SD_BUS,
-    .instance_size = sizeof(SDBus),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_mmci_bus_info,
+                            SDBus, void,
+                            PXA2XX_MMCI_BUS, SD_BUS,
     .class_init = pxa2xx_mmci_bus_class_init,
-};
-TYPE_INFO(pxa2xx_mmci_bus_info)
+)
 
 

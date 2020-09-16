@@ -177,17 +177,15 @@ static void ich_ahci_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo ich_ahci_info = {
-    .name          = TYPE_ICH9_AHCI,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(AHCIPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(ich_ahci_info,
+                            AHCIPCIState, void,
+                            ICH9_AHCI, PCI_DEVICE,
     .instance_init = pci_ich9_ahci_init,
     .class_init    = ich_ahci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(ich_ahci_info)
+)
 
 

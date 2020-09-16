@@ -82,13 +82,11 @@ static void sbsa_ec_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo sbsa_ec_info = {
-    .name          = TYPE_SBSA_EC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SECUREECState),
+OBJECT_DEFINE_TYPE_EXTENDED(sbsa_ec_info,
+                            SECUREECState, void,
+                            SBSA_EC, SYS_BUS_DEVICE,
     .instance_init = sbsa_ec_init,
     .class_init    = sbsa_ec_class_init,
-};
-TYPE_INFO(sbsa_ec_info)
+)
 
 

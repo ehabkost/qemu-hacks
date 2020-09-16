@@ -778,17 +778,15 @@ static void bonito_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo bonito_info = {
-    .name          = TYPE_PCI_BONITO,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIBonitoState),
+OBJECT_DEFINE_TYPE_EXTENDED(bonito_info,
+                            PCIBonitoState, void,
+                            PCI_BONITO, PCI_DEVICE,
     .class_init    = bonito_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(bonito_info)
+)
 
 static void bonito_pcihost_class_init(ObjectClass *klass, void *data)
 {
@@ -797,12 +795,10 @@ static void bonito_pcihost_class_init(ObjectClass *klass, void *data)
     dc->realize = bonito_pcihost_realize;
 }
 
-static const TypeInfo bonito_pcihost_info = {
-    .name          = TYPE_BONITO_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(BonitoState),
+OBJECT_DEFINE_TYPE_EXTENDED(bonito_pcihost_info,
+                            BonitoState, void,
+                            BONITO_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = bonito_pcihost_class_init,
-};
-TYPE_INFO(bonito_pcihost_info)
+)
 
 

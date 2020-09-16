@@ -1041,12 +1041,10 @@ static void rtc_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, mc146818rtc_properties);
 }
 
-static const TypeInfo mc146818rtc_info = {
-    .name          = TYPE_MC146818_RTC,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(RTCState),
+OBJECT_DEFINE_TYPE_EXTENDED(mc146818rtc_info,
+                            RTCState, void,
+                            MC146818_RTC, ISA_DEVICE,
     .class_init    = rtc_class_initfn,
-};
-TYPE_INFO(mc146818rtc_info)
+)
 
 

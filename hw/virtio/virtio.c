@@ -3844,15 +3844,12 @@ bool virtio_device_ioeventfd_enabled(VirtIODevice *vdev)
     return virtio_bus_ioeventfd_enabled(vbus);
 }
 
-static const TypeInfo virtio_device_info = {
-    .name = TYPE_VIRTIO_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(VirtIODevice),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_device_info,
+                            VirtIODevice, VirtioDeviceClass,
+                            VIRTIO_DEVICE, DEVICE,
     .class_init = virtio_device_class_init,
     .instance_finalize = virtio_device_instance_finalize,
     .abstract = true,
-    .class_size = sizeof(VirtioDeviceClass),
-};
-TYPE_INFO(virtio_device_info)
+)
 
 

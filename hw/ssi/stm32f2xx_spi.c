@@ -210,13 +210,11 @@ static void stm32f2xx_spi_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_stm32f2xx_spi;
 }
 
-static const TypeInfo stm32f2xx_spi_info = {
-    .name          = TYPE_STM32F2XX_SPI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F2XXSPIState),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f2xx_spi_info,
+                            STM32F2XXSPIState, void,
+                            STM32F2XX_SPI, SYS_BUS_DEVICE,
     .instance_init = stm32f2xx_spi_init,
     .class_init    = stm32f2xx_spi_class_init,
-};
-TYPE_INFO(stm32f2xx_spi_info)
+)
 
 

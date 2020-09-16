@@ -595,12 +595,10 @@ static void dino_pcihost_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_dino;
 }
 
-static const TypeInfo dino_pcihost_info = {
-    .name          = TYPE_DINO_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(DinoState),
+OBJECT_DEFINE_TYPE_EXTENDED(dino_pcihost_info,
+                            DinoState, void,
+                            DINO_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = dino_pcihost_class_init,
-};
-TYPE_INFO(dino_pcihost_info)
+)
 
 

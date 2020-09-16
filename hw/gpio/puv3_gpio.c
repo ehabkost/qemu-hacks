@@ -139,12 +139,10 @@ static void puv3_gpio_class_init(ObjectClass *klass, void *data)
     dc->realize = puv3_gpio_realize;
 }
 
-static const TypeInfo puv3_gpio_info = {
-    .name = TYPE_PUV3_GPIO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PUV3GPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(puv3_gpio_info,
+                            PUV3GPIOState, void,
+                            PUV3_GPIO, SYS_BUS_DEVICE,
     .class_init = puv3_gpio_class_init,
-};
-TYPE_INFO(puv3_gpio_info)
+)
 
 

@@ -311,14 +311,12 @@ static void pr_manager_helper_class_init(ObjectClass *klass,
     prmgr_klass->is_connected = pr_manager_helper_is_connected;
 }
 
-static const TypeInfo pr_manager_helper_info = {
-    .parent = TYPE_PR_MANAGER,
-    .name = TYPE_PR_MANAGER_HELPER,
-    .instance_size = sizeof(PRManagerHelper),
+OBJECT_DEFINE_TYPE_EXTENDED(pr_manager_helper_info,
+                            PRManagerHelper, void,
+                            PR_MANAGER_HELPER, PR_MANAGER,
     .instance_init = pr_manager_helper_instance_init,
     .instance_finalize = pr_manager_helper_instance_finalize,
     .class_init = pr_manager_helper_class_init,
-};
-TYPE_INFO(pr_manager_helper_info)
+)
 
 

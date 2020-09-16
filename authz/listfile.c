@@ -257,19 +257,17 @@ QAuthZListFile *qauthz_list_file_new(const char *id,
 }
 
 
-static const TypeInfo qauthz_list_file_info = {
-    .parent = TYPE_QAUTHZ,
-    .name = TYPE_QAUTHZ_LIST_FILE,
+OBJECT_DEFINE_TYPE_EXTENDED(qauthz_list_file_info,
+                            QAuthZListFile, void,
+                            QAUTHZ_LIST_FILE, QAUTHZ,
     .instance_init = qauthz_list_file_init,
-    .instance_size = sizeof(QAuthZListFile),
     .instance_finalize = qauthz_list_file_finalize,
     .class_init = qauthz_list_file_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(qauthz_list_file_info)
+)
 
 
 

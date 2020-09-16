@@ -277,12 +277,10 @@ static void nextkbd_class_init(ObjectClass *oc, void *data)
     dc->reset = nextkbd_reset;
 }
 
-static const TypeInfo nextkbd_info = {
-    .name          = TYPE_NEXTKBD,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NextKBDState),
+OBJECT_DEFINE_TYPE_EXTENDED(nextkbd_info,
+                            NextKBDState, void,
+                            NEXTKBD, SYS_BUS_DEVICE,
     .class_init    = nextkbd_class_init,
-};
-TYPE_INFO(nextkbd_info)
+)
 
 

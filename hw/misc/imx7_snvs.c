@@ -69,12 +69,10 @@ static void imx7_snvs_class_init(ObjectClass *klass, void *data)
     dc->desc  = "i.MX7 Secure Non-Volatile Storage Module";
 }
 
-static const TypeInfo imx7_snvs_info = {
-    .name          = TYPE_IMX7_SNVS,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMX7SNVSState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx7_snvs_info,
+                            IMX7SNVSState, void,
+                            IMX7_SNVS, SYS_BUS_DEVICE,
     .instance_init = imx7_snvs_init,
     .class_init    = imx7_snvs_class_init,
-};
-TYPE_INFO(imx7_snvs_info)
+)
 

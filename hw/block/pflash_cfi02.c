@@ -971,13 +971,11 @@ static void pflash_cfi02_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo pflash_cfi02_info = {
-    .name           = TYPE_PFLASH_CFI02,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(PFlashCFI02),
+OBJECT_DEFINE_TYPE_EXTENDED(pflash_cfi02_info,
+                            PFlashCFI02, void,
+                            PFLASH_CFI02, SYS_BUS_DEVICE,
     .class_init     = pflash_cfi02_class_init,
-};
-TYPE_INFO(pflash_cfi02_info)
+)
 
 
 

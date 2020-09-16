@@ -157,12 +157,10 @@ static void etraxfs_pic_init(Object *obj)
     sysbus_init_mmio(sbd, &s->mmio);
 }
 
-static const TypeInfo etraxfs_pic_info = {
-    .name          = TYPE_ETRAX_FS_PIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(struct etrax_pic),
+OBJECT_DEFINE_TYPE_EXTENDED(etraxfs_pic_info,
+                            struct etrax_pic, void,
+                            ETRAX_FS_PIC, SYS_BUS_DEVICE,
     .instance_init = etraxfs_pic_init,
-};
-TYPE_INFO(etraxfs_pic_info)
+)
 
 

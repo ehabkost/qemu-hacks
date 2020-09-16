@@ -511,12 +511,10 @@ static void stellaris_enet_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_stellaris_enet;
 }
 
-static const TypeInfo stellaris_enet_info = {
-    .name          = TYPE_STELLARIS_ENET,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(stellaris_enet_state),
+OBJECT_DEFINE_TYPE_EXTENDED(stellaris_enet_info,
+                            stellaris_enet_state, void,
+                            STELLARIS_ENET, SYS_BUS_DEVICE,
     .class_init    = stellaris_enet_class_init,
-};
-TYPE_INFO(stellaris_enet_info)
+)
 
 

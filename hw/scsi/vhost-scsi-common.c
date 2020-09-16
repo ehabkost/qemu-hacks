@@ -129,12 +129,10 @@ char *vhost_scsi_common_get_fw_dev_path(FWPathProvider *p, BusState *bus,
                            qdev_fw_name(dev), vsc->target, vsc->lun);
 }
 
-static const TypeInfo vhost_scsi_common_info = {
-    .name = TYPE_VHOST_SCSI_COMMON,
-    .parent = TYPE_VIRTIO_SCSI_COMMON,
-    .instance_size = sizeof(VHostSCSICommon),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_scsi_common_info,
+                            VHostSCSICommon, void,
+                            VHOST_SCSI_COMMON, VIRTIO_SCSI_COMMON,
     .abstract = true,
-};
-TYPE_INFO(vhost_scsi_common_info)
+)
 
 

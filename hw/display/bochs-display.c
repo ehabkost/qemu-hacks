@@ -369,10 +369,9 @@ static void bochs_display_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_DISPLAY, dc->categories);
 }
 
-static const TypeInfo bochs_display_type_info = {
-    .name           = TYPE_BOCHS_DISPLAY,
-    .parent         = TYPE_PCI_DEVICE,
-    .instance_size  = sizeof(BochsDisplayState),
+OBJECT_DEFINE_TYPE_EXTENDED(bochs_display_type_info,
+                            BochsDisplayState, void,
+                            BOCHS_DISPLAY, PCI_DEVICE,
     .instance_init  = bochs_display_init,
     .class_init     = bochs_display_class_init,
     .interfaces     = (InterfaceInfo[]) {
@@ -380,7 +379,6 @@ static const TypeInfo bochs_display_type_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(bochs_display_type_info)
+)
 
 

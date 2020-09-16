@@ -124,18 +124,16 @@ QAuthZPAM *qauthz_pam_new(const char *id,
 }
 
 
-static const TypeInfo qauthz_pam_info = {
-    .parent = TYPE_QAUTHZ,
-    .name = TYPE_QAUTHZ_PAM,
-    .instance_size = sizeof(QAuthZPAM),
+OBJECT_DEFINE_TYPE_EXTENDED(qauthz_pam_info,
+                            QAuthZPAM, void,
+                            QAUTHZ_PAM, QAUTHZ,
     .instance_finalize = qauthz_pam_finalize,
     .class_init = qauthz_pam_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(qauthz_pam_info)
+)
 
 
 

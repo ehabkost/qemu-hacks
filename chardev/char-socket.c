@@ -1505,13 +1505,11 @@ static void char_socket_class_init(ObjectClass *oc, void *data)
                                    NULL);
 }
 
-static const TypeInfo char_socket_type_info = {
-    .name = TYPE_CHARDEV_SOCKET,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(SocketChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_socket_type_info,
+                            SocketChardev, void,
+                            CHARDEV_SOCKET, CHARDEV,
     .instance_finalize = char_socket_finalize,
     .class_init = char_socket_class_init,
-};
-TYPE_INFO(char_socket_type_info)
+)
 
 

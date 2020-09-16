@@ -403,13 +403,10 @@ static void sclp_class_init(ObjectClass *oc, void *data)
     sc->service_interrupt = service_interrupt;
 }
 
-static TypeInfo sclp_info = {
-    .name = TYPE_SCLP,
-    .parent = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(sclp_info,
+                            SCLPDevice, SCLPDeviceClass,
+                            SCLP, DEVICE,
     .instance_init = sclp_init,
-    .instance_size = sizeof(SCLPDevice),
     .class_init = sclp_class_init,
-    .class_size = sizeof(SCLPDeviceClass),
-};
-TYPE_INFO(sclp_info)
+)
 

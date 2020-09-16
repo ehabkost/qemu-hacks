@@ -74,11 +74,8 @@ void nmi_monitor_handle(int cpu_index, Error **errp)
     }
 }
 
-static const TypeInfo nmi_info = {
-    .name          = TYPE_NMI,
-    .parent        = TYPE_INTERFACE,
-    .class_size    = sizeof(NMIClass),
-};
-TYPE_INFO(nmi_info)
+OBJECT_DEFINE_TYPE_EXTENDED(nmi_info,
+                            void, NMIClass,
+                            NMI, INTERFACE)
 
 

@@ -203,18 +203,15 @@ static void ioapic_common_class_init(ObjectClass *klass, void *data)
     ic->get_statistics = ioapic_get_statistics;
 }
 
-static const TypeInfo ioapic_common_type = {
-    .name = TYPE_IOAPIC_COMMON,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IOAPICCommonState),
-    .class_size = sizeof(IOAPICCommonClass),
+OBJECT_DEFINE_TYPE_EXTENDED(ioapic_common_type,
+                            IOAPICCommonState, IOAPICCommonClass,
+                            IOAPIC_COMMON, SYS_BUS_DEVICE,
     .class_init = ioapic_common_class_init,
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_INTERRUPT_STATS_PROVIDER },
         { }
     },
-};
-TYPE_INFO(ioapic_common_type)
+)
 
 

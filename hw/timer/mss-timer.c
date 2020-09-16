@@ -282,13 +282,11 @@ static void mss_timer_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_mss_timer;
 }
 
-static const TypeInfo mss_timer_info = {
-    .name          = TYPE_MSS_TIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MSSTimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(mss_timer_info,
+                            MSSTimerState, void,
+                            MSS_TIMER, SYS_BUS_DEVICE,
     .instance_init = mss_timer_init,
     .class_init    = mss_timer_class_init,
-};
-TYPE_INFO(mss_timer_info)
+)
 
 

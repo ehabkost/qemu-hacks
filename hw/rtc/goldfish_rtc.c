@@ -281,12 +281,10 @@ static void goldfish_rtc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &goldfish_rtc_vmstate;
 }
 
-static const TypeInfo goldfish_rtc_info = {
-    .name          = TYPE_GOLDFISH_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(GoldfishRTCState),
+OBJECT_DEFINE_TYPE_EXTENDED(goldfish_rtc_info,
+                            GoldfishRTCState, void,
+                            GOLDFISH_RTC, SYS_BUS_DEVICE,
     .class_init    = goldfish_rtc_class_init,
-};
-TYPE_INFO(goldfish_rtc_info)
+)
 
 

@@ -63,13 +63,11 @@ static void virtio_ccw_serial_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_serial = {
-    .name          = TYPE_VIRTIO_SERIAL_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtioSerialCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_serial,
+                            VirtioSerialCcw, void,
+                            VIRTIO_SERIAL_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_serial_instance_init,
     .class_init    = virtio_ccw_serial_class_init,
-};
-TYPE_INFO(virtio_ccw_serial)
+)
 
 

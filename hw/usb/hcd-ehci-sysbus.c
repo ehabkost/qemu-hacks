@@ -89,16 +89,13 @@ static void ehci_sysbus_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo ehci_type_info = {
-    .name          = TYPE_SYS_BUS_EHCI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(EHCISysBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_type_info,
+                            EHCISysBusState, SysBusEHCIClass,
+                            SYS_BUS_EHCI, SYS_BUS_DEVICE,
     .instance_init = ehci_sysbus_init,
     .abstract      = true,
     .class_init    = ehci_sysbus_class_init,
-    .class_size    = sizeof(SysBusEHCIClass),
-};
-TYPE_INFO(ehci_type_info)
+)
 
 static void ehci_platform_class_init(ObjectClass *oc, void *data)
 {
@@ -110,12 +107,11 @@ static void ehci_platform_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo ehci_platform_type_info = {
-    .name          = TYPE_PLATFORM_EHCI,
-    .parent        = TYPE_SYS_BUS_EHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_platform_type_info,
+                            void, void,
+                            PLATFORM_EHCI, SYS_BUS_EHCI,
     .class_init    = ehci_platform_class_init,
-};
-TYPE_INFO(ehci_platform_type_info)
+)
 
 static void ehci_exynos4210_class_init(ObjectClass *oc, void *data)
 {
@@ -127,12 +123,11 @@ static void ehci_exynos4210_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo ehci_exynos4210_type_info = {
-    .name          = TYPE_EXYNOS4210_EHCI,
-    .parent        = TYPE_SYS_BUS_EHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_exynos4210_type_info,
+                            void, void,
+                            EXYNOS4210_EHCI, SYS_BUS_EHCI,
     .class_init    = ehci_exynos4210_class_init,
-};
-TYPE_INFO(ehci_exynos4210_type_info)
+)
 
 static void ehci_aw_h3_class_init(ObjectClass *oc, void *data)
 {
@@ -144,12 +139,11 @@ static void ehci_aw_h3_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo ehci_aw_h3_type_info = {
-    .name          = TYPE_AW_H3_EHCI,
-    .parent        = TYPE_SYS_BUS_EHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_aw_h3_type_info,
+                            void, void,
+                            AW_H3_EHCI, SYS_BUS_EHCI,
     .class_init    = ehci_aw_h3_class_init,
-};
-TYPE_INFO(ehci_aw_h3_type_info)
+)
 
 static void ehci_tegra2_class_init(ObjectClass *oc, void *data)
 {
@@ -161,12 +155,11 @@ static void ehci_tegra2_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo ehci_tegra2_type_info = {
-    .name          = TYPE_TEGRA2_EHCI,
-    .parent        = TYPE_SYS_BUS_EHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_tegra2_type_info,
+                            void, void,
+                            TEGRA2_EHCI, SYS_BUS_EHCI,
     .class_init    = ehci_tegra2_class_init,
-};
-TYPE_INFO(ehci_tegra2_type_info)
+)
 
 static void ehci_ppc4xx_init(Object *o)
 {
@@ -185,13 +178,12 @@ static void ehci_ppc4xx_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo ehci_ppc4xx_type_info = {
-    .name          = TYPE_PPC4xx_EHCI,
-    .parent        = TYPE_SYS_BUS_EHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_ppc4xx_type_info,
+                            void, void,
+                            PPC4xx_EHCI, SYS_BUS_EHCI,
     .class_init    = ehci_ppc4xx_class_init,
     .instance_init = ehci_ppc4xx_init,
-};
-TYPE_INFO(ehci_ppc4xx_type_info)
+)
 
 /*
  * Faraday FUSBH200 USB 2.0 EHCI
@@ -261,13 +253,11 @@ static void fusbh200_ehci_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo ehci_fusbh200_type_info = {
-    .name          = TYPE_FUSBH200_EHCI,
-    .parent        = TYPE_SYS_BUS_EHCI,
-    .instance_size = sizeof(FUSBH200EHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_fusbh200_type_info,
+                            FUSBH200EHCIState, void,
+                            FUSBH200_EHCI, SYS_BUS_EHCI,
     .instance_init = fusbh200_ehci_init,
     .class_init    = fusbh200_ehci_class_init,
-};
-TYPE_INFO(ehci_fusbh200_type_info)
+)
 
 

@@ -193,12 +193,10 @@ static void aspeed_sdhci_class_init(ObjectClass *classp, void *data)
     device_class_set_props(dc, aspeed_sdhci_properties);
 }
 
-static TypeInfo aspeed_sdhci_info = {
-    .name          = TYPE_ASPEED_SDHCI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedSDHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_sdhci_info,
+                            AspeedSDHCIState, void,
+                            ASPEED_SDHCI, SYS_BUS_DEVICE,
     .class_init    = aspeed_sdhci_class_init,
-};
-TYPE_INFO(aspeed_sdhci_info)
+)
 
 

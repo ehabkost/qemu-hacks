@@ -91,11 +91,10 @@ static void cpu_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo sclp_cpu_info = {
-    .name          = TYPE_SCLP_CPU_HOTPLUG,
-    .parent        = TYPE_SCLP_EVENT,
+OBJECT_DEFINE_TYPE_EXTENDED(sclp_cpu_info,
+                            void, void,
+                            SCLP_CPU_HOTPLUG, SCLP_EVENT,
     .class_init    = cpu_class_init,
-};
-TYPE_INFO(sclp_cpu_info)
+)
 
 

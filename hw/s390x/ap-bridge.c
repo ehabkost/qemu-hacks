@@ -31,12 +31,11 @@ static void ap_bus_class_init(ObjectClass *oc, void *data)
     k->max_dev = 1;
 }
 
-static const TypeInfo ap_bus_info = {
-    .name = TYPE_AP_BUS,
-    .parent = TYPE_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(ap_bus_info,
+                            void, void,
+                            AP_BUS, BUS,
     .class_init = ap_bus_class_init,
-};
-TYPE_INFO(ap_bus_info)
+)
 
 void s390_init_ap(void)
 {
@@ -70,15 +69,14 @@ static void ap_bridge_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo ap_bridge_info = {
-    .name          = TYPE_AP_BRIDGE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(ap_bridge_info,
+                            void, void,
+                            AP_BRIDGE, SYS_BUS_DEVICE,
     .class_init    = ap_bridge_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(ap_bridge_info)
+)
 
 

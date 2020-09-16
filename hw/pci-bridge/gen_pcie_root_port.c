@@ -158,11 +158,9 @@ static void gen_rp_dev_class_init(ObjectClass *klass, void *data)
     rpc->acs_offset = GEN_PCIE_ROOT_PORT_ACS_OFFSET;
 }
 
-static const TypeInfo gen_rp_dev_info = {
-    .name          = TYPE_GEN_PCIE_ROOT_PORT,
-    .parent        = TYPE_PCIE_ROOT_PORT,
-    .instance_size = sizeof(GenPCIERootPort),
+OBJECT_DEFINE_TYPE_EXTENDED(gen_rp_dev_info,
+                            GenPCIERootPort, void,
+                            GEN_PCIE_ROOT_PORT, PCIE_ROOT_PORT,
     .class_init    = gen_rp_dev_class_init,
-};
-TYPE_INFO(gen_rp_dev_info)
+)
 

@@ -134,11 +134,10 @@ static void quiesce_class_init(ObjectClass *klass, void *data)
     k->write_event_data = NULL;
 }
 
-static const TypeInfo sclp_quiesce_info = {
-    .name          = TYPE_SCLP_QUIESCE,
-    .parent        = TYPE_SCLP_EVENT,
+OBJECT_DEFINE_TYPE_EXTENDED(sclp_quiesce_info,
+                            void, void,
+                            SCLP_QUIESCE, SCLP_EVENT,
     .class_init    = quiesce_class_init,
-};
-TYPE_INFO(sclp_quiesce_info)
+)
 
 

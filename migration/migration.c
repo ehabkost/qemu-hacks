@@ -3827,23 +3827,12 @@ static bool migration_object_check(MigrationState *ms, Error **errp)
     return ret;
 }
 
-static const TypeInfo migration_type = {
-    .name = TYPE_MIGRATION,
-    /*
-     * NOTE: TYPE_MIGRATION is not really a device, as the object is
-     * not created using qdev_new(), it is not attached to the qdev
-     * device tree, and it is never realized.
-     *
-     * TODO: Make this TYPE_OBJECT once QOM provides something like
-     * TYPE_DEVICE's "-global" properties.
-     */
-    .parent = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(migration_type,
+                            MigrationState, MigrationClass,
+                            MIGRATION, DEVICE,
     .class_init = migration_class_init,
-    .class_size = sizeof(MigrationClass),
-    .instance_size = sizeof(MigrationState),
     .instance_init = migration_instance_init,
     .instance_finalize = migration_instance_finalize,
-};
-TYPE_INFO(migration_type)
+)
 
 

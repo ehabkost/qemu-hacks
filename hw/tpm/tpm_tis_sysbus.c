@@ -141,17 +141,15 @@ static void tpm_tis_sysbus_class_init(ObjectClass *klass, void *data)
     tc->get_version = tpm_tis_sysbus_get_tpm_version;
 }
 
-static const TypeInfo tpm_tis_sysbus_info = {
-    .name = TYPE_TPM_TIS_SYSBUS,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(TPMStateSysBus),
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_tis_sysbus_info,
+                            TPMStateSysBus, void,
+                            TPM_TIS_SYSBUS, SYS_BUS_DEVICE,
     .instance_init = tpm_tis_sysbus_initfn,
     .class_init  = tpm_tis_sysbus_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_TPM_IF },
         { }
     }
-};
-TYPE_INFO(tpm_tis_sysbus_info)
+)
 
 

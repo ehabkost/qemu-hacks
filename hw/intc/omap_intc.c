@@ -675,12 +675,10 @@ static const TypeInfo omap2_intc_info = {
 };
 TYPE_INFO(omap2_intc_info)
 
-static const TypeInfo omap_intc_type_info = {
-    .name          = TYPE_OMAP_INTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(omap_intr_handler),
+OBJECT_DEFINE_TYPE_EXTENDED(omap_intc_type_info,
+                            omap_intr_handler, void,
+                            OMAP_INTC, SYS_BUS_DEVICE,
     .abstract      = true,
-};
-TYPE_INFO(omap_intc_type_info)
+)
 
 

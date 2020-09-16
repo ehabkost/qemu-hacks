@@ -849,13 +849,11 @@ static void virtser_bus_class_init(ObjectClass *klass, void *data)
     k->print_dev = virtser_bus_dev_print;
 }
 
-static const TypeInfo virtser_bus_info = {
-    .name = TYPE_VIRTIO_SERIAL_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(VirtIOSerialBus),
+OBJECT_DEFINE_TYPE_EXTENDED(virtser_bus_info,
+                            VirtIOSerialBus, void,
+                            VIRTIO_SERIAL_BUS, BUS,
     .class_init = virtser_bus_class_init,
-};
-TYPE_INFO(virtser_bus_info)
+)
 
 static void virtser_bus_dev_print(Monitor *mon, DeviceState *qdev, int indent)
 {
@@ -1110,15 +1108,12 @@ static void virtio_serial_port_class_init(ObjectClass *klass, void *data)
     device_class_set_props(k, virtser_props);
 }
 
-static const TypeInfo virtio_serial_port_type_info = {
-    .name = TYPE_VIRTIO_SERIAL_PORT,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(VirtIOSerialPort),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_serial_port_type_info,
+                            VirtIOSerialPort, VirtIOSerialPortClass,
+                            VIRTIO_SERIAL_PORT, DEVICE,
     .abstract = true,
-    .class_size = sizeof(VirtIOSerialPortClass),
     .class_init = virtio_serial_port_class_init,
-};
-TYPE_INFO(virtio_serial_port_type_info)
+)
 
 static void virtio_serial_device_unrealize(DeviceState *dev)
 {
@@ -1193,16 +1188,14 @@ static void virtio_serial_class_init(ObjectClass *klass, void *data)
     hc->unplug = qdev_simple_device_unplug_cb;
 }
 
-static const TypeInfo virtio_device_info = {
-    .name = TYPE_VIRTIO_SERIAL,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOSerial),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_device_info,
+                            VirtIOSerial, void,
+                            VIRTIO_SERIAL, VIRTIO_DEVICE,
     .class_init = virtio_serial_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(virtio_device_info)
+)
 
 

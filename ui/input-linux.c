@@ -511,18 +511,16 @@ static void input_linux_class_init(ObjectClass *oc, void *data)
     ucc->complete = input_linux_complete;
 }
 
-static const TypeInfo input_linux_info = {
-    .name = TYPE_INPUT_LINUX,
-    .parent = TYPE_OBJECT,
+OBJECT_DEFINE_TYPE_EXTENDED(input_linux_info,
+                            InputLinux, void,
+                            INPUT_LINUX, OBJECT,
     .class_init = input_linux_class_init,
-    .instance_size = sizeof(InputLinux),
     .instance_init = input_linux_instance_init,
     .instance_finalize = input_linux_instance_finalize,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(input_linux_info)
+)
 
 

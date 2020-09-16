@@ -91,18 +91,16 @@ QAuthZSimple *qauthz_simple_new(const char *id,
 }
 
 
-static const TypeInfo qauthz_simple_info = {
-    .parent = TYPE_QAUTHZ,
-    .name = TYPE_QAUTHZ_SIMPLE,
-    .instance_size = sizeof(QAuthZSimple),
+OBJECT_DEFINE_TYPE_EXTENDED(qauthz_simple_info,
+                            QAuthZSimple, void,
+                            QAUTHZ_SIMPLE, QAUTHZ,
     .instance_finalize = qauthz_simple_finalize,
     .class_init = qauthz_simple_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(qauthz_simple_info)
+)
 
 
 

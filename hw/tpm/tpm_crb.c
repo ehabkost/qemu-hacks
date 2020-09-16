@@ -326,17 +326,14 @@ static void tpm_crb_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo tpm_crb_info = {
-    .name = TYPE_TPM_CRB,
-    /* could be TYPE_SYS_BUS_DEVICE (or LPC etc) */
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(CRBState),
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_crb_info,
+                            CRBState, void,
+                            TPM_CRB, DEVICE,
     .class_init  = tpm_crb_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_TPM_IF },
         { }
     }
-};
-TYPE_INFO(tpm_crb_info)
+)
 
 

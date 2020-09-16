@@ -491,21 +491,17 @@ static void slavio_misc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_misc;
 }
 
-static const TypeInfo slavio_misc_info = {
-    .name          = TYPE_SLAVIO_MISC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MiscState),
+OBJECT_DEFINE_TYPE_EXTENDED(slavio_misc_info,
+                            MiscState, void,
+                            SLAVIO_MISC, SYS_BUS_DEVICE,
     .instance_init = slavio_misc_init,
     .class_init    = slavio_misc_class_init,
-};
-TYPE_INFO(slavio_misc_info)
+)
 
-static const TypeInfo apc_info = {
-    .name          = TYPE_APC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(APCState),
+OBJECT_DEFINE_TYPE_EXTENDED(apc_info,
+                            APCState, void,
+                            APC, SYS_BUS_DEVICE,
     .instance_init = apc_init,
-};
-TYPE_INFO(apc_info)
+)
 
 

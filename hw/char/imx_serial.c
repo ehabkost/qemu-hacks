@@ -375,13 +375,11 @@ static void imx_serial_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, imx_serial_properties);
 }
 
-static const TypeInfo imx_serial_info = {
-    .name           = TYPE_IMX_SERIAL,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(IMXSerialState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_serial_info,
+                            IMXSerialState, void,
+                            IMX_SERIAL, SYS_BUS_DEVICE,
     .instance_init  = imx_serial_init,
     .class_init     = imx_serial_class_init,
-};
-TYPE_INFO(imx_serial_info)
+)
 
 

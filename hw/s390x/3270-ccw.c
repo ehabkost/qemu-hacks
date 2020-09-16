@@ -162,14 +162,11 @@ static void emulated_ccw_3270_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_DISPLAY, dc->categories);
 }
 
-static const TypeInfo emulated_ccw_3270_info = {
-    .name = TYPE_EMULATED_CCW_3270,
-    .parent = TYPE_CCW_DEVICE,
-    .instance_size = sizeof(EmulatedCcw3270Device),
+OBJECT_DEFINE_TYPE_EXTENDED(emulated_ccw_3270_info,
+                            EmulatedCcw3270Device, EmulatedCcw3270Class,
+                            EMULATED_CCW_3270, CCW_DEVICE,
     .class_init = emulated_ccw_3270_class_init,
-    .class_size = sizeof(EmulatedCcw3270Class),
     .abstract = true,
-};
-TYPE_INFO(emulated_ccw_3270_info)
+)
 
 

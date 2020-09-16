@@ -1437,14 +1437,12 @@ static void sb16_class_initfn (ObjectClass *klass, void *data)
     device_class_set_props(dc, sb16_properties);
 }
 
-static const TypeInfo sb16_info = {
-    .name          = TYPE_SB16,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof (SB16State),
+OBJECT_DEFINE_TYPE_EXTENDED(sb16_info,
+                            SB16State, void,
+                            SB16, ISA_DEVICE,
     .instance_init = sb16_initfn,
     .class_init    = sb16_class_initfn,
-};
-TYPE_INFO(sb16_info)
+)
 
 static void sb16_register_types (void)
 {

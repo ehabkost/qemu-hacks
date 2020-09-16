@@ -83,14 +83,12 @@ static void cpu_core_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_CPU, dc->categories);
 }
 
-static const TypeInfo cpu_core_type_info = {
-    .name = TYPE_CPU_CORE,
-    .parent = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(cpu_core_type_info,
+                            CPUCore, void,
+                            CPU_CORE, DEVICE,
     .abstract = true,
     .class_init = cpu_core_class_init,
-    .instance_size = sizeof(CPUCore),
     .instance_init = cpu_core_instance_init,
-};
-TYPE_INFO(cpu_core_type_info)
+)
 
 

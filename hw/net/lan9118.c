@@ -1374,13 +1374,11 @@ static void lan9118_class_init(ObjectClass *klass, void *data)
     dc->realize = lan9118_realize;
 }
 
-static const TypeInfo lan9118_info = {
-    .name          = TYPE_LAN9118,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(lan9118_state),
+OBJECT_DEFINE_TYPE_EXTENDED(lan9118_info,
+                            lan9118_state, void,
+                            LAN9118, SYS_BUS_DEVICE,
     .class_init    = lan9118_class_init,
-};
-TYPE_INFO(lan9118_info)
+)
 
 
 /* Legacy helper function.  Should go away when machine config files are

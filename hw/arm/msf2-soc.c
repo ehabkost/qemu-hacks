@@ -227,13 +227,11 @@ static void m2sxxx_soc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, m2sxxx_soc_properties);
 }
 
-static const TypeInfo m2sxxx_soc_info = {
-    .name          = TYPE_MSF2_SOC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MSF2State),
+OBJECT_DEFINE_TYPE_EXTENDED(m2sxxx_soc_info,
+                            MSF2State, void,
+                            MSF2_SOC, SYS_BUS_DEVICE,
     .instance_init = m2sxxx_soc_initfn,
     .class_init    = m2sxxx_soc_class_init,
-};
-TYPE_INFO(m2sxxx_soc_info)
+)
 
 

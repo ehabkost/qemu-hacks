@@ -387,13 +387,11 @@ static void char_mux_class_init(ObjectClass *oc, void *data)
     cc->chr_update_read_handler = mux_chr_update_read_handlers;
 }
 
-static const TypeInfo char_mux_type_info = {
-    .name = TYPE_CHARDEV_MUX,
-    .parent = TYPE_CHARDEV,
+OBJECT_DEFINE_TYPE_EXTENDED(char_mux_type_info,
+                            MuxChardev, void,
+                            CHARDEV_MUX, CHARDEV,
     .class_init = char_mux_class_init,
-    .instance_size = sizeof(MuxChardev),
     .instance_finalize = char_mux_finalize,
-};
-TYPE_INFO(char_mux_type_info)
+)
 
 

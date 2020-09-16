@@ -2231,18 +2231,16 @@ static void spapr_phb_class_init(ObjectClass *klass, void *data)
     hp->unplug_request = spapr_pci_unplug_request;
 }
 
-static const TypeInfo spapr_phb_info = {
-    .name          = TYPE_SPAPR_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(SpaprPhbState),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_phb_info,
+                            SpaprPhbState, void,
+                            SPAPR_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_finalize = spapr_phb_finalizefn,
     .class_init    = spapr_phb_class_init,
     .interfaces    = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(spapr_phb_info)
+)
 
 static void spapr_phb_pci_enumerate_bridge(PCIBus *bus, PCIDevice *pdev,
                                            void *opaque)

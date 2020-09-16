@@ -265,10 +265,9 @@ static void pci_bridge_dev_class_init(ObjectClass *klass, void *data)
     hc->unplug_request = pci_bridge_dev_unplug_request_cb;
 }
 
-static const TypeInfo pci_bridge_dev_info = {
-    .name              = TYPE_PCI_BRIDGE_DEV,
-    .parent            = TYPE_PCI_BRIDGE,
-    .instance_size     = sizeof(PCIBridgeDev),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_bridge_dev_info,
+                            PCIBridgeDev, void,
+                            PCI_BRIDGE_DEV, PCI_BRIDGE,
     .class_init        = pci_bridge_dev_class_init,
     .instance_finalize = pci_bridge_dev_instance_finalize,
     .interfaces = (InterfaceInfo[]) {
@@ -276,8 +275,7 @@ static const TypeInfo pci_bridge_dev_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(pci_bridge_dev_info)
+)
 
 /*
  * Multiseat bridge.  Same as the standard pci bridge, only with a
@@ -293,11 +291,10 @@ static void pci_bridge_dev_seat_class_init(ObjectClass *klass, void *data)
     dc->desc = "Standard PCI Bridge (multiseat)";
 }
 
-static const TypeInfo pci_bridge_dev_seat_info = {
-    .name              = TYPE_PCI_BRIDGE_SEAT_DEV,
-    .parent            = TYPE_PCI_BRIDGE_DEV,
+OBJECT_DEFINE_TYPE_EXTENDED(pci_bridge_dev_seat_info,
+                            void, void,
+                            PCI_BRIDGE_SEAT_DEV, PCI_BRIDGE_DEV,
     .class_init        = pci_bridge_dev_seat_class_init,
-};
-TYPE_INFO(pci_bridge_dev_seat_info)
+)
 
 

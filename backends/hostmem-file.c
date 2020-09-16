@@ -191,13 +191,11 @@ static void file_backend_instance_finalize(Object *o)
     g_free(fb->mem_path);
 }
 
-static const TypeInfo file_backend_info = {
-    .name = TYPE_MEMORY_BACKEND_FILE,
-    .parent = TYPE_MEMORY_BACKEND,
+OBJECT_DEFINE_TYPE_EXTENDED(file_backend_info,
+                            HostMemoryBackendFile, void,
+                            MEMORY_BACKEND_FILE, MEMORY_BACKEND,
     .class_init = file_backend_class_init,
     .instance_finalize = file_backend_instance_finalize,
-    .instance_size = sizeof(HostMemoryBackendFile),
-};
-TYPE_INFO(file_backend_info)
+)
 
 

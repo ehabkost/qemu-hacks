@@ -298,12 +298,10 @@ static void vmport_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, vmport_properties);
 }
 
-static const TypeInfo vmport_info = {
-    .name          = TYPE_VMPORT,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(VMPortState),
+OBJECT_DEFINE_TYPE_EXTENDED(vmport_info,
+                            VMPortState, void,
+                            VMPORT, ISA_DEVICE,
     .class_init    = vmport_class_initfn,
-};
-TYPE_INFO(vmport_info)
+)
 
 

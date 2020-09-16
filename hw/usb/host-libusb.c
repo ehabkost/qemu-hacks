@@ -1735,14 +1735,12 @@ static void usb_host_class_initfn(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static TypeInfo usb_host_dev_info = {
-    .name          = TYPE_USB_HOST_DEVICE,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBHostDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(usb_host_dev_info,
+                            USBHostDevice, void,
+                            USB_HOST_DEVICE, USB_DEVICE,
     .class_init    = usb_host_class_initfn,
     .instance_init = usb_host_instance_init,
-};
-TYPE_INFO(usb_host_dev_info)
+)
 
 
 

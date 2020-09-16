@@ -174,13 +174,11 @@ static void grackle_class_init(ObjectClass *klass, void *data)
     sbc->explicit_ofw_unit_address = grackle_ofw_unit_address;
 }
 
-static const TypeInfo grackle_host_info = {
-    .name          = TYPE_GRACKLE_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(GrackleState),
+OBJECT_DEFINE_TYPE_EXTENDED(grackle_host_info,
+                            GrackleState, void,
+                            GRACKLE_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_init = grackle_init,
     .class_init    = grackle_class_init,
-};
-TYPE_INFO(grackle_host_info)
+)
 
 

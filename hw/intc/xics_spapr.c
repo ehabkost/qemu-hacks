@@ -459,15 +459,14 @@ static void ics_spapr_class_init(ObjectClass *klass, void *data)
     sicc->post_load = xics_spapr_post_load;
 }
 
-static const TypeInfo ics_spapr_info = {
-    .name = TYPE_ICS_SPAPR,
-    .parent = TYPE_ICS,
+OBJECT_DEFINE_TYPE_EXTENDED(ics_spapr_info,
+                            void, void,
+                            ICS_SPAPR, ICS,
     .class_init = ics_spapr_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_SPAPR_INTC },
         { }
     },
-};
-TYPE_INFO(ics_spapr_info)
+)
 
 

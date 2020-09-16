@@ -1032,37 +1032,31 @@ static void xilinx_enet_data_stream_class_init(ObjectClass *klass, void *data)
     ssc->push = xilinx_axienet_data_stream_push;
 }
 
-static const TypeInfo xilinx_enet_info = {
-    .name          = TYPE_XILINX_AXI_ENET,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XilinxAXIEnet),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_enet_info,
+                            XilinxAXIEnet, void,
+                            XILINX_AXI_ENET, SYS_BUS_DEVICE,
     .class_init    = xilinx_enet_class_init,
     .instance_init = xilinx_enet_init,
-};
-TYPE_INFO(xilinx_enet_info)
+)
 
-static const TypeInfo xilinx_enet_data_stream_info = {
-    .name          = TYPE_XILINX_AXI_ENET_DATA_STREAM,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(XilinxAXIEnetStreamSlave),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_enet_data_stream_info,
+                            XilinxAXIEnetStreamSlave, void,
+                            XILINX_AXI_ENET_DATA_STREAM, OBJECT,
     .class_init    = xilinx_enet_data_stream_class_init,
     .interfaces = (InterfaceInfo[]) {
             { TYPE_STREAM_SLAVE },
             { }
     }
-};
-TYPE_INFO(xilinx_enet_data_stream_info)
+)
 
-static const TypeInfo xilinx_enet_control_stream_info = {
-    .name          = TYPE_XILINX_AXI_ENET_CONTROL_STREAM,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(XilinxAXIEnetStreamSlave),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_enet_control_stream_info,
+                            XilinxAXIEnetStreamSlave, void,
+                            XILINX_AXI_ENET_CONTROL_STREAM, OBJECT,
     .class_init    = xilinx_enet_control_stream_class_init,
     .interfaces = (InterfaceInfo[]) {
             { TYPE_STREAM_SLAVE },
             { }
     }
-};
-TYPE_INFO(xilinx_enet_control_stream_info)
+)
 
 

@@ -239,13 +239,11 @@ static void char_pty_class_init(ObjectClass *oc, void *data)
     cc->chr_add_watch = pty_chr_add_watch;
 }
 
-static const TypeInfo char_pty_type_info = {
-    .name = TYPE_CHARDEV_PTY,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(PtyChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_pty_type_info,
+                            PtyChardev, void,
+                            CHARDEV_PTY, CHARDEV,
     .instance_finalize = char_pty_finalize,
     .class_init = char_pty_class_init,
-};
-TYPE_INFO(char_pty_type_info)
+)
 
 

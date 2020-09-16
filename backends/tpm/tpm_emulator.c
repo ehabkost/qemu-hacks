@@ -988,14 +988,12 @@ static void tpm_emulator_class_init(ObjectClass *klass, void *data)
     tbc->handle_request = tpm_emulator_handle_request;
 }
 
-static const TypeInfo tpm_emulator_info = {
-    .name = TYPE_TPM_EMULATOR,
-    .parent = TYPE_TPM_BACKEND,
-    .instance_size = sizeof(TPMEmulator),
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_emulator_info,
+                            TPMEmulator, void,
+                            TPM_EMULATOR, TPM_BACKEND,
     .class_init = tpm_emulator_class_init,
     .instance_init = tpm_emulator_inst_init,
     .instance_finalize = tpm_emulator_inst_finalize,
-};
-TYPE_INFO(tpm_emulator_info)
+)
 
 

@@ -79,11 +79,9 @@ static void collie_machine_class_init(ObjectClass *oc, void *data)
     mc->default_ram_id = "strongarm.sdram";
 }
 
-static const TypeInfo collie_machine_typeinfo = {
-    .name = TYPE_COLLIE_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(collie_machine_typeinfo,
+                            CollieMachineState, void,
+                            COLLIE_MACHINE, MACHINE,
     .class_init = collie_machine_class_init,
-    .instance_size = sizeof(CollieMachineState),
-};
-TYPE_INFO(collie_machine_typeinfo)
+)
 

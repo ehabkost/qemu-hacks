@@ -415,14 +415,12 @@ static void qio_channel_tls_class_init(ObjectClass *klass,
     ioc_klass->io_set_aio_fd_handler = qio_channel_tls_set_aio_fd_handler;
 }
 
-static const TypeInfo qio_channel_tls_info = {
-    .parent = TYPE_QIO_CHANNEL,
-    .name = TYPE_QIO_CHANNEL_TLS,
-    .instance_size = sizeof(QIOChannelTLS),
+OBJECT_DEFINE_TYPE_EXTENDED(qio_channel_tls_info,
+                            QIOChannelTLS, void,
+                            QIO_CHANNEL_TLS, QIO_CHANNEL,
     .instance_init = qio_channel_tls_init,
     .instance_finalize = qio_channel_tls_finalize,
     .class_init = qio_channel_tls_class_init,
-};
-TYPE_INFO(qio_channel_tls_info)
+)
 
 

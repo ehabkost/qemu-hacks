@@ -794,14 +794,12 @@ static void pmu_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo pmu_type_info = {
-    .name = TYPE_VIA_PMU,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PMUState),
+OBJECT_DEFINE_TYPE_EXTENDED(pmu_type_info,
+                            PMUState, void,
+                            VIA_PMU, SYS_BUS_DEVICE,
     .instance_init = pmu_init,
     .class_init = pmu_class_init,
-};
-TYPE_INFO(pmu_type_info)
+)
 
 static void mos6522_pmu_portB_write(MOS6522State *s)
 {
@@ -855,12 +853,10 @@ static void mos6522_pmu_class_init(ObjectClass *oc, void *data)
     mdc->portA_write = mos6522_pmu_portA_write;
 }
 
-static const TypeInfo mos6522_pmu_type_info = {
-    .name = TYPE_MOS6522_PMU,
-    .parent = TYPE_MOS6522,
-    .instance_size = sizeof(MOS6522PMUState),
+OBJECT_DEFINE_TYPE_EXTENDED(mos6522_pmu_type_info,
+                            MOS6522PMUState, void,
+                            MOS6522_PMU, MOS6522,
     .class_init = mos6522_pmu_class_init,
-};
-TYPE_INFO(mos6522_pmu_type_info)
+)
 
 

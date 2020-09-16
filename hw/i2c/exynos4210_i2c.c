@@ -317,13 +317,11 @@ static void exynos4210_i2c_class_init(ObjectClass *klass, void *data)
     dc->reset = exynos4210_i2c_reset;
 }
 
-static const TypeInfo exynos4210_i2c_type_info = {
-    .name = TYPE_EXYNOS4_I2C,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210I2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_i2c_type_info,
+                            Exynos4210I2CState, void,
+                            EXYNOS4_I2C, SYS_BUS_DEVICE,
     .instance_init = exynos4210_i2c_init,
     .class_init = exynos4210_i2c_class_init,
-};
-TYPE_INFO(exynos4210_i2c_type_info)
+)
 
 

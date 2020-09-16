@@ -1230,14 +1230,12 @@ static void pxa2xx_rtc_sysbus_class_init(ObjectClass *klass, void *data)
     dc->realize = pxa2xx_rtc_realize;
 }
 
-static const TypeInfo pxa2xx_rtc_sysbus_info = {
-    .name          = TYPE_PXA2XX_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxRTCState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_rtc_sysbus_info,
+                            PXA2xxRTCState, void,
+                            PXA2XX_RTC, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_rtc_init,
     .class_init    = pxa2xx_rtc_sysbus_class_init,
-};
-TYPE_INFO(pxa2xx_rtc_sysbus_info)
+)
 
 /* I2C Interface */
 
@@ -1491,13 +1489,11 @@ static void pxa2xx_i2c_slave_class_init(ObjectClass *klass, void *data)
     k->send = pxa2xx_i2c_tx;
 }
 
-static const TypeInfo pxa2xx_i2c_slave_info = {
-    .name          = TYPE_PXA2XX_I2C_SLAVE,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(PXA2xxI2CSlaveState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_i2c_slave_info,
+                            PXA2xxI2CSlaveState, void,
+                            PXA2XX_I2C_SLAVE, I2C_SLAVE,
     .class_init    = pxa2xx_i2c_slave_class_init,
-};
-TYPE_INFO(pxa2xx_i2c_slave_info)
+)
 
 PXA2xxI2CState *pxa2xx_i2c_init(hwaddr base,
                 qemu_irq irq, uint32_t region_size)
@@ -1561,14 +1557,12 @@ static void pxa2xx_i2c_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, pxa2xx_i2c_properties);
 }
 
-static const TypeInfo pxa2xx_i2c_info = {
-    .name          = TYPE_PXA2XX_I2C,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_i2c_info,
+                            PXA2xxI2CState, void,
+                            PXA2XX_I2C, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_i2c_initfn,
     .class_init    = pxa2xx_i2c_class_init,
-};
-TYPE_INFO(pxa2xx_i2c_info)
+)
 
 /* PXA Inter-IC Sound Controller */
 static void pxa2xx_i2s_reset(PXA2xxI2SState *i2s)
@@ -2052,14 +2046,12 @@ static void pxa2xx_fir_class_init(ObjectClass *klass, void *data)
     dc->reset = pxa2xx_fir_reset;
 }
 
-static const TypeInfo pxa2xx_fir_info = {
-    .name = TYPE_PXA2XX_FIR,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxFIrState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_fir_info,
+                            PXA2xxFIrState, void,
+                            PXA2XX_FIR, SYS_BUS_DEVICE,
     .class_init = pxa2xx_fir_class_init,
     .instance_init = pxa2xx_fir_instance_init,
-};
-TYPE_INFO(pxa2xx_fir_info)
+)
 
 static PXA2xxFIrState *pxa2xx_fir_init(MemoryRegion *sysmem,
                                        hwaddr base,
@@ -2367,13 +2359,11 @@ static void pxa2xx_ssp_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_pxa2xx_ssp;
 }
 
-static const TypeInfo pxa2xx_ssp_info = {
-    .name          = TYPE_PXA2XX_SSP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxSSPState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_ssp_info,
+                            PXA2xxSSPState, void,
+                            PXA2XX_SSP, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_ssp_init,
     .class_init    = pxa2xx_ssp_class_init,
-};
-TYPE_INFO(pxa2xx_ssp_info)
+)
 
 

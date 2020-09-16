@@ -274,15 +274,12 @@ static void aspeed_wdt_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, aspeed_wdt_properties);
 }
 
-static const TypeInfo aspeed_wdt_info = {
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .name  = TYPE_ASPEED_WDT,
-    .instance_size  = sizeof(AspeedWDTState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_wdt_info,
+                            AspeedWDTState, AspeedWDTClass,
+                            ASPEED_WDT, SYS_BUS_DEVICE,
     .class_init = aspeed_wdt_class_init,
-    .class_size    = sizeof(AspeedWDTClass),
     .abstract      = true,
-};
-TYPE_INFO(aspeed_wdt_info)
+)
 
 static void aspeed_2400_wdt_class_init(ObjectClass *klass, void *data)
 {
@@ -296,12 +293,11 @@ static void aspeed_2400_wdt_class_init(ObjectClass *klass, void *data)
     awc->wdt_reload = aspeed_wdt_reload;
 }
 
-static const TypeInfo aspeed_2400_wdt_info = {
-    .name = TYPE_ASPEED_2400_WDT,
-    .parent = TYPE_ASPEED_WDT,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2400_wdt_info,
+                            void, void,
+                            ASPEED_2400_WDT, ASPEED_WDT,
     .class_init = aspeed_2400_wdt_class_init,
-};
-TYPE_INFO(aspeed_2400_wdt_info)
+)
 
 static void aspeed_2500_wdt_reset_pulse(AspeedWDTState *s, uint32_t property)
 {
@@ -331,12 +327,11 @@ static void aspeed_2500_wdt_class_init(ObjectClass *klass, void *data)
     awc->wdt_reload = aspeed_wdt_reload_1mhz;
 }
 
-static const TypeInfo aspeed_2500_wdt_info = {
-    .name = TYPE_ASPEED_2500_WDT,
-    .parent = TYPE_ASPEED_WDT,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2500_wdt_info,
+                            void, void,
+                            ASPEED_2500_WDT, ASPEED_WDT,
     .class_init = aspeed_2500_wdt_class_init,
-};
-TYPE_INFO(aspeed_2500_wdt_info)
+)
 
 static void aspeed_2600_wdt_class_init(ObjectClass *klass, void *data)
 {
@@ -351,12 +346,11 @@ static void aspeed_2600_wdt_class_init(ObjectClass *klass, void *data)
     awc->wdt_reload = aspeed_wdt_reload_1mhz;
 }
 
-static const TypeInfo aspeed_2600_wdt_info = {
-    .name = TYPE_ASPEED_2600_WDT,
-    .parent = TYPE_ASPEED_WDT,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2600_wdt_info,
+                            void, void,
+                            ASPEED_2600_WDT, ASPEED_WDT,
     .class_init = aspeed_2600_wdt_class_init,
-};
-TYPE_INFO(aspeed_2600_wdt_info)
+)
 
 static void wdt_aspeed_register_types(void)
 {

@@ -74,12 +74,10 @@ static void riscv_harts_class_init(ObjectClass *klass, void *data)
     dc->realize = riscv_harts_realize;
 }
 
-static const TypeInfo riscv_harts_info = {
-    .name          = TYPE_RISCV_HART_ARRAY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RISCVHartArrayState),
+OBJECT_DEFINE_TYPE_EXTENDED(riscv_harts_info,
+                            RISCVHartArrayState, void,
+                            RISCV_HART_ARRAY, SYS_BUS_DEVICE,
     .class_init    = riscv_harts_class_init,
-};
-TYPE_INFO(riscv_harts_info)
+)
 
 

@@ -399,13 +399,10 @@ static void arm_gicv3_class_init(ObjectClass *klass, void *data)
     device_class_set_parent_realize(dc, arm_gic_realize, &agc->parent_realize);
 }
 
-static const TypeInfo arm_gicv3_info = {
-    .name = TYPE_ARM_GICV3,
-    .parent = TYPE_ARM_GICV3_COMMON,
-    .instance_size = sizeof(GICv3State),
+OBJECT_DEFINE_TYPE_EXTENDED(arm_gicv3_info,
+                            GICv3State, ARMGICv3Class,
+                            ARM_GICV3, ARM_GICV3_COMMON,
     .class_init = arm_gicv3_class_init,
-    .class_size = sizeof(ARMGICv3Class),
-};
-TYPE_INFO(arm_gicv3_info)
+)
 
 

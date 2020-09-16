@@ -1156,19 +1156,16 @@ static void armsse_class_init(ObjectClass *klass, void *data)
     asc->info = info;
 }
 
-static const TypeInfo armsse_info = {
-    .name = TYPE_ARM_SSE,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARMSSE),
-    .class_size = sizeof(ARMSSEClass),
+OBJECT_DEFINE_TYPE_EXTENDED(armsse_info,
+                            ARMSSE, ARMSSEClass,
+                            ARM_SSE, SYS_BUS_DEVICE,
     .instance_init = armsse_init,
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_IDAU_INTERFACE },
         { }
     }
-};
-TYPE_INFO(armsse_info)
+)
 
 static void armsse_register_types(void)
 {

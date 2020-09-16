@@ -609,17 +609,14 @@ static void microvm_class_init(ObjectClass *oc, void *data)
     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_RAMFB_DEVICE);
 }
 
-static const TypeInfo microvm_machine_info = {
-    .name          = TYPE_MICROVM_MACHINE,
-    .parent        = TYPE_X86_MACHINE,
-    .instance_size = sizeof(MicrovmMachineState),
+OBJECT_DEFINE_TYPE_EXTENDED(microvm_machine_info,
+                            MicrovmMachineState, MicrovmMachineClass,
+                            MICROVM_MACHINE, X86_MACHINE,
     .instance_init = microvm_machine_initfn,
-    .class_size    = sizeof(MicrovmMachineClass),
     .class_init    = microvm_class_init,
     .interfaces = (InterfaceInfo[]) {
          { TYPE_HOTPLUG_HANDLER },
          { }
     },
-};
-TYPE_INFO(microvm_machine_info)
+)
 

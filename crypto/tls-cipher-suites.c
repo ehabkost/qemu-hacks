@@ -105,18 +105,15 @@ static void qcrypto_tls_cipher_suites_class_init(ObjectClass *oc, void *data)
     fwgc->get_data = qcrypto_tls_cipher_suites_fw_cfg_gen_data;
 }
 
-static const TypeInfo qcrypto_tls_cipher_suites_info = {
-    .parent = TYPE_QCRYPTO_TLS_CREDS,
-    .name = TYPE_QCRYPTO_TLS_CIPHER_SUITES,
-    .instance_size = sizeof(QCryptoTLSCipherSuites),
-    .class_size = sizeof(QCryptoTLSCredsClass),
+OBJECT_DEFINE_TYPE_EXTENDED(qcrypto_tls_cipher_suites_info,
+                            QCryptoTLSCipherSuites, QCryptoTLSCredsClass,
+                            QCRYPTO_TLS_CIPHER_SUITES, QCRYPTO_TLS_CREDS,
     .class_init = qcrypto_tls_cipher_suites_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { TYPE_FW_CFG_DATA_GENERATOR_INTERFACE },
         { }
     }
-};
-TYPE_INFO(qcrypto_tls_cipher_suites_info)
+)
 
 

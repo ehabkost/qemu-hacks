@@ -344,13 +344,11 @@ static void milkymist_vgafb_class_init(ObjectClass *klass, void *data)
     dc->realize = milkymist_vgafb_realize;
 }
 
-static const TypeInfo milkymist_vgafb_info = {
-    .name          = TYPE_MILKYMIST_VGAFB,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistVgafbState),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_vgafb_info,
+                            MilkymistVgafbState, void,
+                            MILKYMIST_VGAFB, SYS_BUS_DEVICE,
     .instance_init = milkymist_vgafb_init,
     .class_init    = milkymist_vgafb_class_init,
-};
-TYPE_INFO(milkymist_vgafb_info)
+)
 
 

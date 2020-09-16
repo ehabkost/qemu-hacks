@@ -372,13 +372,11 @@ static void versal_class_init(ObjectClass *klass, void *data)
     /* No VMSD since we haven't got any top-level SoC state to save.  */
 }
 
-static const TypeInfo versal_info = {
-    .name = TYPE_XLNX_VERSAL,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Versal),
+OBJECT_DEFINE_TYPE_EXTENDED(versal_info,
+                            Versal, void,
+                            XLNX_VERSAL, SYS_BUS_DEVICE,
     .instance_init = versal_init,
     .class_init = versal_class_init,
-};
-TYPE_INFO(versal_info)
+)
 
 

@@ -789,10 +789,9 @@ static void ich9_lpc_class_init(ObjectClass *klass, void *data)
     adevc->madt_cpu = pc_madt_cpu_entry;
 }
 
-static const TypeInfo ich9_lpc_info = {
-    .name       = TYPE_ICH9_LPC_DEVICE,
-    .parent     = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(ICH9LPCState),
+OBJECT_DEFINE_TYPE_EXTENDED(ich9_lpc_info,
+                            ICH9LPCState, void,
+                            ICH9_LPC_DEVICE, PCI_DEVICE,
     .instance_init = ich9_lpc_initfn,
     .class_init  = ich9_lpc_class_init,
     .interfaces = (InterfaceInfo[]) {
@@ -801,7 +800,6 @@ static const TypeInfo ich9_lpc_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(ich9_lpc_info)
+)
 
 

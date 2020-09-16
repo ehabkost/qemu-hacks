@@ -762,14 +762,12 @@ static void omap_gpio_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo omap_gpio_info = {
-    .name          = TYPE_OMAP1_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(struct omap_gpif_s),
+OBJECT_DEFINE_TYPE_EXTENDED(omap_gpio_info,
+                            struct omap_gpif_s, void,
+                            OMAP1_GPIO, SYS_BUS_DEVICE,
     .instance_init = omap_gpio_init,
     .class_init    = omap_gpio_class_init,
-};
-TYPE_INFO(omap_gpio_info)
+)
 
 void omap2_gpio_set_iclk(omap2_gpif *gpio, omap_clk clk)
 {
@@ -798,12 +796,10 @@ static void omap2_gpio_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo omap2_gpio_info = {
-    .name          = TYPE_OMAP2_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(struct omap2_gpif_s),
+OBJECT_DEFINE_TYPE_EXTENDED(omap2_gpio_info,
+                            struct omap2_gpif_s, void,
+                            OMAP2_GPIO, SYS_BUS_DEVICE,
     .class_init    = omap2_gpio_class_init,
-};
-TYPE_INFO(omap2_gpio_info)
+)
 
 

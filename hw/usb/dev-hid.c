@@ -785,14 +785,12 @@ static void usb_hid_class_initfn(ObjectClass *klass, void *data)
     uc->handle_attach  = usb_desc_attach;
 }
 
-static const TypeInfo usb_hid_type_info = {
-    .name = TYPE_USB_HID,
-    .parent = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBHIDState),
+OBJECT_DEFINE_TYPE_EXTENDED(usb_hid_type_info,
+                            USBHIDState, void,
+                            USB_HID, USB_DEVICE,
     .abstract = true,
     .class_init = usb_hid_class_initfn,
-};
-TYPE_INFO(usb_hid_type_info)
+)
 
 static Property usb_tablet_properties[] = {
         DEFINE_PROP_UINT32("usb_version", USBHIDState, usb_version, 2),

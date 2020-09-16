@@ -297,13 +297,10 @@ static void terminal_class_init(ObjectClass *klass, void *data)
     ck->write_payload_3270 = write_payload_3270;
 }
 
-static const TypeInfo ccw_terminal_info = {
-    .name = TYPE_TERMINAL_3270,
-    .parent = TYPE_EMULATED_CCW_3270,
-    .instance_size = sizeof(Terminal3270),
+OBJECT_DEFINE_TYPE_EXTENDED(ccw_terminal_info,
+                            Terminal3270, EmulatedCcw3270Class,
+                            TERMINAL_3270, EMULATED_CCW_3270,
     .class_init = terminal_class_init,
-    .class_size = sizeof(EmulatedCcw3270Class),
-};
-TYPE_INFO(ccw_terminal_info)
+)
 
 

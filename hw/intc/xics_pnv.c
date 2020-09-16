@@ -186,13 +186,10 @@ static void pnv_icp_class_init(ObjectClass *klass, void *data)
     dc->desc = "PowerNV ICP";
 }
 
-static const TypeInfo pnv_icp_info = {
-    .name          = TYPE_PNV_ICP,
-    .parent        = TYPE_ICP,
-    .instance_size = sizeof(PnvICPState),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_icp_info,
+                            PnvICPState, ICPStateClass,
+                            PNV_ICP, ICP,
     .class_init    = pnv_icp_class_init,
-    .class_size    = sizeof(ICPStateClass),
-};
-TYPE_INFO(pnv_icp_info)
+)
 
 

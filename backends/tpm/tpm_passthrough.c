@@ -387,14 +387,12 @@ static void tpm_passthrough_class_init(ObjectClass *klass, void *data)
     tbc->handle_request = tpm_passthrough_handle_request;
 }
 
-static const TypeInfo tpm_passthrough_info = {
-    .name = TYPE_TPM_PASSTHROUGH,
-    .parent = TYPE_TPM_BACKEND,
-    .instance_size = sizeof(TPMPassthruState),
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_passthrough_info,
+                            TPMPassthruState, void,
+                            TPM_PASSTHROUGH, TPM_BACKEND,
     .class_init = tpm_passthrough_class_init,
     .instance_init = tpm_passthrough_inst_init,
     .instance_finalize = tpm_passthrough_inst_finalize,
-};
-TYPE_INFO(tpm_passthrough_info)
+)
 
 

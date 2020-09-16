@@ -302,13 +302,11 @@ static void qio_net_listener_finalize(Object *obj)
     g_free(listener->name);
 }
 
-static const TypeInfo qio_net_listener_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_QIO_NET_LISTENER,
-    .instance_size = sizeof(QIONetListener),
+OBJECT_DEFINE_TYPE_EXTENDED(qio_net_listener_info,
+                            QIONetListener, void,
+                            QIO_NET_LISTENER, OBJECT,
     .instance_finalize = qio_net_listener_finalize,
-};
-TYPE_INFO(qio_net_listener_info)
+)
 
 
 

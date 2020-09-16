@@ -172,13 +172,11 @@ static void stm32f4xx_exti_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_stm32f4xx_exti;
 }
 
-static const TypeInfo stm32f4xx_exti_info = {
-    .name          = TYPE_STM32F4XX_EXTI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F4xxExtiState),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f4xx_exti_info,
+                            STM32F4xxExtiState, void,
+                            STM32F4XX_EXTI, SYS_BUS_DEVICE,
     .instance_init = stm32f4xx_exti_init,
     .class_init    = stm32f4xx_exti_class_init,
-};
-TYPE_INFO(stm32f4xx_exti_info)
+)
 
 

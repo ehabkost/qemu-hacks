@@ -138,12 +138,10 @@ static void a9_scu_class_init(ObjectClass *klass, void *data)
     dc->realize = a9_scu_realize;
 }
 
-static const TypeInfo a9_scu_info = {
-    .name          = TYPE_A9_SCU,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(A9SCUState),
+OBJECT_DEFINE_TYPE_EXTENDED(a9_scu_info,
+                            A9SCUState, void,
+                            A9_SCU, SYS_BUS_DEVICE,
     .class_init    = a9_scu_class_init,
-};
-TYPE_INFO(a9_scu_info)
+)
 
 

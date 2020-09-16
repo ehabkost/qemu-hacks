@@ -295,12 +295,10 @@ static void vuf_class_init(ObjectClass *klass, void *data)
     vdc->guest_notifier_pending = vuf_guest_notifier_pending;
 }
 
-static const TypeInfo vuf_info = {
-    .name = TYPE_VHOST_USER_FS,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VHostUserFS),
+OBJECT_DEFINE_TYPE_EXTENDED(vuf_info,
+                            VHostUserFS, void,
+                            VHOST_USER_FS, VIRTIO_DEVICE,
     .class_init = vuf_class_init,
-};
-TYPE_INFO(vuf_info)
+)
 
 

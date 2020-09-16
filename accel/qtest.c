@@ -40,11 +40,10 @@ static void qtest_accel_class_init(ObjectClass *oc, void *data)
 
 #define TYPE_QTEST_ACCEL ACCEL_CLASS_NAME("qtest")
 
-static const TypeInfo qtest_accel_type = {
-    .name = TYPE_QTEST_ACCEL,
-    .parent = TYPE_ACCEL,
+OBJECT_DEFINE_TYPE_EXTENDED(qtest_accel_type,
+                            void, void,
+                            QTEST_ACCEL, ACCEL,
     .class_init = qtest_accel_class_init,
-};
-TYPE_INFO(qtest_accel_type)
+)
 
 

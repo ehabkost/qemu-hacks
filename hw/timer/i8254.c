@@ -369,13 +369,10 @@ static void pit_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, pit_properties);
 }
 
-static const TypeInfo pit_info = {
-    .name          = TYPE_I8254,
-    .parent        = TYPE_PIT_COMMON,
-    .instance_size = sizeof(PITCommonState),
+OBJECT_DEFINE_TYPE_EXTENDED(pit_info,
+                            PITCommonState, PITClass,
+                            I8254, PIT_COMMON,
     .class_init    = pit_class_initfn,
-    .class_size    = sizeof(PITClass),
-};
-TYPE_INFO(pit_info)
+)
 
 

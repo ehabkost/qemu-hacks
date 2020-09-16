@@ -53,13 +53,11 @@ static void virtio_ccw_crypto_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_crypto = {
-    .name          = TYPE_VIRTIO_CRYPTO_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtIOCryptoCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_crypto,
+                            VirtIOCryptoCcw, void,
+                            VIRTIO_CRYPTO_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_crypto_instance_init,
     .class_init    = virtio_ccw_crypto_class_init,
-};
-TYPE_INFO(virtio_ccw_crypto)
+)
 
 

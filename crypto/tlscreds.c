@@ -260,17 +260,14 @@ qcrypto_tls_creds_finalize(Object *obj)
 }
 
 
-static const TypeInfo qcrypto_tls_creds_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_QCRYPTO_TLS_CREDS,
-    .instance_size = sizeof(QCryptoTLSCreds),
+OBJECT_DEFINE_TYPE_EXTENDED(qcrypto_tls_creds_info,
+                            QCryptoTLSCreds, QCryptoTLSCredsClass,
+                            QCRYPTO_TLS_CREDS, OBJECT,
     .instance_init = qcrypto_tls_creds_init,
     .instance_finalize = qcrypto_tls_creds_finalize,
     .class_init = qcrypto_tls_creds_class_init,
-    .class_size = sizeof(QCryptoTLSCredsClass),
     .abstract = true,
-};
-TYPE_INFO(qcrypto_tls_creds_info)
+)
 
 
 

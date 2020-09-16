@@ -495,13 +495,11 @@ static void exynos4210_class_init(ObjectClass *klass, void *data)
     dc->realize = exynos4210_realize;
 }
 
-static const TypeInfo exynos4210_info = {
-    .name = TYPE_EXYNOS4210_SOC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210State),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_info,
+                            Exynos4210State, void,
+                            EXYNOS4210_SOC, SYS_BUS_DEVICE,
     .instance_init = exynos4210_init,
     .class_init = exynos4210_class_init,
-};
-TYPE_INFO(exynos4210_info)
+)
 
 

@@ -1434,17 +1434,15 @@ static void sungem_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }
 
-static const TypeInfo sungem_info = {
-    .name          = TYPE_SUNGEM,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(SunGEMState),
+OBJECT_DEFINE_TYPE_EXTENDED(sungem_info,
+                            SunGEMState, void,
+                            SUNGEM, PCI_DEVICE,
     .class_init    = sungem_class_init,
     .instance_init = sungem_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(sungem_info)
+)
 
 

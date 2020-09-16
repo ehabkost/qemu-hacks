@@ -696,13 +696,11 @@ static void virt_machine_class_init(ObjectClass *oc, void *data)
     mc->numa_mem_supported = true;
 }
 
-static const TypeInfo virt_machine_typeinfo = {
-    .name       = TYPE_RISCV_VIRT_MACHINE,
-    .parent     = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(virt_machine_typeinfo,
+                            RISCVVirtState, void,
+                            RISCV_VIRT_MACHINE, MACHINE,
     .class_init = virt_machine_class_init,
     .instance_init = virt_machine_instance_init,
-    .instance_size = sizeof(RISCVVirtState),
-};
-TYPE_INFO(virt_machine_typeinfo)
+)
 
 

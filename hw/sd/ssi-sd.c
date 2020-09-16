@@ -302,12 +302,10 @@ static void ssi_sd_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo ssi_sd_info = {
-    .name          = TYPE_SSI_SD,
-    .parent        = TYPE_SSI_SLAVE,
-    .instance_size = sizeof(ssi_sd_state),
+OBJECT_DEFINE_TYPE_EXTENDED(ssi_sd_info,
+                            ssi_sd_state, void,
+                            SSI_SD, SSI_SLAVE,
     .class_init    = ssi_sd_class_init,
-};
-TYPE_INFO(ssi_sd_info)
+)
 
 

@@ -38,13 +38,9 @@ struct DummyObjectClass {
     ObjectClass parent;
 };
 
-static const TypeInfo dummy_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_DUMMY,
-    .instance_size = sizeof(DummyObject),
-    .class_size = sizeof(DummyObjectClass),
-};
-TYPE_INFO(dummy_info)
+OBJECT_DEFINE_TYPE_EXTENDED(dummy_info,
+                            DummyObject, DummyObjectClass,
+                            DUMMY, OBJECT)
 
 struct TestTaskData {
     Object *source;

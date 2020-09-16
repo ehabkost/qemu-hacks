@@ -1312,11 +1312,8 @@ void arm_load_kernel(ARMCPU *cpu, MachineState *ms, struct arm_boot_info *info)
     }
 }
 
-static const TypeInfo arm_linux_boot_if_info = {
-    .name = TYPE_ARM_LINUX_BOOT_IF,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(ARMLinuxBootIfClass),
-};
-TYPE_INFO(arm_linux_boot_if_info)
+OBJECT_DEFINE_TYPE_EXTENDED(arm_linux_boot_if_info,
+                            void, ARMLinuxBootIfClass,
+                            ARM_LINUX_BOOT_IF, INTERFACE)
 
 

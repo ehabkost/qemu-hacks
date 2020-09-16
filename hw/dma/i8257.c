@@ -614,17 +614,15 @@ static void i8257_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo i8257_info = {
-    .name = TYPE_I8257,
-    .parent = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(I8257State),
+OBJECT_DEFINE_TYPE_EXTENDED(i8257_info,
+                            I8257State, void,
+                            I8257, ISA_DEVICE,
     .class_init = i8257_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_ISADMA },
         { }
     }
-};
-TYPE_INFO(i8257_info)
+)
 
 
 

@@ -1234,23 +1234,20 @@ Object *qdev_get_machine(void)
     return dev;
 }
 
-static const TypeInfo device_type_info = {
-    .name = TYPE_DEVICE,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(DeviceState),
+OBJECT_DEFINE_TYPE_EXTENDED(device_type_info,
+                            DeviceState, DeviceClass,
+                            DEVICE, OBJECT,
     .instance_init = device_initfn,
     .instance_post_init = device_post_init,
     .instance_finalize = device_finalize,
     .class_base_init = device_class_base_init,
     .class_init = device_class_init,
     .abstract = true,
-    .class_size = sizeof(DeviceClass),
     .interfaces = (InterfaceInfo[]) {
         { TYPE_VMSTATE_IF },
         { TYPE_RESETTABLE_INTERFACE },
         { }
     }
-};
-TYPE_INFO(device_type_info)
+)
 
 

@@ -833,37 +833,30 @@ static void allwinner_sdhost_sun5i_class_init(ObjectClass *klass, void *data)
     sc->max_desc_size = 64 * KiB;
 }
 
-static TypeInfo allwinner_sdhost_info = {
-    .name          = TYPE_AW_SDHOST,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_sdhost_info,
+                            AwSdHostState, AwSdHostClass,
+                            AW_SDHOST, SYS_BUS_DEVICE,
     .instance_init = allwinner_sdhost_init,
-    .instance_size = sizeof(AwSdHostState),
     .class_init    = allwinner_sdhost_class_init,
-    .class_size    = sizeof(AwSdHostClass),
     .abstract      = true,
-};
-TYPE_INFO(allwinner_sdhost_info)
+)
 
-static const TypeInfo allwinner_sdhost_sun4i_info = {
-    .name          = TYPE_AW_SDHOST_SUN4I,
-    .parent        = TYPE_AW_SDHOST,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_sdhost_sun4i_info,
+                            void, void,
+                            AW_SDHOST_SUN4I, AW_SDHOST,
     .class_init    = allwinner_sdhost_sun4i_class_init,
-};
-TYPE_INFO(allwinner_sdhost_sun4i_info)
+)
 
-static const TypeInfo allwinner_sdhost_sun5i_info = {
-    .name          = TYPE_AW_SDHOST_SUN5I,
-    .parent        = TYPE_AW_SDHOST,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_sdhost_sun5i_info,
+                            void, void,
+                            AW_SDHOST_SUN5I, AW_SDHOST,
     .class_init    = allwinner_sdhost_sun5i_class_init,
-};
-TYPE_INFO(allwinner_sdhost_sun5i_info)
+)
 
-static const TypeInfo allwinner_sdhost_bus_info = {
-    .name = TYPE_AW_SDHOST_BUS,
-    .parent = TYPE_SD_BUS,
-    .instance_size = sizeof(SDBus),
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_sdhost_bus_info,
+                            SDBus, void,
+                            AW_SDHOST_BUS, SD_BUS,
     .class_init = allwinner_sdhost_bus_class_init,
-};
-TYPE_INFO(allwinner_sdhost_bus_info)
+)
 
 

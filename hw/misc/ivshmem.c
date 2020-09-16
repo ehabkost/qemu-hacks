@@ -998,18 +998,16 @@ static void ivshmem_common_class_init(ObjectClass *klass, void *data)
     dc->desc = "Inter-VM shared memory";
 }
 
-static const TypeInfo ivshmem_common_info = {
-    .name          = TYPE_IVSHMEM_COMMON,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(IVShmemState),
+OBJECT_DEFINE_TYPE_EXTENDED(ivshmem_common_info,
+                            IVShmemState, void,
+                            IVSHMEM_COMMON, PCI_DEVICE,
     .abstract      = true,
     .class_init    = ivshmem_common_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(ivshmem_common_info)
+)
 
 static const VMStateDescription ivshmem_plain_vmsd = {
     .name = TYPE_IVSHMEM_PLAIN,
@@ -1058,13 +1056,11 @@ static void ivshmem_plain_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &ivshmem_plain_vmsd;
 }
 
-static const TypeInfo ivshmem_plain_info = {
-    .name          = TYPE_IVSHMEM_PLAIN,
-    .parent        = TYPE_IVSHMEM_COMMON,
-    .instance_size = sizeof(IVShmemState),
+OBJECT_DEFINE_TYPE_EXTENDED(ivshmem_plain_info,
+                            IVShmemState, void,
+                            IVSHMEM_PLAIN, IVSHMEM_COMMON,
     .class_init    = ivshmem_plain_class_init,
-};
-TYPE_INFO(ivshmem_plain_info)
+)
 
 static const VMStateDescription ivshmem_doorbell_vmsd = {
     .name = TYPE_IVSHMEM_DOORBELL,
@@ -1119,13 +1115,11 @@ static void ivshmem_doorbell_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &ivshmem_doorbell_vmsd;
 }
 
-static const TypeInfo ivshmem_doorbell_info = {
-    .name          = TYPE_IVSHMEM_DOORBELL,
-    .parent        = TYPE_IVSHMEM_COMMON,
-    .instance_size = sizeof(IVShmemState),
+OBJECT_DEFINE_TYPE_EXTENDED(ivshmem_doorbell_info,
+                            IVShmemState, void,
+                            IVSHMEM_DOORBELL, IVSHMEM_COMMON,
     .instance_init = ivshmem_doorbell_init,
     .class_init    = ivshmem_doorbell_class_init,
-};
-TYPE_INFO(ivshmem_doorbell_info)
+)
 
 

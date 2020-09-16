@@ -177,11 +177,9 @@ static void spapr_rtc_class_init(ObjectClass *oc, void *data)
                         rtas_set_time_of_day);
 }
 
-static const TypeInfo spapr_rtc_info = {
-    .name          = TYPE_SPAPR_RTC,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(SpaprRtcState),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_rtc_info,
+                            SpaprRtcState, void,
+                            SPAPR_RTC, DEVICE,
     .class_init    = spapr_rtc_class_init,
-};
-TYPE_INFO(spapr_rtc_info)
+)
 

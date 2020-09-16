@@ -963,17 +963,15 @@ static void sunhme_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }
 
-static const TypeInfo sunhme_info = {
-    .name          = TYPE_SUNHME,
-    .parent        = TYPE_PCI_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(sunhme_info,
+                            SunHMEState, void,
+                            SUNHME, PCI_DEVICE,
     .class_init    = sunhme_class_init,
-    .instance_size = sizeof(SunHMEState),
     .instance_init = sunhme_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(sunhme_info)
+)
 
 

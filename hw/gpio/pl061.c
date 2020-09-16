@@ -379,14 +379,12 @@ static void pl061_class_init(ObjectClass *klass, void *data)
     dc->reset = &pl061_reset;
 }
 
-static const TypeInfo pl061_info = {
-    .name          = TYPE_PL061,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL061State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl061_info,
+                            PL061State, void,
+                            PL061, SYS_BUS_DEVICE,
     .instance_init = pl061_init,
     .class_init    = pl061_class_init,
-};
-TYPE_INFO(pl061_info)
+)
 
 static const TypeInfo pl061_luminary_info = {
     .name          = "pl061_luminary",

@@ -105,12 +105,10 @@ static void m41t80_class_init(ObjectClass *klass, void *data)
     sc->event = m41t80_event;
 }
 
-static const TypeInfo m41t80_info = {
-    .name          = TYPE_M41T80,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(M41t80State),
+OBJECT_DEFINE_TYPE_EXTENDED(m41t80_info,
+                            M41t80State, void,
+                            M41T80, I2C_SLAVE,
     .class_init    = m41t80_class_init,
-};
-TYPE_INFO(m41t80_info)
+)
 
 

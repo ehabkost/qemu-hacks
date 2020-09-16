@@ -1354,13 +1354,11 @@ static void xlnx_dp_class_init(ObjectClass *oc, void *data)
     dc->reset = xlnx_dp_reset;
 }
 
-static const TypeInfo xlnx_dp_info = {
-    .name          = TYPE_XLNX_DP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XlnxDPState),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_dp_info,
+                            XlnxDPState, void,
+                            XLNX_DP, SYS_BUS_DEVICE,
     .instance_init = xlnx_dp_init,
     .class_init    = xlnx_dp_class_init,
-};
-TYPE_INFO(xlnx_dp_info)
+)
 
 

@@ -540,14 +540,12 @@ static void pl110_class_init(ObjectClass *klass, void *data)
     dc->realize = pl110_realize;
 }
 
-static const TypeInfo pl110_info = {
-    .name          = TYPE_PL110,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL110State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl110_info,
+                            PL110State, void,
+                            PL110, SYS_BUS_DEVICE,
     .instance_init = pl110_init,
     .class_init    = pl110_class_init,
-};
-TYPE_INFO(pl110_info)
+)
 
 static const TypeInfo pl110_versatile_info = {
     .name          = "pl110_versatile",

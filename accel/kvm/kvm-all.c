@@ -3201,13 +3201,11 @@ static void kvm_accel_class_init(ObjectClass *oc, void *data)
         "KVM shadow MMU size");
 }
 
-static const TypeInfo kvm_accel_type = {
-    .name = TYPE_KVM_ACCEL,
-    .parent = TYPE_ACCEL,
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_accel_type,
+                            KVMState, void,
+                            KVM_ACCEL, ACCEL,
     .instance_init = kvm_accel_instance_init,
     .class_init = kvm_accel_class_init,
-    .instance_size = sizeof(KVMState),
-};
-TYPE_INFO(kvm_accel_type)
+)
 
 

@@ -896,13 +896,11 @@ static void tcx_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, tcx_properties);
 }
 
-static const TypeInfo tcx_info = {
-    .name          = TYPE_TCX,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(TCXState),
+OBJECT_DEFINE_TYPE_EXTENDED(tcx_info,
+                            TCXState, void,
+                            TCX, SYS_BUS_DEVICE,
     .instance_init = tcx_initfn,
     .class_init    = tcx_class_init,
-};
-TYPE_INFO(tcx_info)
+)
 
 

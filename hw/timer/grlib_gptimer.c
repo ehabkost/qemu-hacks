@@ -417,12 +417,10 @@ static void grlib_gptimer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, grlib_gptimer_properties);
 }
 
-static const TypeInfo grlib_gptimer_info = {
-    .name          = TYPE_GRLIB_GPTIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(GPTimerUnit),
+OBJECT_DEFINE_TYPE_EXTENDED(grlib_gptimer_info,
+                            GPTimerUnit, void,
+                            GRLIB_GPTIMER, SYS_BUS_DEVICE,
     .class_init    = grlib_gptimer_class_init,
-};
-TYPE_INFO(grlib_gptimer_info)
+)
 
 

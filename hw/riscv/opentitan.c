@@ -190,13 +190,11 @@ static void lowrisc_ibex_soc_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo lowrisc_ibex_soc_type_info = {
-    .name = TYPE_RISCV_IBEX_SOC,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(LowRISCIbexSoCState),
+OBJECT_DEFINE_TYPE_EXTENDED(lowrisc_ibex_soc_type_info,
+                            LowRISCIbexSoCState, void,
+                            RISCV_IBEX_SOC, DEVICE,
     .instance_init = lowrisc_ibex_soc_init,
     .class_init = lowrisc_ibex_soc_class_init,
-};
-TYPE_INFO(lowrisc_ibex_soc_type_info)
+)
 
 

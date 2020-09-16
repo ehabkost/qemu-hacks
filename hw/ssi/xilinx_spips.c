@@ -1472,30 +1472,23 @@ static void xlnx_zynqmp_qspips_class_init(ObjectClass *klass, void * data)
     xsc->tx_fifo_size = TXFF_A_Q;
 }
 
-static const TypeInfo xilinx_spips_info = {
-    .name  = TYPE_XILINX_SPIPS,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(XilinxSPIPS),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_spips_info,
+                            XilinxSPIPS, XilinxSPIPSClass,
+                            XILINX_SPIPS, SYS_BUS_DEVICE,
     .class_init = xilinx_spips_class_init,
-    .class_size = sizeof(XilinxSPIPSClass),
-};
-TYPE_INFO(xilinx_spips_info)
+)
 
-static const TypeInfo xilinx_qspips_info = {
-    .name  = TYPE_XILINX_QSPIPS,
-    .parent = TYPE_XILINX_SPIPS,
-    .instance_size  = sizeof(XilinxQSPIPS),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_qspips_info,
+                            XilinxQSPIPS, void,
+                            XILINX_QSPIPS, XILINX_SPIPS,
     .class_init = xilinx_qspips_class_init,
-};
-TYPE_INFO(xilinx_qspips_info)
+)
 
-static const TypeInfo xlnx_zynqmp_qspips_info = {
-    .name  = TYPE_XLNX_ZYNQMP_QSPIPS,
-    .parent = TYPE_XILINX_QSPIPS,
-    .instance_size  = sizeof(XlnxZynqMPQSPIPS),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_zynqmp_qspips_info,
+                            XlnxZynqMPQSPIPS, void,
+                            XLNX_ZYNQMP_QSPIPS, XILINX_QSPIPS,
     .instance_init  = xlnx_zynqmp_qspips_init,
     .class_init = xlnx_zynqmp_qspips_class_init,
-};
-TYPE_INFO(xlnx_zynqmp_qspips_info)
+)
 
 

@@ -820,31 +820,26 @@ static void vexpress_a15_class_init(ObjectClass *oc, void *data)
     vmc->daughterboard = &a15_daughterboard;
 }
 
-static const TypeInfo vexpress_info = {
-    .name = TYPE_VEXPRESS_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(vexpress_info,
+                            VexpressMachineState, VexpressMachineClass,
+                            VEXPRESS_MACHINE, MACHINE,
     .abstract = true,
-    .instance_size = sizeof(VexpressMachineState),
     .instance_init = vexpress_instance_init,
-    .class_size = sizeof(VexpressMachineClass),
     .class_init = vexpress_class_init,
-};
-TYPE_INFO(vexpress_info)
+)
 
-static const TypeInfo vexpress_a9_info = {
-    .name = TYPE_VEXPRESS_A9_MACHINE,
-    .parent = TYPE_VEXPRESS_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(vexpress_a9_info,
+                            void, void,
+                            VEXPRESS_A9_MACHINE, VEXPRESS_MACHINE,
     .class_init = vexpress_a9_class_init,
     .instance_init = vexpress_a9_instance_init,
-};
-TYPE_INFO(vexpress_a9_info)
+)
 
-static const TypeInfo vexpress_a15_info = {
-    .name = TYPE_VEXPRESS_A15_MACHINE,
-    .parent = TYPE_VEXPRESS_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(vexpress_a15_info,
+                            void, void,
+                            VEXPRESS_A15_MACHINE, VEXPRESS_MACHINE,
     .class_init = vexpress_a15_class_init,
     .instance_init = vexpress_a15_instance_init,
-};
-TYPE_INFO(vexpress_a15_info)
+)
 
 

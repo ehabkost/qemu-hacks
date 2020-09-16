@@ -225,13 +225,11 @@ static void bcm2835_ic_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_bcm2835_ic;
 }
 
-static TypeInfo bcm2835_ic_info = {
-    .name          = TYPE_BCM2835_IC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835ICState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_ic_info,
+                            BCM2835ICState, void,
+                            BCM2835_IC, SYS_BUS_DEVICE,
     .class_init    = bcm2835_ic_class_init,
     .instance_init = bcm2835_ic_init,
-};
-TYPE_INFO(bcm2835_ic_info)
+)
 
 

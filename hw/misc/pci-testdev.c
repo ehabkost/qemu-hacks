@@ -342,16 +342,14 @@ static void pci_testdev_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, pci_testdev_properties);
 }
 
-static const TypeInfo pci_testdev_info = {
-    .name          = TYPE_PCI_TEST_DEV,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCITestDevState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_testdev_info,
+                            PCITestDevState, void,
+                            PCI_TEST_DEV, PCI_DEVICE,
     .class_init    = pci_testdev_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(pci_testdev_info)
+)
 
 

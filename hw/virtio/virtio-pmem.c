@@ -176,13 +176,10 @@ static void virtio_pmem_class_init(ObjectClass *klass, void *data)
     vpc->get_memory_region = virtio_pmem_get_memory_region;
 }
 
-static TypeInfo virtio_pmem_info = {
-    .name          = TYPE_VIRTIO_PMEM,
-    .parent        = TYPE_VIRTIO_DEVICE,
-    .class_size    = sizeof(VirtIOPMEMClass),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_pmem_info,
+                            VirtIOPMEM, VirtIOPMEMClass,
+                            VIRTIO_PMEM, VIRTIO_DEVICE,
     .class_init    = virtio_pmem_class_init,
-    .instance_size = sizeof(VirtIOPMEM),
-};
-TYPE_INFO(virtio_pmem_info)
+)
 
 

@@ -93,12 +93,10 @@ static void vmcoreinfo_device_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo vmcoreinfo_device_info = {
-    .name          = TYPE_VMCOREINFO,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(VMCoreInfoState),
+OBJECT_DEFINE_TYPE_EXTENDED(vmcoreinfo_device_info,
+                            VMCoreInfoState, void,
+                            VMCOREINFO, DEVICE,
     .class_init    = vmcoreinfo_device_class_init,
-};
-TYPE_INFO(vmcoreinfo_device_info)
+)
 
 

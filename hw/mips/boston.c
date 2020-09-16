@@ -251,12 +251,9 @@ static const MemoryRegionOps boston_platreg_ops = {
     .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
-static const TypeInfo boston_device = {
-    .name          = TYPE_MIPS_BOSTON,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BostonState),
-};
-TYPE_INFO(boston_device)
+OBJECT_DEFINE_TYPE_EXTENDED(boston_device,
+                            BostonState, void,
+                            MIPS_BOSTON, SYS_BUS_DEVICE)
 
 
 static void gen_firmware(uint32_t *p, hwaddr kernel_entry, hwaddr fdt_addr,

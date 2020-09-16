@@ -935,12 +935,9 @@ PCIBus *typhoon_init(MemoryRegion *ram, ISABus **isa_bus, qemu_irq *p_rtc_irq,
     return b;
 }
 
-static const TypeInfo typhoon_pcihost_info = {
-    .name          = TYPE_TYPHOON_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(TyphoonState),
-};
-TYPE_INFO(typhoon_pcihost_info)
+OBJECT_DEFINE_TYPE_EXTENDED(typhoon_pcihost_info,
+                            TyphoonState, void,
+                            TYPHOON_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE)
 
 static void typhoon_iommu_memory_region_class_init(ObjectClass *klass,
                                                    void *data)
@@ -950,11 +947,10 @@ static void typhoon_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->translate = typhoon_translate_iommu;
 }
 
-static const TypeInfo typhoon_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_TYPHOON_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(typhoon_iommu_memory_region_info,
+                            void, void,
+                            TYPHOON_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = typhoon_iommu_memory_region_class_init,
-};
-TYPE_INFO(typhoon_iommu_memory_region_info)
+)
 
 

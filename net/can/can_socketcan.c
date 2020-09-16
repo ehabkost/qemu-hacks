@@ -271,13 +271,11 @@ static void can_host_socketcan_class_init(ObjectClass *klass,
     chc->disconnect = can_host_socketcan_disconnect;
 }
 
-static const TypeInfo can_host_socketcan_info = {
-    .parent = TYPE_CAN_HOST,
-    .name = TYPE_CAN_HOST_SOCKETCAN,
-    .instance_size = sizeof(CanHostSocketCAN),
+OBJECT_DEFINE_TYPE_EXTENDED(can_host_socketcan_info,
+                            CanHostSocketCAN, void,
+                            CAN_HOST_SOCKETCAN, CAN_HOST,
     .instance_init = can_host_socketcan_instance_init,
     .class_init = can_host_socketcan_class_init,
-};
-TYPE_INFO(can_host_socketcan_info)
+)
 
 

@@ -2385,13 +2385,9 @@ void qemu_chr_parse_vc(QemuOpts *opts, ChardevBackend *backend, Error **errp)
     }
 }
 
-static const TypeInfo qemu_console_info = {
-    .name = TYPE_QEMU_CONSOLE,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(QemuConsole),
-    .class_size = sizeof(QemuConsoleClass),
-};
-TYPE_INFO(qemu_console_info)
+OBJECT_DEFINE_TYPE_EXTENDED(qemu_console_info,
+                            QemuConsole, QemuConsoleClass,
+                            QEMU_CONSOLE, OBJECT)
 
 static void char_vc_class_init(ObjectClass *oc, void *data)
 {

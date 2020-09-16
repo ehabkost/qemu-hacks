@@ -238,14 +238,12 @@ static void pcspk_class_initfn(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pcspk_info = {
-    .name           = TYPE_PC_SPEAKER,
-    .parent         = TYPE_ISA_DEVICE,
-    .instance_size  = sizeof(PCSpkState),
+OBJECT_DEFINE_TYPE_EXTENDED(pcspk_info,
+                            PCSpkState, void,
+                            PC_SPEAKER, ISA_DEVICE,
     .instance_init  = pcspk_initfn,
     .class_init     = pcspk_class_initfn,
-};
-TYPE_INFO(pcspk_info)
+)
 
 static int pcspk_audio_init_soundhw(ISABus *bus)
 {

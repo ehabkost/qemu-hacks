@@ -166,13 +166,11 @@ static void or1k_ompic_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_or1k_ompic;
 }
 
-static const TypeInfo or1k_ompic_info = {
-    .name          = TYPE_OR1K_OMPIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(OR1KOMPICState),
+OBJECT_DEFINE_TYPE_EXTENDED(or1k_ompic_info,
+                            OR1KOMPICState, void,
+                            OR1K_OMPIC, SYS_BUS_DEVICE,
     .instance_init = or1k_ompic_init,
     .class_init    = or1k_ompic_class_init,
-};
-TYPE_INFO(or1k_ompic_info)
+)
 
 

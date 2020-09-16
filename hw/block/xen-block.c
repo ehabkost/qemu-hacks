@@ -547,15 +547,12 @@ static void xen_block_class_init(ObjectClass *class, void *data)
     device_class_set_props(dev_class, xen_block_props);
 }
 
-static const TypeInfo xen_block_type_info = {
-    .name = TYPE_XEN_BLOCK_DEVICE,
-    .parent = TYPE_XEN_DEVICE,
-    .instance_size = sizeof(XenBlockDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_block_type_info,
+                            XenBlockDevice, XenBlockDeviceClass,
+                            XEN_BLOCK_DEVICE, XEN_DEVICE,
     .abstract = true,
-    .class_size = sizeof(XenBlockDeviceClass),
     .class_init = xen_block_class_init,
-};
-TYPE_INFO(xen_block_type_info)
+)
 
 static void xen_disk_unrealize(XenBlockDevice *blockdev)
 {
@@ -589,13 +586,11 @@ static void xen_disk_class_init(ObjectClass *class, void *data)
     dev_class->desc = "Xen Disk Device";
 }
 
-static const TypeInfo xen_disk_type_info = {
-    .name = TYPE_XEN_DISK_DEVICE,
-    .parent = TYPE_XEN_BLOCK_DEVICE,
-    .instance_size = sizeof(XenDiskDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_disk_type_info,
+                            XenDiskDevice, void,
+                            XEN_DISK_DEVICE, XEN_BLOCK_DEVICE,
     .class_init = xen_disk_class_init,
-};
-TYPE_INFO(xen_disk_type_info)
+)
 
 static void xen_cdrom_unrealize(XenBlockDevice *blockdev)
 {
@@ -637,13 +632,11 @@ static void xen_cdrom_class_init(ObjectClass *class, void *data)
     dev_class->desc = "Xen CD-ROM Device";
 }
 
-static const TypeInfo xen_cdrom_type_info = {
-    .name = TYPE_XEN_CDROM_DEVICE,
-    .parent = TYPE_XEN_BLOCK_DEVICE,
-    .instance_size = sizeof(XenCDRomDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_cdrom_type_info,
+                            XenCDRomDevice, void,
+                            XEN_CDROM_DEVICE, XEN_BLOCK_DEVICE,
     .class_init = xen_cdrom_class_init,
-};
-TYPE_INFO(xen_cdrom_type_info)
+)
 
 
 

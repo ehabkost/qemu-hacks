@@ -327,14 +327,11 @@ static void virtio_bus_class_init(ObjectClass *klass, void *data)
     bus_class->get_fw_dev_path = virtio_bus_get_fw_dev_path;
 }
 
-static const TypeInfo virtio_bus_info = {
-    .name = TYPE_VIRTIO_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(VirtioBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_bus_info,
+                            VirtioBusState, VirtioBusClass,
+                            VIRTIO_BUS, BUS,
     .abstract = true,
-    .class_size = sizeof(VirtioBusClass),
     .class_init = virtio_bus_class_init
-};
-TYPE_INFO(virtio_bus_info)
+)
 
 

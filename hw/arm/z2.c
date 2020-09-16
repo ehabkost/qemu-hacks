@@ -188,13 +188,11 @@ static void zipit_lcd_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_zipit_lcd_state;
 }
 
-static const TypeInfo zipit_lcd_info = {
-    .name          = TYPE_ZIPIT_LCD,
-    .parent        = TYPE_SSI_SLAVE,
-    .instance_size = sizeof(ZipitLCD),
+OBJECT_DEFINE_TYPE_EXTENDED(zipit_lcd_info,
+                            ZipitLCD, void,
+                            ZIPIT_LCD, SSI_SLAVE,
     .class_init    = zipit_lcd_class_init,
-};
-TYPE_INFO(zipit_lcd_info)
+)
 
 #define TYPE_AER915 "aer915"
 OBJECT_DECLARE_SIMPLE_TYPE(AER915State, AER915)
@@ -292,13 +290,11 @@ static void aer915_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_aer915_state;
 }
 
-static const TypeInfo aer915_info = {
-    .name          = TYPE_AER915,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(AER915State),
+OBJECT_DEFINE_TYPE_EXTENDED(aer915_info,
+                            AER915State, void,
+                            AER915, I2C_SLAVE,
     .class_init    = aer915_class_init,
-};
-TYPE_INFO(aer915_info)
+)
 
 static void z2_init(MachineState *machine)
 {

@@ -690,12 +690,10 @@ static void usb_hub_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, usb_hub_properties);
 }
 
-static const TypeInfo hub_info = {
-    .name          = TYPE_USB_HUB,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBHubState),
+OBJECT_DEFINE_TYPE_EXTENDED(hub_info,
+                            USBHubState, void,
+                            USB_HUB, USB_DEVICE,
     .class_init    = usb_hub_class_initfn,
-};
-TYPE_INFO(hub_info)
+)
 
 

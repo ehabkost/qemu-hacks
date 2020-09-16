@@ -50,13 +50,11 @@ static void virtio_ccw_9p_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_9p_info = {
-    .name          = TYPE_VIRTIO_9P_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(V9fsCCWState),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_9p_info,
+                            V9fsCCWState, void,
+                            VIRTIO_9P_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_9p_instance_init,
     .class_init    = virtio_ccw_9p_class_init,
-};
-TYPE_INFO(virtio_ccw_9p_info)
+)
 
 

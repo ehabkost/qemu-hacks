@@ -156,14 +156,11 @@ static void tilegx_cpu_class_init(ObjectClass *oc, void *data)
     cc->tcg_initialize = tilegx_tcg_init;
 }
 
-static const TypeInfo tilegx_cpu_type_info = {
-    .name = TYPE_TILEGX_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(TileGXCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(tilegx_cpu_type_info,
+                            TileGXCPU, TileGXCPUClass,
+                            TILEGX_CPU, CPU,
     .instance_init = tilegx_cpu_initfn,
-    .class_size = sizeof(TileGXCPUClass),
     .class_init = tilegx_cpu_class_init,
-};
-TYPE_INFO(tilegx_cpu_type_info)
+)
 
 

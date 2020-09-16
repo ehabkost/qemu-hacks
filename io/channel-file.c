@@ -217,14 +217,12 @@ static void qio_channel_file_class_init(ObjectClass *klass,
     ioc_klass->io_set_aio_fd_handler = qio_channel_file_set_aio_fd_handler;
 }
 
-static const TypeInfo qio_channel_file_info = {
-    .parent = TYPE_QIO_CHANNEL,
-    .name = TYPE_QIO_CHANNEL_FILE,
-    .instance_size = sizeof(QIOChannelFile),
+OBJECT_DEFINE_TYPE_EXTENDED(qio_channel_file_info,
+                            QIOChannelFile, void,
+                            QIO_CHANNEL_FILE, QIO_CHANNEL,
     .instance_init = qio_channel_file_init,
     .instance_finalize = qio_channel_file_finalize,
     .class_init = qio_channel_file_class_init,
-};
-TYPE_INFO(qio_channel_file_info)
+)
 
 

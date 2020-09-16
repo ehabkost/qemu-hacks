@@ -1323,19 +1323,16 @@ static void uhci_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_USB, dc->categories);
 }
 
-static const TypeInfo uhci_pci_type_info = {
-    .name = TYPE_UHCI,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(UHCIState),
-    .class_size    = sizeof(UHCIPCIDeviceClass),
+OBJECT_DEFINE_TYPE_EXTENDED(uhci_pci_type_info,
+                            UHCIState, UHCIPCIDeviceClass,
+                            UHCI, PCI_DEVICE,
     .abstract = true,
     .class_init = uhci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(uhci_pci_type_info)
+)
 
 static void uhci_data_class_init(ObjectClass *klass, void *data)
 {

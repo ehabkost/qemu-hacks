@@ -334,15 +334,12 @@ static void u2f_key_class_init(ObjectClass *klass, void *data)
     dc->vmsd           = &vmstate_u2f_key;
 }
 
-static const TypeInfo u2f_key_info = {
-    .name          = TYPE_U2F_KEY,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(U2FKeyState),
+OBJECT_DEFINE_TYPE_EXTENDED(u2f_key_info,
+                            U2FKeyState, U2FKeyClass,
+                            U2F_KEY, USB_DEVICE,
     .abstract      = true,
-    .class_size    = sizeof(U2FKeyClass),
     .class_init    = u2f_key_class_init,
-};
-TYPE_INFO(u2f_key_info)
+)
 
 static void u2f_key_register_types(void)
 {

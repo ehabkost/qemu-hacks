@@ -282,12 +282,10 @@ static void mipsnet_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, mipsnet_properties);
 }
 
-static const TypeInfo mipsnet_info = {
-    .name          = TYPE_MIPS_NET,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MIPSnetState),
+OBJECT_DEFINE_TYPE_EXTENDED(mipsnet_info,
+                            MIPSnetState, void,
+                            MIPS_NET, SYS_BUS_DEVICE,
     .class_init    = mipsnet_class_init,
-};
-TYPE_INFO(mipsnet_info)
+)
 
 

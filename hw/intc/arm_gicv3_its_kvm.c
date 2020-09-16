@@ -250,13 +250,10 @@ static void kvm_arm_its_class_init(ObjectClass *klass, void *data)
     icc->post_load = kvm_arm_its_post_load;
 }
 
-static const TypeInfo kvm_arm_its_info = {
-    .name = TYPE_KVM_ARM_ITS,
-    .parent = TYPE_ARM_GICV3_ITS_COMMON,
-    .instance_size = sizeof(GICv3ITSState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_arm_its_info,
+                            GICv3ITSState, KVMARMITSClass,
+                            KVM_ARM_ITS, ARM_GICV3_ITS_COMMON,
     .class_init = kvm_arm_its_class_init,
-    .class_size = sizeof(KVMARMITSClass),
-};
-TYPE_INFO(kvm_arm_its_info)
+)
 
 

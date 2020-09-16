@@ -124,13 +124,11 @@ static void iotkit_sysinfo_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, iotkit_sysinfo_props);
 }
 
-static const TypeInfo iotkit_sysinfo_info = {
-    .name = TYPE_IOTKIT_SYSINFO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IoTKitSysInfo),
+OBJECT_DEFINE_TYPE_EXTENDED(iotkit_sysinfo_info,
+                            IoTKitSysInfo, void,
+                            IOTKIT_SYSINFO, SYS_BUS_DEVICE,
     .instance_init = iotkit_sysinfo_init,
     .class_init = iotkit_sysinfo_class_init,
-};
-TYPE_INFO(iotkit_sysinfo_info)
+)
 
 

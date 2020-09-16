@@ -981,10 +981,9 @@ static void xen_pci_passthrough_finalize(Object *obj)
     xen_pt_msix_delete(s);
 }
 
-static const TypeInfo xen_pci_passthrough_info = {
-    .name = TYPE_XEN_PT_DEVICE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(XenPCIPassthroughState),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_pci_passthrough_info,
+                            XenPCIPassthroughState, void,
+                            XEN_PT_DEVICE, PCI_DEVICE,
     .instance_finalize = xen_pci_passthrough_finalize,
     .class_init = xen_pci_passthrough_class_init,
     .instance_init = xen_pci_passthrough_instance_init,
@@ -993,7 +992,6 @@ static const TypeInfo xen_pci_passthrough_info = {
         { INTERFACE_PCIE_DEVICE },
         { },
     },
-};
-TYPE_INFO(xen_pci_passthrough_info)
+)
 
 

@@ -199,13 +199,11 @@ static void aw_a10_pic_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_aw_a10_pic;
  }
 
-static const TypeInfo aw_a10_pic_info = {
-    .name = TYPE_AW_A10_PIC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AwA10PICState),
+OBJECT_DEFINE_TYPE_EXTENDED(aw_a10_pic_info,
+                            AwA10PICState, void,
+                            AW_A10_PIC, SYS_BUS_DEVICE,
     .instance_init = aw_a10_pic_init,
     .class_init = aw_a10_pic_class_init,
-};
-TYPE_INFO(aw_a10_pic_info)
+)
 
 

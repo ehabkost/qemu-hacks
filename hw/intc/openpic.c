@@ -1634,13 +1634,11 @@ static void openpic_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo openpic_info = {
-    .name          = TYPE_OPENPIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(OpenPICState),
+OBJECT_DEFINE_TYPE_EXTENDED(openpic_info,
+                            OpenPICState, void,
+                            OPENPIC, SYS_BUS_DEVICE,
     .instance_init = openpic_init,
     .class_init    = openpic_class_init,
-};
-TYPE_INFO(openpic_info)
+)
 
 

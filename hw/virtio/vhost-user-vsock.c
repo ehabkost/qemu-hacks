@@ -166,12 +166,10 @@ static void vuv_class_init(ObjectClass *klass, void *data)
     vdc->set_status = vuv_set_status;
 }
 
-static const TypeInfo vuv_info = {
-    .name = TYPE_VHOST_USER_VSOCK,
-    .parent = TYPE_VHOST_VSOCK_COMMON,
-    .instance_size = sizeof(VHostUserVSock),
+OBJECT_DEFINE_TYPE_EXTENDED(vuv_info,
+                            VHostUserVSock, void,
+                            VHOST_USER_VSOCK, VHOST_VSOCK_COMMON,
     .class_init = vuv_class_init,
-};
-TYPE_INFO(vuv_info)
+)
 
 

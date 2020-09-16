@@ -382,14 +382,12 @@ static void iommu_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, iommu_properties);
 }
 
-static const TypeInfo iommu_info = {
-    .name          = TYPE_SUN4M_IOMMU,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IOMMUState),
+OBJECT_DEFINE_TYPE_EXTENDED(iommu_info,
+                            IOMMUState, void,
+                            SUN4M_IOMMU, SYS_BUS_DEVICE,
     .instance_init = iommu_init,
     .class_init    = iommu_class_init,
-};
-TYPE_INFO(iommu_info)
+)
 
 static void sun4m_iommu_memory_region_class_init(ObjectClass *klass, void *data)
 {
@@ -398,11 +396,10 @@ static void sun4m_iommu_memory_region_class_init(ObjectClass *klass, void *data)
     imrc->translate = sun4m_translate_iommu;
 }
 
-static const TypeInfo sun4m_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_SUN4M_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(sun4m_iommu_memory_region_info,
+                            void, void,
+                            SUN4M_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = sun4m_iommu_memory_region_class_init,
-};
-TYPE_INFO(sun4m_iommu_memory_region_info)
+)
 
 

@@ -620,39 +620,33 @@ static void xilinx_axidma_stream_class_init(ObjectClass *klass, void *data)
     ssc->can_push = ((StreamSlaveClass *)data)->can_push;
 }
 
-static const TypeInfo axidma_info = {
-    .name          = TYPE_XILINX_AXI_DMA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XilinxAXIDMA),
+OBJECT_DEFINE_TYPE_EXTENDED(axidma_info,
+                            XilinxAXIDMA, void,
+                            XILINX_AXI_DMA, SYS_BUS_DEVICE,
     .class_init    = axidma_class_init,
     .instance_init = xilinx_axidma_init,
-};
-TYPE_INFO(axidma_info)
+)
 
-static const TypeInfo xilinx_axidma_data_stream_info = {
-    .name          = TYPE_XILINX_AXI_DMA_DATA_STREAM,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(XilinxAXIDMAStreamSlave),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_axidma_data_stream_info,
+                            XilinxAXIDMAStreamSlave, void,
+                            XILINX_AXI_DMA_DATA_STREAM, OBJECT,
     .class_init    = xilinx_axidma_stream_class_init,
     .class_data    = &xilinx_axidma_data_stream_class,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_STREAM_SLAVE },
         { }
     }
-};
-TYPE_INFO(xilinx_axidma_data_stream_info)
+)
 
-static const TypeInfo xilinx_axidma_control_stream_info = {
-    .name          = TYPE_XILINX_AXI_DMA_CONTROL_STREAM,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(XilinxAXIDMAStreamSlave),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_axidma_control_stream_info,
+                            XilinxAXIDMAStreamSlave, void,
+                            XILINX_AXI_DMA_CONTROL_STREAM, OBJECT,
     .class_init    = xilinx_axidma_stream_class_init,
     .class_data    = &xilinx_axidma_control_stream_class,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_STREAM_SLAVE },
         { }
     }
-};
-TYPE_INFO(xilinx_axidma_control_stream_info)
+)
 
 

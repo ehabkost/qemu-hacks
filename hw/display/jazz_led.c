@@ -304,13 +304,11 @@ static void jazz_led_class_init(ObjectClass *klass, void *data)
     dc->realize = jazz_led_realize;
 }
 
-static const TypeInfo jazz_led_info = {
-    .name          = TYPE_JAZZ_LED,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(LedState),
+OBJECT_DEFINE_TYPE_EXTENDED(jazz_led_info,
+                            LedState, void,
+                            JAZZ_LED, SYS_BUS_DEVICE,
     .instance_init = jazz_led_init,
     .class_init    = jazz_led_class_init,
-};
-TYPE_INFO(jazz_led_info)
+)
 
 

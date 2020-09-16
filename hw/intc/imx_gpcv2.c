@@ -112,12 +112,10 @@ static void imx_gpcv2_class_init(ObjectClass *klass, void *data)
     dc->desc  = "i.MX GPCv2 Module";
 }
 
-static const TypeInfo imx_gpcv2_info = {
-    .name          = TYPE_IMX_GPCV2,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXGPCv2State),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_gpcv2_info,
+                            IMXGPCv2State, void,
+                            IMX_GPCV2, SYS_BUS_DEVICE,
     .instance_init = imx_gpcv2_init,
     .class_init    = imx_gpcv2_class_init,
-};
-TYPE_INFO(imx_gpcv2_info)
+)
 

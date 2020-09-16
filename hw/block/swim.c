@@ -246,20 +246,15 @@ static void swim_drive_class_init(ObjectClass *klass, void *data)
     k->desc = "virtual SWIM drive";
 }
 
-static const TypeInfo swim_drive_info = {
-    .name = TYPE_SWIM_DRIVE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SWIMDrive),
+OBJECT_DEFINE_TYPE_EXTENDED(swim_drive_info,
+                            SWIMDrive, void,
+                            SWIM_DRIVE, DEVICE,
     .class_init = swim_drive_class_init,
-};
-TYPE_INFO(swim_drive_info)
+)
 
-static const TypeInfo swim_bus_info = {
-    .name = TYPE_SWIM_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(SWIMBus),
-};
-TYPE_INFO(swim_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(swim_bus_info,
+                            SWIMBus, void,
+                            SWIM_BUS, BUS)
 
 static void iwmctrl_write(void *opaque, hwaddr reg, uint64_t value,
                           unsigned size)
@@ -476,13 +471,11 @@ static void sysbus_swim_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_sysbus_swim;
 }
 
-static const TypeInfo sysbus_swim_info = {
-    .name          = TYPE_SWIM,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Swim),
+OBJECT_DEFINE_TYPE_EXTENDED(sysbus_swim_info,
+                            Swim, void,
+                            SWIM, SYS_BUS_DEVICE,
     .instance_init = sysbus_swim_init,
     .class_init    = sysbus_swim_class_init,
-};
-TYPE_INFO(sysbus_swim_info)
+)
 
 

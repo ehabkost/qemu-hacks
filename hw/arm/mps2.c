@@ -471,42 +471,35 @@ static void mps2_an511_class_init(ObjectClass *oc, void *data)
     mmc->has_block_ram = false;
 }
 
-static const TypeInfo mps2_info = {
-    .name = TYPE_MPS2_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(mps2_info,
+                            MPS2MachineState, MPS2MachineClass,
+                            MPS2_MACHINE, MACHINE,
     .abstract = true,
-    .instance_size = sizeof(MPS2MachineState),
-    .class_size = sizeof(MPS2MachineClass),
     .class_init = mps2_class_init,
-};
-TYPE_INFO(mps2_info)
+)
 
-static const TypeInfo mps2_an385_info = {
-    .name = TYPE_MPS2_AN385_MACHINE,
-    .parent = TYPE_MPS2_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(mps2_an385_info,
+                            void, void,
+                            MPS2_AN385_MACHINE, MPS2_MACHINE,
     .class_init = mps2_an385_class_init,
-};
-TYPE_INFO(mps2_an385_info)
+)
 
-static const TypeInfo mps2_an386_info = {
-    .name = TYPE_MPS2_AN386_MACHINE,
-    .parent = TYPE_MPS2_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(mps2_an386_info,
+                            void, void,
+                            MPS2_AN386_MACHINE, MPS2_MACHINE,
     .class_init = mps2_an386_class_init,
-};
-TYPE_INFO(mps2_an386_info)
+)
 
-static const TypeInfo mps2_an500_info = {
-    .name = TYPE_MPS2_AN500_MACHINE,
-    .parent = TYPE_MPS2_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(mps2_an500_info,
+                            void, void,
+                            MPS2_AN500_MACHINE, MPS2_MACHINE,
     .class_init = mps2_an500_class_init,
-};
-TYPE_INFO(mps2_an500_info)
+)
 
-static const TypeInfo mps2_an511_info = {
-    .name = TYPE_MPS2_AN511_MACHINE,
-    .parent = TYPE_MPS2_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(mps2_an511_info,
+                            void, void,
+                            MPS2_AN511_MACHINE, MPS2_MACHINE,
     .class_init = mps2_an511_class_init,
-};
-TYPE_INFO(mps2_an511_info)
+)
 
 

@@ -91,11 +91,9 @@ static void can_host_class_init(ObjectClass *klass,
     uc_klass->complete = can_host_complete;
 }
 
-static const TypeInfo can_host_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_CAN_HOST,
-    .instance_size = sizeof(CanHostState),
-    .class_size = sizeof(CanHostClass),
+OBJECT_DEFINE_TYPE_EXTENDED(can_host_info,
+                            CanHostState, CanHostClass,
+                            CAN_HOST, OBJECT,
     .abstract = true,
     .instance_init = can_host_instance_init,
     .class_init = can_host_class_init,
@@ -103,7 +101,6 @@ static const TypeInfo can_host_info = {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(can_host_info)
+)
 
 

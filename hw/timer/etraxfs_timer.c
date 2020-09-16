@@ -353,12 +353,10 @@ static void etraxfs_timer_class_init(ObjectClass *klass, void *data)
     dc->realize = etraxfs_timer_realize;
 }
 
-static const TypeInfo etraxfs_timer_info = {
-    .name          = TYPE_ETRAX_FS_TIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ETRAXTimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(etraxfs_timer_info,
+                            ETRAXTimerState, void,
+                            ETRAX_FS_TIMER, SYS_BUS_DEVICE,
     .class_init    = etraxfs_timer_class_init,
-};
-TYPE_INFO(etraxfs_timer_info)
+)
 
 

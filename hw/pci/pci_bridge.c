@@ -467,12 +467,10 @@ int pci_bridge_qemu_reserve_cap_init(PCIDevice *dev, int cap_offset,
     return 0;
 }
 
-static const TypeInfo pci_bridge_type_info = {
-    .name = TYPE_PCI_BRIDGE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIBridge),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_bridge_type_info,
+                            PCIBridge, void,
+                            PCI_BRIDGE, PCI_DEVICE,
     .abstract = true,
-};
-TYPE_INFO(pci_bridge_type_info)
+)
 
 

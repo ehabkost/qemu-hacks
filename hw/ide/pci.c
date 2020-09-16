@@ -515,16 +515,14 @@ void bmdma_init(IDEBus *bus, BMDMAState *bm, PCIIDEState *d)
     bm->pci_dev = d;
 }
 
-static const TypeInfo pci_ide_type_info = {
-    .name = TYPE_PCI_IDE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIIDEState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_ide_type_info,
+                            PCIIDEState, void,
+                            PCI_IDE, PCI_DEVICE,
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(pci_ide_type_info)
+)
 
 

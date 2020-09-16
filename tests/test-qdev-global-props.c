@@ -60,19 +60,15 @@ static void static_prop_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, static_props);
 }
 
-static const TypeInfo static_prop_type = {
-    .name = TYPE_STATIC_PROPS,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(MyType),
+OBJECT_DEFINE_TYPE_EXTENDED(static_prop_type,
+                            MyType, void,
+                            STATIC_PROPS, DEVICE,
     .class_init = static_prop_class_init,
-};
-TYPE_INFO(static_prop_type)
+)
 
-static const TypeInfo subclass_type = {
-    .name = TYPE_SUBCLASS,
-    .parent = TYPE_STATIC_PROPS,
-};
-TYPE_INFO(subclass_type)
+OBJECT_DEFINE_TYPE_EXTENDED(subclass_type,
+                            void, void,
+                            SUBCLASS, STATIC_PROPS)
 
 /* Test simple static property setting to default value */
 static void test_static_prop_subprocess(void)
@@ -168,14 +164,12 @@ static void dynamic_class_init(ObjectClass *oc, void *data)
 }
 
 
-static const TypeInfo dynamic_prop_type = {
-    .name = TYPE_DYNAMIC_PROPS,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(MyType),
+OBJECT_DEFINE_TYPE_EXTENDED(dynamic_prop_type,
+                            MyType, void,
+                            DYNAMIC_PROPS, DEVICE,
     .instance_init = dynamic_instance_init,
     .class_init = dynamic_class_init,
-};
-TYPE_INFO(dynamic_prop_type)
+)
 
 static void hotplug_class_init(ObjectClass *oc, void *data)
 {
@@ -185,14 +179,12 @@ static void hotplug_class_init(ObjectClass *oc, void *data)
     dc->hotpluggable = true;
 }
 
-static const TypeInfo hotplug_type = {
-    .name = TYPE_UNUSED_HOTPLUG,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(MyType),
+OBJECT_DEFINE_TYPE_EXTENDED(hotplug_type,
+                            MyType, void,
+                            UNUSED_HOTPLUG, DEVICE,
     .instance_init = dynamic_instance_init,
     .class_init = hotplug_class_init,
-};
-TYPE_INFO(hotplug_type)
+)
 
 static void nohotplug_class_init(ObjectClass *oc, void *data)
 {
@@ -202,22 +194,18 @@ static void nohotplug_class_init(ObjectClass *oc, void *data)
     dc->hotpluggable = false;
 }
 
-static const TypeInfo nohotplug_type = {
-    .name = TYPE_UNUSED_NOHOTPLUG,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(MyType),
+OBJECT_DEFINE_TYPE_EXTENDED(nohotplug_type,
+                            MyType, void,
+                            UNUSED_NOHOTPLUG, DEVICE,
     .instance_init = dynamic_instance_init,
     .class_init = nohotplug_class_init,
-};
-TYPE_INFO(nohotplug_type)
+)
 
 #define TYPE_NONDEVICE "nondevice-type"
 
-static const TypeInfo nondevice_type = {
-    .name = TYPE_NONDEVICE,
-    .parent = TYPE_OBJECT,
-};
-TYPE_INFO(nondevice_type)
+OBJECT_DEFINE_TYPE_EXTENDED(nondevice_type,
+                            void, void,
+                            NONDEVICE, OBJECT)
 
 /* Test setting of dynamic properties using global properties */
 static void test_dynamic_globalprop_subprocess(void)

@@ -298,9 +298,6 @@ void user_creatable_cleanup(void)
     object_unparent(object_get_objects_root());
 }
 
-static const TypeInfo uc_interface_info = {
-    .name          = TYPE_USER_CREATABLE,
-    .parent        = TYPE_INTERFACE,
-    .class_size = sizeof(UserCreatableClass),
-};
-TYPE_INFO(uc_interface_info)
+OBJECT_DEFINE_TYPE_EXTENDED(uc_interface_info,
+                            void, UserCreatableClass,
+                            USER_CREATABLE, INTERFACE)

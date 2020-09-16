@@ -376,12 +376,10 @@ static void xilinx_spi_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_xilinx_spi;
 }
 
-static const TypeInfo xilinx_spi_info = {
-    .name           = TYPE_XILINX_SPI,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(XilinxSPI),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_spi_info,
+                            XilinxSPI, void,
+                            XILINX_SPI, SYS_BUS_DEVICE,
     .class_init     = xilinx_spi_class_init,
-};
-TYPE_INFO(xilinx_spi_info)
+)
 
 

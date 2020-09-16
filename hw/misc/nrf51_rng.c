@@ -250,13 +250,11 @@ static void nrf51_rng_class_init(ObjectClass *klass, void *data)
     dc->reset = nrf51_rng_reset;
 }
 
-static const TypeInfo nrf51_rng_info = {
-    .name = TYPE_NRF51_RNG,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NRF51RNGState),
+OBJECT_DEFINE_TYPE_EXTENDED(nrf51_rng_info,
+                            NRF51RNGState, void,
+                            NRF51_RNG, SYS_BUS_DEVICE,
     .instance_init = nrf51_rng_init,
     .class_init = nrf51_rng_class_init
-};
-TYPE_INFO(nrf51_rng_info)
+)
 
 

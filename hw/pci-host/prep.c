@@ -386,17 +386,15 @@ static void raven_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo raven_info = {
-    .name = TYPE_RAVEN_PCI_DEVICE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(RavenPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(raven_info,
+                            RavenPCIState, void,
+                            RAVEN_PCI_DEVICE, PCI_DEVICE,
     .class_init = raven_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(raven_info)
+)
 
 static Property raven_pcihost_properties[] = {
     DEFINE_PROP_UINT32("elf-machine", PREPPCIState, pci_dev.elf_machine,
@@ -418,13 +416,11 @@ static void raven_pcihost_class_init(ObjectClass *klass, void *data)
     dc->fw_name = "pci";
 }
 
-static const TypeInfo raven_pcihost_info = {
-    .name = TYPE_RAVEN_PCI_HOST_BRIDGE,
-    .parent = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(PREPPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(raven_pcihost_info,
+                            PREPPCIState, void,
+                            RAVEN_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_init = raven_pcihost_initfn,
     .class_init = raven_pcihost_class_init,
-};
-TYPE_INFO(raven_pcihost_info)
+)
 
 

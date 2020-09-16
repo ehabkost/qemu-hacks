@@ -301,12 +301,10 @@ static void pl022_class_init(ObjectClass *klass, void *data)
     dc->realize = pl022_realize;
 }
 
-static const TypeInfo pl022_info = {
-    .name          = TYPE_PL022,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL022State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl022_info,
+                            PL022State, void,
+                            PL022, SYS_BUS_DEVICE,
     .class_init    = pl022_class_init,
-};
-TYPE_INFO(pl022_info)
+)
 
 

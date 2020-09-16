@@ -403,10 +403,9 @@ static void acpi_ged_class_init(ObjectClass *class, void *data)
     adevc->send_event = acpi_ged_send_event;
 }
 
-static const TypeInfo acpi_ged_info = {
-    .name          = TYPE_ACPI_GED,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AcpiGedState),
+OBJECT_DEFINE_TYPE_EXTENDED(acpi_ged_info,
+                            AcpiGedState, void,
+                            ACPI_GED, SYS_BUS_DEVICE,
     .instance_init  = acpi_ged_initfn,
     .class_init    = acpi_ged_class_init,
     .interfaces = (InterfaceInfo[]) {
@@ -414,7 +413,6 @@ static const TypeInfo acpi_ged_info = {
         { TYPE_ACPI_DEVICE_IF },
         { }
     }
-};
-TYPE_INFO(acpi_ged_info)
+)
 
 

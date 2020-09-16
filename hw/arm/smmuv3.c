@@ -1519,22 +1519,18 @@ static void smmuv3_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->notify_flag_changed = smmuv3_notify_flag_changed;
 }
 
-static const TypeInfo smmuv3_type_info = {
-    .name          = TYPE_ARM_SMMUV3,
-    .parent        = TYPE_ARM_SMMU,
-    .instance_size = sizeof(SMMUv3State),
+OBJECT_DEFINE_TYPE_EXTENDED(smmuv3_type_info,
+                            SMMUv3State, SMMUv3Class,
+                            ARM_SMMUV3, ARM_SMMU,
     .instance_init = smmuv3_instance_init,
-    .class_size    = sizeof(SMMUv3Class),
     .class_init    = smmuv3_class_init,
-};
-TYPE_INFO(smmuv3_type_info)
+)
 
-static const TypeInfo smmuv3_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_SMMUV3_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(smmuv3_iommu_memory_region_info,
+                            void, void,
+                            SMMUV3_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = smmuv3_iommu_memory_region_class_init,
-};
-TYPE_INFO(smmuv3_iommu_memory_region_info)
+)
 
 
 

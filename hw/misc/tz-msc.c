@@ -296,13 +296,11 @@ static void tz_msc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, tz_msc_properties);
 }
 
-static const TypeInfo tz_msc_info = {
-    .name = TYPE_TZ_MSC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(TZMSC),
+OBJECT_DEFINE_TYPE_EXTENDED(tz_msc_info,
+                            TZMSC, void,
+                            TZ_MSC, SYS_BUS_DEVICE,
     .instance_init = tz_msc_init,
     .class_init = tz_msc_class_init,
-};
-TYPE_INFO(tz_msc_info)
+)
 
 

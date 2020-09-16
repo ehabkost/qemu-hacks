@@ -114,12 +114,10 @@ static void microbit_i2c_class_init(ObjectClass *klass, void *data)
     dc->desc = "Microbit I2C controller";
 }
 
-static const TypeInfo microbit_i2c_info = {
-    .name = TYPE_MICROBIT_I2C,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MicrobitI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(microbit_i2c_info,
+                            MicrobitI2CState, void,
+                            MICROBIT_I2C, SYS_BUS_DEVICE,
     .class_init = microbit_i2c_class_init,
-};
-TYPE_INFO(microbit_i2c_info)
+)
 
 

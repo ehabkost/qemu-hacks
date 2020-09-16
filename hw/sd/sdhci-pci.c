@@ -68,16 +68,14 @@ static void sdhci_pci_class_init(ObjectClass *klass, void *data)
     sdhci_common_class_init(klass, data);
 }
 
-static const TypeInfo sdhci_pci_info = {
-    .name = TYPE_PCI_SDHCI,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(SDHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sdhci_pci_info,
+                            SDHCIState, void,
+                            PCI_SDHCI, PCI_DEVICE,
     .class_init = sdhci_pci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(sdhci_pci_info)
+)
 
 

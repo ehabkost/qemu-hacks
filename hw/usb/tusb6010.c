@@ -835,12 +835,10 @@ static void tusb6010_class_init(ObjectClass *klass, void *data)
     dc->reset = tusb6010_reset;
 }
 
-static const TypeInfo tusb6010_info = {
-    .name          = TYPE_TUSB6010,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(TUSBState),
+OBJECT_DEFINE_TYPE_EXTENDED(tusb6010_info,
+                            TUSBState, void,
+                            TUSB6010, SYS_BUS_DEVICE,
     .class_init    = tusb6010_class_init,
-};
-TYPE_INFO(tusb6010_info)
+)
 
 

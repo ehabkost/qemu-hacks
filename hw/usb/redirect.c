@@ -2600,13 +2600,11 @@ static void usbredir_instance_init(Object *obj)
                                   &udev->qdev);
 }
 
-static const TypeInfo usbredir_dev_info = {
-    .name          = TYPE_USB_REDIR,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBRedirDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(usbredir_dev_info,
+                            USBRedirDevice, void,
+                            USB_REDIR, USB_DEVICE,
     .class_init    = usbredir_class_initfn,
     .instance_init = usbredir_instance_init,
-};
-TYPE_INFO(usbredir_dev_info)
+)
 
 

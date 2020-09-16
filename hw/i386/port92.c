@@ -111,13 +111,11 @@ static void port92_class_initfn(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo port92_info = {
-    .name          = TYPE_PORT92,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(Port92State),
+OBJECT_DEFINE_TYPE_EXTENDED(port92_info,
+                            Port92State, void,
+                            PORT92, ISA_DEVICE,
     .instance_init = port92_initfn,
     .class_init    = port92_class_initfn,
-};
-TYPE_INFO(port92_info)
+)
 
 

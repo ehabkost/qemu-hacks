@@ -71,42 +71,35 @@ static void virtio_ccw_tablet_instance_init(Object *obj)
                                 TYPE_VIRTIO_TABLET);
 }
 
-static const TypeInfo virtio_ccw_input = {
-    .name          = TYPE_VIRTIO_INPUT_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtIOInputCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_input,
+                            VirtIOInputCcw, void,
+                            VIRTIO_INPUT_CCW, VIRTIO_CCW_DEVICE,
     .class_init    = virtio_ccw_input_class_init,
     .abstract = true,
-};
-TYPE_INFO(virtio_ccw_input)
+)
 
-static const TypeInfo virtio_ccw_input_hid = {
-    .name          = TYPE_VIRTIO_INPUT_HID_CCW,
-    .parent        = TYPE_VIRTIO_INPUT_CCW,
-    .instance_size = sizeof(VirtIOInputHIDCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_input_hid,
+                            VirtIOInputHIDCcw, void,
+                            VIRTIO_INPUT_HID_CCW, VIRTIO_INPUT_CCW,
     .abstract = true,
-};
-TYPE_INFO(virtio_ccw_input_hid)
+)
 
-static const TypeInfo virtio_ccw_keyboard = {
-    .name          = TYPE_VIRTIO_KEYBOARD_CCW,
-    .parent        = TYPE_VIRTIO_INPUT_HID_CCW,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_keyboard,
+                            void, void,
+                            VIRTIO_KEYBOARD_CCW, VIRTIO_INPUT_HID_CCW,
     .instance_init = virtio_ccw_keyboard_instance_init,
-};
-TYPE_INFO(virtio_ccw_keyboard)
+)
 
-static const TypeInfo virtio_ccw_mouse = {
-    .name          = TYPE_VIRTIO_MOUSE_CCW,
-    .parent        = TYPE_VIRTIO_INPUT_HID_CCW,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_mouse,
+                            void, void,
+                            VIRTIO_MOUSE_CCW, VIRTIO_INPUT_HID_CCW,
     .instance_init = virtio_ccw_mouse_instance_init,
-};
-TYPE_INFO(virtio_ccw_mouse)
+)
 
-static const TypeInfo virtio_ccw_tablet = {
-    .name          = TYPE_VIRTIO_TABLET_CCW,
-    .parent        = TYPE_VIRTIO_INPUT_HID_CCW,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_tablet,
+                            void, void,
+                            VIRTIO_TABLET_CCW, VIRTIO_INPUT_HID_CCW,
     .instance_init = virtio_ccw_tablet_instance_init,
-};
-TYPE_INFO(virtio_ccw_tablet)
+)
 
 

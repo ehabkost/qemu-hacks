@@ -360,13 +360,11 @@ static void exynos4210_gic_class_init(ObjectClass *klass, void *data)
     dc->realize = exynos4210_gic_realize;
 }
 
-static const TypeInfo exynos4210_gic_info = {
-    .name          = TYPE_EXYNOS4210_GIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210GicState),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_gic_info,
+                            Exynos4210GicState, void,
+                            EXYNOS4210_GIC, SYS_BUS_DEVICE,
     .class_init    = exynos4210_gic_class_init,
-};
-TYPE_INFO(exynos4210_gic_info)
+)
 
 
 
@@ -462,13 +460,11 @@ static void exynos4210_irq_gate_class_init(ObjectClass *klass, void *data)
     dc->realize = exynos4210_irq_gate_realize;
 }
 
-static const TypeInfo exynos4210_irq_gate_info = {
-    .name          = TYPE_EXYNOS4210_IRQ_GATE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210IRQGateState),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_irq_gate_info,
+                            Exynos4210IRQGateState, void,
+                            EXYNOS4210_IRQ_GATE, SYS_BUS_DEVICE,
     .instance_init = exynos4210_irq_gate_init,
     .class_init    = exynos4210_irq_gate_class_init,
-};
-TYPE_INFO(exynos4210_irq_gate_info)
+)
 
 

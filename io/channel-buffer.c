@@ -235,13 +235,11 @@ static void qio_channel_buffer_class_init(ObjectClass *klass,
     ioc_klass->io_create_watch = qio_channel_buffer_create_watch;
 }
 
-static const TypeInfo qio_channel_buffer_info = {
-    .parent = TYPE_QIO_CHANNEL,
-    .name = TYPE_QIO_CHANNEL_BUFFER,
-    .instance_size = sizeof(QIOChannelBuffer),
+OBJECT_DEFINE_TYPE_EXTENDED(qio_channel_buffer_info,
+                            QIOChannelBuffer, void,
+                            QIO_CHANNEL_BUFFER, QIO_CHANNEL,
     .instance_finalize = qio_channel_buffer_finalize,
     .class_init = qio_channel_buffer_class_init,
-};
-TYPE_INFO(qio_channel_buffer_info)
+)
 
 

@@ -213,17 +213,15 @@ static void macio_gpio_class_init(ObjectClass *oc, void *data)
     nc->nmi_monitor_handler = macio_gpio_nmi;
 }
 
-static const TypeInfo macio_gpio_init_info = {
-    .name          = TYPE_MACIO_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MacIOGPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(macio_gpio_init_info,
+                            MacIOGPIOState, void,
+                            MACIO_GPIO, SYS_BUS_DEVICE,
     .instance_init = macio_gpio_init,
     .class_init    = macio_gpio_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_NMI },
         { }
     },
-};
-TYPE_INFO(macio_gpio_init_info)
+)
 
 

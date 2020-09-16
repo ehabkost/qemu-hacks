@@ -39,17 +39,15 @@ static void scsi_bus_class_init(ObjectClass *klass, void *data)
     hc->unplug = qdev_simple_device_unplug_cb;
 }
 
-static const TypeInfo scsi_bus_info = {
-    .name = TYPE_SCSI_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(SCSIBus),
+OBJECT_DEFINE_TYPE_EXTENDED(scsi_bus_info,
+                            SCSIBus, void,
+                            SCSI_BUS, BUS,
     .class_init = scsi_bus_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(scsi_bus_info)
+)
 static int next_scsi_bus;
 
 static void scsi_device_realize(SCSIDevice *s, Error **errp)
@@ -1730,15 +1728,12 @@ static void scsi_dev_instance_init(Object *obj)
                                   &s->qdev);
 }
 
-static const TypeInfo scsi_device_type_info = {
-    .name = TYPE_SCSI_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SCSIDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(scsi_device_type_info,
+                            SCSIDevice, SCSIDeviceClass,
+                            SCSI_DEVICE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(SCSIDeviceClass),
     .class_init = scsi_device_class_init,
     .instance_init = scsi_dev_instance_init,
-};
-TYPE_INFO(scsi_device_type_info)
+)
 
 

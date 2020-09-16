@@ -87,13 +87,11 @@ static void virtual_css_bus_class_init(ObjectClass *klass, void *data)
     k->get_dev_path = virtual_css_bus_get_dev_path;
 }
 
-static const TypeInfo virtual_css_bus_info = {
-    .name = TYPE_VIRTUAL_CSS_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(VirtualCssBus),
+OBJECT_DEFINE_TYPE_EXTENDED(virtual_css_bus_info,
+                            VirtualCssBus, void,
+                            VIRTUAL_CSS_BUS, BUS,
     .class_init = virtual_css_bus_class_init,
-};
-TYPE_INFO(virtual_css_bus_info)
+)
 
 VirtualCssBus *virtual_css_bus_init(void)
 {
@@ -148,16 +146,14 @@ static void virtual_css_bridge_class_init(ObjectClass *klass, void *data)
             " or not (read only, always true)");
 }
 
-static const TypeInfo virtual_css_bridge_info = {
-    .name          = TYPE_VIRTUAL_CSS_BRIDGE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(VirtualCssBridge),
+OBJECT_DEFINE_TYPE_EXTENDED(virtual_css_bridge_info,
+                            VirtualCssBridge, void,
+                            VIRTUAL_CSS_BRIDGE, SYS_BUS_DEVICE,
     .class_init    = virtual_css_bridge_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(virtual_css_bridge_info)
+)
 
 

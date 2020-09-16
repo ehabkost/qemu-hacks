@@ -527,14 +527,12 @@ static void omap_i2c_class_init(ObjectClass *klass, void *data)
     dc->realize = omap_i2c_realize;
 }
 
-static const TypeInfo omap_i2c_info = {
-    .name = TYPE_OMAP_I2C,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(OMAPI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(omap_i2c_info,
+                            OMAPI2CState, void,
+                            OMAP_I2C, SYS_BUS_DEVICE,
     .instance_init = omap_i2c_init,
     .class_init = omap_i2c_class_init,
-};
-TYPE_INFO(omap_i2c_info)
+)
 
 
 I2CBus *omap_i2c_bus(DeviceState *omap_i2c)

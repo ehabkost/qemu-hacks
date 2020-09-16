@@ -1177,12 +1177,9 @@ static Property ccid_props[] = {
 #define TYPE_CCID_BUS "ccid-bus"
 OBJECT_DECLARE_SIMPLE_TYPE(CCIDBus, CCID_BUS)
 
-static const TypeInfo ccid_bus_info = {
-    .name = TYPE_CCID_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(CCIDBus),
-};
-TYPE_INFO(ccid_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(ccid_bus_info,
+                            CCIDBus, void,
+                            CCID_BUS, BUS)
 
 void ccid_card_send_apdu_to_guest(CCIDCardState *card,
                                   uint8_t *apdu, uint32_t len)
@@ -1459,17 +1456,15 @@ static void ccid_class_initfn(ObjectClass *klass, void *data)
     hc->unplug = qdev_simple_device_unplug_cb;
 }
 
-static const TypeInfo ccid_info = {
-    .name          = TYPE_USB_CCID_DEV,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBCCIDState),
+OBJECT_DEFINE_TYPE_EXTENDED(ccid_info,
+                            USBCCIDState, void,
+                            USB_CCID_DEV, USB_DEVICE,
     .class_init    = ccid_class_initfn,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(ccid_info)
+)
 
 static void ccid_card_class_init(ObjectClass *klass, void *data)
 {
@@ -1480,15 +1475,12 @@ static void ccid_card_class_init(ObjectClass *klass, void *data)
     device_class_set_props(k, ccid_props);
 }
 
-static const TypeInfo ccid_card_type_info = {
-    .name = TYPE_CCID_CARD,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(CCIDCardState),
+OBJECT_DEFINE_TYPE_EXTENDED(ccid_card_type_info,
+                            CCIDCardState, CCIDCardClass,
+                            CCID_CARD, DEVICE,
     .abstract = true,
-    .class_size = sizeof(CCIDCardClass),
     .class_init = ccid_card_class_init,
-};
-TYPE_INFO(ccid_card_type_info)
+)
 
 static void ccid_register_types(void)
 {

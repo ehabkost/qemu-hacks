@@ -154,13 +154,11 @@ void hyperv_synic_reset(CPUState *cs)
     }
 }
 
-static const TypeInfo synic_type_info = {
-    .name = TYPE_SYNIC,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SynICState),
+OBJECT_DEFINE_TYPE_EXTENDED(synic_type_info,
+                            SynICState, void,
+                            SYNIC, DEVICE,
     .class_init = synic_class_init,
-};
-TYPE_INFO(synic_type_info)
+)
 
 
 

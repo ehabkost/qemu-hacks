@@ -4466,14 +4466,12 @@ static void spapr_machine_class_init(ObjectClass *oc, void *data)
     xfc->match_nvt = spapr_match_nvt;
 }
 
-static const TypeInfo spapr_machine_info = {
-    .name          = TYPE_SPAPR_MACHINE,
-    .parent        = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_machine_info,
+                            SpaprMachineState, SpaprMachineClass,
+                            SPAPR_MACHINE, MACHINE,
     .abstract      = true,
-    .instance_size = sizeof(SpaprMachineState),
     .instance_init = spapr_instance_init,
     .instance_finalize = spapr_machine_finalizefn,
-    .class_size    = sizeof(SpaprMachineClass),
     .class_init    = spapr_machine_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_FW_PATH_PROVIDER },
@@ -4485,8 +4483,7 @@ static const TypeInfo spapr_machine_info = {
         { TYPE_XIVE_FABRIC },
         { }
     },
-};
-TYPE_INFO(spapr_machine_info)
+)
 
 static void spapr_machine_latest_class_options(MachineClass *mc)
 {

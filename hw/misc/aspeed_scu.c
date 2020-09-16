@@ -494,15 +494,12 @@ static void aspeed_scu_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, aspeed_scu_properties);
 }
 
-static const TypeInfo aspeed_scu_info = {
-    .name = TYPE_ASPEED_SCU,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedSCUState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_scu_info,
+                            AspeedSCUState, AspeedSCUClass,
+                            ASPEED_SCU, SYS_BUS_DEVICE,
     .class_init = aspeed_scu_class_init,
-    .class_size    = sizeof(AspeedSCUClass),
     .abstract      = true,
-};
-TYPE_INFO(aspeed_scu_info)
+)
 
 static void aspeed_2400_scu_class_init(ObjectClass *klass, void *data)
 {
@@ -517,12 +514,11 @@ static void aspeed_2400_scu_class_init(ObjectClass *klass, void *data)
     asc->ops = &aspeed_ast2400_scu_ops;
 }
 
-static const TypeInfo aspeed_2400_scu_info = {
-    .name = TYPE_ASPEED_2400_SCU,
-    .parent = TYPE_ASPEED_SCU,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2400_scu_info,
+                            void, void,
+                            ASPEED_2400_SCU, ASPEED_SCU,
     .class_init = aspeed_2400_scu_class_init,
-};
-TYPE_INFO(aspeed_2400_scu_info)
+)
 
 static void aspeed_2500_scu_class_init(ObjectClass *klass, void *data)
 {
@@ -537,12 +533,11 @@ static void aspeed_2500_scu_class_init(ObjectClass *klass, void *data)
     asc->ops = &aspeed_ast2500_scu_ops;
 }
 
-static const TypeInfo aspeed_2500_scu_info = {
-    .name = TYPE_ASPEED_2500_SCU,
-    .parent = TYPE_ASPEED_SCU,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2500_scu_info,
+                            void, void,
+                            ASPEED_2500_SCU, ASPEED_SCU,
     .class_init = aspeed_2500_scu_class_init,
-};
-TYPE_INFO(aspeed_2500_scu_info)
+)
 
 static uint64_t aspeed_ast2600_scu_read(void *opaque, hwaddr offset,
                                         unsigned size)
@@ -697,11 +692,10 @@ static void aspeed_2600_scu_class_init(ObjectClass *klass, void *data)
     asc->ops = &aspeed_ast2600_scu_ops;
 }
 
-static const TypeInfo aspeed_2600_scu_info = {
-    .name = TYPE_ASPEED_2600_SCU,
-    .parent = TYPE_ASPEED_SCU,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2600_scu_info,
+                            void, void,
+                            ASPEED_2600_SCU, ASPEED_SCU,
     .class_init = aspeed_2600_scu_class_init,
-};
-TYPE_INFO(aspeed_2600_scu_info)
+)
 
 

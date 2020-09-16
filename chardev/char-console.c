@@ -41,11 +41,10 @@ static void char_console_class_init(ObjectClass *oc, void *data)
     cc->open = qemu_chr_open_win_con;
 }
 
-static const TypeInfo char_console_type_info = {
-    .name = TYPE_CHARDEV_CONSOLE,
-    .parent = TYPE_CHARDEV_WIN,
+OBJECT_DEFINE_TYPE_EXTENDED(char_console_type_info,
+                            void, void,
+                            CHARDEV_CONSOLE, CHARDEV_WIN,
     .class_init = char_console_class_init,
-};
-TYPE_INFO(char_console_type_info)
+)
 
 

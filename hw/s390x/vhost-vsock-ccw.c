@@ -45,13 +45,11 @@ static void vhost_vsock_ccw_instance_init(Object *obj)
                                 TYPE_VHOST_VSOCK);
 }
 
-static const TypeInfo vhost_vsock_ccw_info = {
-    .name          = TYPE_VHOST_VSOCK_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VHostVSockCCWState),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_vsock_ccw_info,
+                            VHostVSockCCWState, void,
+                            VHOST_VSOCK_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = vhost_vsock_ccw_instance_init,
     .class_init    = vhost_vsock_ccw_class_init,
-};
-TYPE_INFO(vhost_vsock_ccw_info)
+)
 
 

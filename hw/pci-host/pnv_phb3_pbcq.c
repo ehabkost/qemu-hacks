@@ -338,17 +338,15 @@ static void pnv_pbcq_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pnv_pbcq_type_info = {
-    .name          = TYPE_PNV_PBCQ,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvPBCQState),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_pbcq_type_info,
+                            PnvPBCQState, void,
+                            PNV_PBCQ, DEVICE,
     .instance_init = phb3_pbcq_instance_init,
     .class_init    = pnv_pbcq_class_init,
     .interfaces    = (InterfaceInfo[]) {
         { TYPE_PNV_XSCOM_INTERFACE },
         { }
     }
-};
-TYPE_INFO(pnv_pbcq_type_info)
+)
 
 

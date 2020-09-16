@@ -329,13 +329,11 @@ static void bcm2835_gpio_class_init(ObjectClass *klass, void *data)
     dc->reset = &bcm2835_gpio_reset;
 }
 
-static const TypeInfo bcm2835_gpio_info = {
-    .name          = TYPE_BCM2835_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835GpioState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_gpio_info,
+                            BCM2835GpioState, void,
+                            BCM2835_GPIO, SYS_BUS_DEVICE,
     .instance_init = bcm2835_gpio_init,
     .class_init    = bcm2835_gpio_class_init,
-};
-TYPE_INFO(bcm2835_gpio_info)
+)
 
 

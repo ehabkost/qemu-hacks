@@ -30,13 +30,9 @@
 #include "sysemu/sysemu.h"
 #include "qom/object.h"
 
-static const TypeInfo accel_type = {
-    .name = TYPE_ACCEL,
-    .parent = TYPE_OBJECT,
-    .class_size = sizeof(AccelClass),
-    .instance_size = sizeof(AccelState),
-};
-TYPE_INFO(accel_type)
+OBJECT_DEFINE_TYPE_EXTENDED(accel_type,
+                            AccelState, AccelClass,
+                            ACCEL, OBJECT)
 
 /* Lookup AccelClass from opt_name. Returns NULL if not found */
 AccelClass *accel_find(const char *opt_name)

@@ -582,14 +582,12 @@ static void pnv_psi_power8_class_init(ObjectClass *klass, void *data)
     ppc->compat_size = sizeof(compat);
 }
 
-static const TypeInfo pnv_psi_power8_info = {
-    .name          = TYPE_PNV8_PSI,
-    .parent        = TYPE_PNV_PSI,
-    .instance_size = sizeof(Pnv8Psi),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_psi_power8_info,
+                            Pnv8Psi, void,
+                            PNV8_PSI, PNV_PSI,
     .instance_init = pnv_psi_power8_instance_init,
     .class_init    = pnv_psi_power8_class_init,
-};
-TYPE_INFO(pnv_psi_power8_info)
+)
 
 
 /* Common registers */
@@ -888,18 +886,16 @@ static void pnv_psi_power9_class_init(ObjectClass *klass, void *data)
     xfc->notify      = pnv_psi_notify;
 }
 
-static const TypeInfo pnv_psi_power9_info = {
-    .name          = TYPE_PNV9_PSI,
-    .parent        = TYPE_PNV_PSI,
-    .instance_size = sizeof(Pnv9Psi),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_psi_power9_info,
+                            Pnv9Psi, void,
+                            PNV9_PSI, PNV_PSI,
     .instance_init = pnv_psi_power9_instance_init,
     .class_init    = pnv_psi_power9_class_init,
     .interfaces = (InterfaceInfo[]) {
             { TYPE_XIVE_NOTIFIER },
             { },
     },
-};
-TYPE_INFO(pnv_psi_power9_info)
+)
 
 static void pnv_psi_power10_class_init(ObjectClass *klass, void *data)
 {
@@ -915,12 +911,11 @@ static void pnv_psi_power10_class_init(ObjectClass *klass, void *data)
     ppc->compat_size = sizeof(compat);
 }
 
-static const TypeInfo pnv_psi_power10_info = {
-    .name          = TYPE_PNV10_PSI,
-    .parent        = TYPE_PNV9_PSI,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_psi_power10_info,
+                            void, void,
+                            PNV10_PSI, PNV9_PSI,
     .class_init    = pnv_psi_power10_class_init,
-};
-TYPE_INFO(pnv_psi_power10_info)
+)
 
 static void pnv_psi_class_init(ObjectClass *klass, void *data)
 {
@@ -935,19 +930,16 @@ static void pnv_psi_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pnv_psi_info = {
-    .name          = TYPE_PNV_PSI,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvPsi),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_psi_info,
+                            PnvPsi, PnvPsiClass,
+                            PNV_PSI, DEVICE,
     .class_init    = pnv_psi_class_init,
-    .class_size    = sizeof(PnvPsiClass),
     .abstract      = true,
     .interfaces    = (InterfaceInfo[]) {
         { TYPE_PNV_XSCOM_INTERFACE },
         { }
     }
-};
-TYPE_INFO(pnv_psi_info)
+)
 
 
 

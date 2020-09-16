@@ -55,13 +55,11 @@ static void virtio_ccw_net_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_net = {
-    .name          = TYPE_VIRTIO_NET_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtIONetCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_net,
+                            VirtIONetCcw, void,
+                            VIRTIO_NET_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_net_instance_init,
     .class_init    = virtio_ccw_net_class_init,
-};
-TYPE_INFO(virtio_ccw_net)
+)
 
 

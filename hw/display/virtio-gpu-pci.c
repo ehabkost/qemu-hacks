@@ -57,14 +57,12 @@ static void virtio_gpu_pci_base_class_init(ObjectClass *klass, void *data)
     pcidev_k->class_id = PCI_CLASS_DISPLAY_OTHER;
 }
 
-static const TypeInfo virtio_gpu_pci_base_info = {
-    .name = TYPE_VIRTIO_GPU_PCI_BASE,
-    .parent = TYPE_VIRTIO_PCI,
-    .instance_size = sizeof(VirtIOGPUPCIBase),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_gpu_pci_base_info,
+                            VirtIOGPUPCIBase, void,
+                            VIRTIO_GPU_PCI_BASE, VIRTIO_PCI,
     .class_init = virtio_gpu_pci_base_class_init,
     .abstract = true
-};
-TYPE_INFO(virtio_gpu_pci_base_info)
+)
 
 #define TYPE_VIRTIO_GPU_PCI "virtio-gpu-pci"
 typedef struct VirtIOGPUPCI VirtIOGPUPCI;

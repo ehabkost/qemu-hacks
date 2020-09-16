@@ -399,17 +399,15 @@ static void esp_pci_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_esp_pci_scsi;
 }
 
-static const TypeInfo esp_pci_info = {
-    .name = TYPE_AM53C974_DEVICE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIESPState),
+OBJECT_DEFINE_TYPE_EXTENDED(esp_pci_info,
+                            PCIESPState, void,
+                            AM53C974_DEVICE, PCI_DEVICE,
     .class_init = esp_pci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(esp_pci_info)
+)
 
 struct DC390State {
     PCIESPState pci;
@@ -524,12 +522,10 @@ static void dc390_class_init(ObjectClass *klass, void *data)
     dc->desc = "Tekram DC-390 SCSI adapter";
 }
 
-static const TypeInfo dc390_info = {
-    .name = TYPE_DC390_DEVICE,
-    .parent = TYPE_AM53C974_DEVICE,
-    .instance_size = sizeof(DC390State),
+OBJECT_DEFINE_TYPE_EXTENDED(dc390_info,
+                            DC390State, void,
+                            DC390_DEVICE, AM53C974_DEVICE,
     .class_init = dc390_class_init,
-};
-TYPE_INFO(dc390_info)
+)
 
 

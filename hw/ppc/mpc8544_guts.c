@@ -127,12 +127,10 @@ static void mpc8544_guts_initfn(Object *obj)
     sysbus_init_mmio(d, &s->iomem);
 }
 
-static const TypeInfo mpc8544_guts_info = {
-    .name          = TYPE_MPC8544_GUTS,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(GutsState),
+OBJECT_DEFINE_TYPE_EXTENDED(mpc8544_guts_info,
+                            GutsState, void,
+                            MPC8544_GUTS, SYS_BUS_DEVICE,
     .instance_init = mpc8544_guts_initfn,
-};
-TYPE_INFO(mpc8544_guts_info)
+)
 
 

@@ -506,18 +506,15 @@ static void xen_bus_class_init(ObjectClass *class, void *data)
     hotplug_class->unplug_request = xen_bus_unplug_request;
 }
 
-static const TypeInfo xen_bus_type_info = {
-    .name = TYPE_XEN_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(XenBus),
-    .class_size = sizeof(XenBusClass),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_bus_type_info,
+                            XenBus, XenBusClass,
+                            XEN_BUS, BUS,
     .class_init = xen_bus_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     },
-};
-TYPE_INFO(xen_bus_type_info)
+)
 
 void xen_device_backend_printf(XenDevice *xendev, const char *key,
                                const char *fmt, ...)
@@ -1342,15 +1339,12 @@ static void xen_device_class_init(ObjectClass *class, void *data)
     dev_class->bus_type = TYPE_XEN_BUS;
 }
 
-static const TypeInfo xen_device_type_info = {
-    .name = TYPE_XEN_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(XenDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_device_type_info,
+                            XenDevice, XenDeviceClass,
+                            XEN_DEVICE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(XenDeviceClass),
     .class_init = xen_device_class_init,
-};
-TYPE_INFO(xen_device_type_info)
+)
 
 typedef struct XenBridge {
     SysBusDevice busdev;
@@ -1358,12 +1352,9 @@ typedef struct XenBridge {
 
 #define TYPE_XEN_BRIDGE "xen-bridge"
 
-static const TypeInfo xen_bridge_type_info = {
-    .name = TYPE_XEN_BRIDGE,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XenBridge),
-};
-TYPE_INFO(xen_bridge_type_info)
+OBJECT_DEFINE_TYPE_EXTENDED(xen_bridge_type_info,
+                            XenBridge, void,
+                            XEN_BRIDGE, SYS_BUS_DEVICE)
 
 
 

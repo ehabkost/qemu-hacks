@@ -709,17 +709,15 @@ static void e1000e_instance_init(Object *obj)
                                   DEVICE(obj));
 }
 
-static const TypeInfo e1000e_info = {
-    .name = TYPE_E1000E,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(E1000EState),
+OBJECT_DEFINE_TYPE_EXTENDED(e1000e_info,
+                            E1000EState, void,
+                            E1000E, PCI_DEVICE,
     .class_init = e1000e_class_init,
     .instance_init = e1000e_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
         { }
     },
-};
-TYPE_INFO(e1000e_info)
+)
 
 

@@ -60,11 +60,10 @@ static void e500plat_machine_class_init(ObjectClass *oc, void *data)
 
 #define TYPE_MPC8544DS_MACHINE  MACHINE_TYPE_NAME("mpc8544ds")
 
-static const TypeInfo mpc8544ds_info = {
-    .name          = TYPE_MPC8544DS_MACHINE,
-    .parent        = TYPE_PPCE500_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(mpc8544ds_info,
+                            void, void,
+                            MPC8544DS_MACHINE, PPCE500_MACHINE,
     .class_init    = e500plat_machine_class_init,
-};
-TYPE_INFO(mpc8544ds_info)
+)
 
 

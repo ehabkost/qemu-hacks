@@ -312,11 +312,9 @@ static void hv_test_dev_class_init(ObjectClass *klass, void *data)
     dc->realize = hv_test_dev_realizefn;
 }
 
-static const TypeInfo hv_test_dev_info = {
-    .name           = TYPE_HYPERV_TEST_DEV,
-    .parent         = TYPE_ISA_DEVICE,
-    .instance_size  = sizeof(HypervTestDev),
+OBJECT_DEFINE_TYPE_EXTENDED(hv_test_dev_info,
+                            HypervTestDev, void,
+                            HYPERV_TEST_DEV, ISA_DEVICE,
     .class_init     = hv_test_dev_class_init,
-};
-TYPE_INFO(hv_test_dev_info)
+)
 

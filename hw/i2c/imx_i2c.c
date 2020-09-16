@@ -318,12 +318,10 @@ static void imx_i2c_class_init(ObjectClass *klass, void *data)
     dc->desc = "i.MX I2C Controller";
 }
 
-static const TypeInfo imx_i2c_type_info = {
-    .name = TYPE_IMX_I2C,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_i2c_type_info,
+                            IMXI2CState, void,
+                            IMX_I2C, SYS_BUS_DEVICE,
     .class_init = imx_i2c_class_init,
-};
-TYPE_INFO(imx_i2c_type_info)
+)
 
 

@@ -956,18 +956,16 @@ static void throttle_group_obj_class_init(ObjectClass *klass, void *class_data)
                               NULL, NULL);
 }
 
-static const TypeInfo throttle_group_info = {
-    .name = TYPE_THROTTLE_GROUP,
-    .parent = TYPE_OBJECT,
+OBJECT_DEFINE_TYPE_EXTENDED(throttle_group_info,
+                            ThrottleGroup, void,
+                            THROTTLE_GROUP, OBJECT,
     .class_init = throttle_group_obj_class_init,
-    .instance_size = sizeof(ThrottleGroup),
     .instance_init = throttle_group_obj_init,
     .instance_finalize = throttle_group_obj_finalize,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     },
-};
-TYPE_INFO(throttle_group_info)
+)
 
 

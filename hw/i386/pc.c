@@ -1731,19 +1731,16 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
         pc_machine_get_pit, pc_machine_set_pit);
 }
 
-static const TypeInfo pc_machine_info = {
-    .name = TYPE_PC_MACHINE,
-    .parent = TYPE_X86_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(pc_machine_info,
+                            PCMachineState, PCMachineClass,
+                            PC_MACHINE, X86_MACHINE,
     .abstract = true,
-    .instance_size = sizeof(PCMachineState),
     .instance_init = pc_machine_initfn,
-    .class_size = sizeof(PCMachineClass),
     .class_init = pc_machine_class_init,
     .interfaces = (InterfaceInfo[]) {
          { TYPE_HOTPLUG_HANDLER },
          { }
     },
-};
-TYPE_INFO(pc_machine_info)
+)
 
 

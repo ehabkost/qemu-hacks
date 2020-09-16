@@ -410,15 +410,12 @@ static void aspeed_soc_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, aspeed_soc_properties);
 }
 
-static const TypeInfo aspeed_soc_type_info = {
-    .name           = TYPE_ASPEED_SOC,
-    .parent         = TYPE_DEVICE,
-    .instance_size  = sizeof(AspeedSoCState),
-    .class_size     = sizeof(AspeedSoCClass),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_soc_type_info,
+                            AspeedSoCState, AspeedSoCClass,
+                            ASPEED_SOC, DEVICE,
     .class_init     = aspeed_soc_class_init,
     .abstract       = true,
-};
-TYPE_INFO(aspeed_soc_type_info)
+)
 
 static void aspeed_soc_ast2400_class_init(ObjectClass *oc, void *data)
 {

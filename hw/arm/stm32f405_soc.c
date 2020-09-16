@@ -264,13 +264,11 @@ static void stm32f405_soc_class_init(ObjectClass *klass, void *data)
     /* No vmstate or reset required: device has no internal state */
 }
 
-static const TypeInfo stm32f405_soc_info = {
-    .name          = TYPE_STM32F405_SOC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F405State),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f405_soc_info,
+                            STM32F405State, void,
+                            STM32F405_SOC, SYS_BUS_DEVICE,
     .instance_init = stm32f405_soc_initfn,
     .class_init    = stm32f405_soc_class_init,
-};
-TYPE_INFO(stm32f405_soc_info)
+)
 
 

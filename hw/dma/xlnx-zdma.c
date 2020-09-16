@@ -831,13 +831,11 @@ static void zdma_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_zdma;
 }
 
-static const TypeInfo zdma_info = {
-    .name          = TYPE_XLNX_ZDMA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XlnxZDMA),
+OBJECT_DEFINE_TYPE_EXTENDED(zdma_info,
+                            XlnxZDMA, void,
+                            XLNX_ZDMA, SYS_BUS_DEVICE,
     .class_init    = zdma_class_init,
     .instance_init = zdma_init,
-};
-TYPE_INFO(zdma_info)
+)
 
 

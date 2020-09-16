@@ -963,50 +963,43 @@ static void aspeed_gpio_ast2600_1_8v_class_init(ObjectClass *klass, void *data)
     agc->reg_table = aspeed_1_8v_gpios;
 }
 
-static const TypeInfo aspeed_gpio_info = {
-    .name           = TYPE_ASPEED_GPIO,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(AspeedGPIOState),
-    .class_size     = sizeof(AspeedGPIOClass),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_gpio_info,
+                            AspeedGPIOState, AspeedGPIOClass,
+                            ASPEED_GPIO, SYS_BUS_DEVICE,
     .class_init     = aspeed_gpio_class_init,
     .abstract       = true,
-};
-TYPE_INFO(aspeed_gpio_info)
+)
 
 #define TYPE_ASPEED_GPIO_AST2400 (TYPE_ASPEED_GPIO "-ast2400")
-static const TypeInfo aspeed_gpio_ast2400_info = {
-    .name           = TYPE_ASPEED_GPIO_AST2400,
-    .parent         = TYPE_ASPEED_GPIO,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_gpio_ast2400_info,
+                            void, void,
+                            ASPEED_GPIO_AST2400, ASPEED_GPIO,
     .class_init     = aspeed_gpio_ast2400_class_init,
     .instance_init  = aspeed_gpio_init,
-};
-TYPE_INFO(aspeed_gpio_ast2400_info)
+)
 
 #define TYPE_ASPEED_GPIO_AST2500 (TYPE_ASPEED_GPIO "-ast2500")
-static const TypeInfo aspeed_gpio_ast2500_info = {
-    .name           = TYPE_ASPEED_GPIO_AST2500,
-    .parent         = TYPE_ASPEED_GPIO,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_gpio_ast2500_info,
+                            void, void,
+                            ASPEED_GPIO_AST2500, ASPEED_GPIO,
     .class_init     = aspeed_gpio_2500_class_init,
     .instance_init  = aspeed_gpio_init,
-};
-TYPE_INFO(aspeed_gpio_ast2500_info)
+)
 
 #define TYPE_ASPEED_GPIO_AST2600 (TYPE_ASPEED_GPIO "-ast2600")
-static const TypeInfo aspeed_gpio_ast2600_3_6v_info = {
-    .name           = TYPE_ASPEED_GPIO_AST2600,
-    .parent         = TYPE_ASPEED_GPIO,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_gpio_ast2600_3_6v_info,
+                            void, void,
+                            ASPEED_GPIO_AST2600, ASPEED_GPIO,
     .class_init     = aspeed_gpio_ast2600_3_6v_class_init,
     .instance_init  = aspeed_gpio_init,
-};
-TYPE_INFO(aspeed_gpio_ast2600_3_6v_info)
+)
 
 #define TYPE_ASPEED_GPIO_AST2600_1_8V (TYPE_ASPEED_GPIO "-ast2600-1_8v")
-static const TypeInfo aspeed_gpio_ast2600_1_8v_info = {
-    .name           = TYPE_ASPEED_GPIO_AST2600_1_8V,
-    .parent         = TYPE_ASPEED_GPIO,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_gpio_ast2600_1_8v_info,
+                            void, void,
+                            ASPEED_GPIO_AST2600_1_8V, ASPEED_GPIO,
     .class_init     = aspeed_gpio_ast2600_1_8v_class_init,
     .instance_init  = aspeed_gpio_init,
-};
-TYPE_INFO(aspeed_gpio_ast2600_1_8v_info)
+)
 
 

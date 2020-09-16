@@ -85,12 +85,10 @@ static void cpu_cluster_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo cpu_cluster_type_info = {
-    .name = TYPE_CPU_CLUSTER,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(CPUClusterState),
+OBJECT_DEFINE_TYPE_EXTENDED(cpu_cluster_type_info,
+                            CPUClusterState, void,
+                            CPU_CLUSTER, DEVICE,
     .class_init = cpu_cluster_class_init,
-};
-TYPE_INFO(cpu_cluster_type_info)
+)
 
 

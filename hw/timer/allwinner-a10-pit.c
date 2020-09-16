@@ -289,13 +289,11 @@ static void a10_pit_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_a10_pit;
 }
 
-static const TypeInfo a10_pit_info = {
-    .name = TYPE_AW_A10_PIT,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AwA10PITState),
+OBJECT_DEFINE_TYPE_EXTENDED(a10_pit_info,
+                            AwA10PITState, void,
+                            AW_A10_PIT, SYS_BUS_DEVICE,
     .instance_init = a10_pit_init,
     .class_init = a10_pit_class_init,
-};
-TYPE_INFO(a10_pit_info)
+)
 
 

@@ -307,18 +307,16 @@ static void pci_piix3_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo piix3_pci_type_info = {
-    .name = TYPE_PIIX3_PCI_DEVICE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PIIX3State),
+OBJECT_DEFINE_TYPE_EXTENDED(piix3_pci_type_info,
+                            PIIX3State, void,
+                            PIIX3_PCI_DEVICE, PCI_DEVICE,
     .abstract = true,
     .class_init = pci_piix3_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(piix3_pci_type_info)
+)
 
 static void piix3_class_init(ObjectClass *klass, void *data)
 {
@@ -327,12 +325,11 @@ static void piix3_class_init(ObjectClass *klass, void *data)
     k->config_write = piix3_write_config;
 }
 
-static const TypeInfo piix3_info = {
-    .name          = TYPE_PIIX3_DEVICE,
-    .parent        = TYPE_PIIX3_PCI_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(piix3_info,
+                            void, void,
+                            PIIX3_DEVICE, PIIX3_PCI_DEVICE,
     .class_init    = piix3_class_init,
-};
-TYPE_INFO(piix3_info)
+)
 
 static void piix3_xen_class_init(ObjectClass *klass, void *data)
 {
@@ -341,12 +338,11 @@ static void piix3_xen_class_init(ObjectClass *klass, void *data)
     k->config_write = piix3_write_config_xen;
 };
 
-static const TypeInfo piix3_xen_info = {
-    .name          = TYPE_PIIX3_XEN_DEVICE,
-    .parent        = TYPE_PIIX3_PCI_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(piix3_xen_info,
+                            void, void,
+                            PIIX3_XEN_DEVICE, PIIX3_PCI_DEVICE,
     .class_init    = piix3_xen_class_init,
-};
-TYPE_INFO(piix3_xen_info)
+)
 
 
 

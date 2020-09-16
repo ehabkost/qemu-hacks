@@ -510,12 +510,10 @@ static void ppc440_pcix_class_init(ObjectClass *klass, void *data)
     dc->reset = ppc440_pcix_reset;
 }
 
-static const TypeInfo ppc440_pcix_info = {
-    .name          = TYPE_PPC440_PCIX_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(PPC440PCIXState),
+OBJECT_DEFINE_TYPE_EXTENDED(ppc440_pcix_info,
+                            PPC440PCIXState, void,
+                            PPC440_PCIX_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = ppc440_pcix_class_init,
-};
-TYPE_INFO(ppc440_pcix_info)
+)
 
 

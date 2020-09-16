@@ -238,15 +238,12 @@ static void nvdimm_class_init(ObjectClass *oc, void *data)
     nvc->write_label_data = nvdimm_write_label_data;
 }
 
-static TypeInfo nvdimm_info = {
-    .name          = TYPE_NVDIMM,
-    .parent        = TYPE_PC_DIMM,
-    .class_size    = sizeof(NVDIMMClass),
+OBJECT_DEFINE_TYPE_EXTENDED(nvdimm_info,
+                            NVDIMMDevice, NVDIMMClass,
+                            NVDIMM, PC_DIMM,
     .class_init    = nvdimm_class_init,
-    .instance_size = sizeof(NVDIMMDevice),
     .instance_init = nvdimm_init,
     .instance_finalize = nvdimm_finalize,
-};
-TYPE_INFO(nvdimm_info)
+)
 
 

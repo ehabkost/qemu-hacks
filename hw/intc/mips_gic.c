@@ -452,13 +452,11 @@ static void mips_gic_class_init(ObjectClass *klass, void *data)
     dc->realize = mips_gic_realize;
 }
 
-static const TypeInfo mips_gic_info = {
-    .name          = TYPE_MIPS_GIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MIPSGICState),
+OBJECT_DEFINE_TYPE_EXTENDED(mips_gic_info,
+                            MIPSGICState, void,
+                            MIPS_GIC, SYS_BUS_DEVICE,
     .instance_init = mips_gic_init,
     .class_init    = mips_gic_class_init,
-};
-TYPE_INFO(mips_gic_info)
+)
 
 

@@ -696,17 +696,15 @@ static void pvrdma_class_init(ObjectClass *klass, void *data)
     ir->print_statistics = pvrdma_print_statistics;
 }
 
-static const TypeInfo pvrdma_info = {
-    .name = TYPE_PVRDMA,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PVRDMADev),
+OBJECT_DEFINE_TYPE_EXTENDED(pvrdma_info,
+                            PVRDMADev, void,
+                            PVRDMA, PCI_DEVICE,
     .class_init = pvrdma_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { TYPE_RDMA_PROVIDER },
         { }
     }
-};
-TYPE_INFO(pvrdma_info)
+)
 
 

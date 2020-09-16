@@ -1538,13 +1538,11 @@ static void exynos4210_mct_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_exynos4210_mct_state;
 }
 
-static const TypeInfo exynos4210_mct_info = {
-    .name          = TYPE_EXYNOS4210_MCT,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210MCTState),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_mct_info,
+                            Exynos4210MCTState, void,
+                            EXYNOS4210_MCT, SYS_BUS_DEVICE,
     .instance_init = exynos4210_mct_init,
     .class_init    = exynos4210_mct_class_init,
-};
-TYPE_INFO(exynos4210_mct_info)
+)
 
 

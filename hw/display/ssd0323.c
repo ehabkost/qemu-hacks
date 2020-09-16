@@ -372,12 +372,10 @@ static void ssd0323_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_ssd0323;
 }
 
-static const TypeInfo ssd0323_info = {
-    .name          = TYPE_SSD0323,
-    .parent        = TYPE_SSI_SLAVE,
-    .instance_size = sizeof(ssd0323_state),
+OBJECT_DEFINE_TYPE_EXTENDED(ssd0323_info,
+                            ssd0323_state, void,
+                            SSD0323, SSI_SLAVE,
     .class_init    = ssd0323_class_init,
-};
-TYPE_INFO(ssd0323_info)
+)
 
 

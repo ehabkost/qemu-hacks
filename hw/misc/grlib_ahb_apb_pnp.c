@@ -174,13 +174,11 @@ static void grlib_ahb_pnp_class_init(ObjectClass *klass, void *data)
     dc->realize = grlib_ahb_pnp_realize;
 }
 
-static const TypeInfo grlib_ahb_pnp_info = {
-    .name          = TYPE_GRLIB_AHB_PNP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AHBPnp),
+OBJECT_DEFINE_TYPE_EXTENDED(grlib_ahb_pnp_info,
+                            AHBPnp, void,
+                            GRLIB_AHB_PNP, SYS_BUS_DEVICE,
     .class_init    = grlib_ahb_pnp_class_init,
-};
-TYPE_INFO(grlib_ahb_pnp_info)
+)
 
 /* APBPnp */
 
@@ -286,12 +284,10 @@ static void grlib_apb_pnp_class_init(ObjectClass *klass, void *data)
     dc->realize = grlib_apb_pnp_realize;
 }
 
-static const TypeInfo grlib_apb_pnp_info = {
-    .name          = TYPE_GRLIB_APB_PNP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(APBPnp),
+OBJECT_DEFINE_TYPE_EXTENDED(grlib_apb_pnp_info,
+                            APBPnp, void,
+                            GRLIB_APB_PNP, SYS_BUS_DEVICE,
     .class_init    = grlib_apb_pnp_class_init,
-};
-TYPE_INFO(grlib_apb_pnp_info)
+)
 
 

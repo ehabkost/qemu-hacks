@@ -1963,18 +1963,15 @@ static void pnv_xive_class_init(ObjectClass *klass, void *data)
     xpc->match_nvt  = pnv_xive_match_nvt;
 };
 
-static const TypeInfo pnv_xive_info = {
-    .name          = TYPE_PNV_XIVE,
-    .parent        = TYPE_XIVE_ROUTER,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_xive_info,
+                            PnvXive, PnvXiveClass,
+                            PNV_XIVE, XIVE_ROUTER,
     .instance_init = pnv_xive_init,
-    .instance_size = sizeof(PnvXive),
     .class_init    = pnv_xive_class_init,
-    .class_size    = sizeof(PnvXiveClass),
     .interfaces    = (InterfaceInfo[]) {
         { TYPE_PNV_XSCOM_INTERFACE },
         { }
     }
-};
-TYPE_INFO(pnv_xive_info)
+)
 
 

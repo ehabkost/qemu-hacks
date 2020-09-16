@@ -1299,13 +1299,11 @@ static void ppc460ex_pcie_class_init(ObjectClass *klass, void *data)
     dc->hotpluggable = false;
 }
 
-static const TypeInfo ppc460ex_pcie_host_info = {
-    .name = TYPE_PPC460EX_PCIE_HOST,
-    .parent = TYPE_PCIE_HOST_BRIDGE,
-    .instance_size = sizeof(PPC460EXPCIEState),
+OBJECT_DEFINE_TYPE_EXTENDED(ppc460ex_pcie_host_info,
+                            PPC460EXPCIEState, void,
+                            PPC460EX_PCIE_HOST, PCIE_HOST_BRIDGE,
     .class_init = ppc460ex_pcie_class_init,
-};
-TYPE_INFO(ppc460ex_pcie_host_info)
+)
 
 
 

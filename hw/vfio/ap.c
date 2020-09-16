@@ -173,12 +173,10 @@ static void vfio_ap_class_init(ObjectClass *klass, void *data)
     dc->bus_type = TYPE_AP_BUS;
 }
 
-static const TypeInfo vfio_ap_info = {
-    .name = TYPE_VFIO_AP_DEVICE,
-    .parent = TYPE_AP_DEVICE,
-    .instance_size = sizeof(VFIOAPDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(vfio_ap_info,
+                            VFIOAPDevice, void,
+                            VFIO_AP_DEVICE, AP_DEVICE,
     .class_init = vfio_ap_class_init,
-};
-TYPE_INFO(vfio_ap_info)
+)
 
 

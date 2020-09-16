@@ -602,14 +602,12 @@ static void pxa2xx_timer_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_pxa2xx_timer_regs;
 }
 
-static const TypeInfo pxa2xx_timer_type_info = {
-    .name          = TYPE_PXA2XX_TIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxTimerInfo),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_timer_type_info,
+                            PXA2xxTimerInfo, void,
+                            PXA2XX_TIMER, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_timer_init,
     .abstract      = true,
     .class_init    = pxa2xx_timer_class_init,
-};
-TYPE_INFO(pxa2xx_timer_type_info)
+)
 
 

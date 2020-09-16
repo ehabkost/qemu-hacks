@@ -1217,14 +1217,12 @@ static void fw_cfg_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, fw_cfg_properties);
 }
 
-static const TypeInfo fw_cfg_info = {
-    .name          = TYPE_FW_CFG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(fw_cfg_info,
+                            FWCfgState, void,
+                            FW_CFG, SYS_BUS_DEVICE,
     .abstract      = true,
-    .instance_size = sizeof(FWCfgState),
     .class_init    = fw_cfg_class_init,
-};
-TYPE_INFO(fw_cfg_info)
+)
 
 static void fw_cfg_file_slots_allocate(FWCfgState *s, Error **errp)
 {
@@ -1292,13 +1290,11 @@ static void fw_cfg_io_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, fw_cfg_io_properties);
 }
 
-static const TypeInfo fw_cfg_io_info = {
-    .name          = TYPE_FW_CFG_IO,
-    .parent        = TYPE_FW_CFG,
-    .instance_size = sizeof(FWCfgIoState),
+OBJECT_DEFINE_TYPE_EXTENDED(fw_cfg_io_info,
+                            FWCfgIoState, void,
+                            FW_CFG_IO, FW_CFG,
     .class_init    = fw_cfg_io_class_init,
-};
-TYPE_INFO(fw_cfg_io_info)
+)
 
 
 static Property fw_cfg_mem_properties[] = {
@@ -1355,19 +1351,14 @@ static void fw_cfg_mem_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, fw_cfg_mem_properties);
 }
 
-static const TypeInfo fw_cfg_mem_info = {
-    .name          = TYPE_FW_CFG_MEM,
-    .parent        = TYPE_FW_CFG,
-    .instance_size = sizeof(FWCfgMemState),
+OBJECT_DEFINE_TYPE_EXTENDED(fw_cfg_mem_info,
+                            FWCfgMemState, void,
+                            FW_CFG_MEM, FW_CFG,
     .class_init    = fw_cfg_mem_class_init,
-};
-TYPE_INFO(fw_cfg_mem_info)
+)
 
-static const TypeInfo fw_cfg_data_generator_interface_info = {
-    .parent = TYPE_INTERFACE,
-    .name = TYPE_FW_CFG_DATA_GENERATOR_INTERFACE,
-    .class_size = sizeof(FWCfgDataGeneratorClass),
-};
-TYPE_INFO(fw_cfg_data_generator_interface_info)
+OBJECT_DEFINE_TYPE_EXTENDED(fw_cfg_data_generator_interface_info,
+                            void, FWCfgDataGeneratorClass,
+                            FW_CFG_DATA_GENERATOR_INTERFACE, INTERFACE)
 
 

@@ -198,18 +198,15 @@ static void pic_common_class_init(ObjectClass *klass, void *data)
     ic->print_info = pic_print_info;
 }
 
-static const TypeInfo pic_common_type = {
-    .name = TYPE_PIC_COMMON,
-    .parent = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(PICCommonState),
-    .class_size = sizeof(PICCommonClass),
+OBJECT_DEFINE_TYPE_EXTENDED(pic_common_type,
+                            PICCommonState, PICCommonClass,
+                            PIC_COMMON, ISA_DEVICE,
     .class_init = pic_common_class_init,
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_INTERRUPT_STATS_PROVIDER },
         { }
     },
-};
-TYPE_INFO(pic_common_type)
+)
 
 

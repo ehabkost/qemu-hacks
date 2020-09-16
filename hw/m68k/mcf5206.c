@@ -612,12 +612,10 @@ static void mcf5206_mbar_class_init(ObjectClass *oc, void *data)
     dc->reset = m5206_mbar_reset;
 }
 
-static const TypeInfo mcf5206_mbar_info = {
-    .name          = TYPE_MCF5206_MBAR,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(m5206_mbar_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mcf5206_mbar_info,
+                            m5206_mbar_state, void,
+                            MCF5206_MBAR, SYS_BUS_DEVICE,
     .class_init    = mcf5206_mbar_class_init,
-};
-TYPE_INFO(mcf5206_mbar_info)
+)
 
 

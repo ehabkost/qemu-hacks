@@ -154,14 +154,12 @@ static void sifive_e_machine_class_init(ObjectClass *oc, void *data)
     mc->default_cpu_type = SIFIVE_E_CPU;
 }
 
-static const TypeInfo sifive_e_machine_typeinfo = {
-    .name       = TYPE_RISCV_E_MACHINE,
-    .parent     = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_e_machine_typeinfo,
+                            SiFiveEState, void,
+                            RISCV_E_MACHINE, MACHINE,
     .class_init = sifive_e_machine_class_init,
     .instance_init = sifive_e_machine_instance_init,
-    .instance_size = sizeof(SiFiveEState),
-};
-TYPE_INFO(sifive_e_machine_typeinfo)
+)
 
 
 
@@ -267,13 +265,11 @@ static void sifive_e_soc_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo sifive_e_soc_type_info = {
-    .name = TYPE_RISCV_E_SOC,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SiFiveESoCState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_e_soc_type_info,
+                            SiFiveESoCState, void,
+                            RISCV_E_SOC, DEVICE,
     .instance_init = sifive_e_soc_init,
     .class_init = sifive_e_soc_class_init,
-};
-TYPE_INFO(sifive_e_soc_type_info)
+)
 
 

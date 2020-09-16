@@ -858,12 +858,10 @@ static void vapic_class_init(ObjectClass *klass, void *data)
     dc->realize = vapic_realize;
 }
 
-static const TypeInfo vapic_type = {
-    .name          = TYPE_VAPIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(VAPICROMState),
+OBJECT_DEFINE_TYPE_EXTENDED(vapic_type,
+                            VAPICROMState, void,
+                            VAPIC, SYS_BUS_DEVICE,
     .class_init    = vapic_class_init,
-};
-TYPE_INFO(vapic_type)
+)
 
 

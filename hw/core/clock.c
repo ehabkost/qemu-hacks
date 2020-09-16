@@ -119,13 +119,11 @@ static void clock_finalizefn(Object *obj)
     g_free(clk->canonical_path);
 }
 
-static const TypeInfo clock_info = {
-    .name              = TYPE_CLOCK,
-    .parent            = TYPE_OBJECT,
-    .instance_size     = sizeof(Clock),
+OBJECT_DEFINE_TYPE_EXTENDED(clock_info,
+                            Clock, void,
+                            CLOCK, OBJECT,
     .instance_init     = clock_initfn,
     .instance_finalize = clock_finalizefn,
-};
-TYPE_INFO(clock_info)
+)
 
 

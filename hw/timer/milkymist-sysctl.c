@@ -345,13 +345,11 @@ static void milkymist_sysctl_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, milkymist_sysctl_properties);
 }
 
-static const TypeInfo milkymist_sysctl_info = {
-    .name          = TYPE_MILKYMIST_SYSCTL,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistSysctlState),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_sysctl_info,
+                            MilkymistSysctlState, void,
+                            MILKYMIST_SYSCTL, SYS_BUS_DEVICE,
     .instance_init = milkymist_sysctl_init,
     .class_init    = milkymist_sysctl_class_init,
-};
-TYPE_INFO(milkymist_sysctl_info)
+)
 
 

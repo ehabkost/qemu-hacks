@@ -606,13 +606,11 @@ static void cadence_uart_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, cadence_uart_properties);
   }
 
-static const TypeInfo cadence_uart_info = {
-    .name          = TYPE_CADENCE_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CadenceUARTState),
+OBJECT_DEFINE_TYPE_EXTENDED(cadence_uart_info,
+                            CadenceUARTState, void,
+                            CADENCE_UART, SYS_BUS_DEVICE,
     .instance_init = cadence_uart_init,
     .class_init    = cadence_uart_class_init,
-};
-TYPE_INFO(cadence_uart_info)
+)
 
 

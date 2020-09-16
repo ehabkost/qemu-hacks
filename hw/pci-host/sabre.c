@@ -489,17 +489,15 @@ static void sabre_pci_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo sabre_pci_info = {
-    .name          = TYPE_SABRE_PCI_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(SabrePCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sabre_pci_info,
+                            SabrePCIState, void,
+                            SABRE_PCI_DEVICE, PCI_DEVICE,
     .class_init    = sabre_pci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(sabre_pci_info)
+)
 
 static char *sabre_ofw_unit_address(const SysBusDevice *dev)
 {
@@ -529,13 +527,11 @@ static void sabre_class_init(ObjectClass *klass, void *data)
     sbc->explicit_ofw_unit_address = sabre_ofw_unit_address;
 }
 
-static const TypeInfo sabre_info = {
-    .name          = TYPE_SABRE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(SabreState),
+OBJECT_DEFINE_TYPE_EXTENDED(sabre_info,
+                            SabreState, void,
+                            SABRE, PCI_HOST_BRIDGE,
     .instance_init = sabre_init,
     .class_init    = sabre_class_init,
-};
-TYPE_INFO(sabre_info)
+)
 
 

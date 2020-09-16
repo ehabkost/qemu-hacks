@@ -533,12 +533,10 @@ static void milkymist_pfpu_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_milkymist_pfpu;
 }
 
-static const TypeInfo milkymist_pfpu_info = {
-    .name          = TYPE_MILKYMIST_PFPU,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistPFPUState),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_pfpu_info,
+                            MilkymistPFPUState, void,
+                            MILKYMIST_PFPU, SYS_BUS_DEVICE,
     .class_init    = milkymist_pfpu_class_init,
-};
-TYPE_INFO(milkymist_pfpu_info)
+)
 
 

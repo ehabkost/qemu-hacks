@@ -1393,14 +1393,11 @@ static void dwc2_class_init(ObjectClass *klass, void *data)
                                        dwc2_reset_exit, &c->parent_phases);
 }
 
-static const TypeInfo dwc2_usb_type_info = {
-    .name          = TYPE_DWC2_USB,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(DWC2State),
+OBJECT_DEFINE_TYPE_EXTENDED(dwc2_usb_type_info,
+                            DWC2State, DWC2Class,
+                            DWC2_USB, SYS_BUS_DEVICE,
     .instance_init = dwc2_init,
-    .class_size    = sizeof(DWC2Class),
     .class_init    = dwc2_class_init,
-};
-TYPE_INFO(dwc2_usb_type_info)
+)
 
 

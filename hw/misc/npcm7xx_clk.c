@@ -251,12 +251,10 @@ static void npcm7xx_clk_class_init(ObjectClass *klass, void *data)
     rc->phases.enter = npcm7xx_clk_enter_reset;
 }
 
-static const TypeInfo npcm7xx_clk_info = {
-    .name               = TYPE_NPCM7XX_CLK,
-    .parent             = TYPE_SYS_BUS_DEVICE,
-    .instance_size      = sizeof(NPCM7xxCLKState),
+OBJECT_DEFINE_TYPE_EXTENDED(npcm7xx_clk_info,
+                            NPCM7xxCLKState, void,
+                            NPCM7XX_CLK, SYS_BUS_DEVICE,
     .instance_init      = npcm7xx_clk_init,
     .class_init         = npcm7xx_clk_class_init,
-};
-TYPE_INFO(npcm7xx_clk_info)
+)
 

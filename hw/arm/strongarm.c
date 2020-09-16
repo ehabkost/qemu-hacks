@@ -228,14 +228,12 @@ static void strongarm_pic_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_strongarm_pic_regs;
 }
 
-static const TypeInfo strongarm_pic_info = {
-    .name          = TYPE_STRONGARM_PIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(StrongARMPICState),
+OBJECT_DEFINE_TYPE_EXTENDED(strongarm_pic_info,
+                            StrongARMPICState, void,
+                            STRONGARM_PIC, SYS_BUS_DEVICE,
     .instance_init = strongarm_pic_initfn,
     .class_init    = strongarm_pic_class_init,
-};
-TYPE_INFO(strongarm_pic_info)
+)
 
 /* Real-Time Clock */
 #define RTAR 0x00 /* RTC Alarm register */
@@ -459,14 +457,12 @@ static void strongarm_rtc_sysbus_class_init(ObjectClass *klass, void *data)
     dc->realize = strongarm_rtc_realize;
 }
 
-static const TypeInfo strongarm_rtc_sysbus_info = {
-    .name          = TYPE_STRONGARM_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(StrongARMRTCState),
+OBJECT_DEFINE_TYPE_EXTENDED(strongarm_rtc_sysbus_info,
+                            StrongARMRTCState, void,
+                            STRONGARM_RTC, SYS_BUS_DEVICE,
     .instance_init = strongarm_rtc_init,
     .class_init    = strongarm_rtc_sysbus_class_init,
-};
-TYPE_INFO(strongarm_rtc_sysbus_info)
+)
 
 /* GPIO */
 #define GPLR 0x00
@@ -700,14 +696,12 @@ static void strongarm_gpio_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_strongarm_gpio_regs;
 }
 
-static const TypeInfo strongarm_gpio_info = {
-    .name          = TYPE_STRONGARM_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(StrongARMGPIOInfo),
+OBJECT_DEFINE_TYPE_EXTENDED(strongarm_gpio_info,
+                            StrongARMGPIOInfo, void,
+                            STRONGARM_GPIO, SYS_BUS_DEVICE,
     .instance_init = strongarm_gpio_initfn,
     .class_init    = strongarm_gpio_class_init,
-};
-TYPE_INFO(strongarm_gpio_info)
+)
 
 /* Peripheral Pin Controller */
 #define PPDR 0x00
@@ -869,14 +863,12 @@ static void strongarm_ppc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_strongarm_ppc_regs;
 }
 
-static const TypeInfo strongarm_ppc_info = {
-    .name          = TYPE_STRONGARM_PPC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(StrongARMPPCInfo),
+OBJECT_DEFINE_TYPE_EXTENDED(strongarm_ppc_info,
+                            StrongARMPPCInfo, void,
+                            STRONGARM_PPC, SYS_BUS_DEVICE,
     .instance_init = strongarm_ppc_init,
     .class_init    = strongarm_ppc_class_init,
-};
-TYPE_INFO(strongarm_ppc_info)
+)
 
 /* UART Ports */
 #define UTCR0 0x00
@@ -1336,14 +1328,12 @@ static void strongarm_uart_class_init(ObjectClass *klass, void *data)
     dc->realize = strongarm_uart_realize;
 }
 
-static const TypeInfo strongarm_uart_info = {
-    .name          = TYPE_STRONGARM_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(StrongARMUARTState),
+OBJECT_DEFINE_TYPE_EXTENDED(strongarm_uart_info,
+                            StrongARMUARTState, void,
+                            STRONGARM_UART, SYS_BUS_DEVICE,
     .instance_init = strongarm_uart_init,
     .class_init    = strongarm_uart_class_init,
-};
-TYPE_INFO(strongarm_uart_info)
+)
 
 /* Synchronous Serial Ports */
 
@@ -1582,14 +1572,12 @@ static void strongarm_ssp_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_strongarm_ssp_regs;
 }
 
-static const TypeInfo strongarm_ssp_info = {
-    .name          = TYPE_STRONGARM_SSP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(StrongARMSSPState),
+OBJECT_DEFINE_TYPE_EXTENDED(strongarm_ssp_info,
+                            StrongARMSSPState, void,
+                            STRONGARM_SSP, SYS_BUS_DEVICE,
     .instance_init = strongarm_ssp_init,
     .class_init    = strongarm_ssp_class_init,
-};
-TYPE_INFO(strongarm_ssp_info)
+)
 
 /* Main CPU functions */
 StrongARMState *sa1110_init(const char *cpu_type)

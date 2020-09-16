@@ -1034,13 +1034,11 @@ static void dp8393x_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, dp8393x_properties);
 }
 
-static const TypeInfo dp8393x_info = {
-    .name          = TYPE_DP8393X,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(dp8393xState),
+OBJECT_DEFINE_TYPE_EXTENDED(dp8393x_info,
+                            dp8393xState, void,
+                            DP8393X, SYS_BUS_DEVICE,
     .instance_init = dp8393x_instance_init,
     .class_init    = dp8393x_class_init,
-};
-TYPE_INFO(dp8393x_info)
+)
 
 

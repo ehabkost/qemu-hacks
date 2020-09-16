@@ -592,12 +592,10 @@ static void ipoctal_class_init(ObjectClass *klass, void *data)
     dc->vmsd    = &vmstate_ipoctal;
 }
 
-static const TypeInfo ipoctal_info = {
-    .name          = TYPE_IPOCTAL,
-    .parent        = TYPE_IPACK_DEVICE,
-    .instance_size = sizeof(IPOctalState),
+OBJECT_DEFINE_TYPE_EXTENDED(ipoctal_info,
+                            IPOctalState, void,
+                            IPOCTAL, IPACK_DEVICE,
     .class_init    = ipoctal_class_init,
-};
-TYPE_INFO(ipoctal_info)
+)
 
 

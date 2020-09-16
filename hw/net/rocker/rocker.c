@@ -1521,16 +1521,14 @@ static void rocker_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &rocker_vmsd;
 }
 
-static const TypeInfo rocker_info = {
-    .name          = TYPE_ROCKER,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(Rocker),
+OBJECT_DEFINE_TYPE_EXTENDED(rocker_info,
+                            Rocker, void,
+                            ROCKER, PCI_DEVICE,
     .class_init    = rocker_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(rocker_info)
+)
 
 

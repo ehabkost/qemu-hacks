@@ -382,16 +382,13 @@ char *qcrypto_secret_lookup_as_base64(const char *secretid,
 }
 
 
-static const TypeInfo qcrypto_secret_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_QCRYPTO_SECRET_COMMON,
-    .instance_size = sizeof(QCryptoSecretCommon),
+OBJECT_DEFINE_TYPE_EXTENDED(qcrypto_secret_info,
+                            QCryptoSecretCommon, QCryptoSecretCommonClass,
+                            QCRYPTO_SECRET_COMMON, OBJECT,
     .instance_finalize = qcrypto_secret_finalize,
-    .class_size = sizeof(QCryptoSecretCommonClass),
     .class_init = qcrypto_secret_class_init,
     .abstract = true,
-};
-TYPE_INFO(qcrypto_secret_info)
+)
 
 
 

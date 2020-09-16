@@ -259,13 +259,11 @@ static void rtc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_rtc;
 }
 
-static const TypeInfo rtc_info = {
-    .name          = TYPE_XLNX_ZYNQMP_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XlnxZynqMPRTC),
+OBJECT_DEFINE_TYPE_EXTENDED(rtc_info,
+                            XlnxZynqMPRTC, void,
+                            XLNX_ZYNQMP_RTC, SYS_BUS_DEVICE,
     .class_init    = rtc_class_init,
     .instance_init = rtc_init,
-};
-TYPE_INFO(rtc_info)
+)
 
 

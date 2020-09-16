@@ -370,14 +370,12 @@ static void pc87312_class_init(ObjectClass *klass, void *data)
     };
 }
 
-static const TypeInfo pc87312_type_info = {
-    .name          = TYPE_PC87312,
-    .parent        = TYPE_ISA_SUPERIO,
-    .instance_size = sizeof(PC87312State),
+OBJECT_DEFINE_TYPE_EXTENDED(pc87312_type_info,
+                            PC87312State, void,
+                            PC87312, ISA_SUPERIO,
     .instance_init = pc87312_initfn,
     .class_init    = pc87312_class_init,
     /* FIXME use a qdev drive property instead of drive_get() */
-};
-TYPE_INFO(pc87312_type_info)
+)
 
 

@@ -9,11 +9,8 @@
 #include "qemu/osdep.h"
 #include "hw/vmstate-if.h"
 
-static const TypeInfo vmstate_if_info = {
-    .name = TYPE_VMSTATE_IF,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(VMStateIfClass),
-};
-TYPE_INFO(vmstate_if_info)
+OBJECT_DEFINE_TYPE_EXTENDED(vmstate_if_info,
+                            void, VMStateIfClass,
+                            VMSTATE_IF, INTERFACE)
 
 

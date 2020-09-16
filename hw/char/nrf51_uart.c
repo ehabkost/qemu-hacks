@@ -318,13 +318,11 @@ static void nrf51_uart_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &nrf51_uart_vmstate;
 }
 
-static const TypeInfo nrf51_uart_info = {
-    .name = TYPE_NRF51_UART,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NRF51UARTState),
+OBJECT_DEFINE_TYPE_EXTENDED(nrf51_uart_info,
+                            NRF51UARTState, void,
+                            NRF51_UART, SYS_BUS_DEVICE,
     .instance_init = nrf51_uart_init,
     .class_init = nrf51_uart_class_init
-};
-TYPE_INFO(nrf51_uart_info)
+)
 
 

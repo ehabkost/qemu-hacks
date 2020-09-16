@@ -239,14 +239,12 @@ static void virtio_input_host_init(Object *obj)
     virtio_input_init_config(vinput, virtio_input_host_config);
 }
 
-static const TypeInfo virtio_input_host_info = {
-    .name          = TYPE_VIRTIO_INPUT_HOST,
-    .parent        = TYPE_VIRTIO_INPUT,
-    .instance_size = sizeof(VirtIOInputHost),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_input_host_info,
+                            VirtIOInputHost, void,
+                            VIRTIO_INPUT_HOST, VIRTIO_INPUT,
     .instance_init = virtio_input_host_init,
     .class_init    = virtio_input_host_class_init,
-};
-TYPE_INFO(virtio_input_host_info)
+)
 
 /* ----------------------------------------------------------------- */
 

@@ -178,12 +178,10 @@ static void sii9022_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_sii9022;
 }
 
-static const TypeInfo sii9022_info = {
-    .name          = TYPE_SII9022,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(sii9022_state),
+OBJECT_DEFINE_TYPE_EXTENDED(sii9022_info,
+                            sii9022_state, void,
+                            SII9022, I2C_SLAVE,
     .class_init    = sii9022_class_init,
-};
-TYPE_INFO(sii9022_info)
+)
 
 

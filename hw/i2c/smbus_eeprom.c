@@ -151,13 +151,11 @@ static void smbus_eeprom_class_initfn(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo smbus_eeprom_info = {
-    .name          = TYPE_SMBUS_EEPROM,
-    .parent        = TYPE_SMBUS_DEVICE,
-    .instance_size = sizeof(SMBusEEPROMDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(smbus_eeprom_info,
+                            SMBusEEPROMDevice, void,
+                            SMBUS_EEPROM, SMBUS_DEVICE,
     .class_init    = smbus_eeprom_class_initfn,
-};
-TYPE_INFO(smbus_eeprom_info)
+)
 
 
 

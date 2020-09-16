@@ -227,14 +227,12 @@ static void char_win_class_init(ObjectClass *oc, void *data)
     cc->chr_write = win_chr_write;
 }
 
-static const TypeInfo char_win_type_info = {
-    .name = TYPE_CHARDEV_WIN,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(WinChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_win_type_info,
+                            WinChardev, void,
+                            CHARDEV_WIN, CHARDEV,
     .instance_finalize = char_win_finalize,
     .class_init = char_win_class_init,
     .abstract = true,
-};
-TYPE_INFO(char_win_type_info)
+)
 
 

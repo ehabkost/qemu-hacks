@@ -426,12 +426,10 @@ static InterfaceInfo interfaces[] = {
     { INTERFACE_CONVENTIONAL_PCI_DEVICE },
     { },
 };
-static const TypeInfo edu_info = {
-    .name          = TYPE_PCI_EDU_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(EduState),
+OBJECT_DEFINE_TYPE_EXTENDED(edu_info,
+                            EduState, void,
+                            PCI_EDU_DEVICE, PCI_DEVICE,
     .instance_init = edu_instance_init,
     .class_init    = edu_class_init,
     .interfaces = interfaces,
-};
-TYPE_INFO(edu_info)
+)

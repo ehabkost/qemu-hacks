@@ -566,13 +566,11 @@ static void mips_itu_class_init(ObjectClass *klass, void *data)
     dc->reset = mips_itu_reset;
 }
 
-static const TypeInfo mips_itu_info = {
-    .name          = TYPE_MIPS_ITU,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MIPSITUState),
+OBJECT_DEFINE_TYPE_EXTENDED(mips_itu_info,
+                            MIPSITUState, void,
+                            MIPS_ITU, SYS_BUS_DEVICE,
     .instance_init = mips_itu_init,
     .class_init    = mips_itu_class_init,
-};
-TYPE_INFO(mips_itu_info)
+)
 
 

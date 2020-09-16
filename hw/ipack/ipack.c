@@ -99,21 +99,15 @@ const VMStateDescription vmstate_ipack_device = {
     }
 };
 
-static const TypeInfo ipack_device_info = {
-    .name          = TYPE_IPACK_DEVICE,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(IPackDevice),
-    .class_size    = sizeof(IPackDeviceClass),
+OBJECT_DEFINE_TYPE_EXTENDED(ipack_device_info,
+                            IPackDevice, IPackDeviceClass,
+                            IPACK_DEVICE, DEVICE,
     .class_init    = ipack_device_class_init,
     .abstract      = true,
-};
-TYPE_INFO(ipack_device_info)
+)
 
-static const TypeInfo ipack_bus_info = {
-    .name = TYPE_IPACK_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(IPackBus),
-};
-TYPE_INFO(ipack_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(ipack_bus_info,
+                            IPackBus, void,
+                            IPACK_BUS, BUS)
 
 

@@ -716,13 +716,11 @@ static void exynos4210_uart_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_exynos4210_uart;
 }
 
-static const TypeInfo exynos4210_uart_info = {
-    .name          = TYPE_EXYNOS4210_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210UartState),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_uart_info,
+                            Exynos4210UartState, void,
+                            EXYNOS4210_UART, SYS_BUS_DEVICE,
     .instance_init = exynos4210_uart_init,
     .class_init    = exynos4210_uart_class_init,
-};
-TYPE_INFO(exynos4210_uart_info)
+)
 
 

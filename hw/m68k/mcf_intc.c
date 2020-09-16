@@ -184,14 +184,12 @@ static void mcf_intc_class_init(ObjectClass *oc, void *data)
     dc->reset = mcf_intc_reset;
 }
 
-static const TypeInfo mcf_intc_gate_info = {
-    .name          = TYPE_MCF_INTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mcf_intc_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mcf_intc_gate_info,
+                            mcf_intc_state, void,
+                            MCF_INTC, SYS_BUS_DEVICE,
     .instance_init = mcf_intc_instance_init,
     .class_init    = mcf_intc_class_init,
-};
-TYPE_INFO(mcf_intc_gate_info)
+)
 
 
 

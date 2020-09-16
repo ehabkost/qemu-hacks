@@ -82,12 +82,10 @@ static void sun4v_rtc_class_init(ObjectClass *klass, void *data)
     dc->realize = sun4v_rtc_realize;
 }
 
-static const TypeInfo sun4v_rtc_info = {
-    .name          = TYPE_SUN4V_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Sun4vRtc),
+OBJECT_DEFINE_TYPE_EXTENDED(sun4v_rtc_info,
+                            Sun4vRtc, void,
+                            SUN4V_RTC, SYS_BUS_DEVICE,
     .class_init    = sun4v_rtc_class_init,
-};
-TYPE_INFO(sun4v_rtc_info)
+)
 
 

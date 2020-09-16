@@ -245,12 +245,8 @@ void sdbus_reparent_card(SDBus *from, SDBus *to)
     sdbus_set_readonly(to, readonly);
 }
 
-static const TypeInfo sd_bus_info = {
-    .name = TYPE_SD_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(SDBus),
-    .class_size = sizeof(SDBusClass),
-};
-TYPE_INFO(sd_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(sd_bus_info,
+                            SDBus, SDBusClass,
+                            SD_BUS, BUS)
 
 

@@ -909,17 +909,15 @@ static void es1370_class_init (ObjectClass *klass, void *data)
     device_class_set_props(dc, es1370_properties);
 }
 
-static const TypeInfo es1370_info = {
-    .name          = TYPE_ES1370,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof (ES1370State),
+OBJECT_DEFINE_TYPE_EXTENDED(es1370_info,
+                            ES1370State, void,
+                            ES1370, PCI_DEVICE,
     .class_init    = es1370_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(es1370_info)
+)
 
 static void es1370_register_types (void)
 {

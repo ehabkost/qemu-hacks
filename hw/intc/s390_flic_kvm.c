@@ -661,13 +661,10 @@ static void kvm_s390_flic_class_init(ObjectClass *oc, void *data)
     fsc->inject_crw_mchk = kvm_s390_inject_crw_mchk;
 }
 
-static const TypeInfo kvm_s390_flic_info = {
-    .name          = TYPE_KVM_S390_FLIC,
-    .parent        = TYPE_S390_FLIC_COMMON,
-    .instance_size = sizeof(KVMS390FLICState),
-    .class_size    = sizeof(KVMS390FLICStateClass),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_s390_flic_info,
+                            KVMS390FLICState, KVMS390FLICStateClass,
+                            KVM_S390_FLIC, S390_FLIC_COMMON,
     .class_init    = kvm_s390_flic_class_init,
-};
-TYPE_INFO(kvm_s390_flic_info)
+)
 
 

@@ -153,14 +153,12 @@ memfd_backend_class_init(ObjectClass *oc, void *data)
                                           "Seal growing & shrinking");
 }
 
-static const TypeInfo memfd_backend_info = {
-    .name = TYPE_MEMORY_BACKEND_MEMFD,
-    .parent = TYPE_MEMORY_BACKEND,
+OBJECT_DEFINE_TYPE_EXTENDED(memfd_backend_info,
+                            HostMemoryBackendMemfd, void,
+                            MEMORY_BACKEND_MEMFD, MEMORY_BACKEND,
     .instance_init = memfd_backend_instance_init,
     .class_init = memfd_backend_class_init,
-    .instance_size = sizeof(HostMemoryBackendMemfd),
-};
-TYPE_INFO(memfd_backend_info)
+)
 
 static void register_types(void)
 {

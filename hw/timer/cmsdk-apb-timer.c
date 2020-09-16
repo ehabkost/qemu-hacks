@@ -263,13 +263,11 @@ static void cmsdk_apb_timer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, cmsdk_apb_timer_properties);
 }
 
-static const TypeInfo cmsdk_apb_timer_info = {
-    .name = TYPE_CMSDK_APB_TIMER,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CMSDKAPBTIMER),
+OBJECT_DEFINE_TYPE_EXTENDED(cmsdk_apb_timer_info,
+                            CMSDKAPBTIMER, void,
+                            CMSDK_APB_TIMER, SYS_BUS_DEVICE,
     .instance_init = cmsdk_apb_timer_init,
     .class_init = cmsdk_apb_timer_class_init,
-};
-TYPE_INFO(cmsdk_apb_timer_info)
+)
 
 

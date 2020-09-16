@@ -225,15 +225,12 @@ virtio_gpu_base_class_init(ObjectClass *klass, void *data)
     dc->hotpluggable = false;
 }
 
-static const TypeInfo virtio_gpu_base_info = {
-    .name = TYPE_VIRTIO_GPU_BASE,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOGPUBase),
-    .class_size = sizeof(VirtIOGPUBaseClass),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_gpu_base_info,
+                            VirtIOGPUBase, VirtIOGPUBaseClass,
+                            VIRTIO_GPU_BASE, VIRTIO_DEVICE,
     .class_init = virtio_gpu_base_class_init,
     .abstract = true
-};
-TYPE_INFO(virtio_gpu_base_info)
+)
 
 
 

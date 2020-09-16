@@ -430,13 +430,11 @@ static void slavio_timer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, slavio_timer_properties);
 }
 
-static const TypeInfo slavio_timer_info = {
-    .name          = TYPE_SLAVIO_TIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SLAVIO_TIMERState),
+OBJECT_DEFINE_TYPE_EXTENDED(slavio_timer_info,
+                            SLAVIO_TIMERState, void,
+                            SLAVIO_TIMER, SYS_BUS_DEVICE,
     .instance_init = slavio_timer_init,
     .class_init    = slavio_timer_class_init,
-};
-TYPE_INFO(slavio_timer_info)
+)
 
 

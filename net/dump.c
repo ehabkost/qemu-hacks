@@ -247,14 +247,12 @@ static void filter_dump_class_init(ObjectClass *oc, void *data)
     nfc->receive_iov = filter_dump_receive_iov;
 }
 
-static const TypeInfo filter_dump_info = {
-    .name = TYPE_FILTER_DUMP,
-    .parent = TYPE_NETFILTER,
+OBJECT_DEFINE_TYPE_EXTENDED(filter_dump_info,
+                            NetFilterDumpState, void,
+                            FILTER_DUMP, NETFILTER,
     .class_init = filter_dump_class_init,
     .instance_init = filter_dump_instance_init,
     .instance_finalize = filter_dump_instance_finalize,
-    .instance_size = sizeof(NetFilterDumpState),
-};
-TYPE_INFO(filter_dump_info)
+)
 
 

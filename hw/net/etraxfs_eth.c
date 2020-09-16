@@ -673,12 +673,10 @@ etraxfs_eth_init(NICInfo *nd, hwaddr base, int phyaddr,
     return dev;
 }
 
-static const TypeInfo etraxfs_eth_info = {
-    .name          = TYPE_ETRAX_FS_ETH,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ETRAXFSEthState),
+OBJECT_DEFINE_TYPE_EXTENDED(etraxfs_eth_info,
+                            ETRAXFSEthState, void,
+                            ETRAX_FS_ETH, SYS_BUS_DEVICE,
     .class_init    = etraxfs_eth_class_init,
-};
-TYPE_INFO(etraxfs_eth_info)
+)
 
 

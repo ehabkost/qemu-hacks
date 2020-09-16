@@ -1026,25 +1026,21 @@ static void virtio_scsi_class_init(ObjectClass *klass, void *data)
     hc->unplug = virtio_scsi_hotunplug;
 }
 
-static const TypeInfo virtio_scsi_common_info = {
-    .name = TYPE_VIRTIO_SCSI_COMMON,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOSCSICommon),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_scsi_common_info,
+                            VirtIOSCSICommon, void,
+                            VIRTIO_SCSI_COMMON, VIRTIO_DEVICE,
     .abstract = true,
     .class_init = virtio_scsi_common_class_init,
-};
-TYPE_INFO(virtio_scsi_common_info)
+)
 
-static const TypeInfo virtio_scsi_info = {
-    .name = TYPE_VIRTIO_SCSI,
-    .parent = TYPE_VIRTIO_SCSI_COMMON,
-    .instance_size = sizeof(VirtIOSCSI),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_scsi_info,
+                            VirtIOSCSI, void,
+                            VIRTIO_SCSI, VIRTIO_SCSI_COMMON,
     .class_init = virtio_scsi_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(virtio_scsi_info)
+)
 
 

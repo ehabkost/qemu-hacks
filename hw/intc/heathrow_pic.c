@@ -194,13 +194,11 @@ static void heathrow_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo heathrow_type_info = {
-    .name = TYPE_HEATHROW,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(HeathrowState),
+OBJECT_DEFINE_TYPE_EXTENDED(heathrow_type_info,
+                            HeathrowState, void,
+                            HEATHROW, SYS_BUS_DEVICE,
     .instance_init = heathrow_init,
     .class_init = heathrow_class_init,
-};
-TYPE_INFO(heathrow_type_info)
+)
 
 

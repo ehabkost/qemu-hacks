@@ -710,31 +710,25 @@ static void icp_control_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_icp_control;
 }
 
-static const TypeInfo core_info = {
-    .name          = TYPE_INTEGRATOR_CM,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IntegratorCMState),
+OBJECT_DEFINE_TYPE_EXTENDED(core_info,
+                            IntegratorCMState, void,
+                            INTEGRATOR_CM, SYS_BUS_DEVICE,
     .instance_init = integratorcm_init,
     .class_init    = core_class_init,
-};
-TYPE_INFO(core_info)
+)
 
-static const TypeInfo icp_pic_info = {
-    .name          = TYPE_INTEGRATOR_PIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(icp_pic_state),
+OBJECT_DEFINE_TYPE_EXTENDED(icp_pic_info,
+                            icp_pic_state, void,
+                            INTEGRATOR_PIC, SYS_BUS_DEVICE,
     .instance_init = icp_pic_init,
     .class_init    = icp_pic_class_init,
-};
-TYPE_INFO(icp_pic_info)
+)
 
-static const TypeInfo icp_ctrl_regs_info = {
-    .name          = TYPE_ICP_CONTROL_REGS,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ICPCtrlRegsState),
+OBJECT_DEFINE_TYPE_EXTENDED(icp_ctrl_regs_info,
+                            ICPCtrlRegsState, void,
+                            ICP_CONTROL_REGS, SYS_BUS_DEVICE,
     .instance_init = icp_control_init,
     .class_init    = icp_control_class_init,
-};
-TYPE_INFO(icp_ctrl_regs_info)
+)
 
 

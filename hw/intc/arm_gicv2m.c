@@ -184,13 +184,11 @@ static void gicv2m_class_init(ObjectClass *klass, void *data)
     dc->realize = gicv2m_realize;
 }
 
-static const TypeInfo gicv2m_info = {
-    .name          = TYPE_ARM_GICV2M,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARMGICv2mState),
+OBJECT_DEFINE_TYPE_EXTENDED(gicv2m_info,
+                            ARMGICv2mState, void,
+                            ARM_GICV2M, SYS_BUS_DEVICE,
     .instance_init = gicv2m_init,
     .class_init    = gicv2m_class_init,
-};
-TYPE_INFO(gicv2m_info)
+)
 
 

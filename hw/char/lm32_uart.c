@@ -297,13 +297,11 @@ static void lm32_uart_class_init(ObjectClass *klass, void *data)
     dc->realize = lm32_uart_realize;
 }
 
-static const TypeInfo lm32_uart_info = {
-    .name          = TYPE_LM32_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(LM32UartState),
+OBJECT_DEFINE_TYPE_EXTENDED(lm32_uart_info,
+                            LM32UartState, void,
+                            LM32_UART, SYS_BUS_DEVICE,
     .instance_init = lm32_uart_init,
     .class_init    = lm32_uart_class_init,
-};
-TYPE_INFO(lm32_uart_info)
+)
 
 

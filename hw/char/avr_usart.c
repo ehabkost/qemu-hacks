@@ -304,13 +304,11 @@ static void avr_usart_class_init(ObjectClass *klass, void *data)
     dc->realize = avr_usart_realize;
 }
 
-static const TypeInfo avr_usart_info = {
-    .name          = TYPE_AVR_USART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AVRUsartState),
+OBJECT_DEFINE_TYPE_EXTENDED(avr_usart_info,
+                            AVRUsartState, void,
+                            AVR_USART, SYS_BUS_DEVICE,
     .instance_init = avr_usart_init,
     .class_init    = avr_usart_class_init,
-};
-TYPE_INFO(avr_usart_info)
+)
 
 

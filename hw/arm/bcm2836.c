@@ -160,15 +160,12 @@ static void bcm283x_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo bcm283x_type_info = {
-    .name = TYPE_BCM283X,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(BCM283XState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm283x_type_info,
+                            BCM283XState, BCM283XClass,
+                            BCM283X, DEVICE,
     .instance_init = bcm2836_init,
-    .class_size = sizeof(BCM283XClass),
     .abstract = true,
-};
-TYPE_INFO(bcm283x_type_info)
+)
 
 static void bcm2836_register_types(void)
 {

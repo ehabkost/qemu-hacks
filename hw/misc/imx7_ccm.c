@@ -235,14 +235,12 @@ static void imx7_ccm_class_init(ObjectClass *klass, void *data)
     ccm->get_clock_frequency = imx7_ccm_get_clock_frequency;
 }
 
-static const TypeInfo imx7_ccm_info = {
-    .name          = TYPE_IMX7_CCM,
-    .parent        = TYPE_IMX_CCM,
-    .instance_size = sizeof(IMX7CCMState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx7_ccm_info,
+                            IMX7CCMState, void,
+                            IMX7_CCM, IMX_CCM,
     .instance_init = imx7_ccm_init,
     .class_init    = imx7_ccm_class_init,
-};
-TYPE_INFO(imx7_ccm_info)
+)
 
 static const VMStateDescription vmstate_imx7_analog = {
     .name = TYPE_IMX7_ANALOG,
@@ -264,12 +262,10 @@ static void imx7_analog_class_init(ObjectClass *klass, void *data)
     dc->desc  = "i.MX7 Analog Module";
 }
 
-static const TypeInfo imx7_analog_info = {
-    .name          = TYPE_IMX7_ANALOG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMX7AnalogState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx7_analog_info,
+                            IMX7AnalogState, void,
+                            IMX7_ANALOG, SYS_BUS_DEVICE,
     .instance_init = imx7_analog_init,
     .class_init    = imx7_analog_class_init,
-};
-TYPE_INFO(imx7_analog_info)
+)
 

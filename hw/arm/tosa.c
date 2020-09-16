@@ -293,13 +293,11 @@ static void tosa_dac_class_init(ObjectClass *klass, void *data)
     k->send = tosa_dac_send;
 }
 
-static const TypeInfo tosa_dac_info = {
-    .name          = TYPE_TOSA_DAC,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(TosaDACState),
+OBJECT_DEFINE_TYPE_EXTENDED(tosa_dac_info,
+                            TosaDACState, void,
+                            TOSA_DAC, I2C_SLAVE,
     .class_init    = tosa_dac_class_init,
-};
-TYPE_INFO(tosa_dac_info)
+)
 
 static void tosa_ssp_class_init(ObjectClass *klass, void *data)
 {
@@ -316,16 +314,14 @@ static const TypeInfo tosa_ssp_info = {
 };
 TYPE_INFO(tosa_ssp_info)
 
-static const TypeInfo tosa_misc_gpio_info = {
-    .name          = TYPE_TOSA_MISC_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(TosaMiscGPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(tosa_misc_gpio_info,
+                            TosaMiscGPIOState, void,
+                            TOSA_MISC_GPIO, SYS_BUS_DEVICE,
     .instance_init = tosa_misc_gpio_init,
     /*
      * No class init required: device has no internal state so does not
      * need to set up reset or vmstate, and has no realize method.
      */
-};
-TYPE_INFO(tosa_misc_gpio_info)
+)
 
 

@@ -2203,15 +2203,12 @@ static void sd_class_init(ObjectClass *klass, void *data)
     sc->get_readonly = sd_get_readonly;
 }
 
-static const TypeInfo sd_info = {
-    .name = TYPE_SD_CARD,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SDState),
-    .class_size = sizeof(SDCardClass),
+OBJECT_DEFINE_TYPE_EXTENDED(sd_info,
+                            SDState, SDCardClass,
+                            SD_CARD, DEVICE,
     .class_init = sd_class_init,
     .instance_init = sd_instance_init,
     .instance_finalize = sd_instance_finalize,
-};
-TYPE_INFO(sd_info)
+)
 
 

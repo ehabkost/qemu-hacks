@@ -837,15 +837,12 @@ static void aspeed_i2c_class_init(ObjectClass *klass, void *data)
     dc->desc = "Aspeed I2C Controller";
 }
 
-static const TypeInfo aspeed_i2c_info = {
-    .name          = TYPE_ASPEED_I2C,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_i2c_info,
+                            AspeedI2CState, AspeedI2CClass,
+                            ASPEED_I2C, SYS_BUS_DEVICE,
     .class_init    = aspeed_i2c_class_init,
-    .class_size = sizeof(AspeedI2CClass),
     .abstract   = true,
-};
-TYPE_INFO(aspeed_i2c_info)
+)
 
 static qemu_irq aspeed_2400_i2c_bus_get_irq(AspeedI2CBus *bus)
 {
@@ -876,12 +873,11 @@ static void aspeed_2400_i2c_class_init(ObjectClass *klass, void *data)
     aic->bus_pool_base = aspeed_2400_i2c_bus_pool_base;
 }
 
-static const TypeInfo aspeed_2400_i2c_info = {
-    .name = TYPE_ASPEED_2400_I2C,
-    .parent = TYPE_ASPEED_I2C,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2400_i2c_info,
+                            void, void,
+                            ASPEED_2400_I2C, ASPEED_I2C,
     .class_init = aspeed_2400_i2c_class_init,
-};
-TYPE_INFO(aspeed_2400_i2c_info)
+)
 
 static qemu_irq aspeed_2500_i2c_bus_get_irq(AspeedI2CBus *bus)
 {
@@ -911,12 +907,11 @@ static void aspeed_2500_i2c_class_init(ObjectClass *klass, void *data)
     aic->has_dma = true;
 }
 
-static const TypeInfo aspeed_2500_i2c_info = {
-    .name = TYPE_ASPEED_2500_I2C,
-    .parent = TYPE_ASPEED_I2C,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2500_i2c_info,
+                            void, void,
+                            ASPEED_2500_I2C, ASPEED_I2C,
     .class_init = aspeed_2500_i2c_class_init,
-};
-TYPE_INFO(aspeed_2500_i2c_info)
+)
 
 static qemu_irq aspeed_2600_i2c_bus_get_irq(AspeedI2CBus *bus)
 {
@@ -945,12 +940,11 @@ static void aspeed_2600_i2c_class_init(ObjectClass *klass, void *data)
     aic->has_dma = true;
 }
 
-static const TypeInfo aspeed_2600_i2c_info = {
-    .name = TYPE_ASPEED_2600_I2C,
-    .parent = TYPE_ASPEED_I2C,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2600_i2c_info,
+                            void, void,
+                            ASPEED_2600_I2C, ASPEED_I2C,
     .class_init = aspeed_2600_i2c_class_init,
-};
-TYPE_INFO(aspeed_2600_i2c_info)
+)
 
 
 

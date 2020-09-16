@@ -241,13 +241,11 @@ static void milkymist_uart_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, milkymist_uart_properties);
 }
 
-static const TypeInfo milkymist_uart_info = {
-    .name          = TYPE_MILKYMIST_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistUartState),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_uart_info,
+                            MilkymistUartState, void,
+                            MILKYMIST_UART, SYS_BUS_DEVICE,
     .instance_init = milkymist_uart_init,
     .class_init    = milkymist_uart_class_init,
-};
-TYPE_INFO(milkymist_uart_info)
+)
 
 

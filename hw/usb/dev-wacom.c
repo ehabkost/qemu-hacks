@@ -367,13 +367,11 @@ static void usb_wacom_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_usb_wacom;
 }
 
-static const TypeInfo wacom_info = {
-    .name          = TYPE_USB_WACOM,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBWacomState),
+OBJECT_DEFINE_TYPE_EXTENDED(wacom_info,
+                            USBWacomState, void,
+                            USB_WACOM, USB_DEVICE,
     .class_init    = usb_wacom_class_init,
-};
-TYPE_INFO(wacom_info)
+)
 
 static void usb_wacom_register_types(void)
 {

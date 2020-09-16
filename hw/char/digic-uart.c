@@ -186,13 +186,11 @@ static void digic_uart_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, digic_uart_properties);
 }
 
-static const TypeInfo digic_uart_info = {
-    .name = TYPE_DIGIC_UART,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(DigicUartState),
+OBJECT_DEFINE_TYPE_EXTENDED(digic_uart_info,
+                            DigicUartState, void,
+                            DIGIC_UART, SYS_BUS_DEVICE,
     .instance_init = digic_uart_init,
     .class_init = digic_uart_class_init,
-};
-TYPE_INFO(digic_uart_info)
+)
 
 

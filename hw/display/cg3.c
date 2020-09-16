@@ -379,13 +379,11 @@ static void cg3_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, cg3_properties);
 }
 
-static const TypeInfo cg3_info = {
-    .name          = TYPE_CG3,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CG3State),
+OBJECT_DEFINE_TYPE_EXTENDED(cg3_info,
+                            CG3State, void,
+                            CG3, SYS_BUS_DEVICE,
     .instance_init = cg3_initfn,
     .class_init    = cg3_class_init,
-};
-TYPE_INFO(cg3_info)
+)
 
 

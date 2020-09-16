@@ -95,13 +95,11 @@ static void nubus_class_init(ObjectClass *oc, void *data)
     bc->realize = nubus_realize;
 }
 
-static const TypeInfo nubus_bus_info = {
-    .name = TYPE_NUBUS_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(NubusBus),
+OBJECT_DEFINE_TYPE_EXTENDED(nubus_bus_info,
+                            NubusBus, void,
+                            NUBUS_BUS, BUS,
     .instance_init = nubus_init,
     .class_init = nubus_class_init,
-};
-TYPE_INFO(nubus_bus_info)
+)
 
 

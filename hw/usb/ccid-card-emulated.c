@@ -606,12 +606,10 @@ static void emulated_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, emulated_card_properties);
 }
 
-static const TypeInfo emulated_card_info = {
-    .name          = TYPE_EMULATED_CCID,
-    .parent        = TYPE_CCID_CARD,
-    .instance_size = sizeof(EmulatedState),
+OBJECT_DEFINE_TYPE_EXTENDED(emulated_card_info,
+                            EmulatedState, void,
+                            EMULATED_CCID, CCID_CARD,
     .class_init    = emulated_class_initfn,
-};
-TYPE_INFO(emulated_card_info)
+)
 
 

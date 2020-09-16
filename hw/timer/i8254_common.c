@@ -254,14 +254,11 @@ static void pit_common_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pit_common_type = {
-    .name          = TYPE_PIT_COMMON,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(PITCommonState),
-    .class_size    = sizeof(PITCommonClass),
+OBJECT_DEFINE_TYPE_EXTENDED(pit_common_type,
+                            PITCommonState, PITCommonClass,
+                            PIT_COMMON, ISA_DEVICE,
     .class_init    = pit_common_class_init,
     .abstract      = true,
-};
-TYPE_INFO(pit_common_type)
+)
 
 

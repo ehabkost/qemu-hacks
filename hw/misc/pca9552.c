@@ -397,16 +397,13 @@ static void pca955x_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, pca955x_properties);
 }
 
-static const TypeInfo pca955x_info = {
-    .name          = TYPE_PCA955X,
-    .parent        = TYPE_I2C_SLAVE,
+OBJECT_DEFINE_TYPE_EXTENDED(pca955x_info,
+                            PCA955xState, PCA955xClass,
+                            PCA955X, I2C_SLAVE,
     .instance_init = pca955x_initfn,
-    .instance_size = sizeof(PCA955xState),
     .class_init    = pca955x_class_init,
-    .class_size    = sizeof(PCA955xClass),
     .abstract      = true,
-};
-TYPE_INFO(pca955x_info)
+)
 
 static void pca9552_class_init(ObjectClass *oc, void *data)
 {
@@ -419,11 +416,10 @@ static void pca9552_class_init(ObjectClass *oc, void *data)
     pc->pin_count = 16;
 }
 
-static const TypeInfo pca9552_info = {
-    .name          = TYPE_PCA9552,
-    .parent        = TYPE_PCA955X,
+OBJECT_DEFINE_TYPE_EXTENDED(pca9552_info,
+                            void, void,
+                            PCA9552, PCA955X,
     .class_init    = pca9552_class_init,
-};
-TYPE_INFO(pca9552_info)
+)
 
 

@@ -450,13 +450,10 @@ static void i8259_class_init(ObjectClass *klass, void *data)
     dc->reset = pic_reset;
 }
 
-static const TypeInfo i8259_info = {
-    .name       = TYPE_I8259,
-    .instance_size = sizeof(PICCommonState),
-    .parent     = TYPE_PIC_COMMON,
+OBJECT_DEFINE_TYPE_EXTENDED(i8259_info,
+                            PICCommonState, PICClass,
+                            I8259, PIC_COMMON,
     .class_init = i8259_class_init,
-    .class_size = sizeof(PICClass),
-};
-TYPE_INFO(i8259_info)
+)
 
 

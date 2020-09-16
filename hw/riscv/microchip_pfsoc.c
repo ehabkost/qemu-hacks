@@ -352,14 +352,12 @@ static void microchip_pfsoc_soc_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo microchip_pfsoc_soc_type_info = {
-    .name = TYPE_MICROCHIP_PFSOC,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(MicrochipPFSoCState),
+OBJECT_DEFINE_TYPE_EXTENDED(microchip_pfsoc_soc_type_info,
+                            MicrochipPFSoCState, void,
+                            MICROCHIP_PFSOC, DEVICE,
     .instance_init = microchip_pfsoc_soc_instance_init,
     .class_init = microchip_pfsoc_soc_class_init,
-};
-TYPE_INFO(microchip_pfsoc_soc_type_info)
+)
 
 
 
@@ -418,12 +416,10 @@ static void microchip_icicle_kit_machine_class_init(ObjectClass *oc, void *data)
     mc->default_ram_size = 1 * GiB;
 }
 
-static const TypeInfo microchip_icicle_kit_machine_typeinfo = {
-    .name       = TYPE_MICROCHIP_ICICLE_KIT_MACHINE,
-    .parent     = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(microchip_icicle_kit_machine_typeinfo,
+                            MicrochipIcicleKitState, void,
+                            MICROCHIP_ICICLE_KIT_MACHINE, MACHINE,
     .class_init = microchip_icicle_kit_machine_class_init,
-    .instance_size = sizeof(MicrochipIcicleKitState),
-};
-TYPE_INFO(microchip_icicle_kit_machine_typeinfo)
+)
 
 

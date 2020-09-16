@@ -298,12 +298,10 @@ static void sifive_pdma_class_init(ObjectClass *klass, void *data)
     dc->realize = sifive_pdma_realize;
 }
 
-static const TypeInfo sifive_pdma_info = {
-    .name          = TYPE_SIFIVE_PDMA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SiFivePDMAState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_pdma_info,
+                            SiFivePDMAState, void,
+                            SIFIVE_PDMA, SYS_BUS_DEVICE,
     .class_init    = sifive_pdma_class_init,
-};
-TYPE_INFO(sifive_pdma_info)
+)
 
 

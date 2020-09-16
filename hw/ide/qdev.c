@@ -60,13 +60,11 @@ static void idebus_unrealize(BusState *bus)
     }
 }
 
-static const TypeInfo ide_bus_info = {
-    .name = TYPE_IDE_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(IDEBus),
+OBJECT_DEFINE_TYPE_EXTENDED(ide_bus_info,
+                            IDEBus, void,
+                            IDE_BUS, BUS,
     .class_init = ide_bus_class_init,
-};
-TYPE_INFO(ide_bus_info)
+)
 
 void ide_bus_new(IDEBus *idebus, size_t idebus_size, DeviceState *dev,
                  int bus_id, int max_units)
@@ -326,13 +324,11 @@ static void ide_hd_class_init(ObjectClass *klass, void *data)
 }
 
 #define TYPE_IDE_HD "ide-hd"
-static const TypeInfo ide_hd_info = {
-    .name          = TYPE_IDE_HD,
-    .parent        = TYPE_IDE_DEVICE,
-    .instance_size = sizeof(IDEDrive),
+OBJECT_DEFINE_TYPE_EXTENDED(ide_hd_info,
+                            IDEDrive, void,
+                            IDE_HD, IDE_DEVICE,
     .class_init    = ide_hd_class_init,
-};
-TYPE_INFO(ide_hd_info)
+)
 
 static Property ide_cd_properties[] = {
     DEFINE_IDE_DEV_PROPERTIES(),
@@ -351,13 +347,11 @@ static void ide_cd_class_init(ObjectClass *klass, void *data)
 }
 
 #define TYPE_IDE_CD "ide-cd"
-static const TypeInfo ide_cd_info = {
-    .name          = TYPE_IDE_CD,
-    .parent        = TYPE_IDE_DEVICE,
-    .instance_size = sizeof(IDEDrive),
+OBJECT_DEFINE_TYPE_EXTENDED(ide_cd_info,
+                            IDEDrive, void,
+                            IDE_CD, IDE_DEVICE,
     .class_init    = ide_cd_class_init,
-};
-TYPE_INFO(ide_cd_info)
+)
 
 static Property ide_drive_properties[] = {
     DEFINE_IDE_DEV_PROPERTIES(),
@@ -376,13 +370,11 @@ static void ide_drive_class_init(ObjectClass *klass, void *data)
 }
 
 #define TYPE_IDE_DRIVE "ide-drive"
-static const TypeInfo ide_drive_info = {
-    .name          = TYPE_IDE_DRIVE,
-    .parent        = TYPE_IDE_DEVICE,
-    .instance_size = sizeof(IDEDrive),
+OBJECT_DEFINE_TYPE_EXTENDED(ide_drive_info,
+                            IDEDrive, void,
+                            IDE_DRIVE, IDE_DEVICE,
     .class_init    = ide_drive_class_init,
-};
-TYPE_INFO(ide_drive_info)
+)
 
 static void ide_device_class_init(ObjectClass *klass, void *data)
 {
@@ -393,15 +385,12 @@ static void ide_device_class_init(ObjectClass *klass, void *data)
     device_class_set_props(k, ide_props);
 }
 
-static const TypeInfo ide_device_type_info = {
-    .name = TYPE_IDE_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(IDEDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(ide_device_type_info,
+                            IDEDevice, IDEDeviceClass,
+                            IDE_DEVICE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(IDEDeviceClass),
     .class_init = ide_device_class_init,
     .instance_init = ide_dev_instance_init,
-};
-TYPE_INFO(ide_device_type_info)
+)
 
 

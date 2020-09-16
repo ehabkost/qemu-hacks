@@ -335,13 +335,11 @@ static void fsl_imx25_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo fsl_imx25_type_info = {
-    .name = TYPE_FSL_IMX25,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(FslIMX25State),
+OBJECT_DEFINE_TYPE_EXTENDED(fsl_imx25_type_info,
+                            FslIMX25State, void,
+                            FSL_IMX25, DEVICE,
     .instance_init = fsl_imx25_init,
     .class_init = fsl_imx25_class_init,
-};
-TYPE_INFO(fsl_imx25_type_info)
+)
 
 

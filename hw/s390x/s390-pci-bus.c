@@ -1130,24 +1130,19 @@ static void s390_pcihost_class_init(ObjectClass *klass, void *data)
     msi_nonbroken = true;
 }
 
-static const TypeInfo s390_pcihost_info = {
-    .name          = TYPE_S390_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(S390pciState),
+OBJECT_DEFINE_TYPE_EXTENDED(s390_pcihost_info,
+                            S390pciState, void,
+                            S390_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = s390_pcihost_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(s390_pcihost_info)
+)
 
-static const TypeInfo s390_pcibus_info = {
-    .name = TYPE_S390_PCI_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(S390PCIBus),
-};
-TYPE_INFO(s390_pcibus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(s390_pcibus_info,
+                            S390PCIBus, void,
+                            S390_PCI_BUS, BUS)
 
 static uint16_t s390_pci_generate_uid(S390pciState *s)
 {
@@ -1312,20 +1307,15 @@ static void s390_pci_device_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &s390_pci_device_vmstate;
 }
 
-static const TypeInfo s390_pci_device_info = {
-    .name = TYPE_S390_PCI_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(S390PCIBusDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(s390_pci_device_info,
+                            S390PCIBusDevice, void,
+                            S390_PCI_DEVICE, DEVICE,
     .class_init = s390_pci_device_class_init,
-};
-TYPE_INFO(s390_pci_device_info)
+)
 
-static TypeInfo s390_pci_iommu_info = {
-    .name = TYPE_S390_PCI_IOMMU,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(S390PCIIOMMU),
-};
-TYPE_INFO(s390_pci_iommu_info)
+OBJECT_DEFINE_TYPE_EXTENDED(s390_pci_iommu_info,
+                            S390PCIIOMMU, void,
+                            S390_PCI_IOMMU, OBJECT)
 
 static void s390_iommu_memory_region_class_init(ObjectClass *klass, void *data)
 {
@@ -1335,11 +1325,10 @@ static void s390_iommu_memory_region_class_init(ObjectClass *klass, void *data)
     imrc->replay = s390_pci_iommu_replay;
 }
 
-static const TypeInfo s390_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_S390_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(s390_iommu_memory_region_info,
+                            void, void,
+                            S390_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = s390_iommu_memory_region_class_init,
-};
-TYPE_INFO(s390_iommu_memory_region_info)
+)
 
 

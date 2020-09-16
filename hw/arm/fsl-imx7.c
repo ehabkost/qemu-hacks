@@ -570,12 +570,10 @@ static void fsl_imx7_class_init(ObjectClass *oc, void *data)
     dc->desc = "i.MX7 SOC";
 }
 
-static const TypeInfo fsl_imx7_type_info = {
-    .name = TYPE_FSL_IMX7,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(FslIMX7State),
+OBJECT_DEFINE_TYPE_EXTENDED(fsl_imx7_type_info,
+                            FslIMX7State, void,
+                            FSL_IMX7, DEVICE,
     .instance_init = fsl_imx7_init,
     .class_init = fsl_imx7_class_init,
-};
-TYPE_INFO(fsl_imx7_type_info)
+)
 

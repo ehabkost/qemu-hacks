@@ -720,18 +720,16 @@ static void input_barrier_class_init(ObjectClass *oc, void *data)
     ucc->complete = input_barrier_complete;
 }
 
-static const TypeInfo input_barrier_info = {
-    .name = TYPE_INPUT_BARRIER,
-    .parent = TYPE_OBJECT,
+OBJECT_DEFINE_TYPE_EXTENDED(input_barrier_info,
+                            InputBarrier, void,
+                            INPUT_BARRIER, OBJECT,
     .class_init = input_barrier_class_init,
-    .instance_size = sizeof(InputBarrier),
     .instance_init = input_barrier_instance_init,
     .instance_finalize = input_barrier_instance_finalize,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(input_barrier_info)
+)
 
 

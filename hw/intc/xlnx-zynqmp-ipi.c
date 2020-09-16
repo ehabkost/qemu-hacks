@@ -364,13 +364,11 @@ static void xlnx_zynqmp_ipi_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_zynqmp_pmu_ipi;
 }
 
-static const TypeInfo xlnx_zynqmp_ipi_info = {
-    .name          = TYPE_XLNX_ZYNQMP_IPI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XlnxZynqMPIPI),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_zynqmp_ipi_info,
+                            XlnxZynqMPIPI, void,
+                            XLNX_ZYNQMP_IPI, SYS_BUS_DEVICE,
     .class_init    = xlnx_zynqmp_ipi_class_init,
     .instance_init = xlnx_zynqmp_ipi_init,
-};
-TYPE_INFO(xlnx_zynqmp_ipi_info)
+)
 
 

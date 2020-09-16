@@ -179,14 +179,11 @@ static void kvm_s390_stattrib_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo kvm_s390_stattrib_info = {
-    .name          = TYPE_KVM_S390_STATTRIB,
-    .parent        = TYPE_S390_STATTRIB,
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_s390_stattrib_info,
+                            KVMS390StAttribState, S390StAttribClass,
+                            KVM_S390_STATTRIB, S390_STATTRIB,
     .instance_init = kvm_s390_stattrib_instance_init,
-    .instance_size = sizeof(KVMS390StAttribState),
     .class_init    = kvm_s390_stattrib_class_init,
-    .class_size    = sizeof(S390StAttribClass),
-};
-TYPE_INFO(kvm_s390_stattrib_info)
+)
 
 

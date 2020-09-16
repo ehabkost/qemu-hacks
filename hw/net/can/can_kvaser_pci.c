@@ -304,17 +304,15 @@ static void kvaser_pci_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo kvaser_pci_info = {
-    .name          = TYPE_CAN_PCI_DEV,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(KvaserPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvaser_pci_info,
+                            KvaserPCIState, void,
+                            CAN_PCI_DEV, PCI_DEVICE,
     .class_init    = kvaser_pci_class_init,
     .instance_init = kvaser_pci_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(kvaser_pci_info)
+)
 
 

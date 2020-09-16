@@ -956,12 +956,10 @@ static void usb_uas_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, uas_properties);
 }
 
-static const TypeInfo uas_info = {
-    .name          = TYPE_USB_UAS,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(UASDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(uas_info,
+                            UASDevice, void,
+                            USB_UAS, USB_DEVICE,
     .class_init    = usb_uas_class_initfn,
-};
-TYPE_INFO(uas_info)
+)
 
 

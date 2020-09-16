@@ -439,16 +439,13 @@ static void cpu_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo cpu_type_info = {
-    .name = TYPE_CPU,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(CPUState),
+OBJECT_DEFINE_TYPE_EXTENDED(cpu_type_info,
+                            CPUState, CPUClass,
+                            CPU, DEVICE,
     .instance_init = cpu_common_initfn,
     .instance_finalize = cpu_common_finalize,
     .abstract = true,
-    .class_size = sizeof(CPUClass),
     .class_init = cpu_class_init,
-};
-TYPE_INFO(cpu_type_info)
+)
 
 

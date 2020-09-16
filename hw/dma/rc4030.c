@@ -711,14 +711,12 @@ static void rc4030_class_init(ObjectClass *klass, void *class_data)
     dc->vmsd = &vmstate_rc4030;
 }
 
-static const TypeInfo rc4030_info = {
-    .name = TYPE_RC4030,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(rc4030State),
+OBJECT_DEFINE_TYPE_EXTENDED(rc4030_info,
+                            rc4030State, void,
+                            RC4030, SYS_BUS_DEVICE,
     .instance_init = rc4030_initfn,
     .class_init = rc4030_class_init,
-};
-TYPE_INFO(rc4030_info)
+)
 
 static void rc4030_iommu_memory_region_class_init(ObjectClass *klass,
                                                   void *data)
@@ -728,12 +726,11 @@ static void rc4030_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->translate = rc4030_dma_translate;
 }
 
-static const TypeInfo rc4030_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_RC4030_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(rc4030_iommu_memory_region_info,
+                            void, void,
+                            RC4030_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = rc4030_iommu_memory_region_class_init,
-};
-TYPE_INFO(rc4030_iommu_memory_region_info)
+)
 
 
 

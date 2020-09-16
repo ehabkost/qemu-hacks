@@ -248,14 +248,12 @@ static void scoop_sysbus_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_scoop_regs;
 }
 
-static const TypeInfo scoop_sysbus_info = {
-    .name          = TYPE_SCOOP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ScoopInfo),
+OBJECT_DEFINE_TYPE_EXTENDED(scoop_sysbus_info,
+                            ScoopInfo, void,
+                            SCOOP, SYS_BUS_DEVICE,
     .instance_init = scoop_init,
     .class_init    = scoop_sysbus_class_init,
-};
-TYPE_INFO(scoop_sysbus_info)
+)
 
 
 

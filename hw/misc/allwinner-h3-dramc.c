@@ -342,13 +342,11 @@ static void allwinner_h3_dramc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, allwinner_h3_dramc_properties);
 }
 
-static const TypeInfo allwinner_h3_dramc_info = {
-    .name          = TYPE_AW_H3_DRAMC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_h3_dramc_info,
+                            AwH3DramCtlState, void,
+                            AW_H3_DRAMC, SYS_BUS_DEVICE,
     .instance_init = allwinner_h3_dramc_init,
-    .instance_size = sizeof(AwH3DramCtlState),
     .class_init    = allwinner_h3_dramc_class_init,
-};
-TYPE_INFO(allwinner_h3_dramc_info)
+)
 
 

@@ -979,13 +979,11 @@ static void virtio_crypto_instance_init(Object *obj)
     vcrypto->config_size = sizeof(struct virtio_crypto_config);
 }
 
-static const TypeInfo virtio_crypto_info = {
-    .name = TYPE_VIRTIO_CRYPTO,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOCrypto),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_crypto_info,
+                            VirtIOCrypto, void,
+                            VIRTIO_CRYPTO, VIRTIO_DEVICE,
     .instance_init = virtio_crypto_instance_init,
     .class_init = virtio_crypto_class_init,
-};
-TYPE_INFO(virtio_crypto_info)
+)
 
 

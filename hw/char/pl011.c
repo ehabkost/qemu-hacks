@@ -359,14 +359,12 @@ static void pl011_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, pl011_properties);
 }
 
-static const TypeInfo pl011_arm_info = {
-    .name          = TYPE_PL011,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL011State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl011_arm_info,
+                            PL011State, void,
+                            PL011, SYS_BUS_DEVICE,
     .instance_init = pl011_init,
     .class_init    = pl011_class_init,
-};
-TYPE_INFO(pl011_arm_info)
+)
 
 static void pl011_luminary_init(Object *obj)
 {
@@ -375,11 +373,10 @@ static void pl011_luminary_init(Object *obj)
     s->id = pl011_id_luminary;
 }
 
-static const TypeInfo pl011_luminary_info = {
-    .name          = TYPE_PL011_LUMINARY,
-    .parent        = TYPE_PL011,
+OBJECT_DEFINE_TYPE_EXTENDED(pl011_luminary_info,
+                            void, void,
+                            PL011_LUMINARY, PL011,
     .instance_init = pl011_luminary_init,
-};
-TYPE_INFO(pl011_luminary_info)
+)
 
 

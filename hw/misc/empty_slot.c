@@ -94,12 +94,10 @@ static void empty_slot_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo empty_slot_info = {
-    .name          = TYPE_EMPTY_SLOT,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(EmptySlot),
+OBJECT_DEFINE_TYPE_EXTENDED(empty_slot_info,
+                            EmptySlot, void,
+                            EMPTY_SLOT, SYS_BUS_DEVICE,
     .class_init    = empty_slot_class_init,
-};
-TYPE_INFO(empty_slot_info)
+)
 
 

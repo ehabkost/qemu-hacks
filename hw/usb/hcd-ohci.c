@@ -1989,12 +1989,10 @@ static void ohci_sysbus_class_init(ObjectClass *klass, void *data)
     dc->reset = usb_ohci_reset_sysbus;
 }
 
-static const TypeInfo ohci_sysbus_info = {
-    .name          = TYPE_SYSBUS_OHCI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(OHCISysBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(ohci_sysbus_info,
+                            OHCISysBusState, void,
+                            SYSBUS_OHCI, SYS_BUS_DEVICE,
     .class_init    = ohci_sysbus_class_init,
-};
-TYPE_INFO(ohci_sysbus_info)
+)
 
 

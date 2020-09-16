@@ -520,14 +520,12 @@ static void pl181_class_init(ObjectClass *klass, void *data)
     k->user_creatable = false;
 }
 
-static const TypeInfo pl181_info = {
-    .name          = TYPE_PL181,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL181State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl181_info,
+                            PL181State, void,
+                            PL181, SYS_BUS_DEVICE,
     .instance_init = pl181_init,
     .class_init    = pl181_class_init,
-};
-TYPE_INFO(pl181_info)
+)
 
 static void pl181_bus_class_init(ObjectClass *klass, void *data)
 {
@@ -537,11 +535,10 @@ static void pl181_bus_class_init(ObjectClass *klass, void *data)
     sbc->set_readonly = pl181_set_readonly;
 }
 
-static const TypeInfo pl181_bus_info = {
-    .name = TYPE_PL181_BUS,
-    .parent = TYPE_SD_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(pl181_bus_info,
+                            void, void,
+                            PL181_BUS, SD_BUS,
     .class_init = pl181_bus_class_init,
-};
-TYPE_INFO(pl181_bus_info)
+)
 
 

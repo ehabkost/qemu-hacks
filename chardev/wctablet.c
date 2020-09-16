@@ -351,13 +351,11 @@ static void wctablet_chr_class_init(ObjectClass *oc, void *data)
     cc->chr_accept_input = wctablet_chr_accept_input;
 }
 
-static const TypeInfo wctablet_type_info = {
-    .name = TYPE_CHARDEV_WCTABLET,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(TabletChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(wctablet_type_info,
+                            TabletChardev, void,
+                            CHARDEV_WCTABLET, CHARDEV,
     .instance_finalize = wctablet_chr_finalize,
     .class_init = wctablet_chr_class_init,
-};
-TYPE_INFO(wctablet_type_info)
+)
 
 

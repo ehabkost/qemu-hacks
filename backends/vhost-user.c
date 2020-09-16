@@ -191,13 +191,11 @@ static void vhost_user_backend_finalize(Object *obj)
     qemu_chr_fe_deinit(&b->chr, true);
 }
 
-static const TypeInfo vhost_user_backend_info = {
-    .name = TYPE_VHOST_USER_BACKEND,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(VhostUserBackend),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_user_backend_info,
+                            VhostUserBackend, void,
+                            VHOST_USER_BACKEND, OBJECT,
     .instance_init = vhost_user_backend_init,
     .instance_finalize = vhost_user_backend_finalize,
-};
-TYPE_INFO(vhost_user_backend_info)
+)
 
 

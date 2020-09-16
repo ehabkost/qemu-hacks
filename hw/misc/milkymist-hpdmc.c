@@ -157,12 +157,10 @@ static void milkymist_hpdmc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_milkymist_hpdmc;
 }
 
-static const TypeInfo milkymist_hpdmc_info = {
-    .name          = TYPE_MILKYMIST_HPDMC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistHpdmcState),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_hpdmc_info,
+                            MilkymistHpdmcState, void,
+                            MILKYMIST_HPDMC, SYS_BUS_DEVICE,
     .class_init    = milkymist_hpdmc_class_init,
-};
-TYPE_INFO(milkymist_hpdmc_info)
+)
 
 

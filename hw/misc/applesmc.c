@@ -357,12 +357,10 @@ static void qdev_applesmc_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo applesmc_isa_info = {
-    .name          = TYPE_APPLE_SMC,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(AppleSMCState),
+OBJECT_DEFINE_TYPE_EXTENDED(applesmc_isa_info,
+                            AppleSMCState, void,
+                            APPLE_SMC, ISA_DEVICE,
     .class_init    = qdev_applesmc_class_init,
-};
-TYPE_INFO(applesmc_isa_info)
+)
 
 

@@ -73,14 +73,12 @@ static void filter_replay_class_init(ObjectClass *oc, void *data)
     nfc->receive_iov = filter_replay_receive_iov;
 }
 
-static const TypeInfo filter_replay_info = {
-    .name = TYPE_FILTER_REPLAY,
-    .parent = TYPE_NETFILTER,
+OBJECT_DEFINE_TYPE_EXTENDED(filter_replay_info,
+                            NetFilterReplayState, void,
+                            FILTER_REPLAY, NETFILTER,
     .class_init = filter_replay_class_init,
     .instance_init = filter_replay_instance_init,
     .instance_finalize = filter_replay_instance_finalize,
-    .instance_size = sizeof(NetFilterReplayState),
-};
-TYPE_INFO(filter_replay_info)
+)
 
 

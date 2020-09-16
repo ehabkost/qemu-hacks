@@ -214,13 +214,11 @@ static void sifive_clint_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, sifive_clint_properties);
 }
 
-static const TypeInfo sifive_clint_info = {
-    .name          = TYPE_SIFIVE_CLINT,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SiFiveCLINTState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_clint_info,
+                            SiFiveCLINTState, void,
+                            SIFIVE_CLINT, SYS_BUS_DEVICE,
     .class_init    = sifive_clint_class_init,
-};
-TYPE_INFO(sifive_clint_info)
+)
 
 
 

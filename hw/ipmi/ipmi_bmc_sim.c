@@ -2216,12 +2216,10 @@ static void ipmi_sim_class_init(ObjectClass *oc, void *data)
     bk->handle_command = ipmi_sim_handle_command;
 }
 
-static const TypeInfo ipmi_sim_type = {
-    .name          = TYPE_IPMI_BMC_SIMULATOR,
-    .parent        = TYPE_IPMI_BMC,
-    .instance_size = sizeof(IPMIBmcSim),
+OBJECT_DEFINE_TYPE_EXTENDED(ipmi_sim_type,
+                            IPMIBmcSim, void,
+                            IPMI_BMC_SIMULATOR, IPMI_BMC,
     .class_init    = ipmi_sim_class_init,
-};
-TYPE_INFO(ipmi_sim_type)
+)
 
 

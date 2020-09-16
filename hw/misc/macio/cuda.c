@@ -573,14 +573,12 @@ static void cuda_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo cuda_type_info = {
-    .name = TYPE_CUDA,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CUDAState),
+OBJECT_DEFINE_TYPE_EXTENDED(cuda_type_info,
+                            CUDAState, void,
+                            CUDA, SYS_BUS_DEVICE,
     .instance_init = cuda_init,
     .class_init = cuda_class_init,
-};
-TYPE_INFO(cuda_type_info)
+)
 
 static void mos6522_cuda_portB_write(MOS6522State *s)
 {
@@ -614,12 +612,10 @@ static void mos6522_cuda_class_init(ObjectClass *oc, void *data)
     mdc->get_timer2_load_time = cuda_get_load_time;
 }
 
-static const TypeInfo mos6522_cuda_type_info = {
-    .name = TYPE_MOS6522_CUDA,
-    .parent = TYPE_MOS6522,
-    .instance_size = sizeof(MOS6522CUDAState),
+OBJECT_DEFINE_TYPE_EXTENDED(mos6522_cuda_type_info,
+                            MOS6522CUDAState, void,
+                            MOS6522_CUDA, MOS6522,
     .class_init = mos6522_cuda_class_init,
-};
-TYPE_INFO(mos6522_cuda_type_info)
+)
 
 

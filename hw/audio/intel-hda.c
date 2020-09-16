@@ -42,12 +42,9 @@ static Property hda_props[] = {
     DEFINE_PROP_END_OF_LIST()
 };
 
-static const TypeInfo hda_codec_bus_info = {
-    .name = TYPE_HDA_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(HDACodecBus),
-};
-TYPE_INFO(hda_codec_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(hda_codec_bus_info,
+                            HDACodecBus, void,
+                            HDA_BUS, BUS)
 
 void hda_codec_bus_init(DeviceState *dev, HDACodecBus *bus, size_t bus_size,
                         hda_codec_response_func response,
@@ -1257,18 +1254,16 @@ static void intel_hda_class_init_ich9(ObjectClass *klass, void *data)
     dc->desc = "Intel HD Audio Controller (ich9)";
 }
 
-static const TypeInfo intel_hda_info = {
-    .name          = TYPE_INTEL_HDA_GENERIC,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(IntelHDAState),
+OBJECT_DEFINE_TYPE_EXTENDED(intel_hda_info,
+                            IntelHDAState, void,
+                            INTEL_HDA_GENERIC, PCI_DEVICE,
     .class_init    = intel_hda_class_init,
     .abstract      = true,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(intel_hda_info)
+)
 
 static const TypeInfo intel_hda_info_ich6 = {
     .name          = "intel-hda",
@@ -1294,15 +1289,12 @@ static void hda_codec_device_class_init(ObjectClass *klass, void *data)
     device_class_set_props(k, hda_props);
 }
 
-static const TypeInfo hda_codec_device_type_info = {
-    .name = TYPE_HDA_CODEC_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(HDACodecDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(hda_codec_device_type_info,
+                            HDACodecDevice, HDACodecDeviceClass,
+                            HDA_CODEC_DEVICE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(HDACodecDeviceClass),
     .class_init = hda_codec_device_class_init,
-};
-TYPE_INFO(hda_codec_device_type_info)
+)
 
 /*
  * create intel hda controller with codec attached to it,

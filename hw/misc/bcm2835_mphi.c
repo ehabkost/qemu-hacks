@@ -175,13 +175,11 @@ static void mphi_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_mphi_state;
 }
 
-static const TypeInfo bcm2835_mphi_type_info = {
-    .name          = TYPE_BCM2835_MPHI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835MphiState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_mphi_type_info,
+                            BCM2835MphiState, void,
+                            BCM2835_MPHI, SYS_BUS_DEVICE,
     .instance_init = mphi_init,
     .class_init    = mphi_class_init,
-};
-TYPE_INFO(bcm2835_mphi_type_info)
+)
 
 

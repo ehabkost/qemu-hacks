@@ -558,13 +558,11 @@ static void vhost_user_blk_class_init(ObjectClass *klass, void *data)
     vdc->reset = vhost_user_blk_reset;
 }
 
-static const TypeInfo vhost_user_blk_info = {
-    .name = TYPE_VHOST_USER_BLK,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VHostUserBlk),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_user_blk_info,
+                            VHostUserBlk, void,
+                            VHOST_USER_BLK, VIRTIO_DEVICE,
     .instance_init = vhost_user_blk_instance_init,
     .class_init = vhost_user_blk_class_init,
-};
-TYPE_INFO(vhost_user_blk_info)
+)
 
 

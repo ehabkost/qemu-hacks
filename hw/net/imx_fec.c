@@ -1353,20 +1353,17 @@ static void imx_enet_init(Object *obj)
     s->is_fec = false;
 }
 
-static const TypeInfo imx_fec_info = {
-    .name          = TYPE_IMX_FEC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXFECState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_fec_info,
+                            IMXFECState, void,
+                            IMX_FEC, SYS_BUS_DEVICE,
     .instance_init = imx_fec_init,
     .class_init    = imx_eth_class_init,
-};
-TYPE_INFO(imx_fec_info)
+)
 
-static const TypeInfo imx_enet_info = {
-    .name          = TYPE_IMX_ENET,
-    .parent        = TYPE_IMX_FEC,
+OBJECT_DEFINE_TYPE_EXTENDED(imx_enet_info,
+                            void, void,
+                            IMX_ENET, IMX_FEC,
     .instance_init = imx_enet_init,
-};
-TYPE_INFO(imx_enet_info)
+)
 
 

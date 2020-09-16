@@ -425,21 +425,18 @@ static void pl080_class_init(ObjectClass *oc, void *data)
     dc->reset = pl080_reset;
 }
 
-static const TypeInfo pl080_info = {
-    .name          = TYPE_PL080,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL080State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl080_info,
+                            PL080State, void,
+                            PL080, SYS_BUS_DEVICE,
     .instance_init = pl080_init,
     .class_init    = pl080_class_init,
-};
-TYPE_INFO(pl080_info)
+)
 
-static const TypeInfo pl081_info = {
-    .name          = TYPE_PL081,
-    .parent        = TYPE_PL080,
+OBJECT_DEFINE_TYPE_EXTENDED(pl081_info,
+                            void, void,
+                            PL081, PL080,
     .instance_init = pl081_init,
-};
-TYPE_INFO(pl081_info)
+)
 
 /* The PL080 and PL081 are the same except for the number of channels
    they implement (8 and 2 respectively).  */

@@ -111,14 +111,12 @@ static void vhost_input_finalize(Object *obj)
     object_unref(OBJECT(vhi->vhost));
 }
 
-static const TypeInfo vhost_input_info = {
-    .name          = TYPE_VHOST_USER_INPUT,
-    .parent        = TYPE_VIRTIO_INPUT,
-    .instance_size = sizeof(VHostUserInput),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_input_info,
+                            VHostUserInput, void,
+                            VHOST_USER_INPUT, VIRTIO_INPUT,
     .instance_init = vhost_input_init,
     .instance_finalize = vhost_input_finalize,
     .class_init    = vhost_input_class_init,
-};
-TYPE_INFO(vhost_input_info)
+)
 
 

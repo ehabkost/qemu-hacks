@@ -2025,14 +2025,12 @@ static void sm501_sysbus_init(Object *o)
                               OBJECT(smm), "chardev");
 }
 
-static const TypeInfo sm501_sysbus_info = {
-    .name          = TYPE_SYSBUS_SM501,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SM501SysBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(sm501_sysbus_info,
+                            SM501SysBusState, void,
+                            SYSBUS_SM501, SYS_BUS_DEVICE,
     .class_init    = sm501_sysbus_class_init,
     .instance_init = sm501_sysbus_init,
-};
-TYPE_INFO(sm501_sysbus_info)
+)
 
 #define TYPE_PCI_SM501 "sm501"
 OBJECT_DECLARE_SIMPLE_TYPE(SM501PCIState, PCI_SM501)
@@ -2103,16 +2101,14 @@ static void sm501_pci_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_sm501_pci;
 }
 
-static const TypeInfo sm501_pci_info = {
-    .name          = TYPE_PCI_SM501,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(SM501PCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sm501_pci_info,
+                            SM501PCIState, void,
+                            PCI_SM501, PCI_DEVICE,
     .class_init    = sm501_pci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(sm501_pci_info)
+)
 
 

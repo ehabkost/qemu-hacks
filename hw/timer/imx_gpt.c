@@ -546,34 +546,29 @@ static void imx7_gpt_init(Object *obj)
     s->clocks = imx7_gpt_clocks;
 }
 
-static const TypeInfo imx25_gpt_info = {
-    .name = TYPE_IMX25_GPT,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXGPTState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx25_gpt_info,
+                            IMXGPTState, void,
+                            IMX25_GPT, SYS_BUS_DEVICE,
     .instance_init = imx25_gpt_init,
     .class_init = imx_gpt_class_init,
-};
-TYPE_INFO(imx25_gpt_info)
+)
 
-static const TypeInfo imx31_gpt_info = {
-    .name = TYPE_IMX31_GPT,
-    .parent = TYPE_IMX25_GPT,
+OBJECT_DEFINE_TYPE_EXTENDED(imx31_gpt_info,
+                            void, void,
+                            IMX31_GPT, IMX25_GPT,
     .instance_init = imx31_gpt_init,
-};
-TYPE_INFO(imx31_gpt_info)
+)
 
-static const TypeInfo imx6_gpt_info = {
-    .name = TYPE_IMX6_GPT,
-    .parent = TYPE_IMX25_GPT,
+OBJECT_DEFINE_TYPE_EXTENDED(imx6_gpt_info,
+                            void, void,
+                            IMX6_GPT, IMX25_GPT,
     .instance_init = imx6_gpt_init,
-};
-TYPE_INFO(imx6_gpt_info)
+)
 
-static const TypeInfo imx7_gpt_info = {
-    .name = TYPE_IMX7_GPT,
-    .parent = TYPE_IMX25_GPT,
+OBJECT_DEFINE_TYPE_EXTENDED(imx7_gpt_info,
+                            void, void,
+                            IMX7_GPT, IMX25_GPT,
     .instance_init = imx7_gpt_init,
-};
-TYPE_INFO(imx7_gpt_info)
+)
 
 

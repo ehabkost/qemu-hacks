@@ -52,13 +52,11 @@ static void virtio_ccw_gpu_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_DISPLAY, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_gpu = {
-    .name          = TYPE_VIRTIO_GPU_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtIOGPUCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_gpu,
+                            VirtIOGPUCcw, void,
+                            VIRTIO_GPU_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_gpu_instance_init,
     .class_init    = virtio_ccw_gpu_class_init,
-};
-TYPE_INFO(virtio_ccw_gpu)
+)
 
 

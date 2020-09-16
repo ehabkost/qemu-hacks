@@ -1413,13 +1413,11 @@ static void usb_net_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, net_properties);
 }
 
-static const TypeInfo net_info = {
-    .name          = TYPE_USB_NET,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBNetState),
+OBJECT_DEFINE_TYPE_EXTENDED(net_info,
+                            USBNetState, void,
+                            USB_NET, USB_DEVICE,
     .class_init    = usb_net_class_initfn,
     .instance_init = usb_net_instance_init,
-};
-TYPE_INFO(net_info)
+)
 
 

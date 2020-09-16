@@ -211,13 +211,11 @@ static void tcg_accel_class_init(ObjectClass *oc, void *data)
 
 }
 
-static const TypeInfo tcg_accel_type = {
-    .name = TYPE_TCG_ACCEL,
-    .parent = TYPE_ACCEL,
+OBJECT_DEFINE_TYPE_EXTENDED(tcg_accel_type,
+                            TCGState, void,
+                            TCG_ACCEL, ACCEL,
     .instance_init = tcg_accel_instance_init,
     .class_init = tcg_accel_class_init,
-    .instance_size = sizeof(TCGState),
-};
-TYPE_INFO(tcg_accel_type)
+)
 
 

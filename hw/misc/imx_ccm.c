@@ -71,13 +71,10 @@ uint32_t imx_ccm_calc_pll(uint32_t pllreg, uint32_t base_freq)
     return freq;
 }
 
-static const TypeInfo imx_ccm_info = {
-    .name          = TYPE_IMX_CCM,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXCCMState),
-    .class_size    = sizeof(IMXCCMClass),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_ccm_info,
+                            IMXCCMState, IMXCCMClass,
+                            IMX_CCM, SYS_BUS_DEVICE,
     .abstract      = true,
-};
-TYPE_INFO(imx_ccm_info)
+)
 
 

@@ -70,13 +70,11 @@ static void realview_gic_class_init(ObjectClass *oc, void *data)
     dc->realize = realview_gic_realize;
 }
 
-static const TypeInfo realview_gic_info = {
-    .name          = TYPE_REALVIEW_GIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RealViewGICState),
+OBJECT_DEFINE_TYPE_EXTENDED(realview_gic_info,
+                            RealViewGICState, void,
+                            REALVIEW_GIC, SYS_BUS_DEVICE,
     .instance_init = realview_gic_init,
     .class_init    = realview_gic_class_init,
-};
-TYPE_INFO(realview_gic_info)
+)
 
 

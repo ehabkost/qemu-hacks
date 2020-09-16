@@ -340,12 +340,10 @@ static void imx_gpio_class_init(ObjectClass *klass, void *data)
     dc->desc = "i.MX GPIO controller";
 }
 
-static const TypeInfo imx_gpio_info = {
-    .name = TYPE_IMX_GPIO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXGPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_gpio_info,
+                            IMXGPIOState, void,
+                            IMX_GPIO, SYS_BUS_DEVICE,
     .class_init = imx_gpio_class_init,
-};
-TYPE_INFO(imx_gpio_info)
+)
 
 

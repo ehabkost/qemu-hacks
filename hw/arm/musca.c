@@ -635,28 +635,23 @@ static void musca_b1_class_init(ObjectClass *oc, void *data)
     mmc->num_mpcs = ARRAY_SIZE(b1_mpc_info);
 }
 
-static const TypeInfo musca_info = {
-    .name = TYPE_MUSCA_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(musca_info,
+                            MuscaMachineState, MuscaMachineClass,
+                            MUSCA_MACHINE, MACHINE,
     .abstract = true,
-    .instance_size = sizeof(MuscaMachineState),
-    .class_size = sizeof(MuscaMachineClass),
     .class_init = musca_class_init,
-};
-TYPE_INFO(musca_info)
+)
 
-static const TypeInfo musca_a_info = {
-    .name = TYPE_MUSCA_A_MACHINE,
-    .parent = TYPE_MUSCA_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(musca_a_info,
+                            void, void,
+                            MUSCA_A_MACHINE, MUSCA_MACHINE,
     .class_init = musca_a_class_init,
-};
-TYPE_INFO(musca_a_info)
+)
 
-static const TypeInfo musca_b1_info = {
-    .name = TYPE_MUSCA_B1_MACHINE,
-    .parent = TYPE_MUSCA_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(musca_b1_info,
+                            void, void,
+                            MUSCA_B1_MACHINE, MUSCA_MACHINE,
     .class_init = musca_b1_class_init,
-};
-TYPE_INFO(musca_b1_info)
+)
 
 

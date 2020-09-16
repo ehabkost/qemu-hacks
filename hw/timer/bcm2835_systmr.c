@@ -148,12 +148,10 @@ static void bcm2835_systmr_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &bcm2835_systmr_vmstate;
 }
 
-static const TypeInfo bcm2835_systmr_info = {
-    .name = TYPE_BCM2835_SYSTIMER,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835SystemTimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_systmr_info,
+                            BCM2835SystemTimerState, void,
+                            BCM2835_SYSTIMER, SYS_BUS_DEVICE,
     .class_init = bcm2835_systmr_class_init,
-};
-TYPE_INFO(bcm2835_systmr_info)
+)
 
 

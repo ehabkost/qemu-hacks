@@ -1479,15 +1479,13 @@ static void sdhci_sysbus_class_init(ObjectClass *klass, void *data)
     sdhci_common_class_init(klass, data);
 }
 
-static const TypeInfo sdhci_sysbus_info = {
-    .name = TYPE_SYSBUS_SDHCI,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SDHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sdhci_sysbus_info,
+                            SDHCIState, void,
+                            SYSBUS_SDHCI, SYS_BUS_DEVICE,
     .instance_init = sdhci_sysbus_init,
     .instance_finalize = sdhci_sysbus_finalize,
     .class_init = sdhci_sysbus_class_init,
-};
-TYPE_INFO(sdhci_sysbus_info)
+)
 
 /* --- qdev bus master --- */
 
@@ -1499,13 +1497,11 @@ static void sdhci_bus_class_init(ObjectClass *klass, void *data)
     sbc->set_readonly = sdhci_set_readonly;
 }
 
-static const TypeInfo sdhci_bus_info = {
-    .name = TYPE_SDHCI_BUS,
-    .parent = TYPE_SD_BUS,
-    .instance_size = sizeof(SDBus),
+OBJECT_DEFINE_TYPE_EXTENDED(sdhci_bus_info,
+                            SDBus, void,
+                            SDHCI_BUS, SD_BUS,
     .class_init = sdhci_bus_class_init,
-};
-TYPE_INFO(sdhci_bus_info)
+)
 
 /* --- qdev i.MX eSDHC --- */
 
@@ -1746,12 +1742,11 @@ static void imx_usdhc_init(Object *obj)
     s->quirks = SDHCI_QUIRK_NO_BUSY_IRQ;
 }
 
-static const TypeInfo imx_usdhc_info = {
-    .name = TYPE_IMX_USDHC,
-    .parent = TYPE_SYSBUS_SDHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(imx_usdhc_info,
+                            void, void,
+                            IMX_USDHC, SYSBUS_SDHCI,
     .instance_init = imx_usdhc_init,
-};
-TYPE_INFO(imx_usdhc_info)
+)
 
 /* --- qdev Samsung s3c --- */
 
@@ -1811,11 +1806,10 @@ static void sdhci_s3c_init(Object *obj)
     s->io_ops = &sdhci_s3c_mmio_ops;
 }
 
-static const TypeInfo sdhci_s3c_info = {
-    .name = TYPE_S3C_SDHCI  ,
-    .parent = TYPE_SYSBUS_SDHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(sdhci_s3c_info,
+                            void, void,
+                            S3C_SDHCI  , SYSBUS_SDHCI,
     .instance_init = sdhci_s3c_init,
-};
-TYPE_INFO(sdhci_s3c_info)
+)
 
 

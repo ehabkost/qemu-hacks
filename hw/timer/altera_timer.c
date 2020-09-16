@@ -228,13 +228,11 @@ static void altera_timer_class_init(ObjectClass *klass, void *data)
     dc->reset = altera_timer_reset;
 }
 
-static const TypeInfo altera_timer_info = {
-    .name          = TYPE_ALTERA_TIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AlteraTimer),
+OBJECT_DEFINE_TYPE_EXTENDED(altera_timer_info,
+                            AlteraTimer, void,
+                            ALTERA_TIMER, SYS_BUS_DEVICE,
     .instance_init = altera_timer_init,
     .class_init    = altera_timer_class_init,
-};
-TYPE_INFO(altera_timer_info)
+)
 
 

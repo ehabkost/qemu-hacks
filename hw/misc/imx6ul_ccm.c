@@ -922,13 +922,11 @@ static void imx6ul_ccm_class_init(ObjectClass *klass, void *data)
     ccm->get_clock_frequency = imx6ul_ccm_get_clock_frequency;
 }
 
-static const TypeInfo imx6ul_ccm_info = {
-    .name          = TYPE_IMX6UL_CCM,
-    .parent        = TYPE_IMX_CCM,
-    .instance_size = sizeof(IMX6ULCCMState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx6ul_ccm_info,
+                            IMX6ULCCMState, void,
+                            IMX6UL_CCM, IMX_CCM,
     .instance_init = imx6ul_ccm_init,
     .class_init    = imx6ul_ccm_class_init,
-};
-TYPE_INFO(imx6ul_ccm_info)
+)
 
 

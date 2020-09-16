@@ -345,12 +345,10 @@ static void mpc_i2c_class_init(ObjectClass *klass, void *data)
     dc->desc = "MPC I2C Controller";
 }
 
-static const TypeInfo mpc_i2c_type_info = {
-    .name          = TYPE_MPC_I2C,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MPCI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(mpc_i2c_type_info,
+                            MPCI2CState, void,
+                            MPC_I2C, SYS_BUS_DEVICE,
     .class_init    = mpc_i2c_class_init,
-};
-TYPE_INFO(mpc_i2c_type_info)
+)
 
 

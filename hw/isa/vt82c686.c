@@ -292,17 +292,15 @@ static void via_ac97_class_init(ObjectClass *klass, void *data)
     dc->desc = "AC97";
 }
 
-static const TypeInfo via_ac97_info = {
-    .name          = TYPE_VT82C686B_AC97_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(VT686AC97State),
+OBJECT_DEFINE_TYPE_EXTENDED(via_ac97_info,
+                            VT686AC97State, void,
+                            VT82C686B_AC97_DEVICE, PCI_DEVICE,
     .class_init    = via_ac97_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(via_ac97_info)
+)
 
 static void vt82c686b_mc97_realize(PCIDevice *dev, Error **errp)
 {
@@ -337,17 +335,15 @@ static void via_mc97_class_init(ObjectClass *klass, void *data)
     dc->desc = "MC97";
 }
 
-static const TypeInfo via_mc97_info = {
-    .name          = TYPE_VT82C686B_MC97_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(VT686MC97State),
+OBJECT_DEFINE_TYPE_EXTENDED(via_mc97_info,
+                            VT686MC97State, void,
+                            VT82C686B_MC97_DEVICE, PCI_DEVICE,
     .class_init    = via_mc97_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(via_mc97_info)
+)
 
 /* vt82c686 pm init */
 static void vt82c686b_pm_realize(PCIDevice *dev, Error **errp)
@@ -420,17 +416,15 @@ static void via_pm_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, via_pm_properties);
 }
 
-static const TypeInfo via_pm_info = {
-    .name          = TYPE_VT82C686B_PM_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(VT686PMState),
+OBJECT_DEFINE_TYPE_EXTENDED(via_pm_info,
+                            VT686PMState, void,
+                            VT82C686B_PM_DEVICE, PCI_DEVICE,
     .class_init    = via_pm_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(via_pm_info)
+)
 
 static const VMStateDescription vmstate_via = {
     .name = "vt82c686b",
@@ -509,17 +503,15 @@ static void via_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo via_info = {
-    .name          = TYPE_VT82C686B_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(VT82C686BState),
+OBJECT_DEFINE_TYPE_EXTENDED(via_info,
+                            VT82C686BState, void,
+                            VT82C686B_DEVICE, PCI_DEVICE,
     .class_init    = via_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(via_info)
+)
 
 static void vt82c686b_superio_class_init(ObjectClass *klass, void *data)
 {
@@ -531,11 +523,10 @@ static void vt82c686b_superio_class_init(ObjectClass *klass, void *data)
     sc->floppy.count = 1;
 }
 
-static const TypeInfo via_superio_info = {
-    .name          = TYPE_VT82C686B_SUPERIO,
-    .parent        = TYPE_ISA_SUPERIO,
+OBJECT_DEFINE_TYPE_EXTENDED(via_superio_info,
+                            void, void,
+                            VT82C686B_SUPERIO, ISA_SUPERIO,
     .class_init    = vt82c686b_superio_class_init,
-};
-TYPE_INFO(via_superio_info)
+)
 
 

@@ -354,20 +354,17 @@ static void netfilter_class_init(ObjectClass *oc, void *data)
     nfc->handle_event = default_handle_event;
 }
 
-static const TypeInfo netfilter_info = {
-    .name = TYPE_NETFILTER,
-    .parent = TYPE_OBJECT,
+OBJECT_DEFINE_TYPE_EXTENDED(netfilter_info,
+                            NetFilterState, NetFilterClass,
+                            NETFILTER, OBJECT,
     .abstract = true,
-    .class_size = sizeof(NetFilterClass),
     .class_init = netfilter_class_init,
-    .instance_size = sizeof(NetFilterState),
     .instance_init = netfilter_init,
     .instance_finalize = netfilter_finalize,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(netfilter_info)
+)
 
 

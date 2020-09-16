@@ -85,12 +85,10 @@ static void intdbg_control_init(Object *obj)
     sysbus_init_mmio(sd, &s->iomem);
 }
 
-static const TypeInfo intdbg_info = {
-    .name          = TYPE_INTEGRATOR_DEBUG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IntegratorDebugState),
+OBJECT_DEFINE_TYPE_EXTENDED(intdbg_info,
+                            IntegratorDebugState, void,
+                            INTEGRATOR_DEBUG, SYS_BUS_DEVICE,
     .instance_init = intdbg_control_init,
-};
-TYPE_INFO(intdbg_info)
+)
 
 

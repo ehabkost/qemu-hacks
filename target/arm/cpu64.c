@@ -819,17 +819,14 @@ void aarch64_cpu_register(const ARMCPUInfo *info)
     g_free((void *)type_info.name);
 }
 
-static const TypeInfo aarch64_cpu_type_info = {
-    .name = TYPE_AARCH64_CPU,
-    .parent = TYPE_ARM_CPU,
-    .instance_size = sizeof(ARMCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(aarch64_cpu_type_info,
+                            ARMCPU, AArch64CPUClass,
+                            AARCH64_CPU, ARM_CPU,
     .instance_init = aarch64_cpu_initfn,
     .instance_finalize = aarch64_cpu_finalizefn,
     .abstract = true,
-    .class_size = sizeof(AArch64CPUClass),
     .class_init = aarch64_cpu_class_init,
-};
-TYPE_INFO(aarch64_cpu_type_info)
+)
 
 static void aarch64_cpu_register_types(void)
 {

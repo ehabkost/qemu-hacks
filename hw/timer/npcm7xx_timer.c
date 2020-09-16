@@ -529,11 +529,9 @@ static void npcm7xx_timer_class_init(ObjectClass *klass, void *data)
     rc->phases.hold = npcm7xx_timer_hold_reset;
 }
 
-static const TypeInfo npcm7xx_timer_info = {
-    .name               = TYPE_NPCM7XX_TIMER,
-    .parent             = TYPE_SYS_BUS_DEVICE,
-    .instance_size      = sizeof(NPCM7xxTimerCtrlState),
+OBJECT_DEFINE_TYPE_EXTENDED(npcm7xx_timer_info,
+                            NPCM7xxTimerCtrlState, void,
+                            NPCM7XX_TIMER, SYS_BUS_DEVICE,
     .class_init         = npcm7xx_timer_class_init,
-};
-TYPE_INFO(npcm7xx_timer_info)
+)
 

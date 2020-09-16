@@ -418,13 +418,11 @@ static void exynos4210_pwm_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_exynos4210_pwm_state;
 }
 
-static const TypeInfo exynos4210_pwm_info = {
-    .name          = TYPE_EXYNOS4210_PWM,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210PWMState),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_pwm_info,
+                            Exynos4210PWMState, void,
+                            EXYNOS4210_PWM, SYS_BUS_DEVICE,
     .instance_init = exynos4210_pwm_init,
     .class_init    = exynos4210_pwm_class_init,
-};
-TYPE_INFO(exynos4210_pwm_info)
+)
 
 

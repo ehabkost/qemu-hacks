@@ -297,13 +297,11 @@ static void mv88w8618_audio_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo mv88w8618_audio_info = {
-    .name          = TYPE_MV88W8618_AUDIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mv88w8618_audio_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mv88w8618_audio_info,
+                            mv88w8618_audio_state, void,
+                            MV88W8618_AUDIO, SYS_BUS_DEVICE,
     .instance_init = mv88w8618_audio_init,
     .class_init    = mv88w8618_audio_class_init,
-};
-TYPE_INFO(mv88w8618_audio_info)
+)
 
 

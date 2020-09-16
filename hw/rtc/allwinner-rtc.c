@@ -369,39 +369,33 @@ static void allwinner_rtc_sun7i_class_init(ObjectClass *klass, void *data)
     allwinner_rtc_sun4i_class_init(klass, arc);
 }
 
-static const TypeInfo allwinner_rtc_info = {
-    .name          = TYPE_AW_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_rtc_info,
+                            AwRtcState, AwRtcClass,
+                            AW_RTC, SYS_BUS_DEVICE,
     .instance_init = allwinner_rtc_init,
-    .instance_size = sizeof(AwRtcState),
     .class_init    = allwinner_rtc_class_init,
-    .class_size    = sizeof(AwRtcClass),
     .abstract      = true,
-};
-TYPE_INFO(allwinner_rtc_info)
+)
 
-static const TypeInfo allwinner_rtc_sun4i_info = {
-    .name          = TYPE_AW_RTC_SUN4I,
-    .parent        = TYPE_AW_RTC,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_rtc_sun4i_info,
+                            void, void,
+                            AW_RTC_SUN4I, AW_RTC,
     .class_init    = allwinner_rtc_sun4i_class_init,
     .instance_init = allwinner_rtc_sun4i_init,
-};
-TYPE_INFO(allwinner_rtc_sun4i_info)
+)
 
-static const TypeInfo allwinner_rtc_sun6i_info = {
-    .name          = TYPE_AW_RTC_SUN6I,
-    .parent        = TYPE_AW_RTC,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_rtc_sun6i_info,
+                            void, void,
+                            AW_RTC_SUN6I, AW_RTC,
     .class_init    = allwinner_rtc_sun6i_class_init,
     .instance_init = allwinner_rtc_sun6i_init,
-};
-TYPE_INFO(allwinner_rtc_sun6i_info)
+)
 
-static const TypeInfo allwinner_rtc_sun7i_info = {
-    .name          = TYPE_AW_RTC_SUN7I,
-    .parent        = TYPE_AW_RTC,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_rtc_sun7i_info,
+                            void, void,
+                            AW_RTC_SUN7I, AW_RTC,
     .class_init    = allwinner_rtc_sun7i_class_init,
     .instance_init = allwinner_rtc_sun7i_init,
-};
-TYPE_INFO(allwinner_rtc_sun7i_info)
+)
 
 

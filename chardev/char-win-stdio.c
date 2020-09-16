@@ -254,14 +254,12 @@ static void char_win_stdio_class_init(ObjectClass *oc, void *data)
     cc->chr_set_echo = qemu_chr_set_echo_win_stdio;
 }
 
-static const TypeInfo char_win_stdio_type_info = {
-    .name = TYPE_CHARDEV_WIN_STDIO,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(WinStdioChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_win_stdio_type_info,
+                            WinStdioChardev, void,
+                            CHARDEV_WIN_STDIO, CHARDEV,
     .instance_finalize = char_win_stdio_finalize,
     .class_init = char_win_stdio_class_init,
     .abstract = true,
-};
-TYPE_INFO(char_win_stdio_type_info)
+)
 
 

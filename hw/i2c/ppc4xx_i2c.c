@@ -356,13 +356,11 @@ static void ppc4xx_i2c_class_init(ObjectClass *klass, void *data)
     dc->reset = ppc4xx_i2c_reset;
 }
 
-static const TypeInfo ppc4xx_i2c_type_info = {
-    .name = TYPE_PPC4xx_I2C,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PPC4xxI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(ppc4xx_i2c_type_info,
+                            PPC4xxI2CState, void,
+                            PPC4xx_I2C, SYS_BUS_DEVICE,
     .instance_init = ppc4xx_i2c_init,
     .class_init = ppc4xx_i2c_class_init,
-};
-TYPE_INFO(ppc4xx_i2c_type_info)
+)
 
 

@@ -266,13 +266,11 @@ static void xilinx_ethlite_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, xilinx_ethlite_properties);
 }
 
-static const TypeInfo xilinx_ethlite_info = {
-    .name          = TYPE_XILINX_ETHLITE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(struct xlx_ethlite),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_ethlite_info,
+                            struct xlx_ethlite, void,
+                            XILINX_ETHLITE, SYS_BUS_DEVICE,
     .instance_init = xilinx_ethlite_init,
     .class_init    = xilinx_ethlite_class_init,
-};
-TYPE_INFO(xilinx_ethlite_info)
+)
 
 

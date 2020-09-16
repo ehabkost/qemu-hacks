@@ -151,13 +151,10 @@ static void kvm_i8259_class_init(ObjectClass *klass, void *data)
     k->post_load  = kvm_pic_put;
 }
 
-static const TypeInfo kvm_i8259_info = {
-    .name = TYPE_KVM_I8259,
-    .parent = TYPE_PIC_COMMON,
-    .instance_size = sizeof(PICCommonState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_i8259_info,
+                            PICCommonState, KVMPICClass,
+                            KVM_I8259, PIC_COMMON,
     .class_init = kvm_i8259_class_init,
-    .class_size = sizeof(KVMPICClass),
-};
-TYPE_INFO(kvm_i8259_info)
+)
 
 

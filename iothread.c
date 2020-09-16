@@ -273,19 +273,17 @@ static void iothread_class_init(ObjectClass *klass, void *class_data)
                               NULL, &poll_shrink_info);
 }
 
-static const TypeInfo iothread_info = {
-    .name = TYPE_IOTHREAD,
-    .parent = TYPE_OBJECT,
+OBJECT_DEFINE_TYPE_EXTENDED(iothread_info,
+                            IOThread, void,
+                            IOTHREAD, OBJECT,
     .class_init = iothread_class_init,
-    .instance_size = sizeof(IOThread),
     .instance_init = iothread_instance_init,
     .instance_finalize = iothread_instance_finalize,
     .interfaces = (InterfaceInfo[]) {
         {TYPE_USER_CREATABLE},
         {}
     },
-};
-TYPE_INFO(iothread_info)
+)
 
 
 

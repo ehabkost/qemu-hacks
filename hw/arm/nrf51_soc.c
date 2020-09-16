@@ -212,12 +212,10 @@ static void nrf51_soc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, nrf51_soc_properties);
 }
 
-static const TypeInfo nrf51_soc_info = {
-    .name          = TYPE_NRF51_SOC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NRF51State),
+OBJECT_DEFINE_TYPE_EXTENDED(nrf51_soc_info,
+                            NRF51State, void,
+                            NRF51_SOC, SYS_BUS_DEVICE,
     .instance_init = nrf51_soc_init,
     .class_init    = nrf51_soc_class_init,
-};
-TYPE_INFO(nrf51_soc_info)
+)
 

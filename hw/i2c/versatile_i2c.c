@@ -97,12 +97,10 @@ static void versatile_i2c_init(Object *obj)
     sysbus_init_mmio(sbd, &s->iomem);
 }
 
-static const TypeInfo versatile_i2c_info = {
-    .name          = TYPE_VERSATILE_I2C,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(VersatileI2CState),
+OBJECT_DEFINE_TYPE_EXTENDED(versatile_i2c_info,
+                            VersatileI2CState, void,
+                            VERSATILE_I2C, SYS_BUS_DEVICE,
     .instance_init = versatile_i2c_init,
-};
-TYPE_INFO(versatile_i2c_info)
+)
 
 

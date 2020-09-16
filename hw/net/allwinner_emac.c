@@ -524,13 +524,11 @@ static void aw_emac_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_aw_emac;
 }
 
-static const TypeInfo aw_emac_info = {
-    .name           = TYPE_AW_EMAC,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(AwEmacState),
+OBJECT_DEFINE_TYPE_EXTENDED(aw_emac_info,
+                            AwEmacState, void,
+                            AW_EMAC, SYS_BUS_DEVICE,
     .instance_init   = aw_emac_init,
     .class_init     = aw_emac_class_init,
-};
-TYPE_INFO(aw_emac_info)
+)
 
 

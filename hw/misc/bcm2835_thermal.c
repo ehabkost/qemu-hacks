@@ -120,12 +120,10 @@ static void bcm2835_thermal_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &bcm2835_thermal_vmstate;
 }
 
-static const TypeInfo bcm2835_thermal_info = {
-    .name = TYPE_BCM2835_THERMAL,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Bcm2835ThermalState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_thermal_info,
+                            Bcm2835ThermalState, void,
+                            BCM2835_THERMAL, SYS_BUS_DEVICE,
     .class_init = bcm2835_thermal_class_init,
-};
-TYPE_INFO(bcm2835_thermal_info)
+)
 
 

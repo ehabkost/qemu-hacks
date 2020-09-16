@@ -367,15 +367,12 @@ static void tmp421_class_init(ObjectClass *klass, void *data)
     sc->dev = (DeviceInfo *) data;
 }
 
-static const TypeInfo tmp421_info = {
-    .name          = TYPE_TMP421,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(TMP421State),
-    .class_size    = sizeof(TMP421Class),
+OBJECT_DEFINE_TYPE_EXTENDED(tmp421_info,
+                            TMP421State, TMP421Class,
+                            TMP421, I2C_SLAVE,
     .instance_init = tmp421_initfn,
     .abstract      = true,
-};
-TYPE_INFO(tmp421_info)
+)
 
 static void tmp421_register_types(void)
 {
