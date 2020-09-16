@@ -232,6 +232,23 @@ struct Object
     DECLARE_CLASS_CHECKERS(ClassType, OBJ_NAME, TYPENAME)
 
 /**
+ * DECLARE_INTERFACE_CHECKERS:
+ * @InstanceType: instance struct name
+ * @ClassType: class struct name
+ * @OBJ_NAME: the object name in uppercase with underscore separators
+ * @TYPENAME: type name
+ *
+ * Direct usage of this macro should be avoided, and the complete
+ * OBJECT_DECLARE_TYPE macro is recommended instead.
+ *
+ * This macro will provide the three standard type cast functions for a
+ * QOM interface type.
+ */
+#define DECLARE_INTERFACE_CHECKERS(InstanceType, ClassType, OBJ_NAME, TYPENAME) \
+    DECLARE_INTERFACE_CHECKER(InstanceType, OBJ_NAME, TYPENAME) \
+    DECLARE_CLASS_CHECKERS(ClassType, OBJ_NAME, TYPENAME)
+
+/**
  * OBJECT_DECLARE_TYPE:
  * @InstanceType: instance struct name
  * @ClassType: class struct name
@@ -253,6 +270,25 @@ struct Object
     \
     DECLARE_OBJ_CHECKERS(InstanceType, ClassType, \
                          MODULE_OBJ_NAME, TYPE_##MODULE_OBJ_NAME)
+
+/**
+ * OBJECT_DECLARE_INTERFACE:
+ * @InstanceType: instance struct name
+ * @ClassType: class struct name
+ * @MODULE_OBJ_NAME: the object name in uppercase with underscore separators
+ *
+ * This macro should be used for interface types.  The class struct
+ * needs to be declared manually.
+ */
+#define OBJECT_DECLARE_INTERFACE(InstanceType, ClassType, MODULE_OBJ_NAME) \
+    typedef struct InstanceType InstanceType; \
+    typedef struct ClassType ClassType; \
+    \
+    G_DEFINE_AUTOPTR_CLEANUP_FUNC(InstanceType, object_unref) \
+    \
+    DECLARE_INTERFACE_CHECKERS(InstanceType, ClassType, \
+                               MODULE_OBJ_NAME, TYPE_##MODULE_OBJ_NAME)
+
 
 /**
  * OBJECT_DECLARE_SIMPLE_TYPE:
