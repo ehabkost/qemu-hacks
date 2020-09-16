@@ -40,6 +40,9 @@ class QAPIGen:
         self._preamble = ''
         self._body = ''
 
+    def __bool__(self) -> bool:
+        return bool(self._preamble or self._body)
+
     def preamble_add(self, text: str) -> None:
         self._preamble += text
 
