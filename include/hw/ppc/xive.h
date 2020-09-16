@@ -149,12 +149,9 @@
  * XIVE Notifier (Interface between Source and Router)
  */
 
-typedef struct XiveNotifier XiveNotifier;
 
 #define TYPE_XIVE_NOTIFIER "xive-notifier"
-typedef struct XiveNotifierClass XiveNotifierClass;
-DECLARE_INTERFACE_CHECKERS(XiveNotifier, XiveNotifierClass,
-                           XIVE_NOTIFIER, TYPE_XIVE_NOTIFIER)
+OBJECT_DECLARE_INTERFACE(XiveNotifier, XiveNotifierClass, XIVE_NOTIFIER)
 
 struct XiveNotifierClass {
     InterfaceClass parent;
@@ -383,9 +380,7 @@ typedef struct XiveTCTXMatch {
 } XiveTCTXMatch;
 
 #define TYPE_XIVE_PRESENTER "xive-presenter"
-typedef struct XivePresenterClass XivePresenterClass;
-DECLARE_INTERFACE_CHECKERS(XivePresenter, XivePresenterClass,
-                           XIVE_PRESENTER, TYPE_XIVE_PRESENTER)
+OBJECT_DECLARE_INTERFACE(XivePresenter, XivePresenterClass, XIVE_PRESENTER)
 
 struct XivePresenterClass {
     InterfaceClass parent;
@@ -406,9 +401,7 @@ int xive_presenter_tctx_match(XivePresenter *xptr, XiveTCTX *tctx,
  */
 
 #define TYPE_XIVE_FABRIC "xive-fabric"
-typedef struct XiveFabricClass XiveFabricClass;
-DECLARE_INTERFACE_CHECKERS(XiveFabric, XiveFabricClass,
-                           XIVE_FABRIC, TYPE_XIVE_FABRIC)
+OBJECT_DECLARE_INTERFACE(XiveFabric, XiveFabricClass, XIVE_FABRIC)
 
 struct XiveFabricClass {
     InterfaceClass parent;

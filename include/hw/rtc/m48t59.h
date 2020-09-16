@@ -31,10 +31,7 @@
 
 #define TYPE_NVRAM "nvram"
 
-typedef struct NvramClass NvramClass;
-typedef struct Nvram Nvram;
-DECLARE_INTERFACE_CHECKERS(Nvram, NvramClass,
-                           NVRAM, TYPE_NVRAM)
+OBJECT_DECLARE_INTERFACE(Nvram, NvramClass, NVRAM)
 
 
 struct NvramClass {

@@ -6,10 +6,7 @@
 /* stream slave. Used until qdev provides a generic way.  */
 #define TYPE_STREAM_SLAVE "stream-slave"
 
-typedef struct StreamSlaveClass StreamSlaveClass;
-typedef struct StreamSlave StreamSlave;
-DECLARE_INTERFACE_CHECKERS(StreamSlave, StreamSlaveClass,
-                           STREAM_SLAVE, TYPE_STREAM_SLAVE)
+OBJECT_DECLARE_INTERFACE(StreamSlave, StreamSlaveClass, STREAM_SLAVE)
 
 
 typedef void (*StreamCanPushNotifyFn)(void *opaque);

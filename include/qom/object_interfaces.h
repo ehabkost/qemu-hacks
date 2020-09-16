@@ -6,10 +6,7 @@
 
 #define TYPE_USER_CREATABLE "user-creatable"
 
-typedef struct UserCreatableClass UserCreatableClass;
-typedef struct UserCreatable UserCreatable;
-DECLARE_INTERFACE_CHECKERS(UserCreatable, UserCreatableClass,
-                           USER_CREATABLE, TYPE_USER_CREATABLE)
+OBJECT_DECLARE_INTERFACE(UserCreatable, UserCreatableClass, USER_CREATABLE)
 
 
 /**
