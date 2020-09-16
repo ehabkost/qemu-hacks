@@ -228,6 +228,8 @@ struct Object
  * QOM interface type.
  */
 #define DECLARE_INTERFACE_CHECKER(InstanceType, OBJ_NAME, TYPENAME) \
+    DECLARE_INSTANCE_TYPE(OBJ_NAME, void) \
+    \
     static inline G_GNUC_UNUSED InstanceType * \
     OBJ_NAME(const void *obj) \
     { return INTERFACE_CHECK(InstanceType, obj, TYPENAME); }
