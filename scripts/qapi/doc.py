@@ -203,17 +203,17 @@ def texi_members(doc: QAPIDoc,
         items += texi_member(section.member, desc, '')
     if base:
         items += '@item The members of @code{%s}\n' % base.doc_type()
-    if variants:
-        for v in variants.variants:
-            when = ' when @code{%s} is @t{"%s"}%s' % (
-                variants.tag_member.name, v.name, texi_if(v.ifcond, " (", ")"))
-            if v.type.is_implicit():
-                assert not v.type.base and not v.type.variants
-                for m in v.type.local_members:
-                    items += texi_member(m, '', when)
-            else:
-                items += '@item The members of @code{%s}%s\n' % (
-                    v.type.doc_type(), when)
+    for variant in variants.variants if variants else ():
+        when = ' when @code{%s} is @t{"%s"}%s' % (
+            variants.tag_member.name, variant.name,
+            texi_if(variant.ifcond, " (", ")"))
+        if variant.type.is_implicit():
+            assert not variant.type.base and not variant.type.variants
+            for member in variant.type.local_members:
+                items += texi_member(member, '', when)
+        else:
+            items += '@item The members of @code{%s}%s\n' % (
+                variant.type.doc_type(), when)
     if not items:
         return ''
     return '\n@b{%s:}\n@table @asis\n%s@end table\n' % (what, items)
