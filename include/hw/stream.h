@@ -7,11 +7,9 @@
 #define TYPE_STREAM_SLAVE "stream-slave"
 
 typedef struct StreamSlaveClass StreamSlaveClass;
-DECLARE_CLASS_CHECKERS(StreamSlaveClass, STREAM_SLAVE,
-                       TYPE_STREAM_SLAVE)
 typedef struct StreamSlave StreamSlave;
-DECLARE_INTERFACE_CHECKER(StreamSlave, STREAM_SLAVE,
-                          TYPE_STREAM_SLAVE)
+DECLARE_INTERFACE_CHECKERS(StreamSlave, StreamSlaveClass,
+                           STREAM_SLAVE, TYPE_STREAM_SLAVE)
 
 
 typedef void (*StreamCanPushNotifyFn)(void *opaque);

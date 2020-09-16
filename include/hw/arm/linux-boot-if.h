@@ -10,11 +10,9 @@
 
 #define TYPE_ARM_LINUX_BOOT_IF "arm-linux-boot-if"
 typedef struct ARMLinuxBootIfClass ARMLinuxBootIfClass;
-DECLARE_CLASS_CHECKERS(ARMLinuxBootIfClass, ARM_LINUX_BOOT_IF,
-                       TYPE_ARM_LINUX_BOOT_IF)
 typedef struct ARMLinuxBootIf ARMLinuxBootIf;
-DECLARE_INTERFACE_CHECKER(ARMLinuxBootIf, ARM_LINUX_BOOT_IF,
-                          TYPE_ARM_LINUX_BOOT_IF)
+DECLARE_INTERFACE_CHECKERS(ARMLinuxBootIf, ARMLinuxBootIfClass,
+                           ARM_LINUX_BOOT_IF, TYPE_ARM_LINUX_BOOT_IF)
 
 
 struct ARMLinuxBootIfClass {

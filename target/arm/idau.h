@@ -32,11 +32,9 @@
 
 #define TYPE_IDAU_INTERFACE "idau-interface"
 typedef struct IDAUInterface IDAUInterface;
-DECLARE_INTERFACE_CHECKER(IDAUInterface, IDAU_INTERFACE,
-                          TYPE_IDAU_INTERFACE)
 typedef struct IDAUInterfaceClass IDAUInterfaceClass;
-DECLARE_CLASS_CHECKERS(IDAUInterfaceClass, IDAU_INTERFACE,
-                       TYPE_IDAU_INTERFACE)
+DECLARE_INTERFACE_CHECKERS(IDAUInterface, IDAUInterfaceClass,
+                           IDAU_INTERFACE, TYPE_IDAU_INTERFACE)
 
 
 #define IREGION_NOTVALID -1

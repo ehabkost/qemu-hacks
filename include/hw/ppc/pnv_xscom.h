@@ -25,11 +25,9 @@
 typedef struct PnvXScomInterface PnvXScomInterface;
 
 #define TYPE_PNV_XSCOM_INTERFACE "pnv-xscom-interface"
-DECLARE_INTERFACE_CHECKER(PnvXScomInterface, PNV_XSCOM_INTERFACE,
-                          TYPE_PNV_XSCOM_INTERFACE)
 typedef struct PnvXScomInterfaceClass PnvXScomInterfaceClass;
-DECLARE_CLASS_CHECKERS(PnvXScomInterfaceClass, PNV_XSCOM_INTERFACE,
-                       TYPE_PNV_XSCOM_INTERFACE)
+DECLARE_INTERFACE_CHECKERS(PnvXScomInterface, PnvXScomInterfaceClass,
+                           PNV_XSCOM_INTERFACE, TYPE_PNV_XSCOM_INTERFACE)
 
 struct PnvXScomInterfaceClass {
     InterfaceClass parent;
