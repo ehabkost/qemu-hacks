@@ -31,10 +31,7 @@
 #include "qom/object.h"
 
 #define TYPE_IDAU_INTERFACE "idau-interface"
-typedef struct IDAUInterface IDAUInterface;
-typedef struct IDAUInterfaceClass IDAUInterfaceClass;
-DECLARE_INTERFACE_CHECKERS(IDAUInterface, IDAUInterfaceClass,
-                           IDAU_INTERFACE, TYPE_IDAU_INTERFACE)
+OBJECT_DECLARE_INTERFACE(IDAUInterface, IDAUInterfaceClass, IDAU_INTERFACE)
 
 
 #define IREGION_NOTVALID -1

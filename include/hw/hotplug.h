@@ -16,10 +16,7 @@
 
 #define TYPE_HOTPLUG_HANDLER "hotplug-handler"
 
-typedef struct HotplugHandlerClass HotplugHandlerClass;
-typedef struct HotplugHandler HotplugHandler;
-DECLARE_INTERFACE_CHECKERS(HotplugHandler, HotplugHandlerClass,
-                           HOTPLUG_HANDLER, TYPE_HOTPLUG_HANDLER)
+OBJECT_DECLARE_INTERFACE(HotplugHandler, HotplugHandlerClass, HOTPLUG_HANDLER)
 
 
 /**

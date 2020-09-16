@@ -26,10 +26,7 @@
 
 #define TYPE_NMI "nmi"
 
-typedef struct NMIClass NMIClass;
-typedef struct NMIState NMIState;
-DECLARE_INTERFACE_CHECKERS(NMIState, NMIClass,
-                           NMI, TYPE_NMI)
+OBJECT_DECLARE_INTERFACE(NMIState, NMIClass, NMI)
 
 
 struct NMIClass {

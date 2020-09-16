@@ -13,10 +13,7 @@
 
 #define TYPE_VMSTATE_IF "vmstate-if"
 
-typedef struct VMStateIfClass VMStateIfClass;
-typedef struct VMStateIf VMStateIf;
-DECLARE_INTERFACE_CHECKERS(VMStateIf, VMStateIfClass,
-                           VMSTATE_IF, TYPE_VMSTATE_IF)
+OBJECT_DECLARE_INTERFACE(VMStateIf, VMStateIfClass, VMSTATE_IF)
 
 
 struct VMStateIfClass {

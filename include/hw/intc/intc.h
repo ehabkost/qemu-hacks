@@ -5,10 +5,7 @@
 
 #define TYPE_INTERRUPT_STATS_PROVIDER "intctrl"
 
-typedef struct InterruptStatsProviderClass InterruptStatsProviderClass;
-typedef struct InterruptStatsProvider InterruptStatsProvider;
-DECLARE_INTERFACE_CHECKERS(InterruptStatsProvider, InterruptStatsProviderClass,
-                           INTERRUPT_STATS_PROVIDER, TYPE_INTERRUPT_STATS_PROVIDER)
+OBJECT_DECLARE_INTERFACE(InterruptStatsProvider, InterruptStatsProviderClass, INTERRUPT_STATS_PROVIDER)
 
 
 struct InterruptStatsProviderClass {

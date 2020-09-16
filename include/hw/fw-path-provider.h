@@ -22,10 +22,7 @@
 
 #define TYPE_FW_PATH_PROVIDER "fw-path-provider"
 
-typedef struct FWPathProviderClass FWPathProviderClass;
-typedef struct FWPathProvider FWPathProvider;
-DECLARE_INTERFACE_CHECKERS(FWPathProvider, FWPathProviderClass,
-                           FW_PATH_PROVIDER, TYPE_FW_PATH_PROVIDER)
+OBJECT_DECLARE_INTERFACE(FWPathProvider, FWPathProviderClass, FW_PATH_PROVIDER)
 
 
 struct FWPathProviderClass {

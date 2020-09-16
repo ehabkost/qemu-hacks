@@ -137,9 +137,7 @@ struct ICSIRQState {
 };
 
 #define TYPE_XICS_FABRIC "xics-fabric"
-typedef struct XICSFabricClass XICSFabricClass;
-DECLARE_INTERFACE_CHECKERS(XICSFabric, XICSFabricClass,
-                           XICS_FABRIC, TYPE_XICS_FABRIC)
+OBJECT_DECLARE_INTERFACE(XICSFabric, XICSFabricClass, XICS_FABRIC)
 
 struct XICSFabricClass {
     InterfaceClass parent;

@@ -109,10 +109,7 @@ uint32_t ipmi_next_uuid(void);
  * and the BMC.
  */
 #define TYPE_IPMI_INTERFACE "ipmi-interface"
-typedef struct IPMIInterface IPMIInterface;
-typedef struct IPMIInterfaceClass IPMIInterfaceClass;
-DECLARE_INTERFACE_CHECKERS(IPMIInterface, IPMIInterfaceClass,
-                           IPMI_INTERFACE, TYPE_IPMI_INTERFACE)
+OBJECT_DECLARE_INTERFACE(IPMIInterface, IPMIInterfaceClass, IPMI_INTERFACE)
 
 
 struct IPMIInterfaceClass {

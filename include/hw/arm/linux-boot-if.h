@@ -9,10 +9,7 @@
 #include "qom/object.h"
 
 #define TYPE_ARM_LINUX_BOOT_IF "arm-linux-boot-if"
-typedef struct ARMLinuxBootIfClass ARMLinuxBootIfClass;
-typedef struct ARMLinuxBootIf ARMLinuxBootIf;
-DECLARE_INTERFACE_CHECKERS(ARMLinuxBootIf, ARMLinuxBootIfClass,
-                           ARM_LINUX_BOOT_IF, TYPE_ARM_LINUX_BOOT_IF)
+OBJECT_DECLARE_INTERFACE(ARMLinuxBootIf, ARMLinuxBootIfClass, ARM_LINUX_BOOT_IF)
 
 
 struct ARMLinuxBootIfClass {
