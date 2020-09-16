@@ -344,7 +344,7 @@ class QAPISchemaGenDocVisitor(QAPISchemaVisitor):
         self._gen.add(texi_msg('Event', doc, ifcond, members))
 
     def symbol(self, doc: QAPIDoc, entity: QAPISchemaEntity) -> None:
-        if self._gen._body:
+        if self._gen:
             self._gen.add('\n')
         self.cur_doc = doc
         entity.visit(self)
@@ -352,7 +352,7 @@ class QAPISchemaGenDocVisitor(QAPISchemaVisitor):
 
     def freeform(self, doc: QAPIDoc) -> None:
         assert not doc.args
-        if self._gen._body:
+        if self._gen:
             self._gen.add('\n')
         self._gen.add(texi_body(doc) + texi_sections(doc, None))
 
