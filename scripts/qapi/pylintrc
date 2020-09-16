@@ -4,7 +4,6 @@
 # The regex matches against base names, not paths.
 ignore-patterns=doc.py,
                 error.py,
-                expr.py,
                 parser.py,
                 schema.py,
 
