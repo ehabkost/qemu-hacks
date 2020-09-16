@@ -15,7 +15,7 @@
 # See the COPYING file in the top-level directory.
 
 import re
-from collections import OrderedDict
+
 from .common import c_name
 from .error import QAPISemError
 
@@ -123,7 +123,7 @@ def check_if(expr, info, source):
 
 
 def normalize_members(members):
-    if isinstance(members, OrderedDict):
+    if isinstance(members, dict):
         for key, arg in members.items():
             if isinstance(arg, dict):
                 continue
@@ -154,7 +154,7 @@ def check_type(value, info, source,
     if not allow_dict:
         raise QAPISemError(info, "%s should be a type name" % source)
 
-    if not isinstance(value, OrderedDict):
+    if not isinstance(value, dict):
         raise QAPISemError(info,
                            "%s should be an object or type name" % source)
 
