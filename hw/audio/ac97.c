@@ -1416,17 +1416,15 @@ static void ac97_class_init (ObjectClass *klass, void *data)
     dc->reset = ac97_on_reset;
 }
 
-static const TypeInfo ac97_info = {
-    .name          = TYPE_AC97,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof (AC97LinkState),
+OBJECT_DEFINE_TYPE_EXTENDED(ac97_info,
+                            AC97LinkState, void,
+                            AC97, PCI_DEVICE,
     .class_init    = ac97_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(ac97_info)
+)
 
 static void ac97_register_types (void)
 {

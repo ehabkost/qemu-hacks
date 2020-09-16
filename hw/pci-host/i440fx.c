@@ -359,17 +359,15 @@ static void i440fx_class_init(ObjectClass *klass, void *data)
     dc->hotpluggable   = false;
 }
 
-static const TypeInfo i440fx_info = {
-    .name          = TYPE_I440FX_PCI_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCII440FXState),
+OBJECT_DEFINE_TYPE_EXTENDED(i440fx_info,
+                            PCII440FXState, void,
+                            I440FX_PCI_DEVICE, PCI_DEVICE,
     .class_init    = i440fx_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(i440fx_info)
+)
 
 static const char *i440fx_pcihost_root_bus_path(PCIHostState *host_bridge,
                                                 PCIBus *rootbus)
@@ -404,13 +402,11 @@ static void i440fx_pcihost_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo i440fx_pcihost_info = {
-    .name          = TYPE_I440FX_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(I440FXState),
+OBJECT_DEFINE_TYPE_EXTENDED(i440fx_pcihost_info,
+                            I440FXState, void,
+                            I440FX_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .instance_init = i440fx_pcihost_initfn,
     .class_init    = i440fx_pcihost_class_init,
-};
-TYPE_INFO(i440fx_pcihost_info)
+)
 
 

@@ -254,12 +254,10 @@ static void npcm7xx_gcr_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, npcm7xx_gcr_properties);
 }
 
-static const TypeInfo npcm7xx_gcr_info = {
-    .name               = TYPE_NPCM7XX_GCR,
-    .parent             = TYPE_SYS_BUS_DEVICE,
-    .instance_size      = sizeof(NPCM7xxGCRState),
+OBJECT_DEFINE_TYPE_EXTENDED(npcm7xx_gcr_info,
+                            NPCM7xxGCRState, void,
+                            NPCM7XX_GCR, SYS_BUS_DEVICE,
     .instance_init      = npcm7xx_gcr_init,
     .class_init         = npcm7xx_gcr_class_init,
-};
-TYPE_INFO(npcm7xx_gcr_info)
+)
 

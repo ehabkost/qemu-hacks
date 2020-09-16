@@ -605,13 +605,10 @@ static void kvm_arm_gic_class_init(ObjectClass *klass, void *data)
     device_class_set_parent_reset(dc, kvm_arm_gic_reset, &kgc->parent_reset);
 }
 
-static const TypeInfo kvm_arm_gic_info = {
-    .name = TYPE_KVM_ARM_GIC,
-    .parent = TYPE_ARM_GIC_COMMON,
-    .instance_size = sizeof(GICState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_arm_gic_info,
+                            GICState, KVMARMGICClass,
+                            KVM_ARM_GIC, ARM_GIC_COMMON,
     .class_init = kvm_arm_gic_class_init,
-    .class_size = sizeof(KVMARMGICClass),
-};
-TYPE_INFO(kvm_arm_gic_info)
+)
 
 

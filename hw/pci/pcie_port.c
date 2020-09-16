@@ -136,14 +136,12 @@ static void pcie_port_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, pcie_port_props);
 }
 
-static const TypeInfo pcie_port_type_info = {
-    .name = TYPE_PCIE_PORT,
-    .parent = TYPE_PCI_BRIDGE,
-    .instance_size = sizeof(PCIEPort),
+OBJECT_DEFINE_TYPE_EXTENDED(pcie_port_type_info,
+                            PCIEPort, void,
+                            PCIE_PORT, PCI_BRIDGE,
     .abstract = true,
     .class_init = pcie_port_class_init,
-};
-TYPE_INFO(pcie_port_type_info)
+)
 
 static Property pcie_slot_props[] = {
     DEFINE_PROP_UINT8("chassis", PCIESlot, chassis, 0),
@@ -164,17 +162,15 @@ static void pcie_slot_class_init(ObjectClass *oc, void *data)
     hc->unplug_request = pcie_cap_slot_unplug_request_cb;
 }
 
-static const TypeInfo pcie_slot_type_info = {
-    .name = TYPE_PCIE_SLOT,
-    .parent = TYPE_PCIE_PORT,
-    .instance_size = sizeof(PCIESlot),
+OBJECT_DEFINE_TYPE_EXTENDED(pcie_slot_type_info,
+                            PCIESlot, void,
+                            PCIE_SLOT, PCIE_PORT,
     .abstract = true,
     .class_init = pcie_slot_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
         { }
     }
-};
-TYPE_INFO(pcie_slot_type_info)
+)
 
 

@@ -173,13 +173,11 @@ static void cs4231_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, cs4231_properties);
 }
 
-static const TypeInfo cs4231_info = {
-    .name          = TYPE_CS4231,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CSState),
+OBJECT_DEFINE_TYPE_EXTENDED(cs4231_info,
+                            CSState, void,
+                            CS4231, SYS_BUS_DEVICE,
     .instance_init = cs4231_init,
     .class_init    = cs4231_class_init,
-};
-TYPE_INFO(cs4231_info)
+)
 
 

@@ -120,17 +120,15 @@ static void can_bus_class_init(ObjectClass *klass,
     uc_klass->can_be_deleted = can_bus_can_be_deleted;
 }
 
-static const TypeInfo can_bus_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_CAN_BUS,
-    .instance_size = sizeof(CanBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(can_bus_info,
+                            CanBusState, void,
+                            CAN_BUS, OBJECT,
     .instance_init = can_bus_instance_init,
     .class_init = can_bus_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(can_bus_info)
+)
 
 

@@ -184,13 +184,11 @@ static void armsse_mhu_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &armsse_mhu_vmstate;
 }
 
-static const TypeInfo armsse_mhu_info = {
-    .name = TYPE_ARMSSE_MHU,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARMSSEMHU),
+OBJECT_DEFINE_TYPE_EXTENDED(armsse_mhu_info,
+                            ARMSSEMHU, void,
+                            ARMSSE_MHU, SYS_BUS_DEVICE,
     .instance_init = armsse_mhu_init,
     .class_init = armsse_mhu_class_init,
-};
-TYPE_INFO(armsse_mhu_info)
+)
 
 

@@ -707,13 +707,10 @@ static void vfio_platform_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = true;
 }
 
-static const TypeInfo vfio_platform_dev_info = {
-    .name = TYPE_VFIO_PLATFORM,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(VFIOPlatformDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(vfio_platform_dev_info,
+                            VFIOPlatformDevice, VFIOPlatformDeviceClass,
+                            VFIO_PLATFORM, SYS_BUS_DEVICE,
     .class_init = vfio_platform_class_init,
-    .class_size = sizeof(VFIOPlatformDeviceClass),
-};
-TYPE_INFO(vfio_platform_dev_info)
+)
 
 

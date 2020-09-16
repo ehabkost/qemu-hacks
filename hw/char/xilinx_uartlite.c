@@ -240,13 +240,11 @@ static void xilinx_uartlite_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, xilinx_uartlite_properties);
 }
 
-static const TypeInfo xilinx_uartlite_info = {
-    .name          = TYPE_XILINX_UARTLITE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XilinxUARTLite),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_uartlite_info,
+                            XilinxUARTLite, void,
+                            XILINX_UARTLITE, SYS_BUS_DEVICE,
     .instance_init = xilinx_uartlite_init,
     .class_init    = xilinx_uartlite_class_init,
-};
-TYPE_INFO(xilinx_uartlite_info)
+)
 
 

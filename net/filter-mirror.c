@@ -431,24 +431,20 @@ static void filter_redirector_fini(Object *obj)
     g_free(s->outdev);
 }
 
-static const TypeInfo filter_redirector_info = {
-    .name = TYPE_FILTER_REDIRECTOR,
-    .parent = TYPE_NETFILTER,
+OBJECT_DEFINE_TYPE_EXTENDED(filter_redirector_info,
+                            MirrorState, void,
+                            FILTER_REDIRECTOR, NETFILTER,
     .class_init = filter_redirector_class_init,
     .instance_init = filter_redirector_init,
     .instance_finalize = filter_redirector_fini,
-    .instance_size = sizeof(MirrorState),
-};
-TYPE_INFO(filter_redirector_info)
+)
 
-static const TypeInfo filter_mirror_info = {
-    .name = TYPE_FILTER_MIRROR,
-    .parent = TYPE_NETFILTER,
+OBJECT_DEFINE_TYPE_EXTENDED(filter_mirror_info,
+                            MirrorState, void,
+                            FILTER_MIRROR, NETFILTER,
     .class_init = filter_mirror_class_init,
     .instance_init = filter_mirror_init,
     .instance_finalize = filter_mirror_fini,
-    .instance_size = sizeof(MirrorState),
-};
-TYPE_INFO(filter_mirror_info)
+)
 
 

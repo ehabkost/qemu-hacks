@@ -228,14 +228,12 @@ static void virtio_input_hid_class_init(ObjectClass *klass, void *data)
     vic->handle_status = virtio_input_hid_handle_status;
 }
 
-static const TypeInfo virtio_input_hid_info = {
-    .name          = TYPE_VIRTIO_INPUT_HID,
-    .parent        = TYPE_VIRTIO_INPUT,
-    .instance_size = sizeof(VirtIOInputHID),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_input_hid_info,
+                            VirtIOInputHID, void,
+                            VIRTIO_INPUT_HID, VIRTIO_INPUT,
     .class_init    = virtio_input_hid_class_init,
     .abstract      = true,
-};
-TYPE_INFO(virtio_input_hid_info)
+)
 
 /* ----------------------------------------------------------------- */
 
@@ -286,12 +284,11 @@ static void virtio_keyboard_init(Object *obj)
                             qemu_input_map_qcode_to_linux_len);
 }
 
-static const TypeInfo virtio_keyboard_info = {
-    .name          = TYPE_VIRTIO_KEYBOARD,
-    .parent        = TYPE_VIRTIO_INPUT_HID,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_keyboard_info,
+                            void, void,
+                            VIRTIO_KEYBOARD, VIRTIO_INPUT_HID,
     .instance_init = virtio_keyboard_init,
-};
-TYPE_INFO(virtio_keyboard_info)
+)
 
 /* ----------------------------------------------------------------- */
 
@@ -378,13 +375,12 @@ static void virtio_mouse_init(Object *obj)
                             ARRAY_SIZE(keymap_button));
 }
 
-static const TypeInfo virtio_mouse_info = {
-    .name          = TYPE_VIRTIO_MOUSE,
-    .parent        = TYPE_VIRTIO_INPUT_HID,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_mouse_info,
+                            void, void,
+                            VIRTIO_MOUSE, VIRTIO_INPUT_HID,
     .instance_init = virtio_mouse_init,
     .class_init    = virtio_mouse_class_init,
-};
-TYPE_INFO(virtio_mouse_info)
+)
 
 /* ----------------------------------------------------------------- */
 
@@ -502,13 +498,12 @@ static void virtio_tablet_init(Object *obj)
                             ARRAY_SIZE(keymap_button));
 }
 
-static const TypeInfo virtio_tablet_info = {
-    .name          = TYPE_VIRTIO_TABLET,
-    .parent        = TYPE_VIRTIO_INPUT_HID,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_tablet_info,
+                            void, void,
+                            VIRTIO_TABLET, VIRTIO_INPUT_HID,
     .instance_init = virtio_tablet_init,
     .class_init    = virtio_tablet_class_init,
-};
-TYPE_INFO(virtio_tablet_info)
+)
 
 /* ----------------------------------------------------------------- */
 

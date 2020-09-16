@@ -289,13 +289,11 @@ static void zynq_xadc_class_init(ObjectClass *klass, void *data)
     dc->reset = zynq_xadc_reset;
 }
 
-static const TypeInfo zynq_xadc_info = {
+OBJECT_DEFINE_TYPE_EXTENDED(zynq_xadc_info,
+                            ZynqXADCState, void,
+                            ZYNQ_XADC, SYS_BUS_DEVICE,
     .class_init = zynq_xadc_class_init,
-    .name  = TYPE_ZYNQ_XADC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(ZynqXADCState),
     .instance_init = zynq_xadc_init,
-};
-TYPE_INFO(zynq_xadc_info)
+)
 
 

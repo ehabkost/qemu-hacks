@@ -243,15 +243,12 @@ static void qemu_s390_skeys_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo qemu_s390_skeys_info = {
-    .name          = TYPE_QEMU_S390_SKEYS,
-    .parent        = TYPE_S390_SKEYS,
+OBJECT_DEFINE_TYPE_EXTENDED(qemu_s390_skeys_info,
+                            QEMUS390SKeysState, S390SKeysClass,
+                            QEMU_S390_SKEYS, S390_SKEYS,
     .instance_init = qemu_s390_skeys_init,
-    .instance_size = sizeof(QEMUS390SKeysState),
     .class_init    = qemu_s390_skeys_class_init,
-    .class_size    = sizeof(S390SKeysClass),
-};
-TYPE_INFO(qemu_s390_skeys_info)
+)
 
 static void s390_storage_keys_save(QEMUFile *f, void *opaque)
 {
@@ -413,15 +410,12 @@ static void s390_skeys_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo s390_skeys_info = {
-    .name          = TYPE_S390_SKEYS,
-    .parent        = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(s390_skeys_info,
+                            S390SKeysState, S390SKeysClass,
+                            S390_SKEYS, DEVICE,
     .instance_init = s390_skeys_instance_init,
-    .instance_size = sizeof(S390SKeysState),
     .class_init    = s390_skeys_class_init,
-    .class_size    = sizeof(S390SKeysClass),
     .abstract = true,
-};
-TYPE_INFO(s390_skeys_info)
+)
 
 

@@ -150,12 +150,10 @@ static void lm32_juart_class_init(ObjectClass *klass, void *data)
     dc->realize = lm32_juart_realize;
 }
 
-static const TypeInfo lm32_juart_info = {
-    .name          = TYPE_LM32_JUART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(LM32JuartState),
+OBJECT_DEFINE_TYPE_EXTENDED(lm32_juart_info,
+                            LM32JuartState, void,
+                            LM32_JUART, SYS_BUS_DEVICE,
     .class_init    = lm32_juart_class_init,
-};
-TYPE_INFO(lm32_juart_info)
+)
 
 

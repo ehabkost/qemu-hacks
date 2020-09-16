@@ -230,13 +230,11 @@ static void char_udp_class_init(ObjectClass *oc, void *data)
     cc->chr_update_read_handler = udp_chr_update_read_handler;
 }
 
-static const TypeInfo char_udp_type_info = {
-    .name = TYPE_CHARDEV_UDP,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(UdpChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_udp_type_info,
+                            UdpChardev, void,
+                            CHARDEV_UDP, CHARDEV,
     .instance_finalize = char_udp_finalize,
     .class_init = char_udp_class_init,
-};
-TYPE_INFO(char_udp_type_info)
+)
 
 

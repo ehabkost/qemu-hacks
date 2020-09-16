@@ -226,13 +226,11 @@ static void allwinner_h3_ccu_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &allwinner_h3_ccu_vmstate;
 }
 
-static const TypeInfo allwinner_h3_ccu_info = {
-    .name          = TYPE_AW_H3_CCU,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_h3_ccu_info,
+                            AwH3ClockCtlState, void,
+                            AW_H3_CCU, SYS_BUS_DEVICE,
     .instance_init = allwinner_h3_ccu_init,
-    .instance_size = sizeof(AwH3ClockCtlState),
     .class_init    = allwinner_h3_ccu_class_init,
-};
-TYPE_INFO(allwinner_h3_ccu_info)
+)
 
 

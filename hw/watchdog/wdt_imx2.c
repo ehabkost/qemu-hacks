@@ -284,13 +284,11 @@ static void imx2_wdt_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo imx2_wdt_info = {
-    .name          = TYPE_IMX2_WDT,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMX2WdtState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx2_wdt_info,
+                            IMX2WdtState, void,
+                            IMX2_WDT, SYS_BUS_DEVICE,
     .class_init    = imx2_wdt_class_init,
-};
-TYPE_INFO(imx2_wdt_info)
+)
 
 static WatchdogTimerModel model = {
     .wdt_name = "imx2-watchdog",

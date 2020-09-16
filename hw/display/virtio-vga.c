@@ -192,15 +192,12 @@ static void virtio_vga_base_class_init(ObjectClass *klass, void *data)
     pcidev_k->class_id = PCI_CLASS_DISPLAY_VGA;
 }
 
-static TypeInfo virtio_vga_base_info = {
-    .name          = TYPE_VIRTIO_VGA_BASE,
-    .parent        = TYPE_VIRTIO_PCI,
-    .instance_size = sizeof(VirtIOVGABase),
-    .class_size    = sizeof(VirtIOVGABaseClass),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_vga_base_info,
+                            VirtIOVGABase, VirtIOVGABaseClass,
+                            VIRTIO_VGA_BASE, VIRTIO_PCI,
     .class_init    = virtio_vga_base_class_init,
     .abstract      = true,
-};
-TYPE_INFO(virtio_vga_base_info)
+)
 
 #define TYPE_VIRTIO_VGA "virtio-vga"
 

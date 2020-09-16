@@ -605,13 +605,11 @@ static void avr_timer16_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, avr_timer16_properties);
 }
 
-static const TypeInfo avr_timer16_info = {
-    .name          = TYPE_AVR_TIMER16,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AVRTimer16State),
+OBJECT_DEFINE_TYPE_EXTENDED(avr_timer16_info,
+                            AVRTimer16State, void,
+                            AVR_TIMER16, SYS_BUS_DEVICE,
     .instance_init = avr_timer16_init,
     .class_init    = avr_timer16_class_init,
-};
-TYPE_INFO(avr_timer16_info)
+)
 
 

@@ -253,12 +253,10 @@ static void virtio_9p_class_init(ObjectClass *klass, void *data)
     vdc->reset = virtio_9p_reset;
 }
 
-static const TypeInfo virtio_device_info = {
-    .name = TYPE_VIRTIO_9P,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(V9fsVirtioState),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_device_info,
+                            V9fsVirtioState, void,
+                            VIRTIO_9P, VIRTIO_DEVICE,
     .class_init = virtio_9p_class_init,
-};
-TYPE_INFO(virtio_device_info)
+)
 
 

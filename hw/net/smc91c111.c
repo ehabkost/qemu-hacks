@@ -803,13 +803,11 @@ static void smc91c111_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, smc91c111_properties);
 }
 
-static const TypeInfo smc91c111_info = {
-    .name          = TYPE_SMC91C111,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(smc91c111_state),
+OBJECT_DEFINE_TYPE_EXTENDED(smc91c111_info,
+                            smc91c111_state, void,
+                            SMC91C111, SYS_BUS_DEVICE,
     .class_init    = smc91c111_class_init,
-};
-TYPE_INFO(smc91c111_info)
+)
 
 
 /* Legacy helper function.  Should go away when machine config files are

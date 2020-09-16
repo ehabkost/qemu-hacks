@@ -164,13 +164,11 @@ static void a15mp_priv_class_init(ObjectClass *klass, void *data)
     /* We currently have no savable state */
 }
 
-static const TypeInfo a15mp_priv_info = {
-    .name  = TYPE_A15MPCORE_PRIV,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(A15MPPrivState),
+OBJECT_DEFINE_TYPE_EXTENDED(a15mp_priv_info,
+                            A15MPPrivState, void,
+                            A15MPCORE_PRIV, SYS_BUS_DEVICE,
     .instance_init = a15mp_priv_initfn,
     .class_init = a15mp_priv_class_init,
-};
-TYPE_INFO(a15mp_priv_info)
+)
 
 

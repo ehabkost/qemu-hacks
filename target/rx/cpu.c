@@ -201,21 +201,16 @@ static void rx_cpu_class_init(ObjectClass *klass, void *data)
     cc->gdb_core_xml_file = "rx-core.xml";
 }
 
-static const TypeInfo rx_cpu_info = {
-    .name = TYPE_RX_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(RXCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(rx_cpu_info,
+                            RXCPU, RXCPUClass,
+                            RX_CPU, CPU,
     .instance_init = rx_cpu_init,
     .abstract = true,
-    .class_size = sizeof(RXCPUClass),
     .class_init = rx_cpu_class_init,
-};
-TYPE_INFO(rx_cpu_info)
+)
 
-static const TypeInfo rx62n_rx_cpu_info = {
-    .name = TYPE_RX62N_CPU,
-    .parent = TYPE_RX_CPU,
-};
-TYPE_INFO(rx62n_rx_cpu_info)
+OBJECT_DEFINE_TYPE_EXTENDED(rx62n_rx_cpu_info,
+                            void, void,
+                            RX62N_CPU, RX_CPU)
 
 

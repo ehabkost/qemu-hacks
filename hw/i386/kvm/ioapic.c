@@ -153,12 +153,10 @@ static void kvm_ioapic_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, kvm_ioapic_properties);
 }
 
-static const TypeInfo kvm_ioapic_info = {
-    .name  = TYPE_KVM_IOAPIC,
-    .parent = TYPE_IOAPIC_COMMON,
-    .instance_size = sizeof(KVMIOAPICState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_ioapic_info,
+                            KVMIOAPICState, void,
+                            KVM_IOAPIC, IOAPIC_COMMON,
     .class_init = kvm_ioapic_class_init,
-};
-TYPE_INFO(kvm_ioapic_info)
+)
 
 

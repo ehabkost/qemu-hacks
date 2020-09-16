@@ -3934,14 +3934,12 @@ static void qio_channel_rdma_class_init(ObjectClass *klass,
     ioc_klass->io_shutdown = qio_channel_rdma_shutdown;
 }
 
-static const TypeInfo qio_channel_rdma_info = {
-    .parent = TYPE_QIO_CHANNEL,
-    .name = TYPE_QIO_CHANNEL_RDMA,
-    .instance_size = sizeof(QIOChannelRDMA),
+OBJECT_DEFINE_TYPE_EXTENDED(qio_channel_rdma_info,
+                            QIOChannelRDMA, void,
+                            QIO_CHANNEL_RDMA, QIO_CHANNEL,
     .instance_finalize = qio_channel_rdma_finalize,
     .class_init = qio_channel_rdma_class_init,
-};
-TYPE_INFO(qio_channel_rdma_info)
+)
 
 
 

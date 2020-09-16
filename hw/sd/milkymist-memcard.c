@@ -303,14 +303,12 @@ static void milkymist_memcard_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo milkymist_memcard_info = {
-    .name          = TYPE_MILKYMIST_MEMCARD,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistMemcardState),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_memcard_info,
+                            MilkymistMemcardState, void,
+                            MILKYMIST_MEMCARD, SYS_BUS_DEVICE,
     .instance_init = milkymist_memcard_init,
     .class_init    = milkymist_memcard_class_init,
-};
-TYPE_INFO(milkymist_memcard_info)
+)
 
 static void milkymist_sdbus_class_init(ObjectClass *klass, void *data)
 {
@@ -320,11 +318,10 @@ static void milkymist_sdbus_class_init(ObjectClass *klass, void *data)
     sbc->set_readonly = milkymist_memcard_set_readonly;
 }
 
-static const TypeInfo milkymist_sdbus_info = {
-    .name = TYPE_MILKYMIST_SDBUS,
-    .parent = TYPE_SD_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_sdbus_info,
+                            void, void,
+                            MILKYMIST_SDBUS, SD_BUS,
     .class_init = milkymist_sdbus_class_init,
-};
-TYPE_INFO(milkymist_sdbus_info)
+)
 
 

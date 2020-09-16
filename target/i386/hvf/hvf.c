@@ -905,11 +905,10 @@ static void hvf_accel_class_init(ObjectClass *oc, void *data)
     ac->allowed = &hvf_allowed;
 }
 
-static const TypeInfo hvf_accel_type = {
-    .name = TYPE_HVF_ACCEL,
-    .parent = TYPE_ACCEL,
+OBJECT_DEFINE_TYPE_EXTENDED(hvf_accel_type,
+                            void, void,
+                            HVF_ACCEL, ACCEL,
     .class_init = hvf_accel_class_init,
-};
-TYPE_INFO(hvf_accel_type)
+)
 
 

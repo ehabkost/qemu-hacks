@@ -62,14 +62,12 @@ static void virtio_ccw_scsi_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_scsi = {
-    .name          = TYPE_VIRTIO_SCSI_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtIOSCSICcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_scsi,
+                            VirtIOSCSICcw, void,
+                            VIRTIO_SCSI_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_scsi_instance_init,
     .class_init    = virtio_ccw_scsi_class_init,
-};
-TYPE_INFO(virtio_ccw_scsi)
+)
 
 #ifdef CONFIG_VHOST_SCSI
 
@@ -105,14 +103,12 @@ static void vhost_ccw_scsi_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo vhost_ccw_scsi = {
-    .name          = TYPE_VHOST_SCSI_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VHostSCSICcw),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_ccw_scsi,
+                            VHostSCSICcw, void,
+                            VHOST_SCSI_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = vhost_ccw_scsi_instance_init,
     .class_init    = vhost_ccw_scsi_class_init,
-};
-TYPE_INFO(vhost_ccw_scsi)
+)
 
 #endif
 

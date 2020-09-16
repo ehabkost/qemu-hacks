@@ -1041,15 +1041,12 @@ static void spitz_common_class_init(ObjectClass *oc, void *data)
     mc->init = spitz_common_init;
 }
 
-static const TypeInfo spitz_common_info = {
-    .name = TYPE_SPITZ_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(spitz_common_info,
+                            SpitzMachineState, SpitzMachineClass,
+                            SPITZ_MACHINE, MACHINE,
     .abstract = true,
-    .instance_size = sizeof(SpitzMachineState),
-    .class_size = sizeof(SpitzMachineClass),
     .class_init = spitz_common_class_init,
-};
-TYPE_INFO(spitz_common_info)
+)
 
 static void akitapda_class_init(ObjectClass *oc, void *data)
 {
@@ -1158,14 +1155,12 @@ static void sl_nand_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo sl_nand_info = {
-    .name          = TYPE_SL_NAND,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SLNANDState),
+OBJECT_DEFINE_TYPE_EXTENDED(sl_nand_info,
+                            SLNANDState, void,
+                            SL_NAND, SYS_BUS_DEVICE,
     .instance_init = sl_nand_init,
     .class_init    = sl_nand_class_init,
-};
-TYPE_INFO(sl_nand_info)
+)
 
 static VMStateDescription vmstate_spitz_kbd = {
     .name = "spitz-keyboard",
@@ -1188,14 +1183,12 @@ static void spitz_keyboard_class_init(ObjectClass *klass, void *data)
     dc->realize = spitz_keyboard_realize;
 }
 
-static const TypeInfo spitz_keyboard_info = {
-    .name          = TYPE_SPITZ_KEYBOARD,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SpitzKeyboardState),
+OBJECT_DEFINE_TYPE_EXTENDED(spitz_keyboard_info,
+                            SpitzKeyboardState, void,
+                            SPITZ_KEYBOARD, SYS_BUS_DEVICE,
     .instance_init = spitz_keyboard_init,
     .class_init    = spitz_keyboard_class_init,
-};
-TYPE_INFO(spitz_keyboard_info)
+)
 
 static const VMStateDescription vmstate_corgi_ssp_regs = {
     .name = "corgi-ssp",
@@ -1218,13 +1211,11 @@ static void corgi_ssp_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_corgi_ssp_regs;
 }
 
-static const TypeInfo corgi_ssp_info = {
-    .name          = TYPE_CORGI_SSP,
-    .parent        = TYPE_SSI_SLAVE,
-    .instance_size = sizeof(CorgiSSPState),
+OBJECT_DEFINE_TYPE_EXTENDED(corgi_ssp_info,
+                            CorgiSSPState, void,
+                            CORGI_SSP, SSI_SLAVE,
     .class_init    = corgi_ssp_class_init,
-};
-TYPE_INFO(corgi_ssp_info)
+)
 
 static const VMStateDescription vmstate_spitz_lcdtg_regs = {
     .name = "spitz-lcdtg",
@@ -1248,24 +1239,20 @@ static void spitz_lcdtg_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_spitz_lcdtg_regs;
 }
 
-static const TypeInfo spitz_lcdtg_info = {
-    .name          = TYPE_SPITZ_LCDTG,
-    .parent        = TYPE_SSI_SLAVE,
-    .instance_size = sizeof(SpitzLCDTG),
+OBJECT_DEFINE_TYPE_EXTENDED(spitz_lcdtg_info,
+                            SpitzLCDTG, void,
+                            SPITZ_LCDTG, SSI_SLAVE,
     .class_init    = spitz_lcdtg_class_init,
-};
-TYPE_INFO(spitz_lcdtg_info)
+)
 
-static const TypeInfo spitz_misc_gpio_info = {
-    .name = TYPE_SPITZ_MISC_GPIO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SpitzMiscGPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(spitz_misc_gpio_info,
+                            SpitzMiscGPIOState, void,
+                            SPITZ_MISC_GPIO, SYS_BUS_DEVICE,
     .instance_init = spitz_misc_gpio_init,
     /*
      * No class_init required: device has no internal state so does not
      * need to set up reset or vmstate, and does not have a realize method.
      */
-};
-TYPE_INFO(spitz_misc_gpio_info)
+)
 
 

@@ -2510,11 +2510,9 @@ static void vmxnet3_class_init(ObjectClass *class, void *data)
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }
 
-static const TypeInfo vmxnet3_info = {
-    .name          = TYPE_VMXNET3,
-    .parent        = TYPE_PCI_DEVICE,
-    .class_size    = sizeof(VMXNET3Class),
-    .instance_size = sizeof(VMXNET3State),
+OBJECT_DEFINE_TYPE_EXTENDED(vmxnet3_info,
+                            VMXNET3State, VMXNET3Class,
+                            VMXNET3, PCI_DEVICE,
     .class_init    = vmxnet3_class_init,
     .instance_init = vmxnet3_instance_init,
     .interfaces = (InterfaceInfo[]) {
@@ -2522,8 +2520,7 @@ static const TypeInfo vmxnet3_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     },
-};
-TYPE_INFO(vmxnet3_info)
+)
 
 static void vmxnet3_register_types(void)
 {

@@ -319,13 +319,11 @@ static void spike_machine_class_init(ObjectClass *oc, void *data)
     mc->numa_mem_supported = true;
 }
 
-static const TypeInfo spike_machine_typeinfo = {
-    .name       = TYPE_SPIKE_MACHINE,
-    .parent     = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(spike_machine_typeinfo,
+                            SpikeState, void,
+                            SPIKE_MACHINE, MACHINE,
     .class_init = spike_machine_class_init,
     .instance_init = spike_machine_instance_init,
-    .instance_size = sizeof(SpikeState),
-};
-TYPE_INFO(spike_machine_typeinfo)
+)
 
 

@@ -275,12 +275,10 @@ static void virtio_rng_class_init(ObjectClass *klass, void *data)
     vdc->set_status = virtio_rng_set_status;
 }
 
-static const TypeInfo virtio_rng_info = {
-    .name = TYPE_VIRTIO_RNG,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIORNG),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_rng_info,
+                            VirtIORNG, void,
+                            VIRTIO_RNG, VIRTIO_DEVICE,
     .class_init = virtio_rng_class_init,
-};
-TYPE_INFO(virtio_rng_info)
+)
 
 

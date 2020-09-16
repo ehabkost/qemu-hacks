@@ -123,12 +123,10 @@ static void isa_ide_class_initfn(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo isa_ide_info = {
-    .name          = TYPE_ISA_IDE,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISAIDEState),
+OBJECT_DEFINE_TYPE_EXTENDED(isa_ide_info,
+                            ISAIDEState, void,
+                            ISA_IDE, ISA_DEVICE,
     .class_init    = isa_ide_class_initfn,
-};
-TYPE_INFO(isa_ide_info)
+)
 
 

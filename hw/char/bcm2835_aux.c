@@ -302,13 +302,11 @@ static void bcm2835_aux_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, bcm2835_aux_props);
 }
 
-static const TypeInfo bcm2835_aux_info = {
-    .name          = TYPE_BCM2835_AUX,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835AuxState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_aux_info,
+                            BCM2835AuxState, void,
+                            BCM2835_AUX, SYS_BUS_DEVICE,
     .instance_init = bcm2835_aux_init,
     .class_init    = bcm2835_aux_class_init,
-};
-TYPE_INFO(bcm2835_aux_info)
+)
 
 

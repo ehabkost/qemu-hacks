@@ -113,13 +113,11 @@ static void i2c_ddc_class_init(ObjectClass *oc, void *data)
     isc->send = i2c_ddc_tx;
 }
 
-static TypeInfo i2c_ddc_info = {
-    .name = TYPE_I2CDDC,
-    .parent = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(I2CDDCState),
+OBJECT_DEFINE_TYPE_EXTENDED(i2c_ddc_info,
+                            I2CDDCState, void,
+                            I2CDDC, I2C_SLAVE,
     .instance_init = i2c_ddc_init,
     .class_init = i2c_ddc_class_init
-};
-TYPE_INFO(i2c_ddc_info)
+)
 
 

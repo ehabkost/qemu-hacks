@@ -2262,12 +2262,11 @@ static void arm_host_initfn(Object *obj)
     arm_cpu_post_init(obj);
 }
 
-static const TypeInfo host_arm_cpu_type_info = {
-    .name = TYPE_ARM_HOST_CPU,
-    .parent = TYPE_AARCH64_CPU,
+OBJECT_DEFINE_TYPE_EXTENDED(host_arm_cpu_type_info,
+                            void, void,
+                            ARM_HOST_CPU, AARCH64_CPU,
     .instance_init = arm_host_initfn,
-};
-TYPE_INFO(host_arm_cpu_type_info)
+)
 
 #endif
 
@@ -2302,24 +2301,18 @@ void arm_cpu_register(const ARMCPUInfo *info)
     g_free((void *)type_info.name);
 }
 
-static const TypeInfo arm_cpu_type_info = {
-    .name = TYPE_ARM_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(ARMCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(arm_cpu_type_info,
+                            ARMCPU, ARMCPUClass,
+                            ARM_CPU, CPU,
     .instance_init = arm_cpu_initfn,
     .instance_finalize = arm_cpu_finalizefn,
     .abstract = true,
-    .class_size = sizeof(ARMCPUClass),
     .class_init = arm_cpu_class_init,
-};
-TYPE_INFO(arm_cpu_type_info)
+)
 
-static const TypeInfo idau_interface_type_info = {
-    .name = TYPE_IDAU_INTERFACE,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(IDAUInterfaceClass),
-};
-TYPE_INFO(idau_interface_type_info)
+OBJECT_DEFINE_TYPE_EXTENDED(idau_interface_type_info,
+                            void, IDAUInterfaceClass,
+                            IDAU_INTERFACE, INTERFACE)
 
 static void arm_cpu_register_types(void)
 {

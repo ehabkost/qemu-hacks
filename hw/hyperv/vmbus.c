@@ -2477,16 +2477,13 @@ const VMStateDescription vmstate_vmbus_dev = {
 };
 
 /* vmbus generic device base */
-static const TypeInfo vmbus_dev_type_info = {
-    .name = TYPE_VMBUS_DEVICE,
-    .parent = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(vmbus_dev_type_info,
+                            VMBusDevice, VMBusDeviceClass,
+                            VMBUS_DEVICE, DEVICE,
     .abstract = true,
-    .instance_size = sizeof(VMBusDevice),
-    .class_size = sizeof(VMBusDeviceClass),
     .class_init = vmbus_dev_class_init,
     .instance_init = vmbus_dev_instance_init,
-};
-TYPE_INFO(vmbus_dev_type_info)
+)
 
 static void vmbus_realize(BusState *bus, Error **errp)
 {
@@ -2693,13 +2690,11 @@ static const VMStateDescription vmstate_vmbus = {
     }
 };
 
-static const TypeInfo vmbus_type_info = {
-    .name = TYPE_VMBUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(VMBus),
+OBJECT_DEFINE_TYPE_EXTENDED(vmbus_type_info,
+                            VMBus, void,
+                            VMBUS, BUS,
     .class_init = vmbus_class_init,
-};
-TYPE_INFO(vmbus_type_info)
+)
 
 static void vmbus_bridge_realize(DeviceState *dev, Error **errp)
 {
@@ -2759,12 +2754,10 @@ static void vmbus_bridge_class_init(ObjectClass *klass, void *data)
     k->user_creatable = true;
 }
 
-static const TypeInfo vmbus_bridge_type_info = {
-    .name = TYPE_VMBUS_BRIDGE,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(VMBusBridge),
+OBJECT_DEFINE_TYPE_EXTENDED(vmbus_bridge_type_info,
+                            VMBusBridge, void,
+                            VMBUS_BRIDGE, SYS_BUS_DEVICE,
     .class_init = vmbus_bridge_class_init,
-};
-TYPE_INFO(vmbus_bridge_type_info)
+)
 
 

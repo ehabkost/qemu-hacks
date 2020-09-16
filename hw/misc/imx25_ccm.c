@@ -304,13 +304,11 @@ static void imx25_ccm_class_init(ObjectClass *klass, void *data)
     ccm->get_clock_frequency = imx25_ccm_get_clock_frequency;
 }
 
-static const TypeInfo imx25_ccm_info = {
-    .name          = TYPE_IMX25_CCM,
-    .parent        = TYPE_IMX_CCM,
-    .instance_size = sizeof(IMX25CCMState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx25_ccm_info,
+                            IMX25CCMState, void,
+                            IMX25_CCM, IMX_CCM,
     .instance_init = imx25_ccm_init,
     .class_init    = imx25_ccm_class_init,
-};
-TYPE_INFO(imx25_ccm_info)
+)
 
 

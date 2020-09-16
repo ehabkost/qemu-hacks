@@ -323,16 +323,13 @@ static void virtio_input_class_init(ObjectClass *klass, void *data)
     vdc->reset        = virtio_input_reset;
 }
 
-static const TypeInfo virtio_input_info = {
-    .name          = TYPE_VIRTIO_INPUT,
-    .parent        = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOInput),
-    .class_size    = sizeof(VirtIOInputClass),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_input_info,
+                            VirtIOInput, VirtIOInputClass,
+                            VIRTIO_INPUT, VIRTIO_DEVICE,
     .class_init    = virtio_input_class_init,
     .abstract      = true,
     .instance_finalize = virtio_input_finalize,
-};
-TYPE_INFO(virtio_input_info)
+)
 
 /* ----------------------------------------------------------------- */
 

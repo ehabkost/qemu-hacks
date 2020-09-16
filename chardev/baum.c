@@ -673,13 +673,11 @@ static void char_braille_class_init(ObjectClass *oc, void *data)
     cc->chr_accept_input = baum_chr_accept_input;
 }
 
-static const TypeInfo char_braille_type_info = {
-    .name = TYPE_CHARDEV_BRAILLE,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(BaumChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_braille_type_info,
+                            BaumChardev, void,
+                            CHARDEV_BRAILLE, CHARDEV,
     .instance_finalize = char_braille_finalize,
     .class_init = char_braille_class_init,
-};
-TYPE_INFO(char_braille_type_info)
+)
 
 

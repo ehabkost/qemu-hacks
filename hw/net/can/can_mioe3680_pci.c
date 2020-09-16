@@ -247,17 +247,15 @@ static void mioe3680_pci_class_init(ObjectClass *klass, void *data)
     dc->reset = mioe3680_pci_reset;
 }
 
-static const TypeInfo mioe3680_pci_info = {
-    .name          = TYPE_CAN_PCI_DEV,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(Mioe3680PCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(mioe3680_pci_info,
+                            Mioe3680PCIState, void,
+                            CAN_PCI_DEV, PCI_DEVICE,
     .class_init    = mioe3680_pci_class_init,
     .instance_init = mioe3680_pci_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(mioe3680_pci_info)
+)
 
 

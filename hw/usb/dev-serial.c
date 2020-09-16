@@ -580,14 +580,12 @@ static void usb_serial_dev_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
 }
 
-static const TypeInfo usb_serial_dev_type_info = {
-    .name = TYPE_USB_SERIAL,
-    .parent = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBSerialState),
+OBJECT_DEFINE_TYPE_EXTENDED(usb_serial_dev_type_info,
+                            USBSerialState, void,
+                            USB_SERIAL, USB_DEVICE,
     .abstract = true,
     .class_init = usb_serial_dev_class_init,
-};
-TYPE_INFO(usb_serial_dev_type_info)
+)
 
 static void usb_serial_class_initfn(ObjectClass *klass, void *data)
 {

@@ -567,14 +567,12 @@ static void versal_virt_machine_class_init(ObjectClass *oc, void *data)
     mc->default_ram_id = "ddr";
 }
 
-static const TypeInfo versal_virt_machine_init_typeinfo = {
-    .name       = TYPE_XLNX_VERSAL_VIRT_MACHINE,
-    .parent     = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(versal_virt_machine_init_typeinfo,
+                            VersalVirt, void,
+                            XLNX_VERSAL_VIRT_MACHINE, MACHINE,
     .class_init = versal_virt_machine_class_init,
     .instance_init = versal_virt_machine_instance_init,
-    .instance_size = sizeof(VersalVirt),
-};
-TYPE_INFO(versal_virt_machine_init_typeinfo)
+)
 
 
 

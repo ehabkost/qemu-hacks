@@ -391,14 +391,11 @@ static void adb_kbd_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_adb_kbd;
 }
 
-static const TypeInfo adb_kbd_type_info = {
-    .name = TYPE_ADB_KEYBOARD,
-    .parent = TYPE_ADB_DEVICE,
-    .instance_size = sizeof(KBDState),
+OBJECT_DEFINE_TYPE_EXTENDED(adb_kbd_type_info,
+                            KBDState, ADBKeyboardClass,
+                            ADB_KEYBOARD, ADB_DEVICE,
     .instance_init = adb_kbd_initfn,
     .class_init = adb_kbd_class_init,
-    .class_size = sizeof(ADBKeyboardClass),
-};
-TYPE_INFO(adb_kbd_type_info)
+)
 
 

@@ -131,13 +131,11 @@ static void bcm2835_rng_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_bcm2835_rng;
 }
 
-static TypeInfo bcm2835_rng_info = {
-    .name          = TYPE_BCM2835_RNG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835RngState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_rng_info,
+                            BCM2835RngState, void,
+                            BCM2835_RNG, SYS_BUS_DEVICE,
     .class_init    = bcm2835_rng_class_init,
     .instance_init = bcm2835_rng_init,
-};
-TYPE_INFO(bcm2835_rng_info)
+)
 
 

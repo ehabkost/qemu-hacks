@@ -721,12 +721,10 @@ static void wm8750_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, wm8750_properties);
 }
 
-static const TypeInfo wm8750_info = {
-    .name          = TYPE_WM8750,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(WM8750State),
+OBJECT_DEFINE_TYPE_EXTENDED(wm8750_info,
+                            WM8750State, void,
+                            WM8750, I2C_SLAVE,
     .class_init    = wm8750_class_init,
-};
-TYPE_INFO(wm8750_info)
+)
 
 

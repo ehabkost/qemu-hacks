@@ -189,13 +189,11 @@ static void filter_buffer_init(Object *obj)
                         filter_buffer_set_interval, NULL, NULL);
 }
 
-static const TypeInfo filter_buffer_info = {
-    .name = TYPE_FILTER_BUFFER,
-    .parent = TYPE_NETFILTER,
+OBJECT_DEFINE_TYPE_EXTENDED(filter_buffer_info,
+                            FilterBufferState, void,
+                            FILTER_BUFFER, NETFILTER,
     .class_init = filter_buffer_class_init,
     .instance_init = filter_buffer_init,
-    .instance_size = sizeof(FilterBufferState),
-};
-TYPE_INFO(filter_buffer_info)
+)
 
 

@@ -360,12 +360,10 @@ static void zynq_machine_class_init(ObjectClass *oc, void *data)
     mc->default_ram_id = "zynq.ext_ram";
 }
 
-static const TypeInfo zynq_machine_type = {
-    .name = TYPE_ZYNQ_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(zynq_machine_type,
+                            ZynqMachineState, void,
+                            ZYNQ_MACHINE, MACHINE,
     .class_init = zynq_machine_class_init,
-    .instance_size = sizeof(ZynqMachineState),
-};
-TYPE_INFO(zynq_machine_type)
+)
 
 

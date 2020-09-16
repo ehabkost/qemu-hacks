@@ -91,21 +91,17 @@ static void pxb_bus_class_init(ObjectClass *class, void *data)
     pbc->numa_node = pxb_bus_numa_node;
 }
 
-static const TypeInfo pxb_bus_info = {
-    .name          = TYPE_PXB_BUS,
-    .parent        = TYPE_PCI_BUS,
-    .instance_size = sizeof(PXBBus),
+OBJECT_DEFINE_TYPE_EXTENDED(pxb_bus_info,
+                            PXBBus, void,
+                            PXB_BUS, PCI_BUS,
     .class_init    = pxb_bus_class_init,
-};
-TYPE_INFO(pxb_bus_info)
+)
 
-static const TypeInfo pxb_pcie_bus_info = {
-    .name          = TYPE_PXB_PCIE_BUS,
-    .parent        = TYPE_PCIE_BUS,
-    .instance_size = sizeof(PXBBus),
+OBJECT_DEFINE_TYPE_EXTENDED(pxb_pcie_bus_info,
+                            PXBBus, void,
+                            PXB_PCIE_BUS, PCIE_BUS,
     .class_init    = pxb_bus_class_init,
-};
-TYPE_INFO(pxb_pcie_bus_info)
+)
 
 static const char *pxb_host_root_bus_path(PCIHostState *host_bridge,
                                           PCIBus *rootbus)
@@ -161,12 +157,11 @@ static void pxb_host_class_init(ObjectClass *class, void *data)
     hc->root_bus_path = pxb_host_root_bus_path;
 }
 
-static const TypeInfo pxb_host_info = {
-    .name          = TYPE_PXB_HOST,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
+OBJECT_DEFINE_TYPE_EXTENDED(pxb_host_info,
+                            void, void,
+                            PXB_HOST, PCI_HOST_BRIDGE,
     .class_init    = pxb_host_class_init,
-};
-TYPE_INFO(pxb_host_info)
+)
 
 /*
  * Registers the PXB bus as a child of pci host root bus.
@@ -324,17 +319,15 @@ static void pxb_dev_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo pxb_dev_info = {
-    .name          = TYPE_PXB_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PXBDev),
+OBJECT_DEFINE_TYPE_EXTENDED(pxb_dev_info,
+                            PXBDev, void,
+                            PXB_DEVICE, PCI_DEVICE,
     .class_init    = pxb_dev_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(pxb_dev_info)
+)
 
 static void pxb_pcie_dev_realize(PCIDevice *dev, Error **errp)
 {
@@ -363,16 +356,14 @@ static void pxb_pcie_dev_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
-static const TypeInfo pxb_pcie_dev_info = {
-    .name          = TYPE_PXB_PCIE_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PXBDev),
+OBJECT_DEFINE_TYPE_EXTENDED(pxb_pcie_dev_info,
+                            PXBDev, void,
+                            PXB_PCIE_DEVICE, PCI_DEVICE,
     .class_init    = pxb_pcie_dev_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(pxb_pcie_dev_info)
+)
 
 

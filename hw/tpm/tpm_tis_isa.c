@@ -152,17 +152,15 @@ static void tpm_tis_isa_class_init(ObjectClass *klass, void *data)
     tc->get_version = tpm_tis_isa_get_tpm_version;
 }
 
-static const TypeInfo tpm_tis_isa_info = {
-    .name = TYPE_TPM_TIS_ISA,
-    .parent = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(TPMStateISA),
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_tis_isa_info,
+                            TPMStateISA, void,
+                            TPM_TIS_ISA, ISA_DEVICE,
     .instance_init = tpm_tis_isa_initfn,
     .class_init  = tpm_tis_isa_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_TPM_IF },
         { }
     }
-};
-TYPE_INFO(tpm_tis_isa_info)
+)
 
 

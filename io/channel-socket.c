@@ -789,14 +789,12 @@ static void qio_channel_socket_class_init(ObjectClass *klass,
     ioc_klass->io_set_aio_fd_handler = qio_channel_socket_set_aio_fd_handler;
 }
 
-static const TypeInfo qio_channel_socket_info = {
-    .parent = TYPE_QIO_CHANNEL,
-    .name = TYPE_QIO_CHANNEL_SOCKET,
-    .instance_size = sizeof(QIOChannelSocket),
+OBJECT_DEFINE_TYPE_EXTENDED(qio_channel_socket_info,
+                            QIOChannelSocket, void,
+                            QIO_CHANNEL_SOCKET, QIO_CHANNEL,
     .instance_init = qio_channel_socket_init,
     .instance_finalize = qio_channel_socket_finalize,
     .class_init = qio_channel_socket_class_init,
-};
-TYPE_INFO(qio_channel_socket_info)
+)
 
 

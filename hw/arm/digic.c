@@ -91,13 +91,11 @@ static void digic_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo digic_type_info = {
-    .name = TYPE_DIGIC,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(DigicState),
+OBJECT_DEFINE_TYPE_EXTENDED(digic_type_info,
+                            DigicState, void,
+                            DIGIC, DEVICE,
     .instance_init = digic_init,
     .class_init = digic_class_init,
-};
-TYPE_INFO(digic_type_info)
+)
 
 

@@ -201,12 +201,10 @@ static void testdev_class_init(ObjectClass *klass, void *data)
     dc->realize = testdev_realizefn;
 }
 
-static const TypeInfo testdev_info = {
-    .name           = TYPE_TESTDEV,
-    .parent         = TYPE_ISA_DEVICE,
-    .instance_size  = sizeof(PCTestdev),
+OBJECT_DEFINE_TYPE_EXTENDED(testdev_info,
+                            PCTestdev, void,
+                            TESTDEV, ISA_DEVICE,
     .class_init     = testdev_class_init,
-};
-TYPE_INFO(testdev_info)
+)
 
 

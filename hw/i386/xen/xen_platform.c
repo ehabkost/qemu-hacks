@@ -513,16 +513,14 @@ static void xen_platform_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_xen_platform;
 }
 
-static const TypeInfo xen_platform_info = {
-    .name          = TYPE_XEN_PLATFORM,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIXenPlatformState),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_platform_info,
+                            PCIXenPlatformState, void,
+                            XEN_PLATFORM, PCI_DEVICE,
     .class_init    = xen_platform_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(xen_platform_info)
+)
 
 

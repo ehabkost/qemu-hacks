@@ -2527,14 +2527,11 @@ static void megasas_class_init(ObjectClass *oc, void *data)
     dc->desc = info->desc;
 }
 
-static const TypeInfo megasas_info = {
-    .name  = TYPE_MEGASAS_BASE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(MegasasState),
-    .class_size = sizeof(MegasasBaseClass),
+OBJECT_DEFINE_TYPE_EXTENDED(megasas_info,
+                            MegasasState, MegasasBaseClass,
+                            MEGASAS_BASE, PCI_DEVICE,
     .abstract = true,
-};
-TYPE_INFO(megasas_info)
+)
 
 static void megasas_register_types(void)
 {

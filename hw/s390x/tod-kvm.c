@@ -147,11 +147,10 @@ static void kvm_s390_tod_init(Object *obj)
     td->stopped = false;
 }
 
-static TypeInfo kvm_s390_tod_info = {
-    .name = TYPE_KVM_S390_TOD,
-    .parent = TYPE_S390_TOD,
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_s390_tod_info,
+                            void, void,
+                            KVM_S390_TOD, S390_TOD,
     .instance_init = kvm_s390_tod_init,
     .class_init = kvm_s390_tod_class_init,
-};
-TYPE_INFO(kvm_s390_tod_info)
+)
 

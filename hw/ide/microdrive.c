@@ -588,12 +588,11 @@ static void dscm1xxxx_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo dscm1xxxx_type_info = {
-    .name = TYPE_DSCM1XXXX,
-    .parent = TYPE_MICRODRIVE,
+OBJECT_DEFINE_TYPE_EXTENDED(dscm1xxxx_type_info,
+                            void, void,
+                            DSCM1XXXX, MICRODRIVE,
     .class_init = dscm1xxxx_class_init,
-};
-TYPE_INFO(dscm1xxxx_type_info)
+)
 
 static void microdrive_realize(DeviceState *dev, Error **errp)
 {
@@ -626,14 +625,12 @@ static void microdrive_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_microdrive;
 }
 
-static const TypeInfo microdrive_type_info = {
-    .name = TYPE_MICRODRIVE,
-    .parent = TYPE_PCMCIA_CARD,
-    .instance_size = sizeof(MicroDriveState),
+OBJECT_DEFINE_TYPE_EXTENDED(microdrive_type_info,
+                            MicroDriveState, void,
+                            MICRODRIVE, PCMCIA_CARD,
     .instance_init = microdrive_init,
     .abstract = true,
     .class_init = microdrive_class_init,
-};
-TYPE_INFO(microdrive_type_info)
+)
 
 

@@ -1260,12 +1260,10 @@ static void virtio_gpu_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, virtio_gpu_properties);
 }
 
-static const TypeInfo virtio_gpu_info = {
-    .name = TYPE_VIRTIO_GPU,
-    .parent = TYPE_VIRTIO_GPU_BASE,
-    .instance_size = sizeof(VirtIOGPU),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_gpu_info,
+                            VirtIOGPU, void,
+                            VIRTIO_GPU, VIRTIO_GPU_BASE,
     .class_init = virtio_gpu_class_init,
-};
-TYPE_INFO(virtio_gpu_info)
+)
 
 

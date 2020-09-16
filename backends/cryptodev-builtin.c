@@ -375,12 +375,10 @@ cryptodev_builtin_class_init(ObjectClass *oc, void *data)
     bc->do_sym_op = cryptodev_builtin_sym_operation;
 }
 
-static const TypeInfo cryptodev_builtin_info = {
-    .name = TYPE_CRYPTODEV_BACKEND_BUILTIN,
-    .parent = TYPE_CRYPTODEV_BACKEND,
+OBJECT_DEFINE_TYPE_EXTENDED(cryptodev_builtin_info,
+                            CryptoDevBackendBuiltin, void,
+                            CRYPTODEV_BACKEND_BUILTIN, CRYPTODEV_BACKEND,
     .class_init = cryptodev_builtin_class_init,
-    .instance_size = sizeof(CryptoDevBackendBuiltin),
-};
-TYPE_INFO(cryptodev_builtin_info)
+)
 
 

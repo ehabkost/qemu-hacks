@@ -727,24 +727,20 @@ static void designware_pcie_host_init(Object *obj)
     qdev_prop_set_bit(DEVICE(root), "multifunction", false);
 }
 
-static const TypeInfo designware_pcie_root_info = {
-    .name = TYPE_DESIGNWARE_PCIE_ROOT,
-    .parent = TYPE_PCI_BRIDGE,
-    .instance_size = sizeof(DesignwarePCIERoot),
+OBJECT_DEFINE_TYPE_EXTENDED(designware_pcie_root_info,
+                            DesignwarePCIERoot, void,
+                            DESIGNWARE_PCIE_ROOT, PCI_BRIDGE,
     .class_init = designware_pcie_root_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
         { }
     },
-};
-TYPE_INFO(designware_pcie_root_info)
+)
 
-static const TypeInfo designware_pcie_host_info = {
-    .name       = TYPE_DESIGNWARE_PCIE_HOST,
-    .parent     = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(DesignwarePCIEHost),
+OBJECT_DEFINE_TYPE_EXTENDED(designware_pcie_host_info,
+                            DesignwarePCIEHost, void,
+                            DESIGNWARE_PCIE_HOST, PCI_HOST_BRIDGE,
     .instance_init = designware_pcie_host_init,
     .class_init = designware_pcie_host_class_init,
-};
-TYPE_INFO(designware_pcie_host_info)
+)
 

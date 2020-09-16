@@ -887,12 +887,11 @@ static void pnv_phb3_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->translate = pnv_phb3_translate_iommu;
 }
 
-static const TypeInfo pnv_phb3_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_PNV_PHB3_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb3_iommu_memory_region_info,
+                            void, void,
+                            PNV_PHB3_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = pnv_phb3_iommu_memory_region_class_init,
-};
-TYPE_INFO(pnv_phb3_iommu_memory_region_info)
+)
 
 /*
  * MSI/MSIX memory region implementation.
@@ -1106,14 +1105,12 @@ static void pnv_phb3_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pnv_phb3_type_info = {
-    .name          = TYPE_PNV_PHB3,
-    .parent        = TYPE_PCIE_HOST_BRIDGE,
-    .instance_size = sizeof(PnvPHB3),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb3_type_info,
+                            PnvPHB3, void,
+                            PNV_PHB3, PCIE_HOST_BRIDGE,
     .class_init    = pnv_phb3_class_init,
     .instance_init = pnv_phb3_instance_init,
-};
-TYPE_INFO(pnv_phb3_type_info)
+)
 
 static void pnv_phb3_root_bus_class_init(ObjectClass *klass, void *data)
 {
@@ -1126,16 +1123,15 @@ static void pnv_phb3_root_bus_class_init(ObjectClass *klass, void *data)
     k->max_dev = 1;
 }
 
-static const TypeInfo pnv_phb3_root_bus_info = {
-    .name = TYPE_PNV_PHB3_ROOT_BUS,
-    .parent = TYPE_PCIE_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb3_root_bus_info,
+                            void, void,
+                            PNV_PHB3_ROOT_BUS, PCIE_BUS,
     .class_init = pnv_phb3_root_bus_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
         { }
     },
-};
-TYPE_INFO(pnv_phb3_root_bus_info)
+)
 
 static void pnv_phb3_root_port_realize(DeviceState *dev, Error **errp)
 {
@@ -1169,12 +1165,10 @@ static void pnv_phb3_root_port_class_init(ObjectClass *klass, void *data)
     rpc->aer_offset = 0x100;
 }
 
-static const TypeInfo pnv_phb3_root_port_info = {
-    .name          = TYPE_PNV_PHB3_ROOT_PORT,
-    .parent        = TYPE_PCIE_ROOT_PORT,
-    .instance_size = sizeof(PnvPHB3RootPort),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb3_root_port_info,
+                            PnvPHB3RootPort, void,
+                            PNV_PHB3_ROOT_PORT, PCIE_ROOT_PORT,
     .class_init    = pnv_phb3_root_port_class_init,
-};
-TYPE_INFO(pnv_phb3_root_port_info)
+)
 
 

@@ -1479,19 +1479,16 @@ static void __attribute__((__constructor__)) colo_compare_init_globals(void)
     qemu_mutex_init(&colo_compare_mutex);
 }
 
-static const TypeInfo colo_compare_info = {
-    .name = TYPE_COLO_COMPARE,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(CompareState),
+OBJECT_DEFINE_TYPE_EXTENDED(colo_compare_info,
+                            CompareState, CompareClass,
+                            COLO_COMPARE, OBJECT,
     .instance_init = colo_compare_init,
     .instance_finalize = colo_compare_finalize,
-    .class_size = sizeof(CompareClass),
     .class_init = colo_compare_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(colo_compare_info)
+)
 
 

@@ -276,17 +276,15 @@ static void pcnet_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }
 
-static const TypeInfo pcnet_info = {
-    .name          = TYPE_PCI_PCNET,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIPCNetState),
+OBJECT_DEFINE_TYPE_EXTENDED(pcnet_info,
+                            PCIPCNetState, void,
+                            PCI_PCNET, PCI_DEVICE,
     .class_init    = pcnet_class_init,
     .instance_init = pcnet_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(pcnet_info)
+)
 
 

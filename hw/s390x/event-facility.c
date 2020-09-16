@@ -329,11 +329,9 @@ static void write_event_mask(SCLPEventFacility *ef, SCCB *sccb)
 
 #define TYPE_SCLP_EVENTS_BUS "s390-sclp-events-bus"
 
-static const TypeInfo sclp_events_bus_info = {
-    .name = TYPE_SCLP_EVENTS_BUS,
-    .parent = TYPE_BUS,
-};
-TYPE_INFO(sclp_events_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(sclp_events_bus_info,
+                            void, void,
+                            SCLP_EVENTS_BUS, BUS)
 
 static void command_handler(SCLPEventFacility *ef, SCCB *sccb, uint64_t code)
 {
@@ -476,15 +474,12 @@ static void init_event_facility_class(ObjectClass *klass, void *data)
     k->event_pending = event_pending;
 }
 
-static const TypeInfo sclp_event_facility_info = {
-    .name          = TYPE_SCLP_EVENT_FACILITY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(sclp_event_facility_info,
+                            SCLPEventFacility, SCLPEventFacilityClass,
+                            SCLP_EVENT_FACILITY, SYS_BUS_DEVICE,
     .instance_init = init_event_facility,
-    .instance_size = sizeof(SCLPEventFacility),
     .class_init    = init_event_facility_class,
-    .class_size    = sizeof(SCLPEventFacilityClass),
-};
-TYPE_INFO(sclp_event_facility_info)
+)
 
 static void event_realize(DeviceState *qdev, Error **errp)
 {
@@ -508,15 +503,12 @@ static void event_class_init(ObjectClass *klass, void *data)
     dc->realize = event_realize;
 }
 
-static const TypeInfo sclp_event_type_info = {
-    .name = TYPE_SCLP_EVENT,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SCLPEvent),
+OBJECT_DEFINE_TYPE_EXTENDED(sclp_event_type_info,
+                            SCLPEvent, SCLPEventClass,
+                            SCLP_EVENT, DEVICE,
     .class_init = event_class_init,
-    .class_size = sizeof(SCLPEventClass),
     .abstract = true,
-};
-TYPE_INFO(sclp_event_type_info)
+)
 
 
 

@@ -73,18 +73,15 @@ bool pr_manager_is_connected(PRManager *pr_mgr)
     return !pr_mgr_class->is_connected || pr_mgr_class->is_connected(pr_mgr);
 }
 
-static const TypeInfo pr_manager_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_PR_MANAGER,
-    .instance_size = sizeof(PRManager),
-    .class_size = sizeof(PRManagerClass),
+OBJECT_DEFINE_TYPE_EXTENDED(pr_manager_info,
+                            PRManager, PRManagerClass,
+                            PR_MANAGER, OBJECT,
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(pr_manager_info)
+)
 
 PRManager *pr_manager_lookup(const char *id, Error **errp)
 {

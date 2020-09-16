@@ -154,12 +154,10 @@ static void sifive_u_prci_class_init(ObjectClass *klass, void *data)
     dc->reset = sifive_u_prci_reset;
 }
 
-static const TypeInfo sifive_u_prci_info = {
-    .name          = TYPE_SIFIVE_U_PRCI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SiFiveUPRCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_u_prci_info,
+                            SiFiveUPRCIState, void,
+                            SIFIVE_U_PRCI, SYS_BUS_DEVICE,
     .class_init    = sifive_u_prci_class_init,
-};
-TYPE_INFO(sifive_u_prci_info)
+)
 
 

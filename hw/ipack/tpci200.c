@@ -645,16 +645,14 @@ static void tpci200_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_tpci200;
 }
 
-static const TypeInfo tpci200_info = {
-    .name          = TYPE_TPCI200,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(TPCI200State),
+OBJECT_DEFINE_TYPE_EXTENDED(tpci200_info,
+                            TPCI200State, void,
+                            TPCI200, PCI_DEVICE,
     .class_init    = tpci200_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(tpci200_info)
+)
 
 

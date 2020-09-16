@@ -466,13 +466,11 @@ static void fsl_imx6_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo fsl_imx6_type_info = {
-    .name = TYPE_FSL_IMX6,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(FslIMX6State),
+OBJECT_DEFINE_TYPE_EXTENDED(fsl_imx6_type_info,
+                            FslIMX6State, void,
+                            FSL_IMX6, DEVICE,
     .instance_init = fsl_imx6_init,
     .class_init = fsl_imx6_class_init,
-};
-TYPE_INFO(fsl_imx6_type_info)
+)
 
 

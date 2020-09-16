@@ -254,13 +254,11 @@ static void systick_class_init(ObjectClass *klass, void *data)
     dc->realize = systick_realize;
 }
 
-static const TypeInfo armv7m_systick_info = {
-    .name = TYPE_SYSTICK,
-    .parent = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(armv7m_systick_info,
+                            SysTickState, void,
+                            SYSTICK, SYS_BUS_DEVICE,
     .instance_init = systick_instance_init,
-    .instance_size = sizeof(SysTickState),
     .class_init = systick_class_init,
-};
-TYPE_INFO(armv7m_systick_info)
+)
 
 

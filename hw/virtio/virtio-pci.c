@@ -1933,15 +1933,12 @@ static void virtio_pci_class_init(ObjectClass *klass, void *data)
     dc->reset = virtio_pci_reset;
 }
 
-static const TypeInfo virtio_pci_info = {
-    .name          = TYPE_VIRTIO_PCI,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(VirtIOPCIProxy),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_pci_info,
+                            VirtIOPCIProxy, VirtioPCIClass,
+                            VIRTIO_PCI, PCI_DEVICE,
     .class_init    = virtio_pci_class_init,
-    .class_size    = sizeof(VirtioPCIClass),
     .abstract      = true,
-};
-TYPE_INFO(virtio_pci_info)
+)
 
 static Property virtio_pci_generic_properties[] = {
     DEFINE_PROP_ON_OFF_AUTO("disable-legacy", VirtIOPCIProxy, disable_legacy,
@@ -2130,14 +2127,11 @@ static void virtio_pci_bus_class_init(ObjectClass *klass, void *data)
     k->queue_enabled = virtio_pci_queue_enabled;
 }
 
-static const TypeInfo virtio_pci_bus_info = {
-    .name          = TYPE_VIRTIO_PCI_BUS,
-    .parent        = TYPE_VIRTIO_BUS,
-    .instance_size = sizeof(VirtioPCIBusState),
-    .class_size    = sizeof(VirtioPCIBusClass),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_pci_bus_info,
+                            VirtioPCIBusState, VirtioPCIBusClass,
+                            VIRTIO_PCI_BUS, VIRTIO_BUS,
     .class_init    = virtio_pci_bus_class_init,
-};
-TYPE_INFO(virtio_pci_bus_info)
+)
 
 static void virtio_pci_register_types(void)
 {

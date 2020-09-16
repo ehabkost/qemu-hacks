@@ -147,12 +147,10 @@ static void pci_dec_21154_device_class_init(ObjectClass *klass, void *data)
     dc->realize = pci_dec_21154_device_realize;
 }
 
-static const TypeInfo pci_dec_21154_device_info = {
-    .name          = TYPE_DEC_21154,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(DECState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_dec_21154_device_info,
+                            DECState, void,
+                            DEC_21154, PCI_HOST_BRIDGE,
     .class_init    = pci_dec_21154_device_class_init,
-};
-TYPE_INFO(pci_dec_21154_device_info)
+)
 
 

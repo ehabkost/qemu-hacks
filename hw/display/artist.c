@@ -1485,13 +1485,11 @@ static void artist_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, artist_properties);
 }
 
-static const TypeInfo artist_info = {
-    .name          = TYPE_ARTIST,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARTISTState),
+OBJECT_DEFINE_TYPE_EXTENDED(artist_info,
+                            ARTISTState, void,
+                            ARTIST, SYS_BUS_DEVICE,
     .instance_init = artist_initfn,
     .class_init    = artist_class_init,
-};
-TYPE_INFO(artist_info)
+)
 
 

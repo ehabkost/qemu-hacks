@@ -257,13 +257,11 @@ static void xilinx_timer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, xilinx_timer_properties);
 }
 
-static const TypeInfo xilinx_timer_info = {
-    .name          = TYPE_XILINX_TIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(struct timerblock),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_timer_info,
+                            struct timerblock, void,
+                            XILINX_TIMER, SYS_BUS_DEVICE,
     .instance_init = xilinx_timer_init,
     .class_init    = xilinx_timer_class_init,
-};
-TYPE_INFO(xilinx_timer_info)
+)
 
 

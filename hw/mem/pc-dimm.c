@@ -284,18 +284,15 @@ static void pc_dimm_class_init(ObjectClass *oc, void *data)
     mdc->fill_device_info = pc_dimm_md_fill_device_info;
 }
 
-static TypeInfo pc_dimm_info = {
-    .name          = TYPE_PC_DIMM,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PCDIMMDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(pc_dimm_info,
+                            PCDIMMDevice, PCDIMMDeviceClass,
+                            PC_DIMM, DEVICE,
     .instance_init = pc_dimm_init,
     .class_init    = pc_dimm_class_init,
-    .class_size    = sizeof(PCDIMMDeviceClass),
     .interfaces = (InterfaceInfo[]) {
         { TYPE_MEMORY_DEVICE },
         { }
     },
-};
-TYPE_INFO(pc_dimm_info)
+)
 
 

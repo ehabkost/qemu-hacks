@@ -232,20 +232,16 @@ static void char_ringbuf_class_init(ObjectClass *oc, void *data)
     cc->chr_write = ringbuf_chr_write;
 }
 
-static const TypeInfo char_ringbuf_type_info = {
-    .name = TYPE_CHARDEV_RINGBUF,
-    .parent = TYPE_CHARDEV,
+OBJECT_DEFINE_TYPE_EXTENDED(char_ringbuf_type_info,
+                            RingBufChardev, void,
+                            CHARDEV_RINGBUF, CHARDEV,
     .class_init = char_ringbuf_class_init,
-    .instance_size = sizeof(RingBufChardev),
     .instance_finalize = char_ringbuf_finalize,
-};
-TYPE_INFO(char_ringbuf_type_info)
+)
 
 /* Bug-compatibility: */
-static const TypeInfo char_memory_type_info = {
-    .name = TYPE_CHARDEV_MEMORY,
-    .parent = TYPE_CHARDEV_RINGBUF,
-};
-TYPE_INFO(char_memory_type_info)
+OBJECT_DEFINE_TYPE_EXTENDED(char_memory_type_info,
+                            void, void,
+                            CHARDEV_MEMORY, CHARDEV_RINGBUF)
 
 

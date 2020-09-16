@@ -311,12 +311,10 @@ static void qbus_finalize(Object *obj)
     g_free(bus->name);
 }
 
-static const TypeInfo bus_info = {
-    .name = TYPE_BUS,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(BusState),
+OBJECT_DEFINE_TYPE_EXTENDED(bus_info,
+                            BusState, BusClass,
+                            BUS, OBJECT,
     .abstract = true,
-    .class_size = sizeof(BusClass),
     .instance_init = qbus_initfn,
     .instance_finalize = qbus_finalize,
     .class_init = bus_class_init,
@@ -324,7 +322,6 @@ static const TypeInfo bus_info = {
         { TYPE_RESETTABLE_INTERFACE },
         { }
     },
-};
-TYPE_INFO(bus_info)
+)
 
 

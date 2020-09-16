@@ -816,20 +816,17 @@ qcrypto_tls_creds_x509_class_init(ObjectClass *oc, void *data)
 }
 
 
-static const TypeInfo qcrypto_tls_creds_x509_info = {
-    .parent = TYPE_QCRYPTO_TLS_CREDS,
-    .name = TYPE_QCRYPTO_TLS_CREDS_X509,
-    .instance_size = sizeof(QCryptoTLSCredsX509),
+OBJECT_DEFINE_TYPE_EXTENDED(qcrypto_tls_creds_x509_info,
+                            QCryptoTLSCredsX509, QCryptoTLSCredsX509Class,
+                            QCRYPTO_TLS_CREDS_X509, QCRYPTO_TLS_CREDS,
     .instance_init = qcrypto_tls_creds_x509_init,
     .instance_finalize = qcrypto_tls_creds_x509_finalize,
-    .class_size = sizeof(QCryptoTLSCredsX509Class),
     .class_init = qcrypto_tls_creds_x509_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(qcrypto_tls_creds_x509_info)
+)
 
 
 

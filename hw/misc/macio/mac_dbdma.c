@@ -924,13 +924,11 @@ static void mac_dbdma_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_dbdma;
 }
 
-static const TypeInfo mac_dbdma_type_info = {
-    .name = TYPE_MAC_DBDMA,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(DBDMAState),
+OBJECT_DEFINE_TYPE_EXTENDED(mac_dbdma_type_info,
+                            DBDMAState, void,
+                            MAC_DBDMA, SYS_BUS_DEVICE,
     .instance_init = mac_dbdma_init,
     .class_init = mac_dbdma_class_init
-};
-TYPE_INFO(mac_dbdma_type_info)
+)
 
 

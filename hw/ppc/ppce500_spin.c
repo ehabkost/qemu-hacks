@@ -193,13 +193,11 @@ static void ppce500_spin_class_init(ObjectClass *klass, void *data)
     dc->reset = spin_reset;
 }
 
-static const TypeInfo ppce500_spin_info = {
-    .name          = TYPE_E500_SPIN,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SpinState),
+OBJECT_DEFINE_TYPE_EXTENDED(ppce500_spin_info,
+                            SpinState, void,
+                            E500_SPIN, SYS_BUS_DEVICE,
     .instance_init = ppce500_spin_initfn,
     .class_init    = ppce500_spin_class_init,
-};
-TYPE_INFO(ppce500_spin_info)
+)
 
 

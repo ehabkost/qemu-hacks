@@ -500,13 +500,11 @@ static void ibex_uart_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, ibex_uart_properties);
 }
 
-static const TypeInfo ibex_uart_info = {
-    .name          = TYPE_IBEX_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IbexUartState),
+OBJECT_DEFINE_TYPE_EXTENDED(ibex_uart_info,
+                            IbexUartState, void,
+                            IBEX_UART, SYS_BUS_DEVICE,
     .instance_init = ibex_uart_init,
     .class_init    = ibex_uart_class_init,
-};
-TYPE_INFO(ibex_uart_info)
+)
 
 

@@ -130,14 +130,11 @@ static void wdt_diag288_class_init(ObjectClass *klass, void *data)
     diag288->handle_timer = wdt_diag288_handle_timer;
 }
 
-static const TypeInfo wdt_diag288_info = {
+OBJECT_DEFINE_TYPE_EXTENDED(wdt_diag288_info,
+                            DIAG288State, DIAG288Class,
+                            WDT_DIAG288, DEVICE,
     .class_init = wdt_diag288_class_init,
-    .parent = TYPE_DEVICE,
-    .name  = TYPE_WDT_DIAG288,
-    .instance_size  = sizeof(DIAG288State),
-    .class_size = sizeof(DIAG288Class),
-};
-TYPE_INFO(wdt_diag288_info)
+)
 
 static void wdt_diag288_register_types(void)
 {

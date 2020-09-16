@@ -177,13 +177,11 @@ static void aw_a10_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo aw_a10_type_info = {
-    .name = TYPE_AW_A10,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(AwA10State),
+OBJECT_DEFINE_TYPE_EXTENDED(aw_a10_type_info,
+                            AwA10State, void,
+                            AW_A10, DEVICE,
     .instance_init = aw_a10_init,
     .class_init = aw_a10_class_init,
-};
-TYPE_INFO(aw_a10_type_info)
+)
 
 

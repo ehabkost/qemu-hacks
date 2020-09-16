@@ -11,9 +11,6 @@ void acpi_send_event(DeviceState *dev, AcpiEventStatusBits event)
     }
 }
 
-static const TypeInfo acpi_dev_if_info = {
-    .name          = TYPE_ACPI_DEVICE_IF,
-    .parent        = TYPE_INTERFACE,
-    .class_size = sizeof(AcpiDeviceIfClass),
-};
-TYPE_INFO(acpi_dev_if_info)
+OBJECT_DEFINE_TYPE_EXTENDED(acpi_dev_if_info,
+                            void, AcpiDeviceIfClass,
+                            ACPI_DEVICE_IF, INTERFACE)

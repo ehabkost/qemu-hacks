@@ -267,13 +267,11 @@ static void rcmt_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, rcmt_properties);
 }
 
-static const TypeInfo rcmt_info = {
-    .name = TYPE_RENESAS_CMT,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RCMTState),
+OBJECT_DEFINE_TYPE_EXTENDED(rcmt_info,
+                            RCMTState, void,
+                            RENESAS_CMT, SYS_BUS_DEVICE,
     .instance_init = rcmt_init,
     .class_init = rcmt_class_init,
-};
-TYPE_INFO(rcmt_info)
+)
 
 

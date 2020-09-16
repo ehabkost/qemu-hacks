@@ -881,13 +881,10 @@ static void kvm_arm_gicv3_class_init(ObjectClass *klass, void *data)
     device_class_set_parent_reset(dc, kvm_arm_gicv3_reset, &kgc->parent_reset);
 }
 
-static const TypeInfo kvm_arm_gicv3_info = {
-    .name = TYPE_KVM_ARM_GICV3,
-    .parent = TYPE_ARM_GICV3_COMMON,
-    .instance_size = sizeof(GICv3State),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_arm_gicv3_info,
+                            GICv3State, KVMARMGICv3Class,
+                            KVM_ARM_GICV3, ARM_GICV3_COMMON,
     .class_init = kvm_arm_gicv3_class_init,
-    .class_size = sizeof(KVMARMGICv3Class),
-};
-TYPE_INFO(kvm_arm_gicv3_info)
+)
 
 

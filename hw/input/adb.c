@@ -268,13 +268,11 @@ static void adb_bus_class_init(ObjectClass *klass, void *data)
     k->reset = adb_bus_reset;
 }
 
-static const TypeInfo adb_bus_type_info = {
-    .name = TYPE_ADB_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(ADBBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(adb_bus_type_info,
+                            ADBBusState, void,
+                            ADB_BUS, BUS,
     .class_init = adb_bus_class_init,
-};
-TYPE_INFO(adb_bus_type_info)
+)
 
 const VMStateDescription vmstate_adb_device = {
     .name = "adb_device",
@@ -307,14 +305,11 @@ static void adb_device_class_init(ObjectClass *oc, void *data)
     dc->bus_type = TYPE_ADB_BUS;
 }
 
-static const TypeInfo adb_device_type_info = {
-    .name = TYPE_ADB_DEVICE,
-    .parent = TYPE_DEVICE,
-    .class_size = sizeof(ADBDeviceClass),
-    .instance_size = sizeof(ADBDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(adb_device_type_info,
+                            ADBDevice, ADBDeviceClass,
+                            ADB_DEVICE, DEVICE,
     .abstract = true,
     .class_init = adb_device_class_init,
-};
-TYPE_INFO(adb_device_type_info)
+)
 
 

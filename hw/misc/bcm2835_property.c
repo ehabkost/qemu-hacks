@@ -420,13 +420,11 @@ static void bcm2835_property_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_bcm2835_property;
 }
 
-static TypeInfo bcm2835_property_info = {
-    .name          = TYPE_BCM2835_PROPERTY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835PropertyState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_property_info,
+                            BCM2835PropertyState, void,
+                            BCM2835_PROPERTY, SYS_BUS_DEVICE,
     .class_init    = bcm2835_property_class_init,
     .instance_init = bcm2835_property_init,
-};
-TYPE_INFO(bcm2835_property_info)
+)
 
 

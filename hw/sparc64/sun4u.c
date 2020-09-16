@@ -278,13 +278,11 @@ static void power_class_init(ObjectClass *klass, void *data)
     dc->realize = power_realize;
 }
 
-static const TypeInfo power_info = {
-    .name          = TYPE_SUN4U_POWER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PowerDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(power_info,
+                            PowerDevice, void,
+                            SUN4U_POWER, SYS_BUS_DEVICE,
     .class_init    = power_class_init,
-};
-TYPE_INFO(power_info)
+)
 
 static void ebus_isa_irq_handler(void *opaque, int n, int level)
 {
@@ -389,17 +387,15 @@ static void ebus_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, ebus_properties);
 }
 
-static const TypeInfo ebus_info = {
-    .name          = TYPE_EBUS,
-    .parent        = TYPE_PCI_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(ebus_info,
+                            EbusState, void,
+                            EBUS, PCI_DEVICE,
     .class_init    = ebus_class_init,
-    .instance_size = sizeof(EbusState),
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(ebus_info)
+)
 
 #define TYPE_OPENPROM "openprom"
 typedef struct PROMState PROMState;
@@ -483,13 +479,11 @@ static void prom_class_init(ObjectClass *klass, void *data)
     dc->realize = prom_realize;
 }
 
-static const TypeInfo prom_info = {
-    .name          = TYPE_OPENPROM,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PROMState),
+OBJECT_DEFINE_TYPE_EXTENDED(prom_info,
+                            PROMState, void,
+                            OPENPROM, SYS_BUS_DEVICE,
     .class_init    = prom_class_init,
-};
-TYPE_INFO(prom_info)
+)
 
 
 #define TYPE_SUN4U_MEMORY "memory"
@@ -546,13 +540,11 @@ static void ram_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, ram_properties);
 }
 
-static const TypeInfo ram_info = {
-    .name          = TYPE_SUN4U_MEMORY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RamDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(ram_info,
+                            RamDevice, void,
+                            SUN4U_MEMORY, SYS_BUS_DEVICE,
     .class_init    = ram_class_init,
-};
-TYPE_INFO(ram_info)
+)
 
 static void sun4uv_init(MemoryRegion *address_space_mem,
                         MachineState *machine,

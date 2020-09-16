@@ -3594,13 +3594,11 @@ static void virtio_net_class_init(ObjectClass *klass, void *data)
     vdc->primary_unplug_pending = primary_unplug_pending;
 }
 
-static const TypeInfo virtio_net_info = {
-    .name = TYPE_VIRTIO_NET,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIONet),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_net_info,
+                            VirtIONet, void,
+                            VIRTIO_NET, VIRTIO_DEVICE,
     .instance_init = virtio_net_instance_init,
     .class_init = virtio_net_class_init,
-};
-TYPE_INFO(virtio_net_info)
+)
 
 

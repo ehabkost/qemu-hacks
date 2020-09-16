@@ -216,16 +216,13 @@ static void mips_cpu_class_init(ObjectClass *c, void *data)
     cc->gdb_stop_before_watchpoint = true;
 }
 
-static const TypeInfo mips_cpu_type_info = {
-    .name = TYPE_MIPS_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(MIPSCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(mips_cpu_type_info,
+                            MIPSCPU, MIPSCPUClass,
+                            MIPS_CPU, CPU,
     .instance_init = mips_cpu_initfn,
     .abstract = true,
-    .class_size = sizeof(MIPSCPUClass),
     .class_init = mips_cpu_class_init,
-};
-TYPE_INFO(mips_cpu_type_info)
+)
 
 static void mips_cpu_cpudef_class_init(ObjectClass *oc, void *data)
 {

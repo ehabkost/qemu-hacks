@@ -991,12 +991,10 @@ static void sysbus_esp_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo sysbus_esp_info = {
-    .name          = TYPE_ESP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SysBusESPState),
+OBJECT_DEFINE_TYPE_EXTENDED(sysbus_esp_info,
+                            SysBusESPState, void,
+                            ESP, SYS_BUS_DEVICE,
     .class_init    = sysbus_esp_class_init,
-};
-TYPE_INFO(sysbus_esp_info)
+)
 
 

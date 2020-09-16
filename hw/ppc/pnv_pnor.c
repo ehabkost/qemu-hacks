@@ -126,12 +126,10 @@ static void pnv_pnor_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, pnv_pnor_properties);
 }
 
-static const TypeInfo pnv_pnor_info = {
-    .name          = TYPE_PNV_PNOR,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PnvPnor),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_pnor_info,
+                            PnvPnor, void,
+                            PNV_PNOR, SYS_BUS_DEVICE,
     .class_init    = pnv_pnor_class_init,
-};
-TYPE_INFO(pnv_pnor_info)
+)
 
 

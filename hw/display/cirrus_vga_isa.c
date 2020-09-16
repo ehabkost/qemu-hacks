@@ -84,12 +84,10 @@ static void isa_cirrus_vga_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_DISPLAY, dc->categories);
 }
 
-static const TypeInfo isa_cirrus_vga_info = {
-    .name          = TYPE_ISA_CIRRUS_VGA,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISACirrusVGAState),
+OBJECT_DEFINE_TYPE_EXTENDED(isa_cirrus_vga_info,
+                            ISACirrusVGAState, void,
+                            ISA_CIRRUS_VGA, ISA_DEVICE,
     .class_init = isa_cirrus_vga_class_init,
-};
-TYPE_INFO(isa_cirrus_vga_info)
+)
 
 

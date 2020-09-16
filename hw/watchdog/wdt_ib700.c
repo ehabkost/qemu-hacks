@@ -143,13 +143,11 @@ static void wdt_ib700_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo wdt_ib700_info = {
-    .name          = TYPE_IB700,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(IB700State),
+OBJECT_DEFINE_TYPE_EXTENDED(wdt_ib700_info,
+                            IB700State, void,
+                            IB700, ISA_DEVICE,
     .class_init    = wdt_ib700_class_init,
-};
-TYPE_INFO(wdt_ib700_info)
+)
 
 static void wdt_ib700_register_types(void)
 {

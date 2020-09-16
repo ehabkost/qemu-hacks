@@ -1399,14 +1399,11 @@ static void m25p80_class_init(ObjectClass *klass, void *data)
     mc->pi = data;
 }
 
-static const TypeInfo m25p80_info = {
-    .name           = TYPE_M25P80,
-    .parent         = TYPE_SSI_SLAVE,
-    .instance_size  = sizeof(Flash),
-    .class_size     = sizeof(M25P80Class),
+OBJECT_DEFINE_TYPE_EXTENDED(m25p80_info,
+                            Flash, M25P80Class,
+                            M25P80, SSI_SLAVE,
     .abstract       = true,
-};
-TYPE_INFO(m25p80_info)
+)
 
 static void m25p80_register_types(void)
 {

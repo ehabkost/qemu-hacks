@@ -599,14 +599,12 @@ static void tz_mpc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, tz_mpc_properties);
 }
 
-static const TypeInfo tz_mpc_info = {
-    .name = TYPE_TZ_MPC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(TZMPC),
+OBJECT_DEFINE_TYPE_EXTENDED(tz_mpc_info,
+                            TZMPC, void,
+                            TZ_MPC, SYS_BUS_DEVICE,
     .instance_init = tz_mpc_init,
     .class_init = tz_mpc_class_init,
-};
-TYPE_INFO(tz_mpc_info)
+)
 
 static void tz_mpc_iommu_memory_region_class_init(ObjectClass *klass,
                                                   void *data)
@@ -618,11 +616,10 @@ static void tz_mpc_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->num_indexes = tz_mpc_num_indexes;
 }
 
-static const TypeInfo tz_mpc_iommu_memory_region_info = {
-    .name = TYPE_TZ_MPC_IOMMU_MEMORY_REGION,
-    .parent = TYPE_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(tz_mpc_iommu_memory_region_info,
+                            void, void,
+                            TZ_MPC_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = tz_mpc_iommu_memory_region_class_init,
-};
-TYPE_INFO(tz_mpc_iommu_memory_region_info)
+)
 
 

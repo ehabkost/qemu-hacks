@@ -141,19 +141,16 @@ qcrypto_secret_class_init(ObjectClass *oc, void *data)
 }
 
 
-static const TypeInfo qcrypto_secret_info = {
-    .parent = TYPE_QCRYPTO_SECRET_COMMON,
-    .name = TYPE_QCRYPTO_SECRET,
-    .instance_size = sizeof(QCryptoSecret),
+OBJECT_DEFINE_TYPE_EXTENDED(qcrypto_secret_info,
+                            QCryptoSecret, QCryptoSecretClass,
+                            QCRYPTO_SECRET, QCRYPTO_SECRET_COMMON,
     .instance_finalize = qcrypto_secret_finalize,
-    .class_size = sizeof(QCryptoSecretClass),
     .class_init = qcrypto_secret_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(qcrypto_secret_info)
+)
 
 
 

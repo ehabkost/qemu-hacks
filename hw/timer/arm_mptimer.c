@@ -315,13 +315,11 @@ static void arm_mptimer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, arm_mptimer_properties);
 }
 
-static const TypeInfo arm_mptimer_info = {
-    .name          = TYPE_ARM_MPTIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARMMPTimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(arm_mptimer_info,
+                            ARMMPTimerState, void,
+                            ARM_MPTIMER, SYS_BUS_DEVICE,
     .instance_init = arm_mptimer_init,
     .class_init    = arm_mptimer_class_init,
-};
-TYPE_INFO(arm_mptimer_info)
+)
 
 

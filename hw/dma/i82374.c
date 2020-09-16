@@ -153,12 +153,10 @@ static void i82374_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, i82374_properties);
 }
 
-static const TypeInfo i82374_info = {
-    .name  = TYPE_I82374,
-    .parent = TYPE_ISA_DEVICE,
-    .instance_size  = sizeof(I82374State),
+OBJECT_DEFINE_TYPE_EXTENDED(i82374_info,
+                            I82374State, void,
+                            I82374, ISA_DEVICE,
     .class_init = i82374_class_init,
-};
-TYPE_INFO(i82374_info)
+)
 
 

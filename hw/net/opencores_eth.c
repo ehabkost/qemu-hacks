@@ -758,12 +758,10 @@ static void open_eth_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, open_eth_properties);
 }
 
-static const TypeInfo open_eth_info = {
-    .name          = TYPE_OPEN_ETH,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(OpenEthState),
+OBJECT_DEFINE_TYPE_EXTENDED(open_eth_info,
+                            OpenEthState, void,
+                            OPEN_ETH, SYS_BUS_DEVICE,
     .class_init    = open_eth_class_init,
-};
-TYPE_INFO(open_eth_info)
+)
 
 

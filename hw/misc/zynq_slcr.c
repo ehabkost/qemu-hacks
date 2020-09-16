@@ -610,13 +610,11 @@ static void zynq_slcr_class_init(ObjectClass *klass, void *data)
     rc->phases.exit  = zynq_slcr_reset_exit;
 }
 
-static const TypeInfo zynq_slcr_info = {
+OBJECT_DEFINE_TYPE_EXTENDED(zynq_slcr_info,
+                            ZynqSLCRState, void,
+                            ZYNQ_SLCR, SYS_BUS_DEVICE,
     .class_init = zynq_slcr_class_init,
-    .name  = TYPE_ZYNQ_SLCR,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(ZynqSLCRState),
     .instance_init = zynq_slcr_init,
-};
-TYPE_INFO(zynq_slcr_info)
+)
 
 

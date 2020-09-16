@@ -429,14 +429,12 @@ static void etsec_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = true;
 }
 
-static TypeInfo etsec_info = {
-    .name                  = TYPE_ETSEC_COMMON,
-    .parent                = TYPE_SYS_BUS_DEVICE,
-    .instance_size         = sizeof(eTSEC),
+OBJECT_DEFINE_TYPE_EXTENDED(etsec_info,
+                            eTSEC, void,
+                            ETSEC_COMMON, SYS_BUS_DEVICE,
     .class_init            = etsec_class_init,
     .instance_init         = etsec_instance_init,
-};
-TYPE_INFO(etsec_info)
+)
 
 
 

@@ -1802,14 +1802,12 @@ static void sysbus_ahci_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo sysbus_ahci_info = {
-    .name          = TYPE_SYSBUS_AHCI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SysbusAHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sysbus_ahci_info,
+                            SysbusAHCIState, void,
+                            SYSBUS_AHCI, SYS_BUS_DEVICE,
     .instance_init = sysbus_ahci_init,
     .class_init    = sysbus_ahci_class_init,
-};
-TYPE_INFO(sysbus_ahci_info)
+)
 
 
 

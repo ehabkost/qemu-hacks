@@ -407,12 +407,10 @@ static void mss_spi_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_mss_spi;
 }
 
-static const TypeInfo mss_spi_info = {
-    .name           = TYPE_MSS_SPI,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(MSSSpiState),
+OBJECT_DEFINE_TYPE_EXTENDED(mss_spi_info,
+                            MSSSpiState, void,
+                            MSS_SPI, SYS_BUS_DEVICE,
     .class_init     = mss_spi_class_init,
-};
-TYPE_INFO(mss_spi_info)
+)
 
 

@@ -94,12 +94,10 @@ static void gpio_key_class_init(ObjectClass *klass, void *data)
     dc->reset = &gpio_key_reset;
 }
 
-static const TypeInfo gpio_key_info = {
-    .name          = TYPE_GPIOKEY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(GPIOKEYState),
+OBJECT_DEFINE_TYPE_EXTENDED(gpio_key_info,
+                            GPIOKEYState, void,
+                            GPIOKEY, SYS_BUS_DEVICE,
     .class_init    = gpio_key_class_init,
-};
-TYPE_INFO(gpio_key_info)
+)
 
 

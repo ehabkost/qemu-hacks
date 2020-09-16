@@ -76,12 +76,9 @@ struct FloppyBus {
     FDCtrl *fdc;
 };
 
-static const TypeInfo floppy_bus_info = {
-    .name = TYPE_FLOPPY_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(FloppyBus),
-};
-TYPE_INFO(floppy_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(floppy_bus_info,
+                            FloppyBus, void,
+                            FLOPPY_BUS, BUS)
 
 static void floppy_bus_create(FDCtrl *fdc, FloppyBus *bus, DeviceState *dev)
 {
@@ -615,13 +612,11 @@ static void floppy_drive_class_init(ObjectClass *klass, void *data)
     k->desc = "virtual floppy drive";
 }
 
-static const TypeInfo floppy_drive_info = {
-    .name = TYPE_FLOPPY_DRIVE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(FloppyDrive),
+OBJECT_DEFINE_TYPE_EXTENDED(floppy_drive_info,
+                            FloppyDrive, void,
+                            FLOPPY_DRIVE, DEVICE,
     .class_init = floppy_drive_class_init,
-};
-TYPE_INFO(floppy_drive_info)
+)
 
 /********************************************************/
 /* Intel 82078 floppy disk controller emulation          */
@@ -2935,14 +2930,12 @@ static void isabus_fdc_instance_init(Object *obj)
                                   DEVICE(obj));
 }
 
-static const TypeInfo isa_fdc_info = {
-    .name          = TYPE_ISA_FDC,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(FDCtrlISABus),
+OBJECT_DEFINE_TYPE_EXTENDED(isa_fdc_info,
+                            FDCtrlISABus, void,
+                            ISA_FDC, ISA_DEVICE,
     .class_init    = isabus_fdc_class_init,
     .instance_init = isabus_fdc_instance_init,
-};
-TYPE_INFO(isa_fdc_info)
+)
 
 static const VMStateDescription vmstate_sysbus_fdc ={
     .name = "fdc",
@@ -3021,14 +3014,12 @@ static void sysbus_fdc_common_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_sysbus_fdc;
 }
 
-static const TypeInfo sysbus_fdc_type_info = {
-    .name          = TYPE_SYSBUS_FDC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(FDCtrlSysBus),
+OBJECT_DEFINE_TYPE_EXTENDED(sysbus_fdc_type_info,
+                            FDCtrlSysBus, void,
+                            SYSBUS_FDC, SYS_BUS_DEVICE,
     .instance_init = sysbus_fdc_common_initfn,
     .abstract      = true,
     .class_init    = sysbus_fdc_common_class_init,
-};
-TYPE_INFO(sysbus_fdc_type_info)
+)
 
 

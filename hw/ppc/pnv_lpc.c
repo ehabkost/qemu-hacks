@@ -643,16 +643,15 @@ static void pnv_lpc_power8_class_init(ObjectClass *klass, void *data)
                                     &plc->parent_realize);
 }
 
-static const TypeInfo pnv_lpc_power8_info = {
-    .name          = TYPE_PNV8_LPC,
-    .parent        = TYPE_PNV_LPC,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_lpc_power8_info,
+                            void, void,
+                            PNV8_LPC, PNV_LPC,
     .class_init    = pnv_lpc_power8_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_PNV_XSCOM_INTERFACE },
         { }
     }
-};
-TYPE_INFO(pnv_lpc_power8_info)
+)
 
 static void pnv_lpc_power9_realize(DeviceState *dev, Error **errp)
 {
@@ -684,12 +683,11 @@ static void pnv_lpc_power9_class_init(ObjectClass *klass, void *data)
                                     &plc->parent_realize);
 }
 
-static const TypeInfo pnv_lpc_power9_info = {
-    .name          = TYPE_PNV9_LPC,
-    .parent        = TYPE_PNV_LPC,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_lpc_power9_info,
+                            void, void,
+                            PNV9_LPC, PNV_LPC,
     .class_init    = pnv_lpc_power9_class_init,
-};
-TYPE_INFO(pnv_lpc_power9_info)
+)
 
 static void pnv_lpc_power10_class_init(ObjectClass *klass, void *data)
 {
@@ -698,12 +696,11 @@ static void pnv_lpc_power10_class_init(ObjectClass *klass, void *data)
     dc->desc = "PowerNV LPC Controller POWER10";
 }
 
-static const TypeInfo pnv_lpc_power10_info = {
-    .name          = TYPE_PNV10_LPC,
-    .parent        = TYPE_PNV9_LPC,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_lpc_power10_info,
+                            void, void,
+                            PNV10_LPC, PNV9_LPC,
     .class_init    = pnv_lpc_power10_class_init,
-};
-TYPE_INFO(pnv_lpc_power10_info)
+)
 
 static void pnv_lpc_realize(DeviceState *dev, Error **errp)
 {
@@ -766,15 +763,12 @@ static void pnv_lpc_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pnv_lpc_info = {
-    .name          = TYPE_PNV_LPC,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvLpcController),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_lpc_info,
+                            PnvLpcController, PnvLpcClass,
+                            PNV_LPC, DEVICE,
     .class_init    = pnv_lpc_class_init,
-    .class_size    = sizeof(PnvLpcClass),
     .abstract      = true,
-};
-TYPE_INFO(pnv_lpc_info)
+)
 
 
 

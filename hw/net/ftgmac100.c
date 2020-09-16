@@ -1158,13 +1158,11 @@ static void ftgmac100_class_init(ObjectClass *klass, void *data)
     dc->desc = "Faraday FTGMAC100 Gigabit Ethernet emulation";
 }
 
-static const TypeInfo ftgmac100_info = {
-    .name = TYPE_FTGMAC100,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(FTGMAC100State),
+OBJECT_DEFINE_TYPE_EXTENDED(ftgmac100_info,
+                            FTGMAC100State, void,
+                            FTGMAC100, SYS_BUS_DEVICE,
     .class_init = ftgmac100_class_init,
-};
-TYPE_INFO(ftgmac100_info)
+)
 
 /*
  * AST2600 MII controller
@@ -1318,12 +1316,10 @@ static void aspeed_mii_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, aspeed_mii_properties);
 }
 
-static const TypeInfo aspeed_mii_info = {
-    .name = TYPE_ASPEED_MII,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedMiiState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_mii_info,
+                            AspeedMiiState, void,
+                            ASPEED_MII, SYS_BUS_DEVICE,
     .class_init = aspeed_mii_class_init,
-};
-TYPE_INFO(aspeed_mii_info)
+)
 
 

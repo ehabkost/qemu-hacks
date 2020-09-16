@@ -102,22 +102,18 @@ static void virtio_tablet_initfn(Object *obj)
                                 TYPE_VIRTIO_TABLET);
 }
 
-static const TypeInfo virtio_input_pci_info = {
-    .name          = TYPE_VIRTIO_INPUT_PCI,
-    .parent        = TYPE_VIRTIO_PCI,
-    .instance_size = sizeof(VirtIOInputPCI),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_input_pci_info,
+                            VirtIOInputPCI, void,
+                            VIRTIO_INPUT_PCI, VIRTIO_PCI,
     .class_init    = virtio_input_pci_class_init,
     .abstract      = true,
-};
-TYPE_INFO(virtio_input_pci_info)
+)
 
-static const TypeInfo virtio_input_hid_pci_info = {
-    .name          = TYPE_VIRTIO_INPUT_HID_PCI,
-    .parent        = TYPE_VIRTIO_INPUT_PCI,
-    .instance_size = sizeof(VirtIOInputHIDPCI),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_input_hid_pci_info,
+                            VirtIOInputHIDPCI, void,
+                            VIRTIO_INPUT_HID_PCI, VIRTIO_INPUT_PCI,
     .abstract      = true,
-};
-TYPE_INFO(virtio_input_hid_pci_info)
+)
 
 static const VirtioPCIDeviceTypeInfo virtio_keyboard_pci_info = {
     .generic_name  = TYPE_VIRTIO_KEYBOARD_PCI,

@@ -542,13 +542,11 @@ static void xlnx_pmu_io_intc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, xlnx_pmu_io_intc_properties);
 }
 
-static const TypeInfo xlnx_pmu_io_intc_info = {
-    .name          = TYPE_XLNX_PMU_IO_INTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XlnxPMUIOIntc),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_pmu_io_intc_info,
+                            XlnxPMUIOIntc, void,
+                            XLNX_PMU_IO_INTC, SYS_BUS_DEVICE,
     .class_init    = xlnx_pmu_io_intc_class_init,
     .instance_init = xlnx_pmu_io_intc_init,
-};
-TYPE_INFO(xlnx_pmu_io_intc_info)
+)
 
 

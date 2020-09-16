@@ -177,13 +177,11 @@ static void char_msmouse_class_init(ObjectClass *oc, void *data)
     cc->chr_accept_input = msmouse_chr_accept_input;
 }
 
-static const TypeInfo char_msmouse_type_info = {
-    .name = TYPE_CHARDEV_MSMOUSE,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(MouseChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_msmouse_type_info,
+                            MouseChardev, void,
+                            CHARDEV_MSMOUSE, CHARDEV,
     .instance_finalize = char_msmouse_finalize,
     .class_init = char_msmouse_class_init,
-};
-TYPE_INFO(char_msmouse_type_info)
+)
 
 

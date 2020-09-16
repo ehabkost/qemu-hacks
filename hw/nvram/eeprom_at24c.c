@@ -189,14 +189,10 @@ void at24c_eeprom_class_init(ObjectClass *klass, void *data)
     dc->reset = at24c_eeprom_reset;
 }
 
-static
-const TypeInfo at24c_eeprom_type = {
-    .name = TYPE_AT24C_EE,
-    .parent = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(EEPROMState),
-    .class_size = sizeof(I2CSlaveClass),
+OBJECT_DEFINE_TYPE_EXTENDED(at24c_eeprom_type,
+                            EEPROMState, I2CSlaveClass,
+                            AT24C_EE, I2C_SLAVE,
     .class_init = at24c_eeprom_class_init,
-};
-TYPE_INFO(at24c_eeprom_type)
+)
 
 

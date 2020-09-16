@@ -121,13 +121,11 @@ static void mpcore_rirq_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, mpcore_rirq_properties);
 }
 
-static const TypeInfo mpcore_rirq_info = {
-    .name          = TYPE_REALVIEW_MPCORE_RIRQ,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mpcore_rirq_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mpcore_rirq_info,
+                            mpcore_rirq_state, void,
+                            REALVIEW_MPCORE_RIRQ, SYS_BUS_DEVICE,
     .instance_init = mpcore_rirq_init,
     .class_init    = mpcore_rirq_class_init,
-};
-TYPE_INFO(mpcore_rirq_info)
+)
 
 

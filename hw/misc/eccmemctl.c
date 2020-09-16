@@ -340,14 +340,12 @@ static void ecc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, ecc_properties);
 }
 
-static const TypeInfo ecc_info = {
-    .name          = TYPE_ECC_MEMCTL,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ECCState),
+OBJECT_DEFINE_TYPE_EXTENDED(ecc_info,
+                            ECCState, void,
+                            ECC_MEMCTL, SYS_BUS_DEVICE,
     .instance_init = ecc_init,
     .class_init    = ecc_class_init,
-};
-TYPE_INFO(ecc_info)
+)
 
 
 

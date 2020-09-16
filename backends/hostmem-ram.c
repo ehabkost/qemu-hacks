@@ -40,11 +40,10 @@ ram_backend_class_init(ObjectClass *oc, void *data)
     bc->alloc = ram_backend_memory_alloc;
 }
 
-static const TypeInfo ram_backend_info = {
-    .name = TYPE_MEMORY_BACKEND_RAM,
-    .parent = TYPE_MEMORY_BACKEND,
+OBJECT_DEFINE_TYPE_EXTENDED(ram_backend_info,
+                            void, void,
+                            MEMORY_BACKEND_RAM, MEMORY_BACKEND,
     .class_init = ram_backend_class_init,
-};
-TYPE_INFO(ram_backend_info)
+)
 
 

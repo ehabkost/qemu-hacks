@@ -153,14 +153,12 @@ static void char_fd_class_init(ObjectClass *oc, void *data)
     cc->chr_update_read_handler = fd_chr_update_read_handler;
 }
 
-static const TypeInfo char_fd_type_info = {
-    .name = TYPE_CHARDEV_FD,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(FDChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_fd_type_info,
+                            FDChardev, void,
+                            CHARDEV_FD, CHARDEV,
     .instance_finalize = char_fd_finalize,
     .class_init = char_fd_class_init,
     .abstract = true,
-};
-TYPE_INFO(char_fd_type_info)
+)
 
 

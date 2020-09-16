@@ -2965,15 +2965,12 @@ static void scsi_disk_base_class_initfn(ObjectClass *klass, void *data)
     sdc->need_fua_emulation = scsi_is_cmd_fua;
 }
 
-static const TypeInfo scsi_disk_base_info = {
-    .name          = TYPE_SCSI_DISK_BASE,
-    .parent        = TYPE_SCSI_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(scsi_disk_base_info,
+                            SCSIDiskState, SCSIDiskClass,
+                            SCSI_DISK_BASE, SCSI_DEVICE,
     .class_init    = scsi_disk_base_class_initfn,
-    .instance_size = sizeof(SCSIDiskState),
-    .class_size    = sizeof(SCSIDiskClass),
     .abstract      = true,
-};
-TYPE_INFO(scsi_disk_base_info)
+)
 
 #define DEFINE_SCSI_DISK_PROPERTIES()                                   \
     DEFINE_PROP_DRIVE_IOTHREAD("drive", SCSIDiskState, qdev.conf.blk),  \

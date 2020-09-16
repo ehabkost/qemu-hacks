@@ -65,11 +65,10 @@ static void kvm_s390_skeys_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo kvm_s390_skeys_info = {
-    .name          = TYPE_KVM_S390_SKEYS,
-    .parent        = TYPE_S390_SKEYS,
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_s390_skeys_info,
+                            void, void,
+                            KVM_S390_SKEYS, S390_SKEYS,
     .class_init    = kvm_s390_skeys_class_init,
-};
-TYPE_INFO(kvm_s390_skeys_info)
+)
 
 

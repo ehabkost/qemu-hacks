@@ -147,13 +147,11 @@ static void msf2_sysreg_class_init(ObjectClass *klass, void *data)
     dc->realize = msf2_sysreg_realize;
 }
 
-static const TypeInfo msf2_sysreg_info = {
-    .name  = TYPE_MSF2_SYSREG,
-    .parent = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(msf2_sysreg_info,
+                            MSF2SysregState, void,
+                            MSF2_SYSREG, SYS_BUS_DEVICE,
     .class_init = msf2_sysreg_class_init,
-    .instance_size  = sizeof(MSF2SysregState),
     .instance_init = msf2_sysreg_init,
-};
-TYPE_INFO(msf2_sysreg_info)
+)
 
 

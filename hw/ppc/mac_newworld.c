@@ -634,17 +634,15 @@ static void core99_instance_init(Object *obj)
     return;
 }
 
-static const TypeInfo core99_machine_info = {
-    .name          = TYPE_CORE99_MACHINE,
-    .parent        = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(core99_machine_info,
+                            Core99MachineState, void,
+                            CORE99_MACHINE, MACHINE,
     .class_init    = core99_machine_class_init,
     .instance_init = core99_instance_init,
-    .instance_size = sizeof(Core99MachineState),
     .interfaces = (InterfaceInfo[]) {
         { TYPE_FW_PATH_PROVIDER },
         { }
     },
-};
-TYPE_INFO(core99_machine_info)
+)
 
 

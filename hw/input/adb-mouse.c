@@ -262,14 +262,11 @@ static void adb_mouse_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_adb_mouse;
 }
 
-static const TypeInfo adb_mouse_type_info = {
-    .name = TYPE_ADB_MOUSE,
-    .parent = TYPE_ADB_DEVICE,
-    .instance_size = sizeof(MouseState),
+OBJECT_DEFINE_TYPE_EXTENDED(adb_mouse_type_info,
+                            MouseState, ADBMouseClass,
+                            ADB_MOUSE, ADB_DEVICE,
     .instance_init = adb_mouse_initfn,
     .class_init = adb_mouse_class_init,
-    .class_size = sizeof(ADBMouseClass),
-};
-TYPE_INFO(adb_mouse_type_info)
+)
 
 

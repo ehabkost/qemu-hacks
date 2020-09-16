@@ -104,12 +104,10 @@ static void puv3_dma_class_init(ObjectClass *klass, void *data)
     dc->realize = puv3_dma_realize;
 }
 
-static const TypeInfo puv3_dma_info = {
-    .name = TYPE_PUV3_DMA,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PUV3DMAState),
+OBJECT_DEFINE_TYPE_EXTENDED(puv3_dma_info,
+                            PUV3DMAState, void,
+                            PUV3_DMA, SYS_BUS_DEVICE,
     .class_init = puv3_dma_class_init,
-};
-TYPE_INFO(puv3_dma_info)
+)
 
 

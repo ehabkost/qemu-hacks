@@ -208,13 +208,11 @@ static void mpc8xxx_gpio_class_init(ObjectClass *klass, void *data)
     dc->reset = mpc8xxx_gpio_reset;
 }
 
-static const TypeInfo mpc8xxx_gpio_info = {
-    .name          = TYPE_MPC8XXX_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MPC8XXXGPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(mpc8xxx_gpio_info,
+                            MPC8XXXGPIOState, void,
+                            MPC8XXX_GPIO, SYS_BUS_DEVICE,
     .instance_init = mpc8xxx_gpio_initfn,
     .class_init    = mpc8xxx_gpio_class_init,
-};
-TYPE_INFO(mpc8xxx_gpio_info)
+)
 
 

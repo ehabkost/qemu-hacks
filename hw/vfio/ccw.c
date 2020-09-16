@@ -734,12 +734,10 @@ static void vfio_ccw_class_init(ObjectClass *klass, void *data)
     cdc->handle_store = vfio_ccw_handle_store;
 }
 
-static const TypeInfo vfio_ccw_info = {
-    .name = TYPE_VFIO_CCW,
-    .parent = TYPE_S390_CCW,
-    .instance_size = sizeof(VFIOCCWDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(vfio_ccw_info,
+                            VFIOCCWDevice, void,
+                            VFIO_CCW, S390_CCW,
     .class_init = vfio_ccw_class_init,
-};
-TYPE_INFO(vfio_ccw_info)
+)
 
 

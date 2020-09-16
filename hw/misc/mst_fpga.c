@@ -253,13 +253,11 @@ static void mst_fpga_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_mst_fpga_regs;
 }
 
-static const TypeInfo mst_fpga_info = {
-    .name          = TYPE_MAINSTONE_FPGA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mst_irq_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mst_fpga_info,
+                            mst_irq_state, void,
+                            MAINSTONE_FPGA, SYS_BUS_DEVICE,
     .instance_init = mst_fpga_init,
     .class_init    = mst_fpga_class_init,
-};
-TYPE_INFO(mst_fpga_info)
+)
 
 

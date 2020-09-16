@@ -382,12 +382,10 @@ static void sifive_gpio_class_init(ObjectClass *klass, void *data)
     dc->desc = "SiFive GPIO";
 }
 
-static const TypeInfo sifive_gpio_info = {
-    .name = TYPE_SIFIVE_GPIO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SIFIVEGPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_gpio_info,
+                            SIFIVEGPIOState, void,
+                            SIFIVE_GPIO, SYS_BUS_DEVICE,
     .class_init = sifive_gpio_class_init
-};
-TYPE_INFO(sifive_gpio_info)
+)
 
 

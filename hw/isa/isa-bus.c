@@ -39,20 +39,15 @@ static void isa_bus_class_init(ObjectClass *klass, void *data)
     k->get_fw_dev_path = isabus_get_fw_dev_path;
 }
 
-static const TypeInfo isa_dma_info = {
-    .name = TYPE_ISADMA,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(IsaDmaClass),
-};
-TYPE_INFO(isa_dma_info)
+OBJECT_DEFINE_TYPE_EXTENDED(isa_dma_info,
+                            void, IsaDmaClass,
+                            ISADMA, INTERFACE)
 
-static const TypeInfo isa_bus_info = {
-    .name = TYPE_ISA_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(ISABus),
+OBJECT_DEFINE_TYPE_EXTENDED(isa_bus_info,
+                            ISABus, void,
+                            ISA_BUS, BUS,
     .class_init = isa_bus_class_init,
-};
-TYPE_INFO(isa_bus_info)
+)
 
 ISABus *isa_bus_new(DeviceState *dev, MemoryRegion* address_space,
                     MemoryRegion *address_space_io, Error **errp)
@@ -252,16 +247,13 @@ static void isa_device_class_init(ObjectClass *klass, void *data)
     k->bus_type = TYPE_ISA_BUS;
 }
 
-static const TypeInfo isa_device_type_info = {
-    .name = TYPE_ISA_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(ISADevice),
+OBJECT_DEFINE_TYPE_EXTENDED(isa_device_type_info,
+                            ISADevice, ISADeviceClass,
+                            ISA_DEVICE, DEVICE,
     .instance_init = isa_device_init,
     .abstract = true,
-    .class_size = sizeof(ISADeviceClass),
     .class_init = isa_device_class_init,
-};
-TYPE_INFO(isa_device_type_info)
+)
 
 
 static char *isabus_get_fw_dev_path(DeviceState *dev)

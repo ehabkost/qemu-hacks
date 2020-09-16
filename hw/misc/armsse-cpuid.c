@@ -119,13 +119,11 @@ static void armsse_cpuid_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, armsse_cpuid_props);
 }
 
-static const TypeInfo armsse_cpuid_info = {
-    .name = TYPE_ARMSSE_CPUID,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARMSSECPUID),
+OBJECT_DEFINE_TYPE_EXTENDED(armsse_cpuid_info,
+                            ARMSSECPUID, void,
+                            ARMSSE_CPUID, SYS_BUS_DEVICE,
     .instance_init = armsse_cpuid_init,
     .class_init = armsse_cpuid_class_init,
-};
-TYPE_INFO(armsse_cpuid_info)
+)
 
 

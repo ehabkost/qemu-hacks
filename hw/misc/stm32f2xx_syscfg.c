@@ -147,13 +147,11 @@ static void stm32f2xx_syscfg_class_init(ObjectClass *klass, void *data)
     dc->reset = stm32f2xx_syscfg_reset;
 }
 
-static const TypeInfo stm32f2xx_syscfg_info = {
-    .name          = TYPE_STM32F2XX_SYSCFG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F2XXSyscfgState),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f2xx_syscfg_info,
+                            STM32F2XXSyscfgState, void,
+                            STM32F2XX_SYSCFG, SYS_BUS_DEVICE,
     .instance_init = stm32f2xx_syscfg_init,
     .class_init    = stm32f2xx_syscfg_class_init,
-};
-TYPE_INFO(stm32f2xx_syscfg_info)
+)
 
 

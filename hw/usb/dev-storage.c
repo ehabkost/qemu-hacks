@@ -758,14 +758,12 @@ out:
     error_propagate(errp, local_err);
 }
 
-static const TypeInfo usb_storage_dev_type_info = {
-    .name = TYPE_USB_STORAGE,
-    .parent = TYPE_USB_DEVICE,
-    .instance_size = sizeof(MSDState),
+OBJECT_DEFINE_TYPE_EXTENDED(usb_storage_dev_type_info,
+                            MSDState, void,
+                            USB_STORAGE, USB_DEVICE,
     .abstract = true,
     .class_init = usb_msd_class_initfn_common,
-};
-TYPE_INFO(usb_storage_dev_type_info)
+)
 
 static void usb_msd_instance_init(Object *obj)
 {

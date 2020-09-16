@@ -896,14 +896,12 @@ static void hda_audio_base_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, hda_audio_properties);
 }
 
-static const TypeInfo hda_audio_info = {
-    .name          = TYPE_HDA_AUDIO,
-    .parent        = TYPE_HDA_CODEC_DEVICE,
-    .instance_size = sizeof(HDAAudioState),
+OBJECT_DEFINE_TYPE_EXTENDED(hda_audio_info,
+                            HDAAudioState, void,
+                            HDA_AUDIO, HDA_CODEC_DEVICE,
     .class_init    = hda_audio_base_class_init,
     .abstract      = true,
-};
-TYPE_INFO(hda_audio_info)
+)
 
 static void hda_audio_output_class_init(ObjectClass *klass, void *data)
 {

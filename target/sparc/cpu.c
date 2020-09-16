@@ -888,16 +888,13 @@ static void sparc_cpu_class_init(ObjectClass *oc, void *data)
 #endif
 }
 
-static const TypeInfo sparc_cpu_type_info = {
-    .name = TYPE_SPARC_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(SPARCCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(sparc_cpu_type_info,
+                            SPARCCPU, SPARCCPUClass,
+                            SPARC_CPU, CPU,
     .instance_init = sparc_cpu_initfn,
     .abstract = true,
-    .class_size = sizeof(SPARCCPUClass),
     .class_init = sparc_cpu_class_init,
-};
-TYPE_INFO(sparc_cpu_type_info)
+)
 
 static void sparc_cpu_cpudef_class_init(ObjectClass *oc, void *data)
 {

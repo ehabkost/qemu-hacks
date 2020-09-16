@@ -131,12 +131,10 @@ static void nextfb_class_init(ObjectClass *oc, void *data)
     /* Note: This device does not any state that we have to reset or migrate */
 }
 
-static const TypeInfo nextfb_info = {
-    .name          = TYPE_NEXTFB,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NeXTFbState),
+OBJECT_DEFINE_TYPE_EXTENDED(nextfb_info,
+                            NeXTFbState, void,
+                            NEXTFB, SYS_BUS_DEVICE,
     .class_init    = nextfb_class_init,
-};
-TYPE_INFO(nextfb_info)
+)
 
 

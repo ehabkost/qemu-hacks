@@ -425,12 +425,10 @@ static void pnv_quad_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pnv_quad_info = {
-    .name          = TYPE_PNV_QUAD,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvQuad),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_quad_info,
+                            PnvQuad, void,
+                            PNV_QUAD, DEVICE,
     .class_init    = pnv_quad_class_init,
-};
-TYPE_INFO(pnv_quad_info)
+)
 
 

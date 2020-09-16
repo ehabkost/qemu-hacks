@@ -208,11 +208,10 @@ static void xen_accel_class_init(ObjectClass *oc, void *data)
 
 #define TYPE_XEN_ACCEL ACCEL_CLASS_NAME("xen")
 
-static const TypeInfo xen_accel_type = {
-    .name = TYPE_XEN_ACCEL,
-    .parent = TYPE_ACCEL,
+OBJECT_DEFINE_TYPE_EXTENDED(xen_accel_type,
+                            void, void,
+                            XEN_ACCEL, ACCEL,
     .class_init = xen_accel_class_init,
-};
-TYPE_INFO(xen_accel_type)
+)
 
 

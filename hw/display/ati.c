@@ -1033,16 +1033,14 @@ static void ati_vga_class_init(ObjectClass *klass, void *data)
     k->exit = ati_vga_exit;
 }
 
-static const TypeInfo ati_vga_info = {
-    .name = TYPE_ATI_VGA,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(ATIVGAState),
+OBJECT_DEFINE_TYPE_EXTENDED(ati_vga_info,
+                            ATIVGAState, void,
+                            ATI_VGA, PCI_DEVICE,
     .class_init = ati_vga_class_init,
     .interfaces = (InterfaceInfo[]) {
           { INTERFACE_CONVENTIONAL_PCI_DEVICE },
           { },
     },
-};
-TYPE_INFO(ati_vga_info)
+)
 
 

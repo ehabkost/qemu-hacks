@@ -127,10 +127,9 @@ static void pci_ipmi_bt_class_init(ObjectClass *oc, void *data)
     ipmi_bt_class_init(iic);
 }
 
-static const TypeInfo pci_ipmi_bt_info = {
-    .name          = TYPE_PCI_IPMI_BT,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIIPMIBTDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_ipmi_bt_info,
+                            PCIIPMIBTDevice, void,
+                            PCI_IPMI_BT, PCI_DEVICE,
     .instance_init = pci_ipmi_bt_instance_init,
     .class_init    = pci_ipmi_bt_class_init,
     .interfaces = (InterfaceInfo[]) {
@@ -138,7 +137,6 @@ static const TypeInfo pci_ipmi_bt_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(pci_ipmi_bt_info)
+)
 
 

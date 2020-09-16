@@ -2335,17 +2335,15 @@ static void lsi_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo lsi_info = {
-    .name          = TYPE_LSI53C895A,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(LSIState),
+OBJECT_DEFINE_TYPE_EXTENDED(lsi_info,
+                            LSIState, void,
+                            LSI53C895A, PCI_DEVICE,
     .class_init    = lsi_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(lsi_info)
+)
 
 static void lsi53c810_class_init(ObjectClass *klass, void *data)
 {
@@ -2354,12 +2352,11 @@ static void lsi53c810_class_init(ObjectClass *klass, void *data)
     k->device_id = PCI_DEVICE_ID_LSI_53C810;
 }
 
-static TypeInfo lsi53c810_info = {
-    .name          = TYPE_LSI53C810,
-    .parent        = TYPE_LSI53C895A,
+OBJECT_DEFINE_TYPE_EXTENDED(lsi53c810_info,
+                            void, void,
+                            LSI53C810, LSI53C895A,
     .class_init    = lsi53c810_class_init,
-};
-TYPE_INFO(lsi53c810_info)
+)
 
 
 

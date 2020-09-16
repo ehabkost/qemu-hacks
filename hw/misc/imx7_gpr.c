@@ -109,12 +109,10 @@ static void imx7_gpr_class_init(ObjectClass *klass, void *data)
     dc->desc  = "i.MX7 General Purpose Registers Module";
 }
 
-static const TypeInfo imx7_gpr_info = {
-    .name          = TYPE_IMX7_GPR,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMX7GPRState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx7_gpr_info,
+                            IMX7GPRState, void,
+                            IMX7_GPR, SYS_BUS_DEVICE,
     .instance_init = imx7_gpr_init,
     .class_init    = imx7_gpr_class_init,
-};
-TYPE_INFO(imx7_gpr_info)
+)
 

@@ -2486,17 +2486,15 @@ static void nvme_instance_init(Object *obj)
                                   DEVICE(obj));
 }
 
-static const TypeInfo nvme_info = {
-    .name          = TYPE_NVME,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(NvmeCtrl),
+OBJECT_DEFINE_TYPE_EXTENDED(nvme_info,
+                            NvmeCtrl, void,
+                            NVME, PCI_DEVICE,
     .class_init    = nvme_class_init,
     .instance_init = nvme_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
         { }
     },
-};
-TYPE_INFO(nvme_info)
+)
 
 

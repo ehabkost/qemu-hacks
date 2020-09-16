@@ -319,10 +319,9 @@ sev_guest_instance_init(Object *obj)
 }
 
 /* sev guest info */
-static const TypeInfo sev_guest_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_SEV_GUEST,
-    .instance_size = sizeof(SevGuestState),
+OBJECT_DEFINE_TYPE_EXTENDED(sev_guest_info,
+                            SevGuestState, void,
+                            SEV_GUEST, OBJECT,
     .instance_finalize = sev_guest_finalize,
     .class_init = sev_guest_class_init,
     .instance_init = sev_guest_instance_init,
@@ -330,8 +329,7 @@ static const TypeInfo sev_guest_info = {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(sev_guest_info)
+)
 
 static SevGuestState *
 lookup_sev_guest_info(const char *id)

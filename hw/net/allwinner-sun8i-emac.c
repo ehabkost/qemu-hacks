@@ -865,13 +865,11 @@ static void allwinner_sun8i_emac_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, allwinner_sun8i_emac_properties);
 }
 
-static const TypeInfo allwinner_sun8i_emac_info = {
-    .name           = TYPE_AW_SUN8I_EMAC,
-    .parent         = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(AwSun8iEmacState),
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_sun8i_emac_info,
+                            AwSun8iEmacState, void,
+                            AW_SUN8I_EMAC, SYS_BUS_DEVICE,
     .instance_init  = allwinner_sun8i_emac_init,
     .class_init     = allwinner_sun8i_emac_class_init,
-};
-TYPE_INFO(allwinner_sun8i_emac_info)
+)
 
 

@@ -23,12 +23,9 @@
 
 #include "trace.h"
 
-static const TypeInfo spapr_intc_info = {
-    .name = TYPE_SPAPR_INTC,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(SpaprInterruptControllerClass),
-};
-TYPE_INFO(spapr_intc_info)
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_intc_info,
+                            void, SpaprInterruptControllerClass,
+                            SPAPR_INTC, INTERFACE)
 
 static void spapr_irq_msi_init(SpaprMachineState *spapr)
 {

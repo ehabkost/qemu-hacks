@@ -109,17 +109,15 @@ static void serial_pci_init(Object *o)
     object_initialize_child(o, "serial", &ps->state, TYPE_SERIAL);
 }
 
-static const TypeInfo serial_pci_info = {
-    .name          = TYPE_PCI_SERIAL,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCISerialState),
+OBJECT_DEFINE_TYPE_EXTENDED(serial_pci_info,
+                            PCISerialState, void,
+                            PCI_SERIAL, PCI_DEVICE,
     .instance_init = serial_pci_init,
     .class_init    = serial_pci_class_initfn,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(serial_pci_info)
+)
 
 

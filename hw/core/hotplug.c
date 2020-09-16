@@ -57,11 +57,8 @@ void hotplug_handler_unplug(HotplugHandler *plug_handler,
     }
 }
 
-static const TypeInfo hotplug_handler_info = {
-    .name          = TYPE_HOTPLUG_HANDLER,
-    .parent        = TYPE_INTERFACE,
-    .class_size = sizeof(HotplugHandlerClass),
-};
-TYPE_INFO(hotplug_handler_info)
+OBJECT_DEFINE_TYPE_EXTENDED(hotplug_handler_info,
+                            void, HotplugHandlerClass,
+                            HOTPLUG_HANDLER, INTERFACE)
 
 

@@ -237,13 +237,11 @@ static void xlnx_zcu102_machine_class_init(ObjectClass *oc, void *data)
     mc->default_ram_id = "ddr-ram";
 }
 
-static const TypeInfo xlnx_zcu102_machine_init_typeinfo = {
-    .name       = TYPE_ZCU102_MACHINE,
-    .parent     = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_zcu102_machine_init_typeinfo,
+                            XlnxZCU102, void,
+                            ZCU102_MACHINE, MACHINE,
     .class_init = xlnx_zcu102_machine_class_init,
     .instance_init = xlnx_zcu102_machine_instance_init,
-    .instance_size = sizeof(XlnxZCU102),
-};
-TYPE_INFO(xlnx_zcu102_machine_init_typeinfo)
+)
 
 

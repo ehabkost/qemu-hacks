@@ -379,13 +379,11 @@ static void icp_pit_init(Object *obj)
        save themselves.  */
 }
 
-static const TypeInfo icp_pit_info = {
-    .name          = TYPE_INTEGRATOR_PIT,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(icp_pit_state),
+OBJECT_DEFINE_TYPE_EXTENDED(icp_pit_info,
+                            icp_pit_state, void,
+                            INTEGRATOR_PIT, SYS_BUS_DEVICE,
     .instance_init = icp_pit_init,
-};
-TYPE_INFO(icp_pit_info)
+)
 
 static Property sp804_properties[] = {
     DEFINE_PROP_UINT32("freq0", SP804State, freq0, 1000000),
@@ -402,13 +400,11 @@ static void sp804_class_init(ObjectClass *klass, void *data)
     k->vmsd = &vmstate_sp804;
 }
 
-static const TypeInfo sp804_info = {
-    .name          = TYPE_SP804,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SP804State),
+OBJECT_DEFINE_TYPE_EXTENDED(sp804_info,
+                            SP804State, void,
+                            SP804, SYS_BUS_DEVICE,
     .instance_init = sp804_init,
     .class_init    = sp804_class_init,
-};
-TYPE_INFO(sp804_info)
+)
 
 

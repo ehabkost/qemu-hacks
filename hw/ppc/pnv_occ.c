@@ -171,12 +171,11 @@ static void pnv_occ_power8_class_init(ObjectClass *klass, void *data)
     poc->psi_irq = PSIHB_IRQ_OCC;
 }
 
-static const TypeInfo pnv_occ_power8_type_info = {
-    .name          = TYPE_PNV8_OCC,
-    .parent        = TYPE_PNV_OCC,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_occ_power8_type_info,
+                            void, void,
+                            PNV8_OCC, PNV_OCC,
     .class_init    = pnv_occ_power8_class_init,
-};
-TYPE_INFO(pnv_occ_power8_type_info)
+)
 
 #define P9_OCB_OCI_OCCMISC              0x6080
 #define P9_OCB_OCI_OCCMISC_CLEAR        0x6081
@@ -242,12 +241,11 @@ static void pnv_occ_power9_class_init(ObjectClass *klass, void *data)
     poc->psi_irq = PSIHB9_IRQ_OCC;
 }
 
-static const TypeInfo pnv_occ_power9_type_info = {
-    .name          = TYPE_PNV9_OCC,
-    .parent        = TYPE_PNV_OCC,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_occ_power9_type_info,
+                            void, void,
+                            PNV9_OCC, PNV_OCC,
     .class_init    = pnv_occ_power9_class_init,
-};
-TYPE_INFO(pnv_occ_power9_type_info)
+)
 
 static void pnv_occ_realize(DeviceState *dev, Error **errp)
 {
@@ -283,14 +281,11 @@ static void pnv_occ_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo pnv_occ_type_info = {
-    .name          = TYPE_PNV_OCC,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvOCC),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_occ_type_info,
+                            PnvOCC, PnvOCCClass,
+                            PNV_OCC, DEVICE,
     .class_init    = pnv_occ_class_init,
-    .class_size    = sizeof(PnvOCCClass),
     .abstract      = true,
-};
-TYPE_INFO(pnv_occ_type_info)
+)
 
 

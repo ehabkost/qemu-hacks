@@ -3303,12 +3303,11 @@ static void char_gdb_class_init(ObjectClass *oc, void *data)
 
 #define TYPE_CHARDEV_GDB "chardev-gdb"
 
-static const TypeInfo char_gdb_type_info = {
-    .name = TYPE_CHARDEV_GDB,
-    .parent = TYPE_CHARDEV,
+OBJECT_DEFINE_TYPE_EXTENDED(char_gdb_type_info,
+                            void, void,
+                            CHARDEV_GDB, CHARDEV,
     .class_init = char_gdb_class_init,
-};
-TYPE_INFO(char_gdb_type_info)
+)
 
 static int find_cpu_clusters(Object *child, void *opaque)
 {

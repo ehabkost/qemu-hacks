@@ -751,21 +751,18 @@ static inline void s390_machine_initfn(Object *obj)
             " and guest kernel");
 }
 
-static const TypeInfo ccw_machine_info = {
-    .name          = TYPE_S390_CCW_MACHINE,
-    .parent        = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(ccw_machine_info,
+                            S390CcwMachineState, S390CcwMachineClass,
+                            S390_CCW_MACHINE, MACHINE,
     .abstract      = true,
-    .instance_size = sizeof(S390CcwMachineState),
     .instance_init = s390_machine_initfn,
-    .class_size = sizeof(S390CcwMachineClass),
     .class_init    = ccw_machine_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_NMI },
         { TYPE_HOTPLUG_HANDLER},
         { }
     },
-};
-TYPE_INFO(ccw_machine_info)
+)
 
 bool css_migration_enabled(void)
 {

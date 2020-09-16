@@ -26,12 +26,9 @@
 #include "hw/intc/intc.h"
 #include "qemu/module.h"
 
-static const TypeInfo intctrl_info = {
-    .name = TYPE_INTERRUPT_STATS_PROVIDER,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(InterruptStatsProviderClass),
-};
-TYPE_INFO(intctrl_info)
+OBJECT_DEFINE_TYPE_EXTENDED(intctrl_info,
+                            void, InterruptStatsProviderClass,
+                            INTERRUPT_STATS_PROVIDER, INTERFACE)
 
 
 

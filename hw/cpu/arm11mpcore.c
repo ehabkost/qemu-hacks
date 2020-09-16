@@ -153,13 +153,11 @@ static void mpcore_priv_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, mpcore_priv_properties);
 }
 
-static const TypeInfo mpcore_priv_info = {
-    .name          = TYPE_ARM11MPCORE_PRIV,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARM11MPCorePriveState),
+OBJECT_DEFINE_TYPE_EXTENDED(mpcore_priv_info,
+                            ARM11MPCorePriveState, void,
+                            ARM11MPCORE_PRIV, SYS_BUS_DEVICE,
     .instance_init = mpcore_priv_initfn,
     .class_init    = mpcore_priv_class_init,
-};
-TYPE_INFO(mpcore_priv_info)
+)
 
 

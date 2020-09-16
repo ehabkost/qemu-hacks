@@ -366,13 +366,11 @@ static void bcm2835_peripherals_class_init(ObjectClass *oc, void *data)
     dc->realize = bcm2835_peripherals_realize;
 }
 
-static const TypeInfo bcm2835_peripherals_type_info = {
-    .name = TYPE_BCM2835_PERIPHERALS,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835PeripheralState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_peripherals_type_info,
+                            BCM2835PeripheralState, void,
+                            BCM2835_PERIPHERALS, SYS_BUS_DEVICE,
     .instance_init = bcm2835_peripherals_init,
     .class_init = bcm2835_peripherals_class_init,
-};
-TYPE_INFO(bcm2835_peripherals_type_info)
+)
 
 

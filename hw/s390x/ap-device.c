@@ -20,14 +20,11 @@ static void ap_class_init(ObjectClass *klass, void *data)
     dc->hotpluggable = false;
 }
 
-static const TypeInfo ap_device_info = {
-    .name = TYPE_AP_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(APDevice),
-    .class_size = sizeof(DeviceClass),
+OBJECT_DEFINE_TYPE_EXTENDED(ap_device_info,
+                            APDevice, DeviceClass,
+                            AP_DEVICE, DEVICE,
     .class_init = ap_class_init,
     .abstract = true,
-};
-TYPE_INFO(ap_device_info)
+)
 
 

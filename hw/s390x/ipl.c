@@ -759,12 +759,10 @@ static void s390_ipl_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo s390_ipl_info = {
+OBJECT_DEFINE_TYPE_EXTENDED(s390_ipl_info,
+                            S390IPLState, void,
+                            S390_IPL, DEVICE,
     .class_init = s390_ipl_class_init,
-    .parent = TYPE_DEVICE,
-    .name  = TYPE_S390_IPL,
-    .instance_size  = sizeof(S390IPLState),
-};
-TYPE_INFO(s390_ipl_info)
+)
 
 

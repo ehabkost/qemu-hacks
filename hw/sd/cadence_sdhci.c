@@ -177,13 +177,11 @@ static void cadence_sdhci_class_init(ObjectClass *classp, void *data)
     dc->vmsd = &vmstate_cadence_sdhci;
 }
 
-static TypeInfo cadence_sdhci_info = {
-    .name          = TYPE_CADENCE_SDHCI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CadenceSDHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(cadence_sdhci_info,
+                            CadenceSDHCIState, void,
+                            CADENCE_SDHCI, SYS_BUS_DEVICE,
     .instance_init = cadence_sdhci_instance_init,
     .class_init    = cadence_sdhci_class_init,
-};
-TYPE_INFO(cadence_sdhci_info)
+)
 
 

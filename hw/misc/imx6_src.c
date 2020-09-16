@@ -296,12 +296,10 @@ static void imx6_src_class_init(ObjectClass *klass, void *data)
     dc->desc = "i.MX6 System Reset Controller";
 }
 
-static const TypeInfo imx6_src_info = {
-    .name          = TYPE_IMX6_SRC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMX6SRCState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx6_src_info,
+                            IMX6SRCState, void,
+                            IMX6_SRC, SYS_BUS_DEVICE,
     .class_init    = imx6_src_class_init,
-};
-TYPE_INFO(imx6_src_info)
+)
 
 

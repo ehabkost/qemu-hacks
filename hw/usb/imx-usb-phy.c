@@ -210,12 +210,10 @@ static void imx_usbphy_class_init(ObjectClass *klass, void *data)
     dc->realize = imx_usbphy_realize;
 }
 
-static const TypeInfo imx_usbphy_info = {
-    .name          = TYPE_IMX_USBPHY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXUSBPHYState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_usbphy_info,
+                            IMXUSBPHYState, void,
+                            IMX_USBPHY, SYS_BUS_DEVICE,
     .class_init    = imx_usbphy_class_init,
-};
-TYPE_INFO(imx_usbphy_info)
+)
 
 

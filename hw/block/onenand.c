@@ -849,13 +849,11 @@ static void onenand_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, onenand_properties);
 }
 
-static const TypeInfo onenand_info = {
-    .name          = TYPE_ONE_NAND,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(OneNANDState),
+OBJECT_DEFINE_TYPE_EXTENDED(onenand_info,
+                            OneNANDState, void,
+                            ONE_NAND, SYS_BUS_DEVICE,
     .class_init    = onenand_class_init,
-};
-TYPE_INFO(onenand_info)
+)
 
 
 void *onenand_raw_otp(DeviceState *onenand_device)

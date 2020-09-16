@@ -190,31 +190,27 @@ static void multi_serial_init(Object *o)
 }
 
 #define TYPE_PCI_SERIAL_2X "pci-serial-2x"
-static const TypeInfo multi_2x_serial_pci_info = {
-    .name          = TYPE_PCI_SERIAL_2X,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIMultiSerialState),
+OBJECT_DEFINE_TYPE_EXTENDED(multi_2x_serial_pci_info,
+                            PCIMultiSerialState, void,
+                            PCI_SERIAL_2X, PCI_DEVICE,
     .instance_init = multi_serial_init,
     .class_init    = multi_2x_serial_pci_class_initfn,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(multi_2x_serial_pci_info)
+)
 
 #define TYPE_PCI_SERIAL_4X "pci-serial-4x"
-static const TypeInfo multi_4x_serial_pci_info = {
-    .name          = TYPE_PCI_SERIAL_4X,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIMultiSerialState),
+OBJECT_DEFINE_TYPE_EXTENDED(multi_4x_serial_pci_info,
+                            PCIMultiSerialState, void,
+                            PCI_SERIAL_4X, PCI_DEVICE,
     .instance_init = multi_serial_init,
     .class_init    = multi_4x_serial_pci_class_initfn,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(multi_4x_serial_pci_info)
+)
 
 

@@ -263,12 +263,9 @@ void qio_dns_resolver_lookup_result(QIODNSResolver *resolver,
 }
 
 
-static const TypeInfo qio_dns_resolver_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_QIO_DNS_RESOLVER,
-    .instance_size = sizeof(QIODNSResolver),
-};
-TYPE_INFO(qio_dns_resolver_info)
+OBJECT_DEFINE_TYPE_EXTENDED(qio_dns_resolver_info,
+                            QIODNSResolver, void,
+                            QIO_DNS_RESOLVER, OBJECT)
 
 
 

@@ -573,13 +573,11 @@ static void msf2_emac_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, msf2_emac_properties);
 }
 
-static const TypeInfo msf2_emac_info = {
-    .name          = TYPE_MSS_EMAC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MSF2EmacState),
+OBJECT_DEFINE_TYPE_EXTENDED(msf2_emac_info,
+                            MSF2EmacState, void,
+                            MSS_EMAC, SYS_BUS_DEVICE,
     .instance_init = msf2_emac_init,
     .class_init    = msf2_emac_class_init,
-};
-TYPE_INFO(msf2_emac_info)
+)
 
 

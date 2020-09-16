@@ -313,13 +313,11 @@ static void adlib_class_initfn (ObjectClass *klass, void *data)
     device_class_set_props(dc, adlib_properties);
 }
 
-static const TypeInfo adlib_info = {
-    .name          = TYPE_ADLIB,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof (AdlibState),
+OBJECT_DEFINE_TYPE_EXTENDED(adlib_info,
+                            AdlibState, void,
+                            ADLIB, ISA_DEVICE,
     .class_init    = adlib_class_initfn,
-};
-TYPE_INFO(adlib_info)
+)
 
 static void adlib_register_types (void)
 {

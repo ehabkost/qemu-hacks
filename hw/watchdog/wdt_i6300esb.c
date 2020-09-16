@@ -480,17 +480,15 @@ static void i6300esb_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo i6300esb_info = {
-    .name          = TYPE_WATCHDOG_I6300ESB_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(I6300State),
+OBJECT_DEFINE_TYPE_EXTENDED(i6300esb_info,
+                            I6300State, void,
+                            WATCHDOG_I6300ESB_DEVICE, PCI_DEVICE,
     .class_init    = i6300esb_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(i6300esb_info)
+)
 
 static void i6300esb_register_types(void)
 {

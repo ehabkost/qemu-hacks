@@ -242,13 +242,11 @@ static void vhost_vsock_common_class_init(ObjectClass *klass, void *data)
     vdc->guest_notifier_pending = vhost_vsock_common_guest_notifier_pending;
 }
 
-static const TypeInfo vhost_vsock_common_info = {
-    .name = TYPE_VHOST_VSOCK_COMMON,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VHostVSockCommon),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_vsock_common_info,
+                            VHostVSockCommon, void,
+                            VHOST_VSOCK_COMMON, VIRTIO_DEVICE,
     .class_init = vhost_vsock_common_class_init,
     .abstract = true,
-};
-TYPE_INFO(vhost_vsock_common_info)
+)
 
 

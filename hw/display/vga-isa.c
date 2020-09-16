@@ -100,12 +100,10 @@ static void vga_isa_class_initfn(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_DISPLAY, dc->categories);
 }
 
-static const TypeInfo vga_isa_info = {
-    .name          = TYPE_ISA_VGA,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISAVGAState),
+OBJECT_DEFINE_TYPE_EXTENDED(vga_isa_info,
+                            ISAVGAState, void,
+                            ISA_VGA, ISA_DEVICE,
     .class_init    = vga_isa_class_initfn,
-};
-TYPE_INFO(vga_isa_info)
+)
 
 

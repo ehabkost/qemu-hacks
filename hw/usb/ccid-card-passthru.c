@@ -407,12 +407,10 @@ static void passthru_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, passthru_card_properties);
 }
 
-static const TypeInfo passthru_card_info = {
-    .name          = TYPE_CCID_PASSTHRU,
-    .parent        = TYPE_CCID_CARD,
-    .instance_size = sizeof(PassthruState),
+OBJECT_DEFINE_TYPE_EXTENDED(passthru_card_info,
+                            PassthruState, void,
+                            CCID_PASSTHRU, CCID_CARD,
     .class_init    = passthru_class_initfn,
-};
-TYPE_INFO(passthru_card_info)
+)
 
 

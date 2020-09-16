@@ -1064,13 +1064,11 @@ static void virtio_balloon_class_init(ObjectClass *klass, void *data)
     vdc->vmsd = &vmstate_virtio_balloon_device;
 }
 
-static const TypeInfo virtio_balloon_info = {
-    .name = TYPE_VIRTIO_BALLOON,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOBalloon),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_balloon_info,
+                            VirtIOBalloon, void,
+                            VIRTIO_BALLOON, VIRTIO_DEVICE,
     .instance_init = virtio_balloon_instance_init,
     .class_init = virtio_balloon_class_init,
-};
-TYPE_INFO(virtio_balloon_info)
+)
 
 

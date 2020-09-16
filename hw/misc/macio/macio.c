@@ -462,35 +462,27 @@ static void macio_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo macio_bus_info = {
-    .name = TYPE_MACIO_BUS,
-    .parent = TYPE_SYSTEM_BUS,
-    .instance_size = sizeof(MacIOBusState),
-};
-TYPE_INFO(macio_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(macio_bus_info,
+                            MacIOBusState, void,
+                            MACIO_BUS, SYSTEM_BUS)
 
-static const TypeInfo macio_oldworld_type_info = {
-    .name          = TYPE_OLDWORLD_MACIO,
-    .parent        = TYPE_MACIO,
-    .instance_size = sizeof(OldWorldMacIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(macio_oldworld_type_info,
+                            OldWorldMacIOState, void,
+                            OLDWORLD_MACIO, MACIO,
     .instance_init = macio_oldworld_init,
     .class_init    = macio_oldworld_class_init,
-};
-TYPE_INFO(macio_oldworld_type_info)
+)
 
-static const TypeInfo macio_newworld_type_info = {
-    .name          = TYPE_NEWWORLD_MACIO,
-    .parent        = TYPE_MACIO,
-    .instance_size = sizeof(NewWorldMacIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(macio_newworld_type_info,
+                            NewWorldMacIOState, void,
+                            NEWWORLD_MACIO, MACIO,
     .instance_init = macio_newworld_init,
     .class_init    = macio_newworld_class_init,
-};
-TYPE_INFO(macio_newworld_type_info)
+)
 
-static const TypeInfo macio_type_info = {
-    .name          = TYPE_MACIO,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(MacIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(macio_type_info,
+                            MacIOState, void,
+                            MACIO, PCI_DEVICE,
     .instance_init = macio_instance_init,
     .abstract      = true,
     .class_init    = macio_class_init,
@@ -498,7 +490,6 @@ static const TypeInfo macio_type_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(macio_type_info)
+)
 
 

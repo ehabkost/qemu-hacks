@@ -146,16 +146,14 @@ static void ohci_pci_class_init(ObjectClass *klass, void *data)
     dc->reset = usb_ohci_reset_pci;
 }
 
-static const TypeInfo ohci_pci_info = {
-    .name          = TYPE_PCI_OHCI,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(OHCIPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(ohci_pci_info,
+                            OHCIPCIState, void,
+                            PCI_OHCI, PCI_DEVICE,
     .class_init    = ohci_pci_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(ohci_pci_info)
+)
 
 

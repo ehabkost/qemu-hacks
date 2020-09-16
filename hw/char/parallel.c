@@ -653,12 +653,10 @@ static void parallel_isa_class_initfn(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
 }
 
-static const TypeInfo parallel_isa_info = {
-    .name          = TYPE_ISA_PARALLEL,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISAParallelState),
+OBJECT_DEFINE_TYPE_EXTENDED(parallel_isa_info,
+                            ISAParallelState, void,
+                            ISA_PARALLEL, ISA_DEVICE,
     .class_init    = parallel_isa_class_initfn,
-};
-TYPE_INFO(parallel_isa_info)
+)
 
 

@@ -310,12 +310,10 @@ static void vmmouse_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, vmmouse_properties);
 }
 
-static const TypeInfo vmmouse_info = {
-    .name          = TYPE_VMMOUSE,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(VMMouseState),
+OBJECT_DEFINE_TYPE_EXTENDED(vmmouse_info,
+                            VMMouseState, void,
+                            VMMOUSE, ISA_DEVICE,
     .class_init    = vmmouse_class_initfn,
-};
-TYPE_INFO(vmmouse_info)
+)
 
 

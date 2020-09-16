@@ -501,19 +501,16 @@ static void pnv_pec_class_init(ObjectClass *klass, void *data)
     pecc->stk_compat_size = sizeof(stk_compat);
 }
 
-static const TypeInfo pnv_pec_type_info = {
-    .name          = TYPE_PNV_PHB4_PEC,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvPhb4PecState),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_pec_type_info,
+                            PnvPhb4PecState, PnvPhb4PecClass,
+                            PNV_PHB4_PEC, DEVICE,
     .instance_init = pnv_pec_instance_init,
     .class_init    = pnv_pec_class_init,
-    .class_size    = sizeof(PnvPhb4PecClass),
     .interfaces    = (InterfaceInfo[]) {
         { TYPE_PNV_XSCOM_INTERFACE },
         { }
     }
-};
-TYPE_INFO(pnv_pec_type_info)
+)
 
 static void pnv_pec_stk_instance_init(Object *obj)
 {
@@ -573,17 +570,15 @@ static void pnv_pec_stk_class_init(ObjectClass *klass, void *data)
     /* TODO: reset regs ? */
 }
 
-static const TypeInfo pnv_pec_stk_type_info = {
-    .name          = TYPE_PNV_PHB4_PEC_STACK,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(PnvPhb4PecStack),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_pec_stk_type_info,
+                            PnvPhb4PecStack, void,
+                            PNV_PHB4_PEC_STACK, DEVICE,
     .instance_init = pnv_pec_stk_instance_init,
     .class_init    = pnv_pec_stk_class_init,
     .interfaces    = (InterfaceInfo[]) {
         { TYPE_PNV_XSCOM_INTERFACE },
         { }
     }
-};
-TYPE_INFO(pnv_pec_stk_type_info)
+)
 
 

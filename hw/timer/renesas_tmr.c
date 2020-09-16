@@ -461,13 +461,11 @@ static void rtmr_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, rtmr_properties);
 }
 
-static const TypeInfo rtmr_info = {
-    .name = TYPE_RENESAS_TMR,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RTMRState),
+OBJECT_DEFINE_TYPE_EXTENDED(rtmr_info,
+                            RTMRState, void,
+                            RENESAS_TMR, SYS_BUS_DEVICE,
     .instance_init = rtmr_init,
     .class_init = rtmr_class_init,
-};
-TYPE_INFO(rtmr_info)
+)
 
 

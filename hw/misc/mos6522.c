@@ -514,15 +514,12 @@ static void mos6522_class_init(ObjectClass *oc, void *data)
     mdc->get_timer2_load_time = mos6522_get_load_time;
 }
 
-static const TypeInfo mos6522_type_info = {
-    .name = TYPE_MOS6522,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MOS6522State),
+OBJECT_DEFINE_TYPE_EXTENDED(mos6522_type_info,
+                            MOS6522State, MOS6522DeviceClass,
+                            MOS6522, SYS_BUS_DEVICE,
     .instance_init = mos6522_init,
     .abstract = true,
-    .class_size = sizeof(MOS6522DeviceClass),
     .class_init = mos6522_class_init,
-};
-TYPE_INFO(mos6522_type_info)
+)
 
 

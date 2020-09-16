@@ -276,12 +276,10 @@ static void spapr_nvram_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo spapr_nvram_type_info = {
-    .name          = TYPE_VIO_SPAPR_NVRAM,
-    .parent        = TYPE_VIO_SPAPR_DEVICE,
-    .instance_size = sizeof(SpaprNvram),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_nvram_type_info,
+                            SpaprNvram, void,
+                            VIO_SPAPR_NVRAM, VIO_SPAPR_DEVICE,
     .class_init    = spapr_nvram_class_init,
-};
-TYPE_INFO(spapr_nvram_type_info)
+)
 
 

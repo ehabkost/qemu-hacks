@@ -25,12 +25,9 @@ struct TestIfClass {
     uint32_t test;
 };
 
-static const TypeInfo test_if_info = {
-    .name          = TYPE_TEST_IF,
-    .parent        = TYPE_INTERFACE,
-    .class_size = sizeof(TestIfClass),
-};
-TYPE_INFO(test_if_info)
+OBJECT_DEFINE_TYPE_EXTENDED(test_if_info,
+                            void, TestIfClass,
+                            TEST_IF, INTERFACE)
 
 #define PATTERN 0xFAFBFCFD
 
@@ -44,24 +41,21 @@ static void test_class_init(ObjectClass *oc, void *data)
 
 #define TYPE_DIRECT_IMPL "direct-impl"
 
-static const TypeInfo direct_impl_info = {
-    .name = TYPE_DIRECT_IMPL,
-    .parent = TYPE_OBJECT,
+OBJECT_DEFINE_TYPE_EXTENDED(direct_impl_info,
+                            void, void,
+                            DIRECT_IMPL, OBJECT,
     .class_init = test_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_TEST_IF },
         { }
     }
-};
-TYPE_INFO(direct_impl_info)
+)
 
 #define TYPE_INTERMEDIATE_IMPL "intermediate-impl"
 
-static const TypeInfo intermediate_impl_info = {
-    .name = TYPE_INTERMEDIATE_IMPL,
-    .parent = TYPE_DIRECT_IMPL,
-};
-TYPE_INFO(intermediate_impl_info)
+OBJECT_DEFINE_TYPE_EXTENDED(intermediate_impl_info,
+                            void, void,
+                            INTERMEDIATE_IMPL, DIRECT_IMPL)
 
 static void test_interface_impl(const char *type)
 {

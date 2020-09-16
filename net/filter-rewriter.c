@@ -431,13 +431,11 @@ static void colo_rewriter_class_init(ObjectClass *oc, void *data)
     nfc->handle_event = colo_rewriter_handle_event;
 }
 
-static const TypeInfo colo_rewriter_info = {
-    .name = TYPE_FILTER_REWRITER,
-    .parent = TYPE_NETFILTER,
+OBJECT_DEFINE_TYPE_EXTENDED(colo_rewriter_info,
+                            RewriterState, void,
+                            FILTER_REWRITER, NETFILTER,
     .class_init = colo_rewriter_class_init,
     .instance_init = filter_rewriter_init,
-    .instance_size = sizeof(RewriterState),
-};
-TYPE_INFO(colo_rewriter_info)
+)
 
 

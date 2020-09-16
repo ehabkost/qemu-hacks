@@ -104,11 +104,10 @@ static void igd_passthrough_i440fx_class_init(ObjectClass *klass, void *data)
     dc->desc = "IGD Passthrough Host bridge";
 }
 
-static const TypeInfo igd_passthrough_i440fx_info = {
-    .name          = TYPE_IGD_PASSTHROUGH_I440FX_PCI_DEVICE,
-    .parent        = TYPE_I440FX_PCI_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(igd_passthrough_i440fx_info,
+                            void, void,
+                            IGD_PASSTHROUGH_I440FX_PCI_DEVICE, I440FX_PCI_DEVICE,
     .class_init    = igd_passthrough_i440fx_class_init,
-};
-TYPE_INFO(igd_passthrough_i440fx_info)
+)
 
 

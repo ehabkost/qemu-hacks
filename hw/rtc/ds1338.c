@@ -227,12 +227,10 @@ static void ds1338_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_ds1338;
 }
 
-static const TypeInfo ds1338_info = {
-    .name          = TYPE_DS1338,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(DS1338State),
+OBJECT_DEFINE_TYPE_EXTENDED(ds1338_info,
+                            DS1338State, void,
+                            DS1338, I2C_SLAVE,
     .class_init    = ds1338_class_init,
-};
-TYPE_INFO(ds1338_info)
+)
 
 

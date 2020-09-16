@@ -148,12 +148,10 @@ static void spapr_rng_class_init(ObjectClass *oc, void *data)
     dc->hotpluggable = false;
 }
 
-static const TypeInfo spapr_rng_info = {
-    .name          = TYPE_SPAPR_RNG,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(SpaprRngState),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_rng_info,
+                            SpaprRngState, void,
+                            SPAPR_RNG, DEVICE,
     .instance_init = spapr_rng_instance_init,
     .class_init    = spapr_rng_class_init,
-};
-TYPE_INFO(spapr_rng_info)
+)
 

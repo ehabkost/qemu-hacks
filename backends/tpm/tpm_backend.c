@@ -184,21 +184,15 @@ static void tpm_backend_instance_finalize(Object *obj)
     g_free(s->id);
 }
 
-static const TypeInfo tpm_backend_info = {
-    .name = TYPE_TPM_BACKEND,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(TPMBackend),
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_backend_info,
+                            TPMBackend, TPMBackendClass,
+                            TPM_BACKEND, OBJECT,
     .instance_finalize = tpm_backend_instance_finalize,
-    .class_size = sizeof(TPMBackendClass),
     .abstract = true,
-};
-TYPE_INFO(tpm_backend_info)
+)
 
-static const TypeInfo tpm_if_info = {
-    .name = TYPE_TPM_IF,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(TPMIfClass),
-};
-TYPE_INFO(tpm_if_info)
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_if_info,
+                            void, TPMIfClass,
+                            TPM_IF, INTERFACE)
 
 

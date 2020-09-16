@@ -111,13 +111,11 @@ static void allwinner_ahci_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_allwinner_ahci;
 }
 
-static const TypeInfo allwinner_ahci_info = {
-    .name          = TYPE_ALLWINNER_AHCI,
-    .parent        = TYPE_SYSBUS_AHCI,
-    .instance_size = sizeof(AllwinnerAHCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_ahci_info,
+                            AllwinnerAHCIState, void,
+                            ALLWINNER_AHCI, SYSBUS_AHCI,
     .instance_init = allwinner_ahci_init,
     .class_init    = allwinner_ahci_class_init,
-};
-TYPE_INFO(allwinner_ahci_info)
+)
 
 

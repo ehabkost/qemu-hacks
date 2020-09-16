@@ -76,13 +76,11 @@ static void split_irq_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo split_irq_type_info = {
-   .name = TYPE_SPLIT_IRQ,
-   .parent = TYPE_DEVICE,
-   .instance_size = sizeof(SplitIRQ),
+OBJECT_DEFINE_TYPE_EXTENDED(split_irq_type_info,
+                            SplitIRQ, void,
+                            SPLIT_IRQ, DEVICE,
    .instance_init = split_irq_init,
    .class_init = split_irq_class_init,
-};
-TYPE_INFO(split_irq_type_info)
+)
 
 

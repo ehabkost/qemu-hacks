@@ -129,12 +129,10 @@ static void debugcon_isa_class_initfn(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo debugcon_isa_info = {
-    .name          = TYPE_ISA_DEBUGCON_DEVICE,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISADebugconState),
+OBJECT_DEFINE_TYPE_EXTENDED(debugcon_isa_info,
+                            ISADebugconState, void,
+                            ISA_DEBUGCON_DEVICE, ISA_DEVICE,
     .class_init    = debugcon_isa_class_initfn,
-};
-TYPE_INFO(debugcon_isa_info)
+)
 
 

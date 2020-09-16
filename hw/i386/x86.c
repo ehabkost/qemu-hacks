@@ -923,19 +923,16 @@ static void x86_machine_class_init(ObjectClass *oc, void *data)
         "Enable ACPI");
 }
 
-static const TypeInfo x86_machine_info = {
-    .name = TYPE_X86_MACHINE,
-    .parent = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(x86_machine_info,
+                            X86MachineState, X86MachineClass,
+                            X86_MACHINE, MACHINE,
     .abstract = true,
-    .instance_size = sizeof(X86MachineState),
     .instance_init = x86_machine_initfn,
-    .class_size = sizeof(X86MachineClass),
     .class_init = x86_machine_class_init,
     .interfaces = (InterfaceInfo[]) {
          { TYPE_NMI },
          { }
     },
-};
-TYPE_INFO(x86_machine_info)
+)
 
 

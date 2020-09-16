@@ -288,12 +288,10 @@ static void grlib_apbuart_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, grlib_apbuart_properties);
 }
 
-static const TypeInfo grlib_apbuart_info = {
-    .name          = TYPE_GRLIB_APB_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(UART),
+OBJECT_DEFINE_TYPE_EXTENDED(grlib_apbuart_info,
+                            UART, void,
+                            GRLIB_APB_UART, SYS_BUS_DEVICE,
     .class_init    = grlib_apbuart_class_init,
-};
-TYPE_INFO(grlib_apbuart_info)
+)
 
 

@@ -444,12 +444,10 @@ static void imx_spi_class_init(ObjectClass *klass, void *data)
     dc->desc = "i.MX SPI Controller";
 }
 
-static const TypeInfo imx_spi_info = {
-    .name          = TYPE_IMX_SPI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXSPIState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_spi_info,
+                            IMXSPIState, void,
+                            IMX_SPI, SYS_BUS_DEVICE,
     .class_init    = imx_spi_class_init,
-};
-TYPE_INFO(imx_spi_info)
+)
 
 

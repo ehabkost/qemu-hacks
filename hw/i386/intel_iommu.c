@@ -3867,13 +3867,11 @@ static void vtd_class_init(ObjectClass *klass, void *data)
     dc->desc = "Intel IOMMU (VT-d) DMA Remapping device";
 }
 
-static const TypeInfo vtd_info = {
-    .name          = TYPE_INTEL_IOMMU_DEVICE,
-    .parent        = TYPE_X86_IOMMU_DEVICE,
-    .instance_size = sizeof(IntelIOMMUState),
+OBJECT_DEFINE_TYPE_EXTENDED(vtd_info,
+                            IntelIOMMUState, void,
+                            INTEL_IOMMU_DEVICE, X86_IOMMU_DEVICE,
     .class_init    = vtd_class_init,
-};
-TYPE_INFO(vtd_info)
+)
 
 static void vtd_iommu_memory_region_class_init(ObjectClass *klass,
                                                      void *data)
@@ -3885,11 +3883,10 @@ static void vtd_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->replay = vtd_iommu_replay;
 }
 
-static const TypeInfo vtd_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_INTEL_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(vtd_iommu_memory_region_info,
+                            void, void,
+                            INTEL_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = vtd_iommu_memory_region_class_init,
-};
-TYPE_INFO(vtd_iommu_memory_region_info)
+)
 
 

@@ -178,15 +178,12 @@ static void isa_superio_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo isa_superio_type_info = {
-    .name = TYPE_ISA_SUPERIO,
-    .parent = TYPE_ISA_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(isa_superio_type_info,
+                            ISASuperIODevice, ISASuperIOClass,
+                            ISA_SUPERIO, ISA_DEVICE,
     .abstract = true,
-    .instance_size = sizeof(ISASuperIODevice),
-    .class_size = sizeof(ISASuperIOClass),
     .class_init = isa_superio_class_init,
-};
-TYPE_INFO(isa_superio_type_info)
+)
 
 /* SMS FDC37M817 Super I/O */
 static void fdc37m81x_class_init(ObjectClass *klass, void *data)
@@ -199,11 +196,10 @@ static void fdc37m81x_class_init(ObjectClass *klass, void *data)
     sc->ide.count = 0;
 }
 
-static const TypeInfo fdc37m81x_type_info = {
-    .name          = TYPE_FDC37M81X_SUPERIO,
-    .parent        = TYPE_ISA_SUPERIO,
+OBJECT_DEFINE_TYPE_EXTENDED(fdc37m81x_type_info,
+                            void, void,
+                            FDC37M81X_SUPERIO, ISA_SUPERIO,
     .class_init    = fdc37m81x_class_init,
-};
-TYPE_INFO(fdc37m81x_type_info)
+)
 
 

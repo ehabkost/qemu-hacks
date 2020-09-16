@@ -188,13 +188,11 @@ static void stm32f205_soc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, stm32f205_soc_properties);
 }
 
-static const TypeInfo stm32f205_soc_info = {
-    .name          = TYPE_STM32F205_SOC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F205State),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f205_soc_info,
+                            STM32F205State, void,
+                            STM32F205_SOC, SYS_BUS_DEVICE,
     .instance_init = stm32f205_soc_initfn,
     .class_init    = stm32f205_soc_class_init,
-};
-TYPE_INFO(stm32f205_soc_info)
+)
 
 

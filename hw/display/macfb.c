@@ -453,21 +453,16 @@ static void macfb_nubus_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, macfb_nubus_properties);
 }
 
-static TypeInfo macfb_sysbus_info = {
-    .name          = TYPE_MACFB,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MacfbSysBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(macfb_sysbus_info,
+                            MacfbSysBusState, void,
+                            MACFB, SYS_BUS_DEVICE,
     .class_init    = macfb_sysbus_class_init,
-};
-TYPE_INFO(macfb_sysbus_info)
+)
 
-static TypeInfo macfb_nubus_info = {
-    .name          = TYPE_NUBUS_MACFB,
-    .parent        = TYPE_NUBUS_DEVICE,
-    .instance_size = sizeof(MacfbNubusState),
+OBJECT_DEFINE_TYPE_EXTENDED(macfb_nubus_info,
+                            MacfbNubusState, MacfbNubusDeviceClass,
+                            NUBUS_MACFB, NUBUS_DEVICE,
     .class_init    = macfb_nubus_class_init,
-    .class_size    = sizeof(MacfbNubusDeviceClass),
-};
-TYPE_INFO(macfb_nubus_info)
+)
 
 

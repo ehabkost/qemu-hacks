@@ -206,12 +206,10 @@ static void max7310_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_max7310;
 }
 
-static const TypeInfo max7310_info = {
-    .name          = TYPE_MAX7310,
-    .parent        = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(MAX7310State),
+OBJECT_DEFINE_TYPE_EXTENDED(max7310_info,
+                            MAX7310State, void,
+                            MAX7310, I2C_SLAVE,
     .class_init    = max7310_class_init,
-};
-TYPE_INFO(max7310_info)
+)
 
 

@@ -480,13 +480,11 @@ static void sifive_plic_class_init(ObjectClass *klass, void *data)
     dc->realize = sifive_plic_realize;
 }
 
-static const TypeInfo sifive_plic_info = {
-    .name          = TYPE_SIFIVE_PLIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SiFivePLICState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_plic_info,
+                            SiFivePLICState, void,
+                            SIFIVE_PLIC, SYS_BUS_DEVICE,
     .class_init    = sifive_plic_class_init,
-};
-TYPE_INFO(sifive_plic_info)
+)
 
 
 

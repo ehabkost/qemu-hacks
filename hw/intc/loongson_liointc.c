@@ -228,12 +228,10 @@ static void loongson_liointc_init(Object *obj)
     sysbus_init_mmio(SYS_BUS_DEVICE(obj), &p->mmio);
 }
 
-static const TypeInfo loongson_liointc_info = {
-    .name          = TYPE_LOONGSON_LIOINTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(struct loongson_liointc),
+OBJECT_DEFINE_TYPE_EXTENDED(loongson_liointc_info,
+                            struct loongson_liointc, void,
+                            LOONGSON_LIOINTC, SYS_BUS_DEVICE,
     .instance_init = loongson_liointc_init,
-};
-TYPE_INFO(loongson_liointc_info)
+)
 
 

@@ -254,14 +254,12 @@ static void q35_host_initfn(Object *obj)
                              qdev_prop_allow_set_link_before_realize, 0);
 }
 
-static const TypeInfo q35_host_info = {
-    .name       = TYPE_Q35_HOST_DEVICE,
-    .parent     = TYPE_PCIE_HOST_BRIDGE,
-    .instance_size = sizeof(Q35PCIHost),
+OBJECT_DEFINE_TYPE_EXTENDED(q35_host_info,
+                            Q35PCIHost, void,
+                            Q35_HOST_DEVICE, PCIE_HOST_BRIDGE,
     .instance_init = q35_host_initfn,
     .class_init = q35_host_class_init,
-};
-TYPE_INFO(q35_host_info)
+)
 
 /****************************************************************************
  * MCH D0:F0
@@ -697,16 +695,14 @@ static void mch_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo mch_info = {
-    .name = TYPE_MCH_PCI_DEVICE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(MCHPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(mch_info,
+                            MCHPCIState, void,
+                            MCH_PCI_DEVICE, PCI_DEVICE,
     .class_init = mch_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(mch_info)
+)
 
 

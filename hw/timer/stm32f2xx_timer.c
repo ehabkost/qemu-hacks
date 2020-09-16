@@ -331,13 +331,11 @@ static void stm32f2xx_timer_class_init(ObjectClass *klass, void *data)
     dc->realize = stm32f2xx_timer_realize;
 }
 
-static const TypeInfo stm32f2xx_timer_info = {
-    .name          = TYPE_STM32F2XX_TIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F2XXTimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f2xx_timer_info,
+                            STM32F2XXTimerState, void,
+                            STM32F2XX_TIMER, SYS_BUS_DEVICE,
     .instance_init = stm32f2xx_timer_init,
     .class_init    = stm32f2xx_timer_class_init,
-};
-TYPE_INFO(stm32f2xx_timer_info)
+)
 
 

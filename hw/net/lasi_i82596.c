@@ -174,13 +174,11 @@ static void lasi_82596_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, lasi_82596_properties);
 }
 
-static const TypeInfo lasi_82596_info = {
-    .name          = TYPE_LASI_82596,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SysBusI82596State),
+OBJECT_DEFINE_TYPE_EXTENDED(lasi_82596_info,
+                            SysBusI82596State, void,
+                            LASI_82596, SYS_BUS_DEVICE,
     .class_init    = lasi_82596_class_init,
     .instance_init = lasi_82596_instance_init,
-};
-TYPE_INFO(lasi_82596_info)
+)
 
 

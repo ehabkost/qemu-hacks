@@ -456,13 +456,11 @@ static void vpb_sic_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_vpb_sic;
 }
 
-static const TypeInfo vpb_sic_info = {
-    .name          = TYPE_VERSATILE_PB_SIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(vpb_sic_state),
+OBJECT_DEFINE_TYPE_EXTENDED(vpb_sic_info,
+                            vpb_sic_state, void,
+                            VERSATILE_PB_SIC, SYS_BUS_DEVICE,
     .instance_init = vpb_sic_init,
     .class_init    = vpb_sic_class_init,
-};
-TYPE_INFO(vpb_sic_info)
+)
 
 

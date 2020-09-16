@@ -273,14 +273,12 @@ static void armv7m_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, armv7m_properties);
 }
 
-static const TypeInfo armv7m_info = {
-    .name = TYPE_ARMV7M,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ARMv7MState),
+OBJECT_DEFINE_TYPE_EXTENDED(armv7m_info,
+                            ARMv7MState, void,
+                            ARMV7M, SYS_BUS_DEVICE,
     .instance_init = armv7m_instance_init,
     .class_init = armv7m_class_init,
-};
-TYPE_INFO(armv7m_info)
+)
 
 static void armv7m_reset(void *opaque)
 {
@@ -353,13 +351,11 @@ static void bitband_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, bitband_properties);
 }
 
-static const TypeInfo bitband_info = {
-    .name          = TYPE_BITBAND,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BitBandState),
+OBJECT_DEFINE_TYPE_EXTENDED(bitband_info,
+                            BitBandState, void,
+                            BITBAND, SYS_BUS_DEVICE,
     .instance_init = bitband_init,
     .class_init    = bitband_class_init,
-};
-TYPE_INFO(bitband_info)
+)
 
 

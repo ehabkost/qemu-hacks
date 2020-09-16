@@ -190,13 +190,11 @@ static void xilinx_intc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, xilinx_intc_properties);
 }
 
-static const TypeInfo xilinx_intc_info = {
-    .name          = TYPE_XILINX_INTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(struct xlx_pic),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_intc_info,
+                            struct xlx_pic, void,
+                            XILINX_INTC, SYS_BUS_DEVICE,
     .instance_init = xilinx_intc_init,
     .class_init    = xilinx_intc_class_init,
-};
-TYPE_INFO(xilinx_intc_info)
+)
 
 

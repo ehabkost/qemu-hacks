@@ -688,15 +688,12 @@ static void timer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, aspeed_timer_properties);
 }
 
-static const TypeInfo aspeed_timer_info = {
-    .name = TYPE_ASPEED_TIMER,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedTimerCtrlState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_timer_info,
+                            AspeedTimerCtrlState, AspeedTimerClass,
+                            ASPEED_TIMER, SYS_BUS_DEVICE,
     .class_init = timer_class_init,
-    .class_size = sizeof(AspeedTimerClass),
     .abstract   = true,
-};
-TYPE_INFO(aspeed_timer_info)
+)
 
 static void aspeed_2400_timer_class_init(ObjectClass *klass, void *data)
 {
@@ -708,12 +705,11 @@ static void aspeed_2400_timer_class_init(ObjectClass *klass, void *data)
     awc->write = aspeed_2400_timer_write;
 }
 
-static const TypeInfo aspeed_2400_timer_info = {
-    .name = TYPE_ASPEED_2400_TIMER,
-    .parent = TYPE_ASPEED_TIMER,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2400_timer_info,
+                            void, void,
+                            ASPEED_2400_TIMER, ASPEED_TIMER,
     .class_init = aspeed_2400_timer_class_init,
-};
-TYPE_INFO(aspeed_2400_timer_info)
+)
 
 static void aspeed_2500_timer_class_init(ObjectClass *klass, void *data)
 {
@@ -725,12 +721,11 @@ static void aspeed_2500_timer_class_init(ObjectClass *klass, void *data)
     awc->write = aspeed_2500_timer_write;
 }
 
-static const TypeInfo aspeed_2500_timer_info = {
-    .name = TYPE_ASPEED_2500_TIMER,
-    .parent = TYPE_ASPEED_TIMER,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2500_timer_info,
+                            void, void,
+                            ASPEED_2500_TIMER, ASPEED_TIMER,
     .class_init = aspeed_2500_timer_class_init,
-};
-TYPE_INFO(aspeed_2500_timer_info)
+)
 
 static void aspeed_2600_timer_class_init(ObjectClass *klass, void *data)
 {
@@ -742,11 +737,10 @@ static void aspeed_2600_timer_class_init(ObjectClass *klass, void *data)
     awc->write = aspeed_2600_timer_write;
 }
 
-static const TypeInfo aspeed_2600_timer_info = {
-    .name = TYPE_ASPEED_2600_TIMER,
-    .parent = TYPE_ASPEED_TIMER,
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_2600_timer_info,
+                            void, void,
+                            ASPEED_2600_TIMER, ASPEED_TIMER,
     .class_init = aspeed_2600_timer_class_init,
-};
-TYPE_INFO(aspeed_2600_timer_info)
+)
 
 

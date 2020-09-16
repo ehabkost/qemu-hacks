@@ -2522,20 +2522,17 @@ static void virt_instance_init(Object *obj)
     virt_flash_create(vms);
 }
 
-static const TypeInfo virt_machine_info = {
-    .name          = TYPE_VIRT_MACHINE,
-    .parent        = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(virt_machine_info,
+                            VirtMachineState, VirtMachineClass,
+                            VIRT_MACHINE, MACHINE,
     .abstract      = true,
-    .instance_size = sizeof(VirtMachineState),
-    .class_size    = sizeof(VirtMachineClass),
     .class_init    = virt_machine_class_init,
     .instance_init = virt_instance_init,
     .interfaces = (InterfaceInfo[]) {
          { TYPE_HOTPLUG_HANDLER },
          { }
     },
-};
-TYPE_INFO(virt_machine_info)
+)
 
 
 static void virt_machine_5_2_options(MachineClass *mc)

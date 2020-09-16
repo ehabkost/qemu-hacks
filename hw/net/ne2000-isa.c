@@ -136,13 +136,11 @@ static void isa_ne2000_instance_init(Object *obj)
                         isa_ne2000_set_bootindex, NULL, NULL);
     object_property_set_int(obj, "bootindex", -1, NULL);
 }
-static const TypeInfo ne2000_isa_info = {
-    .name          = TYPE_ISA_NE2000,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISANE2000State),
+OBJECT_DEFINE_TYPE_EXTENDED(ne2000_isa_info,
+                            ISANE2000State, void,
+                            ISA_NE2000, ISA_DEVICE,
     .class_init    = isa_ne2000_class_initfn,
     .instance_init = isa_ne2000_instance_init,
-};
-TYPE_INFO(ne2000_isa_info)
+)
 
 

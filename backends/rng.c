@@ -125,20 +125,17 @@ static void rng_backend_class_init(ObjectClass *oc, void *data)
     ucc->complete = rng_backend_complete;
 }
 
-static const TypeInfo rng_backend_info = {
-    .name = TYPE_RNG_BACKEND,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(RngBackend),
+OBJECT_DEFINE_TYPE_EXTENDED(rng_backend_info,
+                            RngBackend, RngBackendClass,
+                            RNG_BACKEND, OBJECT,
     .instance_init = rng_backend_init,
     .instance_finalize = rng_backend_finalize,
-    .class_size = sizeof(RngBackendClass),
     .class_init = rng_backend_class_init,
     .abstract = true,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(rng_backend_info)
+)
 
 

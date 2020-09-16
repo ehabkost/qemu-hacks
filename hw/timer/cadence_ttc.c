@@ -487,13 +487,11 @@ static void cadence_ttc_class_init(ObjectClass *klass, void *data)
     dc->realize = cadence_ttc_realize;
 }
 
-static const TypeInfo cadence_ttc_info = {
-    .name  = TYPE_CADENCE_TTC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(CadenceTTCState),
+OBJECT_DEFINE_TYPE_EXTENDED(cadence_ttc_info,
+                            CadenceTTCState, void,
+                            CADENCE_TTC, SYS_BUS_DEVICE,
     .instance_init = cadence_ttc_init,
     .class_init = cadence_ttc_class_init,
-};
-TYPE_INFO(cadence_ttc_info)
+)
 
 

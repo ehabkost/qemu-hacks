@@ -380,14 +380,12 @@ static void rxicu_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, rxicu_properties);
 }
 
-static const TypeInfo rxicu_info = {
-    .name = TYPE_RX_ICU,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RXICUState),
+OBJECT_DEFINE_TYPE_EXTENDED(rxicu_info,
+                            RXICUState, void,
+                            RX_ICU, SYS_BUS_DEVICE,
     .instance_init = rxicu_init,
     .instance_finalize = rxicu_fini,
     .class_init = rxicu_class_init,
-};
-TYPE_INFO(rxicu_info)
+)
 
 

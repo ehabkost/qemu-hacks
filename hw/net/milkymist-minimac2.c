@@ -532,12 +532,10 @@ static void milkymist_minimac2_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, milkymist_minimac2_properties);
 }
 
-static const TypeInfo milkymist_minimac2_info = {
-    .name          = TYPE_MILKYMIST_MINIMAC2,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistMinimac2State),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_minimac2_info,
+                            MilkymistMinimac2State, void,
+                            MILKYMIST_MINIMAC2, SYS_BUS_DEVICE,
     .class_init    = milkymist_minimac2_class_init,
-};
-TYPE_INFO(milkymist_minimac2_info)
+)
 
 

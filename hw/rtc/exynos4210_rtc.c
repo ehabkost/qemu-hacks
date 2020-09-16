@@ -592,13 +592,11 @@ static void exynos4210_rtc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_exynos4210_rtc_state;
 }
 
-static const TypeInfo exynos4210_rtc_info = {
-    .name          = TYPE_EXYNOS4210_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Exynos4210RTCState),
+OBJECT_DEFINE_TYPE_EXTENDED(exynos4210_rtc_info,
+                            Exynos4210RTCState, void,
+                            EXYNOS4210_RTC, SYS_BUS_DEVICE,
     .instance_init = exynos4210_rtc_init,
     .class_init    = exynos4210_rtc_class_init,
-};
-TYPE_INFO(exynos4210_rtc_info)
+)
 
 

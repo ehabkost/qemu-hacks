@@ -324,13 +324,11 @@ static void pl031_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, pl031_properties);
 }
 
-static const TypeInfo pl031_info = {
-    .name          = TYPE_PL031,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL031State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl031_info,
+                            PL031State, void,
+                            PL031, SYS_BUS_DEVICE,
     .instance_init = pl031_init,
     .class_init    = pl031_class_init,
-};
-TYPE_INFO(pl031_info)
+)
 
 

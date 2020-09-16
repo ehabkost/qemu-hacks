@@ -247,18 +247,16 @@ ssize_t qauthz_list_delete_rule(QAuthZList *auth, const char *match)
 }
 
 
-static const TypeInfo qauthz_list_info = {
-    .parent = TYPE_QAUTHZ,
-    .name = TYPE_QAUTHZ_LIST,
-    .instance_size = sizeof(QAuthZList),
+OBJECT_DEFINE_TYPE_EXTENDED(qauthz_list_info,
+                            QAuthZList, void,
+                            QAUTHZ_LIST, QAUTHZ,
     .instance_finalize = qauthz_list_finalize,
     .class_init = qauthz_list_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(qauthz_list_info)
+)
 
 
 

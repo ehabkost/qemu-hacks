@@ -644,13 +644,11 @@ static void pl041_device_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, pl041_device_properties);
 }
 
-static const TypeInfo pl041_device_info = {
-    .name          = TYPE_PL041,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL041State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl041_device_info,
+                            PL041State, void,
+                            PL041, SYS_BUS_DEVICE,
     .instance_init = pl041_init,
     .class_init    = pl041_device_class_init,
-};
-TYPE_INFO(pl041_device_info)
+)
 
 

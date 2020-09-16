@@ -1324,13 +1324,11 @@ static void virtio_blk_class_init(ObjectClass *klass, void *data)
     vdc->stop_ioeventfd = virtio_blk_data_plane_stop;
 }
 
-static const TypeInfo virtio_blk_info = {
-    .name = TYPE_VIRTIO_BLK,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOBlock),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_blk_info,
+                            VirtIOBlock, void,
+                            VIRTIO_BLK, VIRTIO_DEVICE,
     .instance_init = virtio_blk_instance_init,
     .class_init = virtio_blk_class_init,
-};
-TYPE_INFO(virtio_blk_info)
+)
 
 

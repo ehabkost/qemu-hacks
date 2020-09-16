@@ -415,16 +415,14 @@ static void tpm_spapr_class_init(ObjectClass *klass, void *data)
     tc->request_completed = tpm_spapr_request_completed;
 }
 
-static const TypeInfo tpm_spapr_info = {
-    .name          = TYPE_TPM_SPAPR,
-    .parent        = TYPE_VIO_SPAPR_DEVICE,
-    .instance_size = sizeof(SpaprTpmState),
+OBJECT_DEFINE_TYPE_EXTENDED(tpm_spapr_info,
+                            SpaprTpmState, void,
+                            TPM_SPAPR, VIO_SPAPR_DEVICE,
     .class_init    = tpm_spapr_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_TPM_IF },
         { }
     }
-};
-TYPE_INFO(tpm_spapr_info)
+)
 
 

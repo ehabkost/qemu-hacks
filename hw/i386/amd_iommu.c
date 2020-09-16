@@ -1613,25 +1613,21 @@ static void amdvi_class_init(ObjectClass *klass, void* data)
     dc->desc = "AMD IOMMU (AMD-Vi) DMA Remapping device";
 }
 
-static const TypeInfo amdvi = {
-    .name = TYPE_AMD_IOMMU_DEVICE,
-    .parent = TYPE_X86_IOMMU_DEVICE,
-    .instance_size = sizeof(AMDVIState),
+OBJECT_DEFINE_TYPE_EXTENDED(amdvi,
+                            AMDVIState, void,
+                            AMD_IOMMU_DEVICE, X86_IOMMU_DEVICE,
     .instance_init = amdvi_instance_init,
     .class_init = amdvi_class_init
-};
-TYPE_INFO(amdvi)
+)
 
-static const TypeInfo amdviPCI = {
-    .name = TYPE_AMD_IOMMU_PCI,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(AMDVIPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(amdviPCI,
+                            AMDVIPCIState, void,
+                            AMD_IOMMU_PCI, PCI_DEVICE,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(amdviPCI)
+)
 
 static void amdvi_iommu_memory_region_class_init(ObjectClass *klass, void *data)
 {
@@ -1641,11 +1637,10 @@ static void amdvi_iommu_memory_region_class_init(ObjectClass *klass, void *data)
     imrc->notify_flag_changed = amdvi_iommu_notify_flag_changed;
 }
 
-static const TypeInfo amdvi_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_AMD_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(amdvi_iommu_memory_region_info,
+                            void, void,
+                            AMD_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = amdvi_iommu_memory_region_class_init,
-};
-TYPE_INFO(amdvi_iommu_memory_region_info)
+)
 
 

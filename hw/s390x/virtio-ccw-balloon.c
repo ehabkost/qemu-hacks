@@ -55,13 +55,11 @@ static void virtio_ccw_balloon_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_balloon = {
-    .name          = TYPE_VIRTIO_BALLOON_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtIOBalloonCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_balloon,
+                            VirtIOBalloonCcw, void,
+                            VIRTIO_BALLOON_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_balloon_instance_init,
     .class_init    = virtio_ccw_balloon_class_init,
-};
-TYPE_INFO(virtio_ccw_balloon)
+)
 
 

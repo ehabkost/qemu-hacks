@@ -224,12 +224,10 @@ static void rs6000mc_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, rs6000mc_properties);
 }
 
-static const TypeInfo rs6000mc_info = {
-    .name          = TYPE_RS6000MC,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(RS6000MCState),
+OBJECT_DEFINE_TYPE_EXTENDED(rs6000mc_info,
+                            RS6000MCState, void,
+                            RS6000MC, ISA_DEVICE,
     .class_init    = rs6000mc_class_initfn,
-};
-TYPE_INFO(rs6000mc_info)
+)
 
 

@@ -206,13 +206,11 @@ AUXReply aux_request(AUXBus *bus, AUXCommand cmd, uint32_t address,
     return ret;
 }
 
-static const TypeInfo aux_bus_info = {
-    .name = TYPE_AUX_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(AUXBus),
+OBJECT_DEFINE_TYPE_EXTENDED(aux_bus_info,
+                            AUXBus, void,
+                            AUX_BUS, BUS,
     .class_init = aux_bus_class_init
-};
-TYPE_INFO(aux_bus_info)
+)
 
 /* aux-i2c implementation (internal not public) */
 struct AUXTOI2CState {
@@ -245,14 +243,12 @@ static inline I2CBus *aux_bridge_get_i2c_bus(AUXTOI2CState *bridge)
     return bridge->i2c_bus;
 }
 
-static const TypeInfo aux_to_i2c_type_info = {
-    .name = TYPE_AUXTOI2C,
-    .parent = TYPE_AUX_SLAVE,
+OBJECT_DEFINE_TYPE_EXTENDED(aux_to_i2c_type_info,
+                            AUXTOI2CState, void,
+                            AUXTOI2C, AUX_SLAVE,
     .class_init = aux_bridge_class_init,
-    .instance_size = sizeof(AUXTOI2CState),
     .instance_init = aux_bridge_init
-};
-TYPE_INFO(aux_to_i2c_type_info)
+)
 
 /* aux-slave implementation */
 static void aux_slave_dev_print(Monitor *mon, DeviceState *dev, int indent)
@@ -287,13 +283,11 @@ static void aux_slave_class_init(ObjectClass *klass, void *data)
     k->bus_type = TYPE_AUX_BUS;
 }
 
-static const TypeInfo aux_slave_type_info = {
-    .name = TYPE_AUX_SLAVE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(AUXSlave),
+OBJECT_DEFINE_TYPE_EXTENDED(aux_slave_type_info,
+                            AUXSlave, void,
+                            AUX_SLAVE, DEVICE,
     .abstract = true,
     .class_init = aux_slave_class_init,
-};
-TYPE_INFO(aux_slave_type_info)
+)
 
 

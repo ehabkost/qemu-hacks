@@ -206,12 +206,10 @@ static void generic_loader_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static TypeInfo generic_loader_info = {
-    .name = TYPE_GENERIC_LOADER,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(GenericLoaderState),
+OBJECT_DEFINE_TYPE_EXTENDED(generic_loader_info,
+                            GenericLoaderState, void,
+                            GENERIC_LOADER, DEVICE,
     .class_init = generic_loader_class_init,
-};
-TYPE_INFO(generic_loader_info)
+)
 
 

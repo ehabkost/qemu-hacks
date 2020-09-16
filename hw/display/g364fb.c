@@ -531,12 +531,10 @@ static void g364fb_sysbus_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, g364fb_sysbus_properties);
 }
 
-static const TypeInfo g364fb_sysbus_info = {
-    .name          = TYPE_G364,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(G364SysBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(g364fb_sysbus_info,
+                            G364SysBusState, void,
+                            G364, SYS_BUS_DEVICE,
     .class_init    = g364fb_sysbus_class_init,
-};
-TYPE_INFO(g364fb_sysbus_info)
+)
 
 

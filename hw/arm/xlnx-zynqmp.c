@@ -632,13 +632,11 @@ static void xlnx_zynqmp_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo xlnx_zynqmp_type_info = {
-    .name = TYPE_XLNX_ZYNQMP,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(XlnxZynqMPState),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_zynqmp_type_info,
+                            XlnxZynqMPState, void,
+                            XLNX_ZYNQMP, DEVICE,
     .instance_init = xlnx_zynqmp_init,
     .class_init = xlnx_zynqmp_class_init,
-};
-TYPE_INFO(xlnx_zynqmp_type_info)
+)
 
 

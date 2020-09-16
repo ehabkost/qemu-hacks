@@ -861,15 +861,13 @@ static void spapr_vlan_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_spapr_llan;
 }
 
-static const TypeInfo spapr_vlan_info = {
-    .name          = TYPE_VIO_SPAPR_VLAN_DEVICE,
-    .parent        = TYPE_VIO_SPAPR_DEVICE,
-    .instance_size = sizeof(SpaprVioVlan),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_vlan_info,
+                            SpaprVioVlan, void,
+                            VIO_SPAPR_VLAN_DEVICE, VIO_SPAPR_DEVICE,
     .class_init    = spapr_vlan_class_init,
     .instance_init = spapr_vlan_instance_init,
     .instance_finalize = spapr_vlan_instance_finalize,
-};
-TYPE_INFO(spapr_vlan_info)
+)
 
 static void spapr_vlan_register_types(void)
 {

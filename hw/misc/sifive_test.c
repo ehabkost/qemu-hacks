@@ -73,13 +73,11 @@ static void sifive_test_init(Object *obj)
     sysbus_init_mmio(SYS_BUS_DEVICE(obj), &s->mmio);
 }
 
-static const TypeInfo sifive_test_info = {
-    .name          = TYPE_SIFIVE_TEST,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SiFiveTestState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_test_info,
+                            SiFiveTestState, void,
+                            SIFIVE_TEST, SYS_BUS_DEVICE,
     .instance_init = sifive_test_init,
-};
-TYPE_INFO(sifive_test_info)
+)
 
 
 

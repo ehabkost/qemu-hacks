@@ -101,14 +101,13 @@ static void e500plat_machine_class_init(ObjectClass *oc, void *data)
     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_ETSEC_COMMON);
  }
 
-static const TypeInfo e500plat_info = {
-    .name          = TYPE_E500PLAT_MACHINE,
-    .parent        = TYPE_PPCE500_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(e500plat_info,
+                            void, void,
+                            E500PLAT_MACHINE, PPCE500_MACHINE,
     .class_init    = e500plat_machine_class_init,
     .interfaces    = (InterfaceInfo[]) {
          { TYPE_HOTPLUG_HANDLER },
          { }
     }
-};
-TYPE_INFO(e500plat_info)
+)
 

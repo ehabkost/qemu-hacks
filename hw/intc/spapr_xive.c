@@ -809,19 +809,16 @@ static void spapr_xive_class_init(ObjectClass *klass, void *data)
     xpc->in_kernel  = spapr_xive_in_kernel_xptr;
 }
 
-static const TypeInfo spapr_xive_info = {
-    .name = TYPE_SPAPR_XIVE,
-    .parent = TYPE_XIVE_ROUTER,
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_xive_info,
+                            SpaprXive, SpaprXiveClass,
+                            SPAPR_XIVE, XIVE_ROUTER,
     .instance_init = spapr_xive_instance_init,
-    .instance_size = sizeof(SpaprXive),
     .class_init = spapr_xive_class_init,
-    .class_size = sizeof(SpaprXiveClass),
     .interfaces = (InterfaceInfo[]) {
         { TYPE_SPAPR_INTC },
         { }
     },
-};
-TYPE_INFO(spapr_xive_info)
+)
 
 
 

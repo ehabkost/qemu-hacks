@@ -362,12 +362,10 @@ static void a9_gtimer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, a9_gtimer_properties);
 }
 
-static const TypeInfo a9_gtimer_info = {
-    .name          = TYPE_A9_GTIMER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(A9GTimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(a9_gtimer_info,
+                            A9GTimerState, void,
+                            A9_GTIMER, SYS_BUS_DEVICE,
     .class_init    = a9_gtimer_class_init,
-};
-TYPE_INFO(a9_gtimer_info)
+)
 
 

@@ -3223,24 +3223,18 @@ void memory_region_init_rom_device(MemoryRegion *mr,
     vmstate_register_ram(mr, owner_dev);
 }
 
-static const TypeInfo memory_region_info = {
-    .parent             = TYPE_OBJECT,
-    .name               = TYPE_MEMORY_REGION,
-    .class_size         = sizeof(MemoryRegionClass),
-    .instance_size      = sizeof(MemoryRegion),
+OBJECT_DEFINE_TYPE_EXTENDED(memory_region_info,
+                            MemoryRegion, MemoryRegionClass,
+                            MEMORY_REGION, OBJECT,
     .instance_init      = memory_region_initfn,
     .instance_finalize  = memory_region_finalize,
-};
-TYPE_INFO(memory_region_info)
+)
 
-static const TypeInfo iommu_memory_region_info = {
-    .parent             = TYPE_MEMORY_REGION,
-    .name               = TYPE_IOMMU_MEMORY_REGION,
-    .class_size         = sizeof(IOMMUMemoryRegionClass),
-    .instance_size      = sizeof(IOMMUMemoryRegion),
+OBJECT_DEFINE_TYPE_EXTENDED(iommu_memory_region_info,
+                            IOMMUMemoryRegion, IOMMUMemoryRegionClass,
+                            IOMMU_MEMORY_REGION, MEMORY_REGION,
     .instance_init      = iommu_memory_region_initfn,
     .abstract           = true,
-};
-TYPE_INFO(iommu_memory_region_info)
+)
 
 

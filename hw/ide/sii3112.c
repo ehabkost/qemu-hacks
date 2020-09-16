@@ -307,12 +307,10 @@ static void sii3112_pci_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo sii3112_pci_info = {
-    .name = TYPE_SII3112_PCI,
-    .parent = TYPE_PCI_IDE,
-    .instance_size = sizeof(SiI3112PCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sii3112_pci_info,
+                            SiI3112PCIState, void,
+                            SII3112_PCI, PCI_IDE,
     .class_init = sii3112_pci_class_init,
-};
-TYPE_INFO(sii3112_pci_info)
+)
 
 

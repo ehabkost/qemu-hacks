@@ -155,13 +155,11 @@ static void stm32f4xx_syscfg_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_stm32f4xx_syscfg;
 }
 
-static const TypeInfo stm32f4xx_syscfg_info = {
-    .name          = TYPE_STM32F4XX_SYSCFG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F4xxSyscfgState),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f4xx_syscfg_info,
+                            STM32F4xxSyscfgState, void,
+                            STM32F4XX_SYSCFG, SYS_BUS_DEVICE,
     .instance_init = stm32f4xx_syscfg_init,
     .class_init    = stm32f4xx_syscfg_class_init,
-};
-TYPE_INFO(stm32f4xx_syscfg_info)
+)
 
 

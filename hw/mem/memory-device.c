@@ -332,11 +332,8 @@ uint64_t memory_device_get_region_size(const MemoryDeviceState *md,
     return memory_region_size(mr);
 }
 
-static const TypeInfo memory_device_info = {
-    .name          = TYPE_MEMORY_DEVICE,
-    .parent        = TYPE_INTERFACE,
-    .class_size = sizeof(MemoryDeviceClass),
-};
-TYPE_INFO(memory_device_info)
+OBJECT_DEFINE_TYPE_EXTENDED(memory_device_info,
+                            void, MemoryDeviceClass,
+                            MEMORY_DEVICE, INTERFACE)
 
 

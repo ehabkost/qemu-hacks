@@ -121,13 +121,11 @@ void pcie_host_mmcfg_update(PCIExpressHost *e,
     memory_region_transaction_commit();
 }
 
-static const TypeInfo pcie_host_type_info = {
-    .name = TYPE_PCIE_HOST_BRIDGE,
-    .parent = TYPE_PCI_HOST_BRIDGE,
+OBJECT_DEFINE_TYPE_EXTENDED(pcie_host_type_info,
+                            PCIExpressHost, void,
+                            PCIE_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .abstract = true,
-    .instance_size = sizeof(PCIExpressHost),
     .instance_init = pcie_host_init,
-};
-TYPE_INFO(pcie_host_type_info)
+)
 
 

@@ -132,11 +132,8 @@ void qemu_irq_intercept_in(qemu_irq *gpio_in, qemu_irq_handler handler, int n)
     }
 }
 
-static const TypeInfo irq_type_info = {
-   .name = TYPE_IRQ,
-   .parent = TYPE_OBJECT,
-   .instance_size = sizeof(struct IRQState),
-};
-TYPE_INFO(irq_type_info)
+OBJECT_DEFINE_TYPE_EXTENDED(irq_type_info,
+                            struct IRQState, void,
+                            IRQ, OBJECT)
 
 

@@ -166,12 +166,10 @@ static void aspeed_rtc_class_init(ObjectClass *klass, void *data)
     dc->reset = aspeed_rtc_reset;
 }
 
-static const TypeInfo aspeed_rtc_info = {
-    .name          = TYPE_ASPEED_RTC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AspeedRtcState),
+OBJECT_DEFINE_TYPE_EXTENDED(aspeed_rtc_info,
+                            AspeedRtcState, void,
+                            ASPEED_RTC, SYS_BUS_DEVICE,
     .class_init    = aspeed_rtc_class_init,
-};
-TYPE_INFO(aspeed_rtc_info)
+)
 
 

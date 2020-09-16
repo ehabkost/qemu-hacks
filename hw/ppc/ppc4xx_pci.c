@@ -372,12 +372,10 @@ static void ppc4xx_pcihost_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_ppc4xx_pci;
 }
 
-static const TypeInfo ppc4xx_pcihost_info = {
-    .name          = TYPE_PPC4xx_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(PPC4xxPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(ppc4xx_pcihost_info,
+                            PPC4xxPCIState, void,
+                            PPC4xx_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = ppc4xx_pcihost_class_init,
-};
-TYPE_INFO(ppc4xx_pcihost_info)
+)
 
 

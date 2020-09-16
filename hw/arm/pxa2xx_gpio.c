@@ -353,13 +353,11 @@ static void pxa2xx_gpio_class_init(ObjectClass *klass, void *data)
     dc->realize = pxa2xx_gpio_realize;
 }
 
-static const TypeInfo pxa2xx_gpio_info = {
-    .name          = TYPE_PXA2XX_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxGPIOInfo),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_gpio_info,
+                            PXA2xxGPIOInfo, void,
+                            PXA2XX_GPIO, SYS_BUS_DEVICE,
     .instance_init = pxa2xx_gpio_initfn,
     .class_init    = pxa2xx_gpio_class_init,
-};
-TYPE_INFO(pxa2xx_gpio_info)
+)
 
 

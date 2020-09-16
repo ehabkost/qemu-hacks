@@ -248,17 +248,15 @@ static void pcm3680i_pci_class_init(ObjectClass *klass, void *data)
     dc->reset = pcm3680i_pci_reset;
 }
 
-static const TypeInfo pcm3680i_pci_info = {
-    .name          = TYPE_CAN_PCI_DEV,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(Pcm3680iPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(pcm3680i_pci_info,
+                            Pcm3680iPCIState, void,
+                            CAN_PCI_DEV, PCI_DEVICE,
     .class_init    = pcm3680i_pci_class_init,
     .instance_init = pcm3680i_pci_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(pcm3680i_pci_info)
+)
 
 

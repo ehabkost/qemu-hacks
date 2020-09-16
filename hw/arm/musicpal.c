@@ -455,14 +455,12 @@ static void mv88w8618_eth_class_init(ObjectClass *klass, void *data)
     dc->realize = mv88w8618_eth_realize;
 }
 
-static const TypeInfo mv88w8618_eth_info = {
-    .name          = TYPE_MV88W8618_ETH,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mv88w8618_eth_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mv88w8618_eth_info,
+                            mv88w8618_eth_state, void,
+                            MV88W8618_ETH, SYS_BUS_DEVICE,
     .instance_init = mv88w8618_eth_init,
     .class_init    = mv88w8618_eth_class_init,
-};
-TYPE_INFO(mv88w8618_eth_info)
+)
 
 /* LCD register offsets */
 #define MP_LCD_IRQCTRL          0x180
@@ -686,14 +684,12 @@ static void musicpal_lcd_class_init(ObjectClass *klass, void *data)
     dc->realize = musicpal_lcd_realize;
 }
 
-static const TypeInfo musicpal_lcd_info = {
-    .name          = TYPE_MUSICPAL_LCD,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(musicpal_lcd_state),
+OBJECT_DEFINE_TYPE_EXTENDED(musicpal_lcd_info,
+                            musicpal_lcd_state, void,
+                            MUSICPAL_LCD, SYS_BUS_DEVICE,
     .instance_init = musicpal_lcd_init,
     .class_init    = musicpal_lcd_class_init,
-};
-TYPE_INFO(musicpal_lcd_info)
+)
 
 /* PIC register offsets */
 #define MP_PIC_STATUS           0x00
@@ -808,14 +804,12 @@ static void mv88w8618_pic_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &mv88w8618_pic_vmsd;
 }
 
-static const TypeInfo mv88w8618_pic_info = {
-    .name          = TYPE_MV88W8618_PIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mv88w8618_pic_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mv88w8618_pic_info,
+                            mv88w8618_pic_state, void,
+                            MV88W8618_PIC, SYS_BUS_DEVICE,
     .instance_init = mv88w8618_pic_init,
     .class_init    = mv88w8618_pic_class_init,
-};
-TYPE_INFO(mv88w8618_pic_info)
+)
 
 /* PIT register offsets */
 #define MP_PIT_TIMER1_LENGTH    0x00
@@ -992,14 +986,12 @@ static void mv88w8618_pit_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &mv88w8618_pit_vmsd;
 }
 
-static const TypeInfo mv88w8618_pit_info = {
-    .name          = TYPE_MV88W8618_PIT,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mv88w8618_pit_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mv88w8618_pit_info,
+                            mv88w8618_pit_state, void,
+                            MV88W8618_PIT, SYS_BUS_DEVICE,
     .instance_init = mv88w8618_pit_init,
     .class_init    = mv88w8618_pit_class_init,
-};
-TYPE_INFO(mv88w8618_pit_info)
+)
 
 /* Flash config register offsets */
 #define MP_FLASHCFG_CFGR0    0x04
@@ -1077,14 +1069,12 @@ static void mv88w8618_flashcfg_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &mv88w8618_flashcfg_vmsd;
 }
 
-static const TypeInfo mv88w8618_flashcfg_info = {
-    .name          = TYPE_MV88W8618_FLASHCFG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mv88w8618_flashcfg_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mv88w8618_flashcfg_info,
+                            mv88w8618_flashcfg_state, void,
+                            MV88W8618_FLASHCFG, SYS_BUS_DEVICE,
     .instance_init = mv88w8618_flashcfg_init,
     .class_init    = mv88w8618_flashcfg_class_init,
-};
-TYPE_INFO(mv88w8618_flashcfg_info)
+)
 
 /* Misc register offsets */
 #define MP_MISC_BOARD_REVISION  0x18
@@ -1132,13 +1122,11 @@ static void musicpal_misc_init(Object *obj)
     sysbus_init_mmio(sd, &s->iomem);
 }
 
-static const TypeInfo musicpal_misc_info = {
-    .name = TYPE_MUSICPAL_MISC,
-    .parent = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(musicpal_misc_info,
+                            MusicPalMiscState, void,
+                            MUSICPAL_MISC, SYS_BUS_DEVICE,
     .instance_init = musicpal_misc_init,
-    .instance_size = sizeof(MusicPalMiscState),
-};
-TYPE_INFO(musicpal_misc_info)
+)
 
 /* WLAN register offsets */
 #define MP_WLAN_MAGIC1          0x11c
@@ -1419,14 +1407,12 @@ static void musicpal_gpio_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &musicpal_gpio_vmsd;
 }
 
-static const TypeInfo musicpal_gpio_info = {
-    .name          = TYPE_MUSICPAL_GPIO,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(musicpal_gpio_state),
+OBJECT_DEFINE_TYPE_EXTENDED(musicpal_gpio_info,
+                            musicpal_gpio_state, void,
+                            MUSICPAL_GPIO, SYS_BUS_DEVICE,
     .instance_init = musicpal_gpio_init,
     .class_init    = musicpal_gpio_class_init,
-};
-TYPE_INFO(musicpal_gpio_info)
+)
 
 /* Keyboard codes & masks */
 #define KEY_RELEASED            0x80
@@ -1578,14 +1564,12 @@ static void musicpal_key_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &musicpal_key_vmsd;
 }
 
-static const TypeInfo musicpal_key_info = {
-    .name          = TYPE_MUSICPAL_KEY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(musicpal_key_state),
+OBJECT_DEFINE_TYPE_EXTENDED(musicpal_key_info,
+                            musicpal_key_state, void,
+                            MUSICPAL_KEY, SYS_BUS_DEVICE,
     .instance_init = musicpal_key_init,
     .class_init    = musicpal_key_class_init,
-};
-TYPE_INFO(musicpal_key_info)
+)
 
 static struct arm_boot_info musicpal_binfo = {
     .loader_start = 0x0,

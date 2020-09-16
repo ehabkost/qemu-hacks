@@ -135,16 +135,14 @@ static void xen_pv_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_xen_pvdevice;
 }
 
-static const TypeInfo xen_pv_type_info = {
-    .name          = TYPE_XEN_PV_DEVICE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(XenPVDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(xen_pv_type_info,
+                            XenPVDevice, void,
+                            XEN_PV_DEVICE, PCI_DEVICE,
     .class_init    = xen_pv_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(xen_pv_type_info)
+)
 
 

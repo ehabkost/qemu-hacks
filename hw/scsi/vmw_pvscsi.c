@@ -1296,11 +1296,9 @@ static void pvscsi_class_init(ObjectClass *klass, void *data)
     hc->plug = pvscsi_hotplug;
 }
 
-static const TypeInfo pvscsi_info = {
-    .name          = TYPE_PVSCSI,
-    .parent        = TYPE_PCI_DEVICE,
-    .class_size    = sizeof(PVSCSIClass),
-    .instance_size = sizeof(PVSCSIState),
+OBJECT_DEFINE_TYPE_EXTENDED(pvscsi_info,
+                            PVSCSIState, PVSCSIClass,
+                            PVSCSI, PCI_DEVICE,
     .class_init    = pvscsi_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
@@ -1308,7 +1306,6 @@ static const TypeInfo pvscsi_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(pvscsi_info)
+)
 
 

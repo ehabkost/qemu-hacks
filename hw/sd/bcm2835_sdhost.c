@@ -436,20 +436,15 @@ static void bcm2835_sdhost_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_bcm2835_sdhost;
 }
 
-static TypeInfo bcm2835_sdhost_info = {
-    .name          = TYPE_BCM2835_SDHOST,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(BCM2835SDHostState),
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_sdhost_info,
+                            BCM2835SDHostState, void,
+                            BCM2835_SDHOST, SYS_BUS_DEVICE,
     .class_init    = bcm2835_sdhost_class_init,
     .instance_init = bcm2835_sdhost_init,
-};
-TYPE_INFO(bcm2835_sdhost_info)
+)
 
-static const TypeInfo bcm2835_sdhost_bus_info = {
-    .name = TYPE_BCM2835_SDHOST_BUS,
-    .parent = TYPE_SD_BUS,
-    .instance_size = sizeof(SDBus),
-};
-TYPE_INFO(bcm2835_sdhost_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(bcm2835_sdhost_bus_info,
+                            SDBus, void,
+                            BCM2835_SDHOST_BUS, SD_BUS)
 
 

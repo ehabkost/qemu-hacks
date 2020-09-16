@@ -162,13 +162,11 @@ static void digic_timer_class_init(ObjectClass *klass, void *class_data)
     dc->vmsd = &vmstate_digic_timer;
 }
 
-static const TypeInfo digic_timer_info = {
-    .name = TYPE_DIGIC_TIMER,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(DigicTimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(digic_timer_info,
+                            DigicTimerState, void,
+                            DIGIC_TIMER, SYS_BUS_DEVICE,
     .instance_init = digic_timer_init,
     .class_init = digic_timer_class_init,
-};
-TYPE_INFO(digic_timer_info)
+)
 
 

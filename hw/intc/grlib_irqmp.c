@@ -344,13 +344,11 @@ static void grlib_irqmp_class_init(ObjectClass *klass, void *data)
     dc->reset = grlib_irqmp_reset;
 }
 
-static const TypeInfo grlib_irqmp_info = {
-    .name          = TYPE_GRLIB_IRQMP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IRQMP),
+OBJECT_DEFINE_TYPE_EXTENDED(grlib_irqmp_info,
+                            IRQMP, void,
+                            GRLIB_IRQMP, SYS_BUS_DEVICE,
     .instance_init = grlib_irqmp_init,
     .class_init    = grlib_irqmp_class_init,
-};
-TYPE_INFO(grlib_irqmp_info)
+)
 
 

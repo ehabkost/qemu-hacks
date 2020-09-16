@@ -760,13 +760,11 @@ static void xive_tctx_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo xive_tctx_info = {
-    .name          = TYPE_XIVE_TCTX,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(XiveTCTX),
+OBJECT_DEFINE_TYPE_EXTENDED(xive_tctx_info,
+                            XiveTCTX, void,
+                            XIVE_TCTX, DEVICE,
     .class_init    = xive_tctx_class_init,
-};
-TYPE_INFO(xive_tctx_info)
+)
 
 Object *xive_tctx_create(Object *cpu, XivePresenter *xptr, Error **errp)
 {
@@ -1209,13 +1207,11 @@ static void xive_source_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo xive_source_info = {
-    .name          = TYPE_XIVE_SOURCE,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(XiveSource),
+OBJECT_DEFINE_TYPE_EXTENDED(xive_source_info,
+                            XiveSource, void,
+                            XIVE_SOURCE, DEVICE,
     .class_init    = xive_source_class_init,
-};
-TYPE_INFO(xive_source_info)
+)
 
 /*
  * XiveEND helpers
@@ -1750,20 +1746,17 @@ static void xive_router_class_init(ObjectClass *klass, void *data)
     xnc->notify = xive_router_notify;
 }
 
-static const TypeInfo xive_router_info = {
-    .name          = TYPE_XIVE_ROUTER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(xive_router_info,
+                            XiveRouter, XiveRouterClass,
+                            XIVE_ROUTER, SYS_BUS_DEVICE,
     .abstract      = true,
-    .instance_size = sizeof(XiveRouter),
-    .class_size    = sizeof(XiveRouterClass),
     .class_init    = xive_router_class_init,
     .interfaces    = (InterfaceInfo[]) {
         { TYPE_XIVE_NOTIFIER },
         { TYPE_XIVE_PRESENTER },
         { }
     }
-};
-TYPE_INFO(xive_router_info)
+)
 
 void xive_eas_pic_print_info(XiveEAS *eas, uint32_t lisn, Monitor *mon)
 {
@@ -1917,42 +1910,31 @@ static void xive_end_source_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo xive_end_source_info = {
-    .name          = TYPE_XIVE_END_SOURCE,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(XiveENDSource),
+OBJECT_DEFINE_TYPE_EXTENDED(xive_end_source_info,
+                            XiveENDSource, void,
+                            XIVE_END_SOURCE, DEVICE,
     .class_init    = xive_end_source_class_init,
-};
-TYPE_INFO(xive_end_source_info)
+)
 
 /*
  * XIVE Notifier
  */
-static const TypeInfo xive_notifier_info = {
-    .name = TYPE_XIVE_NOTIFIER,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(XiveNotifierClass),
-};
-TYPE_INFO(xive_notifier_info)
+OBJECT_DEFINE_TYPE_EXTENDED(xive_notifier_info,
+                            void, XiveNotifierClass,
+                            XIVE_NOTIFIER, INTERFACE)
 
 /*
  * XIVE Presenter
  */
-static const TypeInfo xive_presenter_info = {
-    .name = TYPE_XIVE_PRESENTER,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(XivePresenterClass),
-};
-TYPE_INFO(xive_presenter_info)
+OBJECT_DEFINE_TYPE_EXTENDED(xive_presenter_info,
+                            void, XivePresenterClass,
+                            XIVE_PRESENTER, INTERFACE)
 
 /*
  * XIVE Fabric
  */
-static const TypeInfo xive_fabric_info = {
-    .name = TYPE_XIVE_FABRIC,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(XiveFabricClass),
-};
-TYPE_INFO(xive_fabric_info)
+OBJECT_DEFINE_TYPE_EXTENDED(xive_fabric_info,
+                            void, XiveFabricClass,
+                            XIVE_FABRIC, INTERFACE)
 
 

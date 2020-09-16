@@ -152,20 +152,17 @@ static void dummy_finalize(Object *obj)
 }
 
 
-static const TypeInfo dummy_info = {
-    .name          = TYPE_DUMMY,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(DummyObject),
+OBJECT_DEFINE_TYPE_EXTENDED(dummy_info,
+                            DummyObject, DummyObjectClass,
+                            DUMMY, OBJECT,
     .instance_init = dummy_init,
     .instance_finalize = dummy_finalize,
-    .class_size = sizeof(DummyObjectClass),
     .class_init = dummy_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(dummy_info)
+)
 
 
 /*
@@ -295,36 +292,27 @@ static void dummy_backend_init(Object *obj)
 }
 
 
-static const TypeInfo dummy_dev_info = {
-    .name          = TYPE_DUMMY_DEV,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(DummyDev),
+OBJECT_DEFINE_TYPE_EXTENDED(dummy_dev_info,
+                            DummyDev, DummyDevClass,
+                            DUMMY_DEV, OBJECT,
     .instance_init = dummy_dev_init,
     .instance_finalize = dummy_dev_finalize,
-    .class_size = sizeof(DummyDevClass),
     .class_init = dummy_dev_class_init,
-};
-TYPE_INFO(dummy_dev_info)
+)
 
-static const TypeInfo dummy_bus_info = {
-    .name          = TYPE_DUMMY_BUS,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(DummyBus),
+OBJECT_DEFINE_TYPE_EXTENDED(dummy_bus_info,
+                            DummyBus, DummyBusClass,
+                            DUMMY_BUS, OBJECT,
     .instance_init = dummy_bus_init,
     .instance_finalize = dummy_bus_finalize,
-    .class_size = sizeof(DummyBusClass),
     .class_init = dummy_bus_class_init,
-};
-TYPE_INFO(dummy_bus_info)
+)
 
-static const TypeInfo dummy_backend_info = {
-    .name          = TYPE_DUMMY_BACKEND,
-    .parent        = TYPE_OBJECT,
-    .instance_size = sizeof(DummyBackend),
+OBJECT_DEFINE_TYPE_EXTENDED(dummy_backend_info,
+                            DummyBackend, DummyBackendClass,
+                            DUMMY_BACKEND, OBJECT,
     .instance_init = dummy_backend_init,
-    .class_size = sizeof(DummyBackendClass),
-};
-TYPE_INFO(dummy_backend_info)
+)
 
 static QemuOptsList qemu_object_opts = {
     .name = "object",

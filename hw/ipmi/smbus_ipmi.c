@@ -365,17 +365,15 @@ static void smbus_ipmi_class_init(ObjectClass *oc, void *data)
     iic->get_fwinfo = smbus_ipmi_get_fwinfo;
 }
 
-static const TypeInfo smbus_ipmi_info = {
-    .name          = TYPE_SMBUS_IPMI,
-    .parent        = TYPE_SMBUS_DEVICE,
-    .instance_size = sizeof(SMBusIPMIDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(smbus_ipmi_info,
+                            SMBusIPMIDevice, void,
+                            SMBUS_IPMI, SMBUS_DEVICE,
     .instance_init = smbus_ipmi_init,
     .class_init    = smbus_ipmi_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_IPMI_INTERFACE },
         { }
     }
-};
-TYPE_INFO(smbus_ipmi_info)
+)
 
 

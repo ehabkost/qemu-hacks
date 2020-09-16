@@ -355,12 +355,10 @@ static void lasi_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_lasi;
 }
 
-static const TypeInfo lasi_pcihost_info = {
-    .name          = TYPE_LASI_CHIP,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(LasiState),
+OBJECT_DEFINE_TYPE_EXTENDED(lasi_pcihost_info,
+                            LasiState, void,
+                            LASI_CHIP, SYS_BUS_DEVICE,
     .class_init    = lasi_class_init,
-};
-TYPE_INFO(lasi_pcihost_info)
+)
 
 

@@ -706,14 +706,12 @@ static void cs4231a_class_initfn (ObjectClass *klass, void *data)
     device_class_set_props(dc, cs4231a_properties);
 }
 
-static const TypeInfo cs4231a_info = {
-    .name          = TYPE_CS4231A,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof (CSState),
+OBJECT_DEFINE_TYPE_EXTENDED(cs4231a_info,
+                            CSState, void,
+                            CS4231A, ISA_DEVICE,
     .instance_init = cs4231a_initfn,
     .class_init    = cs4231a_class_initfn,
-};
-TYPE_INFO(cs4231a_info)
+)
 
 static void cs4231a_register_types (void)
 {

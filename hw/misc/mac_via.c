@@ -1171,14 +1171,12 @@ static void mac_via_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, mac_via_properties);
 }
 
-static TypeInfo mac_via_info = {
-    .name = TYPE_MAC_VIA,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MacVIAState),
+OBJECT_DEFINE_TYPE_EXTENDED(mac_via_info,
+                            MacVIAState, void,
+                            MAC_VIA, SYS_BUS_DEVICE,
     .instance_init = mac_via_init,
     .class_init = mac_via_class_init,
-};
-TYPE_INFO(mac_via_info)
+)
 
 /* VIA 1 */
 static void mos6522_q800_via1_reset(DeviceState *dev)
@@ -1207,14 +1205,12 @@ static void mos6522_q800_via1_class_init(ObjectClass *oc, void *data)
     dc->reset = mos6522_q800_via1_reset;
 }
 
-static const TypeInfo mos6522_q800_via1_type_info = {
-    .name = TYPE_MOS6522_Q800_VIA1,
-    .parent = TYPE_MOS6522,
-    .instance_size = sizeof(MOS6522Q800VIA1State),
+OBJECT_DEFINE_TYPE_EXTENDED(mos6522_q800_via1_type_info,
+                            MOS6522Q800VIA1State, void,
+                            MOS6522_Q800_VIA1, MOS6522,
     .instance_init = mos6522_q800_via1_init,
     .class_init = mos6522_q800_via1_class_init,
-};
-TYPE_INFO(mos6522_q800_via1_type_info)
+)
 
 /* VIA 2 */
 static void mos6522_q800_via2_portB_write(MOS6522State *s)
@@ -1254,13 +1250,11 @@ static void mos6522_q800_via2_class_init(ObjectClass *oc, void *data)
     mdc->portB_write = mos6522_q800_via2_portB_write;
 }
 
-static const TypeInfo mos6522_q800_via2_type_info = {
-    .name = TYPE_MOS6522_Q800_VIA2,
-    .parent = TYPE_MOS6522,
-    .instance_size = sizeof(MOS6522Q800VIA2State),
+OBJECT_DEFINE_TYPE_EXTENDED(mos6522_q800_via2_type_info,
+                            MOS6522Q800VIA2State, void,
+                            MOS6522_Q800_VIA2, MOS6522,
     .instance_init = mos6522_q800_via2_init,
     .class_init = mos6522_q800_via2_class_init,
-};
-TYPE_INFO(mos6522_q800_via2_type_info)
+)
 
 

@@ -344,13 +344,11 @@ static void milkymist_ac97_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, milkymist_ac97_properties);
 }
 
-static const TypeInfo milkymist_ac97_info = {
-    .name          = TYPE_MILKYMIST_AC97,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistAC97State),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_ac97_info,
+                            MilkymistAC97State, void,
+                            MILKYMIST_AC97, SYS_BUS_DEVICE,
     .instance_init = milkymist_ac97_init,
     .class_init    = milkymist_ac97_class_init,
-};
-TYPE_INFO(milkymist_ac97_info)
+)
 
 

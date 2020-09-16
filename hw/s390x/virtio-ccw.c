@@ -1191,15 +1191,12 @@ static void virtio_ccw_device_class_init(ObjectClass *klass, void *data)
     device_class_set_parent_reset(dc, virtio_ccw_reset, &vdc->parent_reset);
 }
 
-static const TypeInfo virtio_ccw_device_info = {
-    .name = TYPE_VIRTIO_CCW_DEVICE,
-    .parent = TYPE_CCW_DEVICE,
-    .instance_size = sizeof(VirtioCcwDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_device_info,
+                            VirtioCcwDevice, VirtIOCCWDeviceClass,
+                            VIRTIO_CCW_DEVICE, CCW_DEVICE,
     .class_init = virtio_ccw_device_class_init,
-    .class_size = sizeof(VirtIOCCWDeviceClass),
     .abstract = true,
-};
-TYPE_INFO(virtio_ccw_device_info)
+)
 
 /* virtio-ccw-bus */
 
@@ -1234,13 +1231,10 @@ static void virtio_ccw_bus_class_init(ObjectClass *klass, void *data)
     k->ioeventfd_assign = virtio_ccw_ioeventfd_assign;
 }
 
-static const TypeInfo virtio_ccw_bus_info = {
-    .name = TYPE_VIRTIO_CCW_BUS,
-    .parent = TYPE_VIRTIO_BUS,
-    .instance_size = sizeof(VirtioCcwBusState),
-    .class_size = sizeof(VirtioCcwBusClass),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_bus_info,
+                            VirtioCcwBusState, VirtioCcwBusClass,
+                            VIRTIO_CCW_BUS, VIRTIO_BUS,
     .class_init = virtio_ccw_bus_class_init,
-};
-TYPE_INFO(virtio_ccw_bus_info)
+)
 
 

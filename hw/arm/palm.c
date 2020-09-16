@@ -173,17 +173,15 @@ static void palm_misc_gpio_init(Object *obj)
     qdev_init_gpio_in(dev, palmte_onoff_gpios, 7);
 }
 
-static const TypeInfo palm_misc_gpio_info = {
-    .name = TYPE_PALM_MISC_GPIO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PalmMiscGPIOState),
+OBJECT_DEFINE_TYPE_EXTENDED(palm_misc_gpio_info,
+                            PalmMiscGPIOState, void,
+                            PALM_MISC_GPIO, SYS_BUS_DEVICE,
     .instance_init = palm_misc_gpio_init,
     /*
      * No class init required: device has no internal state so does not
      * need to set up reset or vmstate, and has no realize method.
      */
-};
-TYPE_INFO(palm_misc_gpio_info)
+)
 
 static void palmte_gpio_setup(struct omap_mpu_state_s *cpu)
 {

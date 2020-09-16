@@ -184,14 +184,11 @@ static void pci_bus_class_init(ObjectClass *klass, void *data)
     pbc->numa_node = pcibus_numa_node;
 }
 
-static const TypeInfo pci_bus_info = {
-    .name = TYPE_PCI_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(PCIBus),
-    .class_size = sizeof(PCIBusClass),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_bus_info,
+                            PCIBus, PCIBusClass,
+                            PCI_BUS, BUS,
     .class_init = pci_bus_class_init,
-};
-TYPE_INFO(pci_bus_info)
+)
 
 static const TypeInfo pcie_interface_info = {
     .name          = INTERFACE_PCIE_DEVICE,
@@ -212,12 +209,11 @@ static void pcie_bus_class_init(ObjectClass *klass, void *data)
     k->realize = pcie_bus_realize;
 }
 
-static const TypeInfo pcie_bus_info = {
-    .name = TYPE_PCIE_BUS,
-    .parent = TYPE_PCI_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(pcie_bus_info,
+                            void, void,
+                            PCIE_BUS, PCI_BUS,
     .class_init = pcie_bus_class_init,
-};
-TYPE_INFO(pcie_bus_info)
+)
 
 static PCIBus *pci_find_bus_nr(PCIBus *bus, int bus_num);
 static void pci_update_mappings(PCIDevice *d);
@@ -2819,15 +2815,12 @@ MSIMessage pci_get_msi_message(PCIDevice *dev, int vector)
     return msg;
 }
 
-static const TypeInfo pci_device_type_info = {
-    .name = TYPE_PCI_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(PCIDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_device_type_info,
+                            PCIDevice, PCIDeviceClass,
+                            PCI_DEVICE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(PCIDeviceClass),
     .class_init = pci_device_class_init,
     .class_base_init = pci_device_class_base_init,
-};
-TYPE_INFO(pci_device_type_info)
+)
 
 

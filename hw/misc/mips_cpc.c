@@ -178,13 +178,11 @@ static void mips_cpc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, mips_cpc_properties);
 }
 
-static const TypeInfo mips_cpc_info = {
-    .name          = TYPE_MIPS_CPC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MIPSCPCState),
+OBJECT_DEFINE_TYPE_EXTENDED(mips_cpc_info,
+                            MIPSCPCState, void,
+                            MIPS_CPC, SYS_BUS_DEVICE,
     .instance_init = mips_cpc_init,
     .class_init    = mips_cpc_class_init,
-};
-TYPE_INFO(mips_cpc_info)
+)
 
 

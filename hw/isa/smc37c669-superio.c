@@ -100,11 +100,10 @@ static void smc37c669_class_init(ObjectClass *klass, void *data)
     sc->ide.count = 0;
 }
 
-static const TypeInfo smc37c669_type_info = {
-    .name          = TYPE_SMC37C669_SUPERIO,
-    .parent        = TYPE_ISA_SUPERIO,
+OBJECT_DEFINE_TYPE_EXTENDED(smc37c669_type_info,
+                            void, void,
+                            SMC37C669_SUPERIO, ISA_SUPERIO,
     .class_init    = smc37c669_class_init,
-};
-TYPE_INFO(smc37c669_type_info)
+)
 
 

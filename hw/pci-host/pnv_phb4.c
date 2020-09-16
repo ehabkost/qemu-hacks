@@ -1052,12 +1052,11 @@ static void pnv_phb4_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->translate = pnv_phb4_translate_iommu;
 }
 
-static const TypeInfo pnv_phb4_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_PNV_PHB4_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb4_iommu_memory_region_info,
+                            void, void,
+                            PNV_PHB4_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = pnv_phb4_iommu_memory_region_class_init,
-};
-TYPE_INFO(pnv_phb4_iommu_memory_region_info)
+)
 
 /*
  * MSI/MSIX memory region implementation.
@@ -1290,18 +1289,16 @@ static void pnv_phb4_class_init(ObjectClass *klass, void *data)
     xfc->notify         = pnv_phb4_xive_notify;
 }
 
-static const TypeInfo pnv_phb4_type_info = {
-    .name          = TYPE_PNV_PHB4,
-    .parent        = TYPE_PCIE_HOST_BRIDGE,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb4_type_info,
+                            PnvPHB4, void,
+                            PNV_PHB4, PCIE_HOST_BRIDGE,
     .instance_init = pnv_phb4_instance_init,
-    .instance_size = sizeof(PnvPHB4),
     .class_init    = pnv_phb4_class_init,
     .interfaces = (InterfaceInfo[]) {
             { TYPE_XIVE_NOTIFIER },
             { },
     }
-};
-TYPE_INFO(pnv_phb4_type_info)
+)
 
 static void pnv_phb4_root_bus_class_init(ObjectClass *klass, void *data)
 {
@@ -1314,16 +1311,15 @@ static void pnv_phb4_root_bus_class_init(ObjectClass *klass, void *data)
     k->max_dev = 1;
 }
 
-static const TypeInfo pnv_phb4_root_bus_info = {
-    .name = TYPE_PNV_PHB4_ROOT_BUS,
-    .parent = TYPE_PCIE_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb4_root_bus_info,
+                            void, void,
+                            PNV_PHB4_ROOT_BUS, PCIE_BUS,
     .class_init = pnv_phb4_root_bus_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
         { }
     },
-};
-TYPE_INFO(pnv_phb4_root_bus_info)
+)
 
 static void pnv_phb4_root_port_reset(DeviceState *dev)
 {
@@ -1381,13 +1377,11 @@ static void pnv_phb4_root_port_class_init(ObjectClass *klass, void *data)
     dc->reset = &pnv_phb4_root_port_reset;
 }
 
-static const TypeInfo pnv_phb4_root_port_info = {
-    .name          = TYPE_PNV_PHB4_ROOT_PORT,
-    .parent        = TYPE_PCIE_ROOT_PORT,
-    .instance_size = sizeof(PnvPHB4RootPort),
+OBJECT_DEFINE_TYPE_EXTENDED(pnv_phb4_root_port_info,
+                            PnvPHB4RootPort, void,
+                            PNV_PHB4_ROOT_PORT, PCIE_ROOT_PORT,
     .class_init    = pnv_phb4_root_port_class_init,
-};
-TYPE_INFO(pnv_phb4_root_port_info)
+)
 
 
 

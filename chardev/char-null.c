@@ -41,11 +41,10 @@ static void char_null_class_init(ObjectClass *oc, void *data)
     cc->open = null_chr_open;
 }
 
-static const TypeInfo char_null_type_info = {
-    .name = TYPE_CHARDEV_NULL,
-    .parent = TYPE_CHARDEV,
+OBJECT_DEFINE_TYPE_EXTENDED(char_null_type_info,
+                            void, void,
+                            CHARDEV_NULL, CHARDEV,
     .class_init = char_null_class_init,
-};
-TYPE_INFO(char_null_type_info)
+)
 
 

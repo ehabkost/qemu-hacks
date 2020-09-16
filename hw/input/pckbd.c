@@ -599,13 +599,11 @@ static void i8042_class_initfn(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
 }
 
-static const TypeInfo i8042_info = {
-    .name          = TYPE_I8042,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISAKBDState),
+OBJECT_DEFINE_TYPE_EXTENDED(i8042_info,
+                            ISAKBDState, void,
+                            I8042, ISA_DEVICE,
     .instance_init = i8042_initfn,
     .class_init    = i8042_class_initfn,
-};
-TYPE_INFO(i8042_info)
+)
 
 

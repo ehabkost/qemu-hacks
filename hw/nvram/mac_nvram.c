@@ -121,13 +121,11 @@ static void macio_nvram_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo macio_nvram_type_info = {
-    .name = TYPE_MACIO_NVRAM,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MacIONVRAMState),
+OBJECT_DEFINE_TYPE_EXTENDED(macio_nvram_type_info,
+                            MacIONVRAMState, void,
+                            MACIO_NVRAM, SYS_BUS_DEVICE,
     .class_init = macio_nvram_class_init,
-};
-TYPE_INFO(macio_nvram_type_info)
+)
 
 
 /* Set up a system OpenBIOS NVRAM partition */

@@ -79,13 +79,11 @@ static void altera_iic_class_init(ObjectClass *klass, void *data)
     dc->realize = altera_iic_realize;
 }
 
-static TypeInfo altera_iic_info = {
-    .name          = TYPE_ALTERA_IIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AlteraIIC),
+OBJECT_DEFINE_TYPE_EXTENDED(altera_iic_info,
+                            AlteraIIC, void,
+                            ALTERA_IIC, SYS_BUS_DEVICE,
     .instance_init = altera_iic_init,
     .class_init    = altera_iic_class_init,
-};
-TYPE_INFO(altera_iic_info)
+)
 
 

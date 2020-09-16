@@ -271,13 +271,11 @@ static void ibex_plic_class_init(ObjectClass *klass, void *data)
     dc->realize = ibex_plic_realize;
 }
 
-static const TypeInfo ibex_plic_info = {
-    .name          = TYPE_IBEX_PLIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IbexPlicState),
+OBJECT_DEFINE_TYPE_EXTENDED(ibex_plic_info,
+                            IbexPlicState, void,
+                            IBEX_PLIC, SYS_BUS_DEVICE,
     .instance_init = ibex_plic_init,
     .class_init    = ibex_plic_class_init,
-};
-TYPE_INFO(ibex_plic_info)
+)
 
 

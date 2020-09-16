@@ -165,10 +165,9 @@ static void ehci_class_init(ObjectClass *klass, void *data)
     dc->reset = usb_ehci_pci_reset;
 }
 
-static const TypeInfo ehci_pci_type_info = {
-    .name = TYPE_PCI_EHCI,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(EHCIPCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(ehci_pci_type_info,
+                            EHCIPCIState, void,
+                            PCI_EHCI, PCI_DEVICE,
     .instance_init = usb_ehci_pci_init,
     .instance_finalize = usb_ehci_pci_finalize,
     .abstract = true,
@@ -177,8 +176,7 @@ static const TypeInfo ehci_pci_type_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(ehci_pci_type_info)
+)
 
 static void ehci_data_class_init(ObjectClass *klass, void *data)
 {

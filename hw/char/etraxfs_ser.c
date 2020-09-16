@@ -250,13 +250,11 @@ static void etraxfs_ser_class_init(ObjectClass *klass, void *data)
     dc->realize = etraxfs_ser_realize;
 }
 
-static const TypeInfo etraxfs_ser_info = {
-    .name          = TYPE_ETRAX_FS_SERIAL,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ETRAXSerial),
+OBJECT_DEFINE_TYPE_EXTENDED(etraxfs_ser_info,
+                            ETRAXSerial, void,
+                            ETRAX_FS_SERIAL, SYS_BUS_DEVICE,
     .instance_init = etraxfs_ser_init,
     .class_init    = etraxfs_ser_class_init,
-};
-TYPE_INFO(etraxfs_ser_info)
+)
 
 

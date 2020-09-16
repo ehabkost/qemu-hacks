@@ -505,17 +505,15 @@ static void e500_host_bridge_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo e500_host_bridge_info = {
-    .name          = TYPE_PPC_E500_PCI_BRIDGE,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PPCE500PCIBridgeState),
+OBJECT_DEFINE_TYPE_EXTENDED(e500_host_bridge_info,
+                            PPCE500PCIBridgeState, void,
+                            PPC_E500_PCI_BRIDGE, PCI_DEVICE,
     .class_init    = e500_host_bridge_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(e500_host_bridge_info)
+)
 
 static Property pcihost_properties[] = {
     DEFINE_PROP_UINT32("first_slot", PPCE500PCIState, first_slot, 0x11),
@@ -533,12 +531,10 @@ static void e500_pcihost_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_ppce500_pci;
 }
 
-static const TypeInfo e500_pcihost_info = {
-    .name          = TYPE_PPC_E500_PCI_HOST_BRIDGE,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(PPCE500PCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(e500_pcihost_info,
+                            PPCE500PCIState, void,
+                            PPC_E500_PCI_HOST_BRIDGE, PCI_HOST_BRIDGE,
     .class_init    = e500_pcihost_class_init,
-};
-TYPE_INFO(e500_pcihost_info)
+)
 
 

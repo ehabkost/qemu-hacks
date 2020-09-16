@@ -152,13 +152,11 @@ static void allwinner_sid_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, allwinner_sid_properties);
 }
 
-static const TypeInfo allwinner_sid_info = {
-    .name          = TYPE_AW_SID,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_sid_info,
+                            AwSidState, void,
+                            AW_SID, SYS_BUS_DEVICE,
     .instance_init = allwinner_sid_init,
-    .instance_size = sizeof(AwSidState),
     .class_init    = allwinner_sid_class_init,
-};
-TYPE_INFO(allwinner_sid_info)
+)
 
 

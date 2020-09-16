@@ -869,13 +869,11 @@ static void escc_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
 }
 
-static const TypeInfo escc_info = {
-    .name          = TYPE_ESCC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(ESCCState),
+OBJECT_DEFINE_TYPE_EXTENDED(escc_info,
+                            ESCCState, void,
+                            ESCC, SYS_BUS_DEVICE,
     .instance_init = escc_init1,
     .class_init    = escc_class_init,
-};
-TYPE_INFO(escc_info)
+)
 
 

@@ -390,12 +390,10 @@ static void u2f_emulated_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, u2f_emulated_properties);
 }
 
-static const TypeInfo u2f_key_emulated_info = {
-    .name = TYPE_U2F_EMULATED,
-    .parent = TYPE_U2F_KEY,
-    .instance_size = sizeof(U2FEmulatedState),
+OBJECT_DEFINE_TYPE_EXTENDED(u2f_key_emulated_info,
+                            U2FEmulatedState, void,
+                            U2F_EMULATED, U2F_KEY,
     .class_init = u2f_emulated_class_init
-};
-TYPE_INFO(u2f_key_emulated_info)
+)
 
 

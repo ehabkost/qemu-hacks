@@ -279,13 +279,11 @@ static void kvm_openpic_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo kvm_openpic_info = {
-    .name          = TYPE_KVM_OPENPIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(KVMOpenPICState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvm_openpic_info,
+                            KVMOpenPICState, void,
+                            KVM_OPENPIC, SYS_BUS_DEVICE,
     .instance_init = kvm_openpic_init,
     .class_init    = kvm_openpic_class_init,
-};
-TYPE_INFO(kvm_openpic_info)
+)
 
 

@@ -26,12 +26,9 @@ struct SSIBus {
 #define TYPE_SSI_BUS "SSI"
 OBJECT_DECLARE_SIMPLE_TYPE(SSIBus, SSI_BUS)
 
-static const TypeInfo ssi_bus_info = {
-    .name = TYPE_SSI_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(SSIBus),
-};
-TYPE_INFO(ssi_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(ssi_bus_info,
+                            SSIBus, void,
+                            SSI_BUS, BUS)
 
 static void ssi_cs_default(void *opaque, int n, int level)
 {
@@ -84,15 +81,12 @@ static void ssi_slave_class_init(ObjectClass *klass, void *data)
     }
 }
 
-static const TypeInfo ssi_slave_info = {
-    .name = TYPE_SSI_SLAVE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SSISlave),
+OBJECT_DEFINE_TYPE_EXTENDED(ssi_slave_info,
+                            SSISlave, SSISlaveClass,
+                            SSI_SLAVE, DEVICE,
     .class_init = ssi_slave_class_init,
-    .class_size = sizeof(SSISlaveClass),
     .abstract = true,
-};
-TYPE_INFO(ssi_slave_info)
+)
 
 bool ssi_realize_and_unref(DeviceState *dev, SSIBus *bus, Error **errp)
 {

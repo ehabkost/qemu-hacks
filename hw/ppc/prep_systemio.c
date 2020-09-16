@@ -292,12 +292,10 @@ static void prep_systemio_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, prep_systemio_properties);
 }
 
-static TypeInfo prep_systemio800_info = {
-    .name          = TYPE_PREP_SYSTEMIO,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(PrepSystemIoState),
+OBJECT_DEFINE_TYPE_EXTENDED(prep_systemio800_info,
+                            PrepSystemIoState, void,
+                            PREP_SYSTEMIO, ISA_DEVICE,
     .class_init    = prep_systemio_class_initfn,
-};
-TYPE_INFO(prep_systemio800_info)
+)
 
 

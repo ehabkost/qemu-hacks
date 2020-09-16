@@ -307,13 +307,11 @@ static void gus_class_initfn (ObjectClass *klass, void *data)
     device_class_set_props(dc, gus_properties);
 }
 
-static const TypeInfo gus_info = {
-    .name          = TYPE_GUS,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof (GUSState),
+OBJECT_DEFINE_TYPE_EXTENDED(gus_info,
+                            GUSState, void,
+                            GUS, ISA_DEVICE,
     .class_init    = gus_class_initfn,
-};
-TYPE_INFO(gus_info)
+)
 
 static void gus_register_types (void)
 {

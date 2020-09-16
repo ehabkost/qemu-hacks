@@ -133,13 +133,11 @@ static void or_irq_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo or_irq_type_info = {
-   .name = TYPE_OR_IRQ,
-   .parent = TYPE_DEVICE,
-   .instance_size = sizeof(qemu_or_irq),
+OBJECT_DEFINE_TYPE_EXTENDED(or_irq_type_info,
+                            qemu_or_irq, void,
+                            OR_IRQ, DEVICE,
    .instance_init = or_irq_init,
    .class_init = or_irq_class_init,
-};
-TYPE_INFO(or_irq_type_info)
+)
 
 

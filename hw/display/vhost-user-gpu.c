@@ -588,14 +588,12 @@ vhost_user_gpu_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, vhost_user_gpu_properties);
 }
 
-static const TypeInfo vhost_user_gpu_info = {
-    .name = TYPE_VHOST_USER_GPU,
-    .parent = TYPE_VIRTIO_GPU_BASE,
-    .instance_size = sizeof(VhostUserGPU),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_user_gpu_info,
+                            VhostUserGPU, void,
+                            VHOST_USER_GPU, VIRTIO_GPU_BASE,
     .instance_init = vhost_user_gpu_instance_init,
     .instance_finalize = vhost_user_gpu_instance_finalize,
     .class_init = vhost_user_gpu_class_init,
-};
-TYPE_INFO(vhost_user_gpu_info)
+)
 
 

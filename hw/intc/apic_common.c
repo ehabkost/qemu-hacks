@@ -479,15 +479,12 @@ static void apic_common_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo apic_common_type = {
-    .name = TYPE_APIC_COMMON,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(APICCommonState),
+OBJECT_DEFINE_TYPE_EXTENDED(apic_common_type,
+                            APICCommonState, APICCommonClass,
+                            APIC_COMMON, DEVICE,
     .instance_init = apic_common_initfn,
-    .class_size = sizeof(APICCommonClass),
     .class_init = apic_common_class_init,
     .abstract = true,
-};
-TYPE_INFO(apic_common_type)
+)
 
 

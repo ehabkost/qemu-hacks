@@ -272,13 +272,10 @@ static void console_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
 }
 
-static const TypeInfo sclp_console_info = {
-    .name          = TYPE_SCLP_CONSOLE,
-    .parent        = TYPE_SCLP_EVENT,
-    .instance_size = sizeof(SCLPConsole),
+OBJECT_DEFINE_TYPE_EXTENDED(sclp_console_info,
+                            SCLPConsole, SCLPEventClass,
+                            SCLP_CONSOLE, SCLP_EVENT,
     .class_init    = console_class_init,
-    .class_size    = sizeof(SCLPEventClass),
-};
-TYPE_INFO(sclp_console_info)
+)
 
 

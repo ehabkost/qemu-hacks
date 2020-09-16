@@ -175,17 +175,15 @@ static void lm32_pic_class_init(ObjectClass *klass, void *data)
     ic->print_info = lm32_print_info;
 }
 
-static const TypeInfo lm32_pic_info = {
-    .name          = TYPE_LM32_PIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(LM32PicState),
+OBJECT_DEFINE_TYPE_EXTENDED(lm32_pic_info,
+                            LM32PicState, void,
+                            LM32_PIC, SYS_BUS_DEVICE,
     .instance_init = lm32_pic_init,
     .class_init    = lm32_pic_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_INTERRUPT_STATS_PROVIDER },
         { }
     },
-};
-TYPE_INFO(lm32_pic_info)
+)
 
 

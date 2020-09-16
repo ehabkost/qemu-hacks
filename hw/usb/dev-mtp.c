@@ -2108,12 +2108,10 @@ static void usb_mtp_class_initfn(ObjectClass *klass, void *data)
     device_class_set_props(dc, mtp_properties);
 }
 
-static TypeInfo mtp_info = {
-    .name          = TYPE_USB_MTP,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(MTPState),
+OBJECT_DEFINE_TYPE_EXTENDED(mtp_info,
+                            MTPState, void,
+                            USB_MTP, USB_DEVICE,
     .class_init    = usb_mtp_class_initfn,
-};
-TYPE_INFO(mtp_info)
+)
 
 

@@ -451,13 +451,11 @@ static void nand_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, nand_properties);
 }
 
-static const TypeInfo nand_info = {
-    .name          = TYPE_NAND,
-    .parent        = TYPE_DEVICE,
-    .instance_size = sizeof(NANDFlashState),
+OBJECT_DEFINE_TYPE_EXTENDED(nand_info,
+                            NANDFlashState, void,
+                            NAND, DEVICE,
     .class_init    = nand_class_init,
-};
-TYPE_INFO(nand_info)
+)
 
 
 /*

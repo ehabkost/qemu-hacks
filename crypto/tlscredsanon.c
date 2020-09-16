@@ -191,19 +191,16 @@ qcrypto_tls_creds_anon_class_init(ObjectClass *oc, void *data)
 }
 
 
-static const TypeInfo qcrypto_tls_creds_anon_info = {
-    .parent = TYPE_QCRYPTO_TLS_CREDS,
-    .name = TYPE_QCRYPTO_TLS_CREDS_ANON,
-    .instance_size = sizeof(QCryptoTLSCredsAnon),
+OBJECT_DEFINE_TYPE_EXTENDED(qcrypto_tls_creds_anon_info,
+                            QCryptoTLSCredsAnon, QCryptoTLSCredsAnonClass,
+                            QCRYPTO_TLS_CREDS_ANON, QCRYPTO_TLS_CREDS,
     .instance_finalize = qcrypto_tls_creds_anon_finalize,
-    .class_size = sizeof(QCryptoTLSCredsAnonClass),
     .class_init = qcrypto_tls_creds_anon_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_USER_CREATABLE },
         { }
     }
-};
-TYPE_INFO(qcrypto_tls_creds_anon_info)
+)
 
 
 

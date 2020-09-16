@@ -197,13 +197,11 @@ static void spapr_vty_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_spapr_vty;
 }
 
-static const TypeInfo spapr_vty_info = {
-    .name          = TYPE_VIO_SPAPR_VTY_DEVICE,
-    .parent        = TYPE_VIO_SPAPR_DEVICE,
-    .instance_size = sizeof(SpaprVioVty),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_vty_info,
+                            SpaprVioVty, void,
+                            VIO_SPAPR_VTY_DEVICE, VIO_SPAPR_DEVICE,
     .class_init    = spapr_vty_class_init,
-};
-TYPE_INFO(spapr_vty_info)
+)
 
 SpaprVioDevice *spapr_vty_get_default(SpaprVioBus *bus)
 {

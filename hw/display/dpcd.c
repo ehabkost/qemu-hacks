@@ -149,13 +149,11 @@ static void dpcd_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_dpcd;
 }
 
-static const TypeInfo dpcd_info = {
-    .name          = TYPE_DPCD,
-    .parent        = TYPE_AUX_SLAVE,
-    .instance_size = sizeof(DPCDState),
+OBJECT_DEFINE_TYPE_EXTENDED(dpcd_info,
+                            DPCDState, void,
+                            DPCD, AUX_SLAVE,
     .class_init    = dpcd_class_init,
     .instance_init = dpcd_init,
-};
-TYPE_INFO(dpcd_info)
+)
 
 

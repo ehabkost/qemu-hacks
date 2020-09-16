@@ -303,13 +303,11 @@ static void mps2_fpgaio_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, mps2_fpgaio_properties);
 }
 
-static const TypeInfo mps2_fpgaio_info = {
-    .name = TYPE_MPS2_FPGAIO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MPS2FPGAIO),
+OBJECT_DEFINE_TYPE_EXTENDED(mps2_fpgaio_info,
+                            MPS2FPGAIO, void,
+                            MPS2_FPGAIO, SYS_BUS_DEVICE,
     .instance_init = mps2_fpgaio_init,
     .class_init = mps2_fpgaio_class_init,
-};
-TYPE_INFO(mps2_fpgaio_info)
+)
 
 

@@ -388,13 +388,11 @@ static void nrf51_timer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, nrf51_timer_properties);
 }
 
-static const TypeInfo nrf51_timer_info = {
-    .name = TYPE_NRF51_TIMER,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(NRF51TimerState),
+OBJECT_DEFINE_TYPE_EXTENDED(nrf51_timer_info,
+                            NRF51TimerState, void,
+                            NRF51_TIMER, SYS_BUS_DEVICE,
     .instance_init = nrf51_timer_init,
     .class_init = nrf51_timer_class_init
-};
-TYPE_INFO(nrf51_timer_info)
+)
 
 

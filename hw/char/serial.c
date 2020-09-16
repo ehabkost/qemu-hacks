@@ -1017,14 +1017,12 @@ static void serial_io_instance_init(Object *o)
 }
 
 
-static const TypeInfo serial_io_info = {
-    .name = TYPE_SERIAL_IO,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SerialIO),
+OBJECT_DEFINE_TYPE_EXTENDED(serial_io_info,
+                            SerialIO, void,
+                            SERIAL_IO, SYS_BUS_DEVICE,
     .instance_init = serial_io_instance_init,
     .class_init = serial_io_class_init,
-};
-TYPE_INFO(serial_io_info)
+)
 
 static Property serial_properties[] = {
     DEFINE_PROP_CHR("chardev", SerialState, chr),
@@ -1043,13 +1041,11 @@ static void serial_class_init(ObjectClass *klass, void* data)
     device_class_set_props(dc, serial_properties);
 }
 
-static const TypeInfo serial_info = {
-    .name = TYPE_SERIAL,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SerialState),
+OBJECT_DEFINE_TYPE_EXTENDED(serial_info,
+                            SerialState, void,
+                            SERIAL, DEVICE,
     .class_init = serial_class_init,
-};
-TYPE_INFO(serial_info)
+)
 
 /* Memory mapped interface */
 static uint64_t serial_mm_read(void *opaque, hwaddr addr,
@@ -1168,14 +1164,12 @@ static void serial_mm_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_serial_mm;
 }
 
-static const TypeInfo serial_mm_info = {
-    .name = TYPE_SERIAL_MM,
-    .parent = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(serial_mm_info,
+                            SerialMM, void,
+                            SERIAL_MM, SYS_BUS_DEVICE,
     .class_init = serial_mm_class_init,
     .instance_init = serial_mm_instance_init,
-    .instance_size = sizeof(SerialMM),
     .class_init = serial_mm_class_init,
-};
-TYPE_INFO(serial_mm_info)
+)
 
 

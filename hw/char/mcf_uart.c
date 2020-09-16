@@ -326,14 +326,12 @@ static void mcf_uart_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
 }
 
-static const TypeInfo mcf_uart_info = {
-    .name          = TYPE_MCF_UART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mcf_uart_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mcf_uart_info,
+                            mcf_uart_state, void,
+                            MCF_UART, SYS_BUS_DEVICE,
     .instance_init = mcf_uart_instance_init,
     .class_init    = mcf_uart_class_init,
-};
-TYPE_INFO(mcf_uart_info)
+)
 
 
 

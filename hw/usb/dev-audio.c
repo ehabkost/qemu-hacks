@@ -1014,13 +1014,11 @@ static void usb_audio_class_init(ObjectClass *klass, void *data)
     k->set_interface  = usb_audio_set_interface;
 }
 
-static const TypeInfo usb_audio_info = {
-    .name          = TYPE_USB_AUDIO,
-    .parent        = TYPE_USB_DEVICE,
-    .instance_size = sizeof(USBAudioState),
+OBJECT_DEFINE_TYPE_EXTENDED(usb_audio_info,
+                            USBAudioState, void,
+                            USB_AUDIO, USB_DEVICE,
     .class_init    = usb_audio_class_init,
-};
-TYPE_INFO(usb_audio_info)
+)
 
 static void usb_audio_register_types(void)
 {

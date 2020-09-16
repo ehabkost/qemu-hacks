@@ -156,13 +156,11 @@ static void lance_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, lance_properties);
 }
 
-static const TypeInfo lance_info = {
-    .name          = TYPE_LANCE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SysBusPCNetState),
+OBJECT_DEFINE_TYPE_EXTENDED(lance_info,
+                            SysBusPCNetState, void,
+                            LANCE, SYS_BUS_DEVICE,
     .class_init    = lance_class_init,
     .instance_init = lance_instance_init,
-};
-TYPE_INFO(lance_info)
+)
 
 

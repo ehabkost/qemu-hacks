@@ -187,13 +187,11 @@ static void l2x0_class_init(ObjectClass *klass, void *data)
     dc->reset = l2x0_priv_reset;
 }
 
-static const TypeInfo l2x0_info = {
-    .name = TYPE_ARM_L2X0,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(L2x0State),
+OBJECT_DEFINE_TYPE_EXTENDED(l2x0_info,
+                            L2x0State, void,
+                            ARM_L2X0, SYS_BUS_DEVICE,
     .instance_init = l2x0_priv_init,
     .class_init = l2x0_class_init,
-};
-TYPE_INFO(l2x0_info)
+)
 
 

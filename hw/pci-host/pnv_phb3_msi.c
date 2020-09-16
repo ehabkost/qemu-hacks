@@ -302,15 +302,12 @@ static void phb3_msi_class_init(ObjectClass *klass, void *data)
     isc->resend = phb3_msi_resend;
 }
 
-static const TypeInfo phb3_msi_info = {
-    .name = TYPE_PHB3_MSI,
-    .parent = TYPE_ICS,
-    .instance_size = sizeof(Phb3MsiState),
+OBJECT_DEFINE_TYPE_EXTENDED(phb3_msi_info,
+                            Phb3MsiState, ICSStateClass,
+                            PHB3_MSI, ICS,
     .class_init = phb3_msi_class_init,
-    .class_size = sizeof(ICSStateClass),
     .instance_init = phb3_msi_instance_init,
-};
-TYPE_INFO(phb3_msi_info)
+)
 
 
 

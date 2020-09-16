@@ -52,13 +52,11 @@ static void virtio_ccw_blk_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo virtio_ccw_blk = {
-    .name          = TYPE_VIRTIO_BLK_CCW,
-    .parent        = TYPE_VIRTIO_CCW_DEVICE,
-    .instance_size = sizeof(VirtIOBlkCcw),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_ccw_blk,
+                            VirtIOBlkCcw, void,
+                            VIRTIO_BLK_CCW, VIRTIO_CCW_DEVICE,
     .instance_init = virtio_ccw_blk_instance_init,
     .class_init    = virtio_ccw_blk_class_init,
-};
-TYPE_INFO(virtio_ccw_blk)
+)
 
 

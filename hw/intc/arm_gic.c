@@ -2127,13 +2127,10 @@ static void arm_gic_class_init(ObjectClass *klass, void *data)
     device_class_set_parent_realize(dc, arm_gic_realize, &agc->parent_realize);
 }
 
-static const TypeInfo arm_gic_info = {
-    .name = TYPE_ARM_GIC,
-    .parent = TYPE_ARM_GIC_COMMON,
-    .instance_size = sizeof(GICState),
+OBJECT_DEFINE_TYPE_EXTENDED(arm_gic_info,
+                            GICState, ARMGICClass,
+                            ARM_GIC, ARM_GIC_COMMON,
     .class_init = arm_gic_class_init,
-    .class_size = sizeof(ARMGICClass),
-};
-TYPE_INFO(arm_gic_info)
+)
 
 

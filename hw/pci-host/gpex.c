@@ -129,14 +129,12 @@ static void gpex_host_initfn(Object *obj)
     qdev_prop_set_bit(DEVICE(root), "multifunction", false);
 }
 
-static const TypeInfo gpex_host_info = {
-    .name       = TYPE_GPEX_HOST,
-    .parent     = TYPE_PCIE_HOST_BRIDGE,
-    .instance_size = sizeof(GPEXHost),
+OBJECT_DEFINE_TYPE_EXTENDED(gpex_host_info,
+                            GPEXHost, void,
+                            GPEX_HOST, PCIE_HOST_BRIDGE,
     .instance_init = gpex_host_initfn,
     .class_init = gpex_host_class_init,
-};
-TYPE_INFO(gpex_host_info)
+)
 
 /****************************************************************************
  * GPEX Root D0:F0
@@ -171,16 +169,14 @@ static void gpex_root_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo gpex_root_info = {
-    .name = TYPE_GPEX_ROOT_DEVICE,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(GPEXRootState),
+OBJECT_DEFINE_TYPE_EXTENDED(gpex_root_info,
+                            GPEXRootState, void,
+                            GPEX_ROOT_DEVICE, PCI_DEVICE,
     .class_init = gpex_root_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(gpex_root_info)
+)
 
 

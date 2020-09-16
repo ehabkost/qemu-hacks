@@ -80,12 +80,11 @@ static void system_bus_class_init(ObjectClass *klass, void *data)
     k->get_fw_dev_path = sysbus_get_fw_dev_path;
 }
 
-static const TypeInfo system_bus_info = {
-    .name = TYPE_SYSTEM_BUS,
-    .parent = TYPE_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(system_bus_info,
+                            void, void,
+                            SYSTEM_BUS, BUS,
     .class_init = system_bus_class_init,
-};
-TYPE_INFO(system_bus_info)
+)
 
 /* Check whether an IRQ source exists */
 bool sysbus_has_irq(SysBusDevice *dev, int n)
@@ -327,15 +326,12 @@ static void sysbus_device_class_init(ObjectClass *klass, void *data)
     k->user_creatable = false;
 }
 
-static const TypeInfo sysbus_device_type_info = {
-    .name = TYPE_SYS_BUS_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SysBusDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(sysbus_device_type_info,
+                            SysBusDevice, SysBusDeviceClass,
+                            SYS_BUS_DEVICE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(SysBusDeviceClass),
     .class_init = sysbus_device_class_init,
-};
-TYPE_INFO(sysbus_device_type_info)
+)
 
 static BusState *main_system_bus;
 

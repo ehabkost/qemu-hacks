@@ -124,13 +124,11 @@ static void pvpanic_isa_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static TypeInfo pvpanic_isa_info = {
-    .name          = TYPE_PVPANIC,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(PVPanicState),
+OBJECT_DEFINE_TYPE_EXTENDED(pvpanic_isa_info,
+                            PVPanicState, void,
+                            PVPANIC, ISA_DEVICE,
     .instance_init = pvpanic_isa_initfn,
     .class_init    = pvpanic_isa_class_init,
-};
-TYPE_INFO(pvpanic_isa_info)
+)
 
 

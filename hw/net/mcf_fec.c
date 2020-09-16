@@ -676,13 +676,11 @@ static void mcf_fec_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, mcf_fec_properties);
 }
 
-static const TypeInfo mcf_fec_info = {
-    .name          = TYPE_MCF_FEC_NET,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(mcf_fec_state),
+OBJECT_DEFINE_TYPE_EXTENDED(mcf_fec_info,
+                            mcf_fec_state, void,
+                            MCF_FEC_NET, SYS_BUS_DEVICE,
     .instance_init = mcf_fec_instance_init,
     .class_init    = mcf_fec_class_init,
-};
-TYPE_INFO(mcf_fec_info)
+)
 
 

@@ -909,12 +909,10 @@ static void apic_class_init(ObjectClass *klass, void *data)
     k->send_msi = apic_send_msi;
 }
 
-static const TypeInfo apic_info = {
-    .name          = TYPE_APIC,
-    .instance_size = sizeof(APICCommonState),
-    .parent        = TYPE_APIC_COMMON,
+OBJECT_DEFINE_TYPE_EXTENDED(apic_info,
+                            APICCommonState, void,
+                            APIC, APIC_COMMON,
     .class_init    = apic_class_init,
-};
-TYPE_INFO(apic_info)
+)
 
 

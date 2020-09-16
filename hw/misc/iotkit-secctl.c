@@ -783,13 +783,11 @@ static void iotkit_secctl_class_init(ObjectClass *klass, void *data)
     dc->reset = iotkit_secctl_reset;
 }
 
-static const TypeInfo iotkit_secctl_info = {
-    .name = TYPE_IOTKIT_SECCTL,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IoTKitSecCtl),
+OBJECT_DEFINE_TYPE_EXTENDED(iotkit_secctl_info,
+                            IoTKitSecCtl, void,
+                            IOTKIT_SECCTL, SYS_BUS_DEVICE,
     .instance_init = iotkit_secctl_init,
     .class_init = iotkit_secctl_class_init,
-};
-TYPE_INFO(iotkit_secctl_info)
+)
 
 

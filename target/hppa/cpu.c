@@ -158,15 +158,12 @@ static void hppa_cpu_class_init(ObjectClass *oc, void *data)
     cc->gdb_num_core_regs = 128;
 }
 
-static const TypeInfo hppa_cpu_type_info = {
-    .name = TYPE_HPPA_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(HPPACPU),
+OBJECT_DEFINE_TYPE_EXTENDED(hppa_cpu_type_info,
+                            HPPACPU, HPPACPUClass,
+                            HPPA_CPU, CPU,
     .instance_init = hppa_cpu_initfn,
     .abstract = false,
-    .class_size = sizeof(HPPACPUClass),
     .class_init = hppa_cpu_class_init,
-};
-TYPE_INFO(hppa_cpu_type_info)
+)
 
 

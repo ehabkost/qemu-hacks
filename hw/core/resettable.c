@@ -287,11 +287,8 @@ void resettable_class_set_parent_phases(ResettableClass *rc,
     }
 }
 
-static const TypeInfo resettable_interface_info = {
-    .name       = TYPE_RESETTABLE_INTERFACE,
-    .parent     = TYPE_INTERFACE,
-    .class_size = sizeof(ResettableClass),
-};
-TYPE_INFO(resettable_interface_info)
+OBJECT_DEFINE_TYPE_EXTENDED(resettable_interface_info,
+                            void, ResettableClass,
+                            RESETTABLE_INTERFACE, INTERFACE)
 
 

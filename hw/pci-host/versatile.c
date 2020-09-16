@@ -486,17 +486,15 @@ static void versatile_pci_host_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo versatile_pci_host_info = {
-    .name          = TYPE_VERSATILE_PCI_HOST,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(versatile_pci_host_info,
+                            PCIDevice, void,
+                            VERSATILE_PCI_HOST, PCI_DEVICE,
     .class_init    = versatile_pci_host_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(versatile_pci_host_info)
+)
 
 static Property pci_vpb_properties[] = {
     DEFINE_PROP_UINT8("broken-irq-mapping", PCIVPBState, irq_mapping_prop,
@@ -514,14 +512,12 @@ static void pci_vpb_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, pci_vpb_properties);
 }
 
-static const TypeInfo pci_vpb_info = {
-    .name          = TYPE_VERSATILE_PCI,
-    .parent        = TYPE_PCI_HOST_BRIDGE,
-    .instance_size = sizeof(PCIVPBState),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_vpb_info,
+                            PCIVPBState, void,
+                            VERSATILE_PCI, PCI_HOST_BRIDGE,
     .instance_init = pci_vpb_init,
     .class_init    = pci_vpb_class_init,
-};
-TYPE_INFO(pci_vpb_info)
+)
 
 static void pci_realview_init(Object *obj)
 {

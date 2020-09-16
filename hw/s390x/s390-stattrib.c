@@ -322,15 +322,12 @@ static void qemu_s390_stattrib_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo qemu_s390_stattrib_info = {
-    .name          = TYPE_QEMU_S390_STATTRIB,
-    .parent        = TYPE_S390_STATTRIB,
+OBJECT_DEFINE_TYPE_EXTENDED(qemu_s390_stattrib_info,
+                            QEMUS390StAttribState, S390StAttribClass,
+                            QEMU_S390_STATTRIB, S390_STATTRIB,
     .instance_init = qemu_s390_stattrib_instance_init,
-    .instance_size = sizeof(QEMUS390StAttribState),
     .class_init    = qemu_s390_stattrib_class_init,
-    .class_size    = sizeof(S390StAttribClass),
-};
-TYPE_INFO(qemu_s390_stattrib_info)
+)
 
 /* Generic abstract object: */
 
@@ -393,15 +390,12 @@ static void s390_stattrib_instance_init(Object *obj)
     sas->migration_cur_gfn = 0;
 }
 
-static const TypeInfo s390_stattrib_info = {
-    .name          = TYPE_S390_STATTRIB,
-    .parent        = TYPE_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(s390_stattrib_info,
+                            S390StAttribState, S390StAttribClass,
+                            S390_STATTRIB, DEVICE,
     .instance_init = s390_stattrib_instance_init,
-    .instance_size = sizeof(S390StAttribState),
     .class_init    = s390_stattrib_class_init,
-    .class_size    = sizeof(S390StAttribClass),
     .abstract      = true,
-};
-TYPE_INFO(s390_stattrib_info)
+)
 
 

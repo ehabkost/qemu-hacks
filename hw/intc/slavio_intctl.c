@@ -455,17 +455,15 @@ static void slavio_intctl_class_init(ObjectClass *klass, void *data)
     ic->print_info = slavio_intctl_print_info;
 }
 
-static const TypeInfo slavio_intctl_info = {
-    .name          = TYPE_SLAVIO_INTCTL,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SLAVIO_INTCTLState),
+OBJECT_DEFINE_TYPE_EXTENDED(slavio_intctl_info,
+                            SLAVIO_INTCTLState, void,
+                            SLAVIO_INTCTL, SYS_BUS_DEVICE,
     .instance_init = slavio_intctl_init,
     .class_init    = slavio_intctl_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_INTERRUPT_STATS_PROVIDER },
         { }
     },
-};
-TYPE_INFO(slavio_intctl_info)
+)
 
 

@@ -821,13 +821,11 @@ static void sbsa_ref_class_init(ObjectClass *oc, void *data)
     mc->get_default_cpu_node_id = sbsa_ref_get_default_cpu_node_id;
 }
 
-static const TypeInfo sbsa_ref_info = {
-    .name          = TYPE_SBSA_MACHINE,
-    .parent        = TYPE_MACHINE,
+OBJECT_DEFINE_TYPE_EXTENDED(sbsa_ref_info,
+                            SBSAMachineState, void,
+                            SBSA_MACHINE, MACHINE,
     .instance_init = sbsa_ref_instance_init,
     .class_init    = sbsa_ref_class_init,
-    .instance_size = sizeof(SBSAMachineState),
-};
-TYPE_INFO(sbsa_ref_info)
+)
 
 

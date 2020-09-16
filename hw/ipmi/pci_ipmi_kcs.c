@@ -127,10 +127,9 @@ static void pci_ipmi_kcs_class_init(ObjectClass *oc, void *data)
     ipmi_kcs_class_init(iic);
 }
 
-static const TypeInfo pci_ipmi_kcs_info = {
-    .name          = TYPE_PCI_IPMI_KCS,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PCIIPMIKCSDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(pci_ipmi_kcs_info,
+                            PCIIPMIKCSDevice, void,
+                            PCI_IPMI_KCS, PCI_DEVICE,
     .instance_init = pci_ipmi_kcs_instance_init,
     .class_init    = pci_ipmi_kcs_class_init,
     .interfaces = (InterfaceInfo[]) {
@@ -138,7 +137,6 @@ static const TypeInfo pci_ipmi_kcs_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(pci_ipmi_kcs_info)
+)
 
 

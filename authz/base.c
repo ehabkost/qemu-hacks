@@ -66,14 +66,11 @@ bool qauthz_is_allowed_by_id(const char *authzid,
 }
 
 
-static const TypeInfo authz_info = {
-    .parent = TYPE_OBJECT,
-    .name = TYPE_QAUTHZ,
-    .instance_size = sizeof(QAuthZ),
-    .class_size = sizeof(QAuthZClass),
+OBJECT_DEFINE_TYPE_EXTENDED(authz_info,
+                            QAuthZ, QAuthZClass,
+                            QAUTHZ, OBJECT,
     .abstract = true,
-};
-TYPE_INFO(authz_info)
+)
 
 
 

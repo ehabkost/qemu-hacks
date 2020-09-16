@@ -97,13 +97,11 @@ static void avr_mask_class_init(ObjectClass *klass, void *data)
     dc->reset = avr_mask_reset;
 }
 
-static const TypeInfo avr_mask_info = {
-    .name          = TYPE_AVR_MASK,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AVRMaskState),
+OBJECT_DEFINE_TYPE_EXTENDED(avr_mask_info,
+                            AVRMaskState, void,
+                            AVR_MASK, SYS_BUS_DEVICE,
     .class_init    = avr_mask_class_init,
     .instance_init = avr_mask_init,
-};
-TYPE_INFO(avr_mask_info)
+)
 
 

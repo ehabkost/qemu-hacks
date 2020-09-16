@@ -296,13 +296,11 @@ static void mps2_scc_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, mps2_scc_properties);
 }
 
-static const TypeInfo mps2_scc_info = {
-    .name = TYPE_MPS2_SCC,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MPS2SCC),
+OBJECT_DEFINE_TYPE_EXTENDED(mps2_scc_info,
+                            MPS2SCC, void,
+                            MPS2_SCC, SYS_BUS_DEVICE,
     .instance_init = mps2_scc_init,
     .class_init = mps2_scc_class_init,
-};
-TYPE_INFO(mps2_scc_info)
+)
 
 

@@ -615,13 +615,11 @@ static void idreg_class_init(ObjectClass *oc, void *data)
     dc->realize = idreg_realize;
 }
 
-static const TypeInfo idreg_info = {
-    .name          = TYPE_MACIO_ID_REGISTER,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IDRegState),
+OBJECT_DEFINE_TYPE_EXTENDED(idreg_info,
+                            IDRegState, void,
+                            MACIO_ID_REGISTER, SYS_BUS_DEVICE,
     .class_init    = idreg_class_init,
-};
-TYPE_INFO(idreg_info)
+)
 
 #define TYPE_TCX_AFX "tcx_afx"
 OBJECT_DECLARE_SIMPLE_TYPE(AFXState, TCX_AFX)
@@ -669,13 +667,11 @@ static void afx_class_init(ObjectClass *oc, void *data)
     dc->realize = afx_realize;
 }
 
-static const TypeInfo afx_info = {
-    .name          = TYPE_TCX_AFX,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(AFXState),
+OBJECT_DEFINE_TYPE_EXTENDED(afx_info,
+                            AFXState, void,
+                            TCX_AFX, SYS_BUS_DEVICE,
     .class_init    = afx_class_init,
-};
-TYPE_INFO(afx_info)
+)
 
 #define TYPE_OPENPROM "openprom"
 typedef struct PROMState PROMState;
@@ -760,13 +756,11 @@ static void prom_class_init(ObjectClass *klass, void *data)
     dc->realize = prom_realize;
 }
 
-static const TypeInfo prom_info = {
-    .name          = TYPE_OPENPROM,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PROMState),
+OBJECT_DEFINE_TYPE_EXTENDED(prom_info,
+                            PROMState, void,
+                            OPENPROM, SYS_BUS_DEVICE,
     .class_init    = prom_class_init,
-};
-TYPE_INFO(prom_info)
+)
 
 #define TYPE_SUN4M_MEMORY "memory"
 typedef struct RamDevice RamDevice;
@@ -805,14 +799,12 @@ static void ram_class_init(ObjectClass *klass, void *data)
     dc->realize = ram_realize;
 }
 
-static const TypeInfo ram_info = {
-    .name          = TYPE_SUN4M_MEMORY,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RamDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(ram_info,
+                            RamDevice, void,
+                            SUN4M_MEMORY, SYS_BUS_DEVICE,
     .instance_init = ram_initfn,
     .class_init    = ram_class_init,
-};
-TYPE_INFO(ram_info)
+)
 
 static void cpu_devinit(const char *cpu_type, unsigned int id,
                         uint64_t prom_addr, qemu_irq **cpu_irqs)

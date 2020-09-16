@@ -1433,16 +1433,14 @@ static void mptsas1068_class_init(ObjectClass *oc, void *data)
     set_bit(DEVICE_CATEGORY_STORAGE, dc->categories);
 }
 
-static const TypeInfo mptsas_info = {
-    .name = TYPE_MPTSAS1068,
-    .parent = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(MPTSASState),
+OBJECT_DEFINE_TYPE_EXTENDED(mptsas_info,
+                            MPTSASState, void,
+                            MPTSAS1068, PCI_DEVICE,
     .class_init = mptsas1068_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(mptsas_info)
+)
 
 

@@ -324,12 +324,10 @@ static void pxa2xx_pic_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_pxa2xx_pic_regs;
 }
 
-static const TypeInfo pxa2xx_pic_info = {
-    .name          = TYPE_PXA2XX_PIC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PXA2xxPICState),
+OBJECT_DEFINE_TYPE_EXTENDED(pxa2xx_pic_info,
+                            PXA2xxPICState, void,
+                            PXA2XX_PIC, SYS_BUS_DEVICE,
     .class_init    = pxa2xx_pic_class_init,
-};
-TYPE_INFO(pxa2xx_pic_info)
+)
 
 

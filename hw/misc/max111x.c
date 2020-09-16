@@ -187,14 +187,12 @@ static void max111x_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_max111x;
 }
 
-static const TypeInfo max111x_info = {
-    .name          = TYPE_MAX_111X,
-    .parent        = TYPE_SSI_SLAVE,
-    .instance_size = sizeof(MAX111xState),
+OBJECT_DEFINE_TYPE_EXTENDED(max111x_info,
+                            MAX111xState, void,
+                            MAX_111X, SSI_SLAVE,
     .class_init    = max111x_class_init,
     .abstract      = true,
-};
-TYPE_INFO(max111x_info)
+)
 
 static void max1110_class_init(ObjectClass *klass, void *data)
 {
@@ -205,12 +203,11 @@ static void max1110_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, max1110_properties);
 }
 
-static const TypeInfo max1110_info = {
-    .name          = TYPE_MAX_1110,
-    .parent        = TYPE_MAX_111X,
+OBJECT_DEFINE_TYPE_EXTENDED(max1110_info,
+                            void, void,
+                            MAX_1110, MAX_111X,
     .class_init    = max1110_class_init,
-};
-TYPE_INFO(max1110_info)
+)
 
 static void max1111_class_init(ObjectClass *klass, void *data)
 {
@@ -221,11 +218,10 @@ static void max1111_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, max1111_properties);
 }
 
-static const TypeInfo max1111_info = {
-    .name          = TYPE_MAX_1111,
-    .parent        = TYPE_MAX_111X,
+OBJECT_DEFINE_TYPE_EXTENDED(max1111_info,
+                            void, void,
+                            MAX_1111, MAX_111X,
     .class_init    = max1111_class_init,
-};
-TYPE_INFO(max1111_info)
+)
 
 

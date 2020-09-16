@@ -19,11 +19,10 @@ static void nubus_bridge_class_init(ObjectClass *klass, void *data)
     dc->fw_name = "nubus";
 }
 
-static const TypeInfo nubus_bridge_info = {
-    .name          = TYPE_NUBUS_BRIDGE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(nubus_bridge_info,
+                            void, void,
+                            NUBUS_BRIDGE, SYS_BUS_DEVICE,
     .class_init    = nubus_bridge_class_init,
-};
-TYPE_INFO(nubus_bridge_info)
+)
 
 

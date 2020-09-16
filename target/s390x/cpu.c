@@ -513,16 +513,13 @@ static void s390_cpu_class_init(ObjectClass *oc, void *data)
     s390_cpu_model_class_register_props(oc);
 }
 
-static const TypeInfo s390_cpu_type_info = {
-    .name = TYPE_S390_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(S390CPU),
+OBJECT_DEFINE_TYPE_EXTENDED(s390_cpu_type_info,
+                            S390CPU, S390CPUClass,
+                            S390_CPU, CPU,
     .instance_init = s390_cpu_initfn,
     .instance_finalize = s390_cpu_finalize,
     .abstract = true,
-    .class_size = sizeof(S390CPUClass),
     .class_init = s390_cpu_class_init,
-};
-TYPE_INFO(s390_cpu_type_info)
+)
 
 

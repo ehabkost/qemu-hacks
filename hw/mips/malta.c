@@ -1421,12 +1421,9 @@ void mips_malta_init(MachineState *machine)
     pci_vga_init(pci_bus);
 }
 
-static const TypeInfo mips_malta_device = {
-    .name          = TYPE_MIPS_MALTA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MaltaState),
-};
-TYPE_INFO(mips_malta_device)
+OBJECT_DEFINE_TYPE_EXTENDED(mips_malta_device,
+                            MaltaState, void,
+                            MIPS_MALTA, SYS_BUS_DEVICE)
 
 static void mips_malta_machine_init(MachineClass *mc)
 {

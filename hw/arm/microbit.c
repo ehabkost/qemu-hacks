@@ -69,12 +69,10 @@ static void microbit_machine_class_init(ObjectClass *oc, void *data)
     mc->max_cpus = 1;
 }
 
-static const TypeInfo microbit_info = {
-    .name = TYPE_MICROBIT_MACHINE,
-    .parent = TYPE_MACHINE,
-    .instance_size = sizeof(MicrobitMachineState),
+OBJECT_DEFINE_TYPE_EXTENDED(microbit_info,
+                            MicrobitMachineState, void,
+                            MICROBIT_MACHINE, MACHINE,
     .class_init = microbit_machine_class_init,
-};
-TYPE_INFO(microbit_info)
+)
 
 

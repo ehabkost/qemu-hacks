@@ -169,12 +169,10 @@ static void ads7846_class_init(ObjectClass *klass, void *data)
     k->transfer = ads7846_transfer;
 }
 
-static const TypeInfo ads7846_info = {
-    .name          = TYPE_ADS7846,
-    .parent        = TYPE_SSI_SLAVE,
-    .instance_size = sizeof(ADS7846State),
+OBJECT_DEFINE_TYPE_EXTENDED(ads7846_info,
+                            ADS7846State, void,
+                            ADS7846, SSI_SLAVE,
     .class_init    = ads7846_class_init,
-};
-TYPE_INFO(ads7846_info)
+)
 
 

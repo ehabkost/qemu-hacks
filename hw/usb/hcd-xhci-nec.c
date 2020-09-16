@@ -50,11 +50,10 @@ static void nec_xhci_class_init(ObjectClass *klass, void *data)
     k->revision     = 0x03;
 }
 
-static const TypeInfo nec_xhci_info = {
-    .name          = TYPE_NEC_XHCI,
-    .parent        = TYPE_XHCI,
+OBJECT_DEFINE_TYPE_EXTENDED(nec_xhci_info,
+                            void, void,
+                            NEC_XHCI, XHCI,
     .class_init    = nec_xhci_class_init,
-};
-TYPE_INFO(nec_xhci_info)
+)
 
 

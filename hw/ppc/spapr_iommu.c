@@ -680,13 +680,11 @@ static void spapr_tce_table_class_init(ObjectClass *klass, void *data)
     spapr_register_hypercall(H_STUFF_TCE, h_stuff_tce);
 }
 
-static TypeInfo spapr_tce_table_info = {
-    .name = TYPE_SPAPR_TCE_TABLE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SpaprTceTable),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_tce_table_info,
+                            SpaprTceTable, void,
+                            SPAPR_TCE_TABLE, DEVICE,
     .class_init = spapr_tce_table_class_init,
-};
-TYPE_INFO(spapr_tce_table_info)
+)
 
 static void spapr_iommu_memory_region_class_init(ObjectClass *klass, void *data)
 {
@@ -699,11 +697,10 @@ static void spapr_iommu_memory_region_class_init(ObjectClass *klass, void *data)
     imrc->get_attr = spapr_tce_get_attr;
 }
 
-static const TypeInfo spapr_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_SPAPR_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_iommu_memory_region_info,
+                            void, void,
+                            SPAPR_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = spapr_iommu_memory_region_class_init,
-};
-TYPE_INFO(spapr_iommu_memory_region_info)
+)
 
 

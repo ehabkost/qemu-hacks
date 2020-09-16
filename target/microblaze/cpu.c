@@ -338,14 +338,11 @@ static void mb_cpu_class_init(ObjectClass *oc, void *data)
     cc->tcg_initialize = mb_tcg_init;
 }
 
-static const TypeInfo mb_cpu_type_info = {
-    .name = TYPE_MICROBLAZE_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(MicroBlazeCPU),
+OBJECT_DEFINE_TYPE_EXTENDED(mb_cpu_type_info,
+                            MicroBlazeCPU, MicroBlazeCPUClass,
+                            MICROBLAZE_CPU, CPU,
     .instance_init = mb_cpu_initfn,
-    .class_size = sizeof(MicroBlazeCPUClass),
     .class_init = mb_cpu_class_init,
-};
-TYPE_INFO(mb_cpu_type_info)
+)
 
 

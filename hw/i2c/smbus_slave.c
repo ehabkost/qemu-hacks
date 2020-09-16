@@ -220,14 +220,11 @@ const VMStateDescription vmstate_smbus_device = {
     }
 };
 
-static const TypeInfo smbus_device_type_info = {
-    .name = TYPE_SMBUS_DEVICE,
-    .parent = TYPE_I2C_SLAVE,
-    .instance_size = sizeof(SMBusDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(smbus_device_type_info,
+                            SMBusDevice, SMBusDeviceClass,
+                            SMBUS_DEVICE, I2C_SLAVE,
     .abstract = true,
-    .class_size = sizeof(SMBusDeviceClass),
     .class_init = smbus_device_class_init,
-};
-TYPE_INFO(smbus_device_type_info)
+)
 
 

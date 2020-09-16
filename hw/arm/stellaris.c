@@ -1510,14 +1510,12 @@ static void stellaris_i2c_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_stellaris_i2c;
 }
 
-static const TypeInfo stellaris_i2c_info = {
-    .name          = TYPE_STELLARIS_I2C,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(stellaris_i2c_state),
+OBJECT_DEFINE_TYPE_EXTENDED(stellaris_i2c_info,
+                            stellaris_i2c_state, void,
+                            STELLARIS_I2C, SYS_BUS_DEVICE,
     .instance_init = stellaris_i2c_init,
     .class_init    = stellaris_i2c_class_init,
-};
-TYPE_INFO(stellaris_i2c_info)
+)
 
 static void stellaris_gptm_class_init(ObjectClass *klass, void *data)
 {
@@ -1527,14 +1525,12 @@ static void stellaris_gptm_class_init(ObjectClass *klass, void *data)
     dc->realize = stellaris_gptm_realize;
 }
 
-static const TypeInfo stellaris_gptm_info = {
-    .name          = TYPE_STELLARIS_GPTM,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(gptm_state),
+OBJECT_DEFINE_TYPE_EXTENDED(stellaris_gptm_info,
+                            gptm_state, void,
+                            STELLARIS_GPTM, SYS_BUS_DEVICE,
     .instance_init = stellaris_gptm_init,
     .class_init    = stellaris_gptm_class_init,
-};
-TYPE_INFO(stellaris_gptm_info)
+)
 
 static void stellaris_adc_class_init(ObjectClass *klass, void *data)
 {
@@ -1543,13 +1539,11 @@ static void stellaris_adc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_stellaris_adc;
 }
 
-static const TypeInfo stellaris_adc_info = {
-    .name          = TYPE_STELLARIS_ADC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(stellaris_adc_state),
+OBJECT_DEFINE_TYPE_EXTENDED(stellaris_adc_info,
+                            stellaris_adc_state, void,
+                            STELLARIS_ADC, SYS_BUS_DEVICE,
     .instance_init = stellaris_adc_init,
     .class_init    = stellaris_adc_class_init,
-};
-TYPE_INFO(stellaris_adc_info)
+)
 
 

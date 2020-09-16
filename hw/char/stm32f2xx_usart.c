@@ -226,13 +226,11 @@ static void stm32f2xx_usart_class_init(ObjectClass *klass, void *data)
     dc->realize = stm32f2xx_usart_realize;
 }
 
-static const TypeInfo stm32f2xx_usart_info = {
-    .name          = TYPE_STM32F2XX_USART,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F2XXUsartState),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f2xx_usart_info,
+                            STM32F2XXUsartState, void,
+                            STM32F2XX_USART, SYS_BUS_DEVICE,
     .instance_init = stm32f2xx_usart_init,
     .class_init    = stm32f2xx_usart_class_init,
-};
-TYPE_INFO(stm32f2xx_usart_info)
+)
 
 

@@ -366,14 +366,11 @@ static void icp_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo icp_info = {
-    .name = TYPE_ICP,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(ICPState),
+OBJECT_DEFINE_TYPE_EXTENDED(icp_info,
+                            ICPState, ICPStateClass,
+                            ICP, DEVICE,
     .class_init = icp_class_init,
-    .class_size = sizeof(ICPStateClass),
-};
-TYPE_INFO(icp_info)
+)
 
 Object *icp_create(Object *cpu, const char *type, XICSFabric *xi, Error **errp)
 {
@@ -700,22 +697,16 @@ static void ics_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo ics_info = {
-    .name = TYPE_ICS,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(ICSState),
+OBJECT_DEFINE_TYPE_EXTENDED(ics_info,
+                            ICSState, ICSStateClass,
+                            ICS, DEVICE,
     .instance_init = ics_instance_init,
     .class_init = ics_class_init,
-    .class_size = sizeof(ICSStateClass),
-};
-TYPE_INFO(ics_info)
+)
 
-static const TypeInfo xics_fabric_info = {
-    .name = TYPE_XICS_FABRIC,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(XICSFabricClass),
-};
-TYPE_INFO(xics_fabric_info)
+OBJECT_DEFINE_TYPE_EXTENDED(xics_fabric_info,
+                            void, XICSFabricClass,
+                            XICS_FABRIC, INTERFACE)
 
 /*
  * Exported functions

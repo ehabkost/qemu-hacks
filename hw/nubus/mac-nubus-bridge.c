@@ -29,13 +29,11 @@ static void mac_nubus_bridge_class_init(ObjectClass *klass, void *data)
     dc->desc = "Nubus bridge";
 }
 
-static const TypeInfo mac_nubus_bridge_info = {
-    .name          = TYPE_MAC_NUBUS_BRIDGE,
-    .parent        = TYPE_NUBUS_BRIDGE,
+OBJECT_DEFINE_TYPE_EXTENDED(mac_nubus_bridge_info,
+                            MacNubusState, void,
+                            MAC_NUBUS_BRIDGE, NUBUS_BRIDGE,
     .instance_init = mac_nubus_bridge_init,
-    .instance_size = sizeof(MacNubusState),
     .class_init    = mac_nubus_bridge_class_init,
-};
-TYPE_INFO(mac_nubus_bridge_info)
+)
 
 

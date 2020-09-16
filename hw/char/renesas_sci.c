@@ -334,13 +334,11 @@ static void rsci_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, rsci_properties);
 }
 
-static const TypeInfo rsci_info = {
-    .name = TYPE_RENESAS_SCI,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(RSCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(rsci_info,
+                            RSCIState, void,
+                            RENESAS_SCI, SYS_BUS_DEVICE,
     .instance_init = rsci_init,
     .class_init = rsci_class_init,
-};
-TYPE_INFO(rsci_info)
+)
 
 

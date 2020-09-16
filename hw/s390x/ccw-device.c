@@ -71,14 +71,11 @@ const VMStateDescription vmstate_ccw_dev = {
     }
 };
 
-static const TypeInfo ccw_device_info = {
-    .name = TYPE_CCW_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(CcwDevice),
-    .class_size = sizeof(CCWDeviceClass),
+OBJECT_DEFINE_TYPE_EXTENDED(ccw_device_info,
+                            CcwDevice, CCWDeviceClass,
+                            CCW_DEVICE, DEVICE,
     .class_init = ccw_device_class_init,
     .abstract = true,
-};
-TYPE_INFO(ccw_device_info)
+)
 
 

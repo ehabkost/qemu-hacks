@@ -487,14 +487,12 @@ static void milkymist_tmu2_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_milkymist_tmu2;
 }
 
-static const TypeInfo milkymist_tmu2_info = {
-    .name          = TYPE_MILKYMIST_TMU2,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(MilkymistTMU2State),
+OBJECT_DEFINE_TYPE_EXTENDED(milkymist_tmu2_info,
+                            MilkymistTMU2State, void,
+                            MILKYMIST_TMU2, SYS_BUS_DEVICE,
     .instance_init = milkymist_tmu2_init,
     .class_init    = milkymist_tmu2_class_init,
-};
-TYPE_INFO(milkymist_tmu2_info)
+)
 
 
 

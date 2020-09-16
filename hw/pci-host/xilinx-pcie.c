@@ -178,14 +178,12 @@ static void xilinx_pcie_host_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, xilinx_pcie_host_props);
 }
 
-static const TypeInfo xilinx_pcie_host_info = {
-    .name       = TYPE_XILINX_PCIE_HOST,
-    .parent     = TYPE_PCIE_HOST_BRIDGE,
-    .instance_size = sizeof(XilinxPCIEHost),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_pcie_host_info,
+                            XilinxPCIEHost, void,
+                            XILINX_PCIE_HOST, PCIE_HOST_BRIDGE,
     .instance_init = xilinx_pcie_host_init,
     .class_init = xilinx_pcie_host_class_init,
-};
-TYPE_INFO(xilinx_pcie_host_info)
+)
 
 static uint32_t xilinx_pcie_root_config_read(PCIDevice *d,
                                              uint32_t address, int len)
@@ -312,16 +310,14 @@ static void xilinx_pcie_root_class_init(ObjectClass *klass, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo xilinx_pcie_root_info = {
-    .name = TYPE_XILINX_PCIE_ROOT,
-    .parent = TYPE_PCI_BRIDGE,
-    .instance_size = sizeof(XilinxPCIERoot),
+OBJECT_DEFINE_TYPE_EXTENDED(xilinx_pcie_root_info,
+                            XilinxPCIERoot, void,
+                            XILINX_PCIE_ROOT, PCI_BRIDGE,
     .class_init = xilinx_pcie_root_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_PCIE_DEVICE },
         { }
     },
-};
-TYPE_INFO(xilinx_pcie_root_info)
+)
 
 

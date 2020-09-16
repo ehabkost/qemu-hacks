@@ -675,10 +675,9 @@ static void piix4_pm_class_init(ObjectClass *klass, void *data)
     adevc->madt_cpu = pc_madt_cpu_entry;
 }
 
-static const TypeInfo piix4_pm_info = {
-    .name          = TYPE_PIIX4_PM,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(PIIX4PMState),
+OBJECT_DEFINE_TYPE_EXTENDED(piix4_pm_info,
+                            PIIX4PMState, void,
+                            PIIX4_PM, PCI_DEVICE,
     .class_init    = piix4_pm_class_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_HOTPLUG_HANDLER },
@@ -686,7 +685,6 @@ static const TypeInfo piix4_pm_info = {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { }
     }
-};
-TYPE_INFO(piix4_pm_info)
+)
 
 

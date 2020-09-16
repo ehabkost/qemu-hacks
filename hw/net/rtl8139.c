@@ -3441,17 +3441,15 @@ static void rtl8139_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_NETWORK, dc->categories);
 }
 
-static const TypeInfo rtl8139_info = {
-    .name          = TYPE_RTL8139,
-    .parent        = TYPE_PCI_DEVICE,
-    .instance_size = sizeof(RTL8139State),
+OBJECT_DEFINE_TYPE_EXTENDED(rtl8139_info,
+                            RTL8139State, void,
+                            RTL8139, PCI_DEVICE,
     .class_init    = rtl8139_class_init,
     .instance_init = rtl8139_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
         { },
     },
-};
-TYPE_INFO(rtl8139_info)
+)
 
 

@@ -185,15 +185,12 @@ static void s390_ccw_class_init(ObjectClass *klass, void *data)
     cdc->unrealize = s390_ccw_unrealize;
 }
 
-static const TypeInfo s390_ccw_info = {
-    .name          = TYPE_S390_CCW,
-    .parent        = TYPE_CCW_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(s390_ccw_info,
+                            S390CCWDevice, S390CCWDeviceClass,
+                            S390_CCW, CCW_DEVICE,
     .instance_init = s390_ccw_instance_init,
-    .instance_size = sizeof(S390CCWDevice),
-    .class_size    = sizeof(S390CCWDeviceClass),
     .class_init    = s390_ccw_class_init,
     .abstract      = true,
-};
-TYPE_INFO(s390_ccw_info)
+)
 
 

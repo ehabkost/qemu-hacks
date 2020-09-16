@@ -151,12 +151,10 @@ static void puv3_ost_class_init(ObjectClass *klass, void *data)
     dc->realize = puv3_ost_realize;
 }
 
-static const TypeInfo puv3_ost_info = {
-    .name = TYPE_PUV3_OST,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PUV3OSTState),
+OBJECT_DEFINE_TYPE_EXTENDED(puv3_ost_info,
+                            PUV3OSTState, void,
+                            PUV3_OST, SYS_BUS_DEVICE,
     .class_init = puv3_ost_class_init,
-};
-TYPE_INFO(puv3_ost_info)
+)
 
 

@@ -278,15 +278,13 @@ static void sparc32_dma_device_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_sparc32_dma_device;
 }
 
-static const TypeInfo sparc32_dma_device_info = {
-    .name          = TYPE_SPARC32_DMA_DEVICE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(sparc32_dma_device_info,
+                            DMADeviceState, void,
+                            SPARC32_DMA_DEVICE, SYS_BUS_DEVICE,
     .abstract      = true,
-    .instance_size = sizeof(DMADeviceState),
     .instance_init = sparc32_dma_device_init,
     .class_init    = sparc32_dma_device_class_init,
-};
-TYPE_INFO(sparc32_dma_device_info)
+)
 
 static void sparc32_espdma_device_init(Object *obj)
 {
@@ -321,14 +319,12 @@ static void sparc32_espdma_device_class_init(ObjectClass *klass, void *data)
     dc->realize = sparc32_espdma_device_realize;
 }
 
-static const TypeInfo sparc32_espdma_device_info = {
-    .name          = TYPE_SPARC32_ESPDMA_DEVICE,
-    .parent        = TYPE_SPARC32_DMA_DEVICE,
-    .instance_size = sizeof(ESPDMADeviceState),
+OBJECT_DEFINE_TYPE_EXTENDED(sparc32_espdma_device_info,
+                            ESPDMADeviceState, void,
+                            SPARC32_ESPDMA_DEVICE, SPARC32_DMA_DEVICE,
     .instance_init = sparc32_espdma_device_init,
     .class_init    = sparc32_espdma_device_class_init,
-};
-TYPE_INFO(sparc32_espdma_device_info)
+)
 
 static void sparc32_ledma_device_init(Object *obj)
 {
@@ -360,14 +356,12 @@ static void sparc32_ledma_device_class_init(ObjectClass *klass, void *data)
     dc->realize = sparc32_ledma_device_realize;
 }
 
-static const TypeInfo sparc32_ledma_device_info = {
-    .name          = TYPE_SPARC32_LEDMA_DEVICE,
-    .parent        = TYPE_SPARC32_DMA_DEVICE,
-    .instance_size = sizeof(LEDMADeviceState),
+OBJECT_DEFINE_TYPE_EXTENDED(sparc32_ledma_device_info,
+                            LEDMADeviceState, void,
+                            SPARC32_LEDMA_DEVICE, SPARC32_DMA_DEVICE,
     .instance_init = sparc32_ledma_device_init,
     .class_init    = sparc32_ledma_device_class_init,
-};
-TYPE_INFO(sparc32_ledma_device_info)
+)
 
 static void sparc32_dma_realize(DeviceState *dev, Error **errp)
 {
@@ -433,14 +427,12 @@ static void sparc32_dma_class_init(ObjectClass *klass, void *data)
     dc->realize = sparc32_dma_realize;
 }
 
-static const TypeInfo sparc32_dma_info = {
-    .name          = TYPE_SPARC32_DMA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SPARC32DMAState),
+OBJECT_DEFINE_TYPE_EXTENDED(sparc32_dma_info,
+                            SPARC32DMAState, void,
+                            SPARC32_DMA, SYS_BUS_DEVICE,
     .instance_init = sparc32_dma_init,
     .class_init    = sparc32_dma_class_init,
-};
-TYPE_INFO(sparc32_dma_info)
+)
 
 
 

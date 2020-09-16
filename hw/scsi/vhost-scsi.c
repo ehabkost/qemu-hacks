@@ -313,17 +313,15 @@ static void vhost_scsi_instance_init(Object *obj)
                                   DEVICE(vsc));
 }
 
-static const TypeInfo vhost_scsi_info = {
-    .name = TYPE_VHOST_SCSI,
-    .parent = TYPE_VHOST_SCSI_COMMON,
-    .instance_size = sizeof(VHostSCSI),
+OBJECT_DEFINE_TYPE_EXTENDED(vhost_scsi_info,
+                            VHostSCSI, void,
+                            VHOST_SCSI, VHOST_SCSI_COMMON,
     .class_init = vhost_scsi_class_init,
     .instance_init = vhost_scsi_instance_init,
     .interfaces = (InterfaceInfo[]) {
         { TYPE_FW_PATH_PROVIDER },
         { }
     },
-};
-TYPE_INFO(vhost_scsi_info)
+)
 
 

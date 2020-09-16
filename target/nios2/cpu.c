@@ -208,14 +208,11 @@ static void nios2_cpu_class_init(ObjectClass *oc, void *data)
     cc->tcg_initialize = nios2_tcg_init;
 }
 
-static const TypeInfo nios2_cpu_type_info = {
-    .name = TYPE_NIOS2_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(Nios2CPU),
+OBJECT_DEFINE_TYPE_EXTENDED(nios2_cpu_type_info,
+                            Nios2CPU, Nios2CPUClass,
+                            NIOS2_CPU, CPU,
     .instance_init = nios2_cpu_initfn,
-    .class_size = sizeof(Nios2CPUClass),
     .class_init = nios2_cpu_class_init,
-};
-TYPE_INFO(nios2_cpu_type_info)
+)
 
 

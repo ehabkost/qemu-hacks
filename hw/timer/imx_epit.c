@@ -362,12 +362,10 @@ static void imx_epit_class_init(ObjectClass *klass, void *data)
     dc->desc = "i.MX periodic timer";
 }
 
-static const TypeInfo imx_epit_info = {
-    .name = TYPE_IMX_EPIT,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXEPITState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_epit_info,
+                            IMXEPITState, void,
+                            IMX_EPIT, SYS_BUS_DEVICE,
     .class_init = imx_epit_class_init,
-};
-TYPE_INFO(imx_epit_info)
+)
 
 

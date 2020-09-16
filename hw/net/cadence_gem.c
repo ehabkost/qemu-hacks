@@ -1704,13 +1704,11 @@ static void gem_class_init(ObjectClass *klass, void *data)
     dc->reset = gem_reset;
 }
 
-static const TypeInfo gem_info = {
-    .name  = TYPE_CADENCE_GEM,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size  = sizeof(CadenceGEMState),
+OBJECT_DEFINE_TYPE_EXTENDED(gem_info,
+                            CadenceGEMState, void,
+                            CADENCE_GEM, SYS_BUS_DEVICE,
     .instance_init = gem_init,
     .class_init = gem_class_init,
-};
-TYPE_INFO(gem_info)
+)
 
 

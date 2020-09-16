@@ -22,12 +22,9 @@ static Property i2c_props[] = {
     DEFINE_PROP_END_OF_LIST(),
 };
 
-static const TypeInfo i2c_bus_info = {
-    .name = TYPE_I2C_BUS,
-    .parent = TYPE_BUS,
-    .instance_size = sizeof(I2CBus),
-};
-TYPE_INFO(i2c_bus_info)
+OBJECT_DEFINE_TYPE_EXTENDED(i2c_bus_info,
+                            I2CBus, void,
+                            I2C_BUS, BUS)
 
 static int i2c_bus_pre_save(void *opaque)
 {
@@ -299,14 +296,11 @@ static void i2c_slave_class_init(ObjectClass *klass, void *data)
     device_class_set_props(k, i2c_props);
 }
 
-static const TypeInfo i2c_slave_type_info = {
-    .name = TYPE_I2C_SLAVE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(I2CSlave),
+OBJECT_DEFINE_TYPE_EXTENDED(i2c_slave_type_info,
+                            I2CSlave, I2CSlaveClass,
+                            I2C_SLAVE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(I2CSlaveClass),
     .class_init = i2c_slave_class_init,
-};
-TYPE_INFO(i2c_slave_type_info)
+)
 
 

@@ -263,12 +263,10 @@ static void imx_rngc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_imx_rngc;
 }
 
-static const TypeInfo imx_rngc_info = {
-    .name          = TYPE_IMX_RNGC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(IMXRNGCState),
+OBJECT_DEFINE_TYPE_EXTENDED(imx_rngc_info,
+                            IMXRNGCState, void,
+                            IMX_RNGC, SYS_BUS_DEVICE,
     .class_init    = imx_rngc_class_init,
-};
-TYPE_INFO(imx_rngc_info)
+)
 
 

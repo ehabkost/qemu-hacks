@@ -292,13 +292,11 @@ static void stm32f2xx_adc_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &vmstate_stm32f2xx_adc;
 }
 
-static const TypeInfo stm32f2xx_adc_info = {
-    .name          = TYPE_STM32F2XX_ADC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(STM32F2XXADCState),
+OBJECT_DEFINE_TYPE_EXTENDED(stm32f2xx_adc_info,
+                            STM32F2XXADCState, void,
+                            STM32F2XX_ADC, SYS_BUS_DEVICE,
     .instance_init = stm32f2xx_adc_init,
     .class_init    = stm32f2xx_adc_class_init,
-};
-TYPE_INFO(stm32f2xx_adc_info)
+)
 
 

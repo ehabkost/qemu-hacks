@@ -1144,17 +1144,14 @@ void machine_run_board_init(MachineState *machine)
     machine_class->init(machine);
 }
 
-static const TypeInfo machine_info = {
-    .name = TYPE_MACHINE,
-    .parent = TYPE_OBJECT,
+OBJECT_DEFINE_TYPE_EXTENDED(machine_info,
+                            MachineState, MachineClass,
+                            MACHINE, OBJECT,
     .abstract = true,
-    .class_size = sizeof(MachineClass),
     .class_init    = machine_class_init,
     .class_base_init = machine_class_base_init,
-    .instance_size = sizeof(MachineState),
     .instance_init = machine_initfn,
     .instance_finalize = machine_finalize,
-};
-TYPE_INFO(machine_info)
+)
 
 

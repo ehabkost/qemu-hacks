@@ -117,12 +117,10 @@ static void char_testdev_class_init(ObjectClass *oc, void *data)
     cc->chr_write = testdev_chr_write;
 }
 
-static const TypeInfo char_testdev_type_info = {
-    .name = TYPE_CHARDEV_TESTDEV,
-    .parent = TYPE_CHARDEV,
-    .instance_size = sizeof(TestdevChardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_testdev_type_info,
+                            TestdevChardev, void,
+                            CHARDEV_TESTDEV, CHARDEV,
     .class_init = char_testdev_class_init,
-};
-TYPE_INFO(char_testdev_type_info)
+)
 
 

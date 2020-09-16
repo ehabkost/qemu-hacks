@@ -478,10 +478,9 @@ dbus_vmstate_class_init(ObjectClass *oc, void *data)
                                   get_id_list, set_id_list);
 }
 
-static const TypeInfo dbus_vmstate_info = {
-    .name = TYPE_DBUS_VMSTATE,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(DBusVMState),
+OBJECT_DEFINE_TYPE_EXTENDED(dbus_vmstate_info,
+                            DBusVMState, void,
+                            DBUS_VMSTATE, OBJECT,
     .instance_finalize = dbus_vmstate_finalize,
     .class_init = dbus_vmstate_class_init,
     .interfaces = (InterfaceInfo[]) {
@@ -489,7 +488,6 @@ static const TypeInfo dbus_vmstate_info = {
         { TYPE_VMSTATE_IF },
         { }
     }
-};
-TYPE_INFO(dbus_vmstate_info)
+)
 
 

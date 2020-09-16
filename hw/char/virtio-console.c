@@ -293,12 +293,10 @@ static void virtserialport_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, virtserialport_properties);
 }
 
-static const TypeInfo virtserialport_info = {
-    .name          = TYPE_VIRTIO_CONSOLE_SERIAL_PORT,
-    .parent        = TYPE_VIRTIO_SERIAL_PORT,
-    .instance_size = sizeof(VirtConsole),
+OBJECT_DEFINE_TYPE_EXTENDED(virtserialport_info,
+                            VirtConsole, void,
+                            VIRTIO_CONSOLE_SERIAL_PORT, VIRTIO_SERIAL_PORT,
     .class_init    = virtserialport_class_init,
-};
-TYPE_INFO(virtserialport_info)
+)
 
 

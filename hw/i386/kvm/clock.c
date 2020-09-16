@@ -321,13 +321,11 @@ static void kvmclock_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, kvmclock_properties);
 }
 
-static const TypeInfo kvmclock_info = {
-    .name          = TYPE_KVM_CLOCK,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(KVMClockState),
+OBJECT_DEFINE_TYPE_EXTENDED(kvmclock_info,
+                            KVMClockState, void,
+                            KVM_CLOCK, SYS_BUS_DEVICE,
     .class_init    = kvmclock_class_init,
-};
-TYPE_INFO(kvmclock_info)
+)
 
 /* Note: Must be called after VCPU initialization. */
 void kvmclock_create(void)

@@ -294,17 +294,14 @@ static void char_finalize(Object *obj)
     qemu_mutex_destroy(&chr->chr_write_lock);
 }
 
-static const TypeInfo char_type_info = {
-    .name = TYPE_CHARDEV,
-    .parent = TYPE_OBJECT,
-    .instance_size = sizeof(Chardev),
+OBJECT_DEFINE_TYPE_EXTENDED(char_type_info,
+                            Chardev, ChardevClass,
+                            CHARDEV, OBJECT,
     .instance_init = char_init,
     .instance_finalize = char_finalize,
     .abstract = true,
-    .class_size = sizeof(ChardevClass),
     .class_init = char_class_init,
-};
-TYPE_INFO(char_type_info)
+)
 
 static bool qemu_chr_is_busy(Chardev *s)
 {

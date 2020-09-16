@@ -161,14 +161,11 @@ bool x86_iommu_ir_supported(X86IOMMUState *s)
     return s->intr_supported == ON_OFF_AUTO_ON;
 }
 
-static const TypeInfo x86_iommu_info = {
-    .name          = TYPE_X86_IOMMU_DEVICE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(X86IOMMUState),
+OBJECT_DEFINE_TYPE_EXTENDED(x86_iommu_info,
+                            X86IOMMUState, X86IOMMUClass,
+                            X86_IOMMU_DEVICE, SYS_BUS_DEVICE,
     .class_init    = x86_iommu_class_init,
-    .class_size    = sizeof(X86IOMMUClass),
     .abstract      = true,
-};
-TYPE_INFO(x86_iommu_info)
+)
 
 

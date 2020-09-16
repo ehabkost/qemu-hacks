@@ -531,14 +531,12 @@ static void ipmi_bmc_extern_class_init(ObjectClass *oc, void *data)
     device_class_set_props(dc, ipmi_bmc_extern_properties);
 }
 
-static const TypeInfo ipmi_bmc_extern_type = {
-    .name          = TYPE_IPMI_BMC_EXTERN,
-    .parent        = TYPE_IPMI_BMC,
-    .instance_size = sizeof(IPMIBmcExtern),
+OBJECT_DEFINE_TYPE_EXTENDED(ipmi_bmc_extern_type,
+                            IPMIBmcExtern, void,
+                            IPMI_BMC_EXTERN, IPMI_BMC,
     .instance_init = ipmi_bmc_extern_init,
     .instance_finalize = ipmi_bmc_extern_finalize,
     .class_init    = ipmi_bmc_extern_class_init,
- };
-TYPE_INFO(ipmi_bmc_extern_type)
+ )
 
 

@@ -977,20 +977,17 @@ static void virtio_iommu_memory_region_class_init(ObjectClass *klass,
     imrc->translate = virtio_iommu_translate;
 }
 
-static const TypeInfo virtio_iommu_info = {
-    .name = TYPE_VIRTIO_IOMMU,
-    .parent = TYPE_VIRTIO_DEVICE,
-    .instance_size = sizeof(VirtIOIOMMU),
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_iommu_info,
+                            VirtIOIOMMU, void,
+                            VIRTIO_IOMMU, VIRTIO_DEVICE,
     .instance_init = virtio_iommu_instance_init,
     .class_init = virtio_iommu_class_init,
-};
-TYPE_INFO(virtio_iommu_info)
+)
 
-static const TypeInfo virtio_iommu_memory_region_info = {
-    .parent = TYPE_IOMMU_MEMORY_REGION,
-    .name = TYPE_VIRTIO_IOMMU_MEMORY_REGION,
+OBJECT_DEFINE_TYPE_EXTENDED(virtio_iommu_memory_region_info,
+                            void, void,
+                            VIRTIO_IOMMU_MEMORY_REGION, IOMMU_MEMORY_REGION,
     .class_init = virtio_iommu_memory_region_class_init,
-};
-TYPE_INFO(virtio_iommu_memory_region_info)
+)
 
 

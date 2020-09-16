@@ -601,14 +601,12 @@ static void xlnx_dpdma_class_init(ObjectClass *oc, void *data)
     dc->reset = xlnx_dpdma_reset;
 }
 
-static const TypeInfo xlnx_dpdma_info = {
-    .name          = TYPE_XLNX_DPDMA,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(XlnxDPDMAState),
+OBJECT_DEFINE_TYPE_EXTENDED(xlnx_dpdma_info,
+                            XlnxDPDMAState, void,
+                            XLNX_DPDMA, SYS_BUS_DEVICE,
     .instance_init = xlnx_dpdma_init,
     .class_init    = xlnx_dpdma_class_init,
-};
-TYPE_INFO(xlnx_dpdma_info)
+)
 
 
 size_t xlnx_dpdma_start_operation(XlnxDPDMAState *s, uint8_t channel,

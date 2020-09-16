@@ -7416,16 +7416,13 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = true;
 }
 
-static const TypeInfo x86_cpu_type_info = {
-    .name = TYPE_X86_CPU,
-    .parent = TYPE_CPU,
-    .instance_size = sizeof(X86CPU),
+OBJECT_DEFINE_TYPE_EXTENDED(x86_cpu_type_info,
+                            X86CPU, X86CPUClass,
+                            X86_CPU, CPU,
     .instance_init = x86_cpu_initfn,
     .abstract = true,
-    .class_size = sizeof(X86CPUClass),
     .class_init = x86_cpu_common_class_init,
-};
-TYPE_INFO(x86_cpu_type_info)
+)
 
 
 /* "base" CPU model, used by query-cpu-model-expansion */

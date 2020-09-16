@@ -266,13 +266,11 @@ static void allwinner_cpucfg_class_init(ObjectClass *klass, void *data)
     dc->vmsd = &allwinner_cpucfg_vmstate;
 }
 
-static const TypeInfo allwinner_cpucfg_info = {
-    .name          = TYPE_AW_CPUCFG,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_cpucfg_info,
+                            AwCpuCfgState, void,
+                            AW_CPUCFG, SYS_BUS_DEVICE,
     .instance_init = allwinner_cpucfg_init,
-    .instance_size = sizeof(AwCpuCfgState),
     .class_init    = allwinner_cpucfg_class_init,
-};
-TYPE_INFO(allwinner_cpucfg_info)
+)
 
 

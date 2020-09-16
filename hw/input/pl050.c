@@ -194,13 +194,11 @@ static void pl050_class_init(ObjectClass *oc, void *data)
     dc->vmsd = &vmstate_pl050;
 }
 
-static const TypeInfo pl050_type_info = {
-    .name          = TYPE_PL050,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(PL050State),
+OBJECT_DEFINE_TYPE_EXTENDED(pl050_type_info,
+                            PL050State, void,
+                            PL050, SYS_BUS_DEVICE,
     .abstract      = true,
     .class_init    = pl050_class_init,
-};
-TYPE_INFO(pl050_type_info)
+)
 
 

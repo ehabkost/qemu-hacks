@@ -238,13 +238,11 @@ static void fsl_imx31_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo fsl_imx31_type_info = {
-    .name = TYPE_FSL_IMX31,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(FslIMX31State),
+OBJECT_DEFINE_TYPE_EXTENDED(fsl_imx31_type_info,
+                            FslIMX31State, void,
+                            FSL_IMX31, DEVICE,
     .instance_init = fsl_imx31_init,
     .class_init = fsl_imx31_class_init,
-};
-TYPE_INFO(fsl_imx31_type_info)
+)
 
 

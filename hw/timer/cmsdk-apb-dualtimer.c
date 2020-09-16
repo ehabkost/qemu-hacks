@@ -513,13 +513,11 @@ static void cmsdk_apb_dualtimer_class_init(ObjectClass *klass, void *data)
     device_class_set_props(dc, cmsdk_apb_dualtimer_properties);
 }
 
-static const TypeInfo cmsdk_apb_dualtimer_info = {
-    .name = TYPE_CMSDK_APB_DUALTIMER,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(CMSDKAPBDualTimer),
+OBJECT_DEFINE_TYPE_EXTENDED(cmsdk_apb_dualtimer_info,
+                            CMSDKAPBDualTimer, void,
+                            CMSDK_APB_DUALTIMER, SYS_BUS_DEVICE,
     .instance_init = cmsdk_apb_dualtimer_init,
     .class_init = cmsdk_apb_dualtimer_class_init,
-};
-TYPE_INFO(cmsdk_apb_dualtimer_info)
+)
 
 

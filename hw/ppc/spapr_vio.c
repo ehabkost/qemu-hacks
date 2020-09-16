@@ -59,13 +59,11 @@ static void spapr_vio_bus_class_init(ObjectClass *klass, void *data)
     k->get_fw_dev_path = spapr_vio_get_dev_name;
 }
 
-static const TypeInfo spapr_vio_bus_info = {
-    .name = TYPE_SPAPR_VIO_BUS,
-    .parent = TYPE_BUS,
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_vio_bus_info,
+                            SpaprVioBus, void,
+                            SPAPR_VIO_BUS, BUS,
     .class_init = spapr_vio_bus_class_init,
-    .instance_size = sizeof(SpaprVioBus),
-};
-TYPE_INFO(spapr_vio_bus_info)
+)
 
 SpaprVioDevice *spapr_vio_find_by_reg(SpaprVioBus *bus, uint32_t reg)
 {
@@ -609,12 +607,11 @@ static void spapr_vio_bridge_class_init(ObjectClass *klass, void *data)
     dc->fw_name = "vdevice";
 }
 
-static const TypeInfo spapr_vio_bridge_info = {
-    .name          = TYPE_SPAPR_VIO_BRIDGE,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_vio_bridge_info,
+                            void, void,
+                            SPAPR_VIO_BRIDGE, SYS_BUS_DEVICE,
     .class_init    = spapr_vio_bridge_class_init,
-};
-TYPE_INFO(spapr_vio_bridge_info)
+)
 
 const VMStateDescription vmstate_spapr_vio = {
     .name = "spapr_vio",
@@ -643,15 +640,12 @@ static void vio_spapr_device_class_init(ObjectClass *klass, void *data)
     k->bus_type = TYPE_SPAPR_VIO_BUS;
 }
 
-static const TypeInfo spapr_vio_type_info = {
-    .name = TYPE_VIO_SPAPR_DEVICE,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(SpaprVioDevice),
+OBJECT_DEFINE_TYPE_EXTENDED(spapr_vio_type_info,
+                            SpaprVioDevice, SpaprVioDeviceClass,
+                            VIO_SPAPR_DEVICE, DEVICE,
     .abstract = true,
-    .class_size = sizeof(SpaprVioDeviceClass),
     .class_init = vio_spapr_device_class_init,
-};
-TYPE_INFO(spapr_vio_type_info)
+)
 
 
 

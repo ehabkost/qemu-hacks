@@ -443,13 +443,11 @@ static void allwinner_h3_class_init(ObjectClass *oc, void *data)
     dc->user_creatable = false;
 }
 
-static const TypeInfo allwinner_h3_type_info = {
-    .name = TYPE_AW_H3,
-    .parent = TYPE_DEVICE,
-    .instance_size = sizeof(AwH3State),
+OBJECT_DEFINE_TYPE_EXTENDED(allwinner_h3_type_info,
+                            AwH3State, void,
+                            AW_H3, DEVICE,
     .instance_init = allwinner_h3_init,
     .class_init = allwinner_h3_class_init,
-};
-TYPE_INFO(allwinner_h3_type_info)
+)
 
 

@@ -681,18 +681,13 @@ static void m48txx_sysbus_concrete_class_init(ObjectClass *klass, void *data)
     u->info = *info;
 }
 
-static const TypeInfo nvram_info = {
-    .name = TYPE_NVRAM,
-    .parent = TYPE_INTERFACE,
-    .class_size = sizeof(NvramClass),
-};
-TYPE_INFO(nvram_info)
+OBJECT_DEFINE_TYPE_EXTENDED(nvram_info,
+                            void, NvramClass,
+                            NVRAM, INTERFACE)
 
-static const TypeInfo m48txx_sysbus_type_info = {
-    .name = TYPE_M48TXX_SYS_BUS,
-    .parent = TYPE_SYS_BUS_DEVICE,
-    .class_size = sizeof(M48txxSysBusDeviceClass),
-    .instance_size = sizeof(M48txxSysBusState),
+OBJECT_DEFINE_TYPE_EXTENDED(m48txx_sysbus_type_info,
+                            M48txxSysBusState, M48txxSysBusDeviceClass,
+                            M48TXX_SYS_BUS, SYS_BUS_DEVICE,
     .instance_init = m48t59_init1,
     .abstract = true,
     .class_init = m48txx_sysbus_class_init,
@@ -700,8 +695,7 @@ static const TypeInfo m48txx_sysbus_type_info = {
         { TYPE_NVRAM },
         { }
     }
-};
-TYPE_INFO(m48txx_sysbus_type_info)
+)
 
 static void m48t59_register_types(void)
 {

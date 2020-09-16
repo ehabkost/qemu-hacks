@@ -98,13 +98,11 @@ static void sifive_e_prci_init(Object *obj)
     s->plloutdiv = SIFIVE_E_PRCI_PLLOUTDIV_DIV1;
 }
 
-static const TypeInfo sifive_e_prci_info = {
-    .name          = TYPE_SIFIVE_E_PRCI,
-    .parent        = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(SiFiveEPRCIState),
+OBJECT_DEFINE_TYPE_EXTENDED(sifive_e_prci_info,
+                            SiFiveEPRCIState, void,
+                            SIFIVE_E_PRCI, SYS_BUS_DEVICE,
     .instance_init = sifive_e_prci_init,
-};
-TYPE_INFO(sifive_e_prci_info)
+)
 
 
 

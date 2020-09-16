@@ -136,14 +136,12 @@ static void rng_random_class_init(ObjectClass *klass, void *data)
     rbc->opened = rng_random_opened;
 }
 
-static const TypeInfo rng_random_info = {
-    .name = TYPE_RNG_RANDOM,
-    .parent = TYPE_RNG_BACKEND,
-    .instance_size = sizeof(RngRandom),
+OBJECT_DEFINE_TYPE_EXTENDED(rng_random_info,
+                            RngRandom, void,
+                            RNG_RANDOM, RNG_BACKEND,
     .class_init = rng_random_class_init,
     .instance_init = rng_random_init,
     .instance_finalize = rng_random_finalize,
-};
-TYPE_INFO(rng_random_info)
+)
 
 

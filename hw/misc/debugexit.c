@@ -69,12 +69,10 @@ static void debug_exit_class_initfn(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
 }
 
-static const TypeInfo debug_exit_info = {
-    .name          = TYPE_ISA_DEBUG_EXIT_DEVICE,
-    .parent        = TYPE_ISA_DEVICE,
-    .instance_size = sizeof(ISADebugExitState),
+OBJECT_DEFINE_TYPE_EXTENDED(debug_exit_info,
+                            ISADebugExitState, void,
+                            ISA_DEBUG_EXIT_DEVICE, ISA_DEVICE,
     .class_init    = debug_exit_class_initfn,
-};
-TYPE_INFO(debug_exit_info)
+)
 
 
