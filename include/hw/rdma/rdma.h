@@ -20,11 +20,9 @@
 #define INTERFACE_RDMA_PROVIDER "rdma"
 
 typedef struct RdmaProviderClass RdmaProviderClass;
-DECLARE_CLASS_CHECKERS(RdmaProviderClass, RDMA_PROVIDER,
-                       INTERFACE_RDMA_PROVIDER)
 typedef struct RdmaProvider RdmaProvider;
-DECLARE_INTERFACE_CHECKER(RdmaProvider, RDMA_PROVIDER,
-                          INTERFACE_RDMA_PROVIDER)
+DECLARE_INTERFACE_CHECKERS(RdmaProvider, RdmaProviderClass,
+                           RDMA_PROVIDER, INTERFACE_RDMA_PROVIDER)
 
 
 struct RdmaProviderClass {

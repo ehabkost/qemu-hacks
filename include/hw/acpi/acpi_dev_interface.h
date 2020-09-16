@@ -19,11 +19,9 @@ typedef enum {
 #define TYPE_ACPI_DEVICE_IF "acpi-device-interface"
 
 typedef struct AcpiDeviceIfClass AcpiDeviceIfClass;
-DECLARE_CLASS_CHECKERS(AcpiDeviceIfClass, ACPI_DEVICE_IF,
-                       TYPE_ACPI_DEVICE_IF)
 typedef struct AcpiDeviceIf AcpiDeviceIf;
-DECLARE_INTERFACE_CHECKER(AcpiDeviceIf, ACPI_DEVICE_IF,
-                          TYPE_ACPI_DEVICE_IF)
+DECLARE_INTERFACE_CHECKERS(AcpiDeviceIf, AcpiDeviceIfClass,
+                           ACPI_DEVICE_IF, TYPE_ACPI_DEVICE_IF)
 
 
 void acpi_send_event(DeviceState *dev, AcpiEventStatusBits event);

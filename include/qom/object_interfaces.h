@@ -7,11 +7,9 @@
 #define TYPE_USER_CREATABLE "user-creatable"
 
 typedef struct UserCreatableClass UserCreatableClass;
-DECLARE_CLASS_CHECKERS(UserCreatableClass, USER_CREATABLE,
-                       TYPE_USER_CREATABLE)
 typedef struct UserCreatable UserCreatable;
-DECLARE_INTERFACE_CHECKER(UserCreatable, USER_CREATABLE,
-                          TYPE_USER_CREATABLE)
+DECLARE_INTERFACE_CHECKERS(UserCreatable, UserCreatableClass,
+                           USER_CREATABLE, TYPE_USER_CREATABLE)
 
 
 /**

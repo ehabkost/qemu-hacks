@@ -34,11 +34,9 @@ struct SpaprMachineState;
 typedef struct SpaprInterruptController SpaprInterruptController;
 
 #define TYPE_SPAPR_INTC "spapr-interrupt-controller"
-DECLARE_INTERFACE_CHECKER(SpaprInterruptController, SPAPR_INTC,
-                          TYPE_SPAPR_INTC)
 typedef struct SpaprInterruptControllerClass SpaprInterruptControllerClass;
-DECLARE_CLASS_CHECKERS(SpaprInterruptControllerClass, SPAPR_INTC,
-                       TYPE_SPAPR_INTC)
+DECLARE_INTERFACE_CHECKERS(SpaprInterruptController, SpaprInterruptControllerClass,
+                           SPAPR_INTC, TYPE_SPAPR_INTC)
 
 struct SpaprInterruptControllerClass {
     InterfaceClass parent;

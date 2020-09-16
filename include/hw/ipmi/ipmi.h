@@ -110,11 +110,9 @@ uint32_t ipmi_next_uuid(void);
  */
 #define TYPE_IPMI_INTERFACE "ipmi-interface"
 typedef struct IPMIInterface IPMIInterface;
-DECLARE_INTERFACE_CHECKER(IPMIInterface, IPMI_INTERFACE,
-                          TYPE_IPMI_INTERFACE)
 typedef struct IPMIInterfaceClass IPMIInterfaceClass;
-DECLARE_CLASS_CHECKERS(IPMIInterfaceClass, IPMI_INTERFACE,
-                       TYPE_IPMI_INTERFACE)
+DECLARE_INTERFACE_CHECKERS(IPMIInterface, IPMIInterfaceClass,
+                           IPMI_INTERFACE, TYPE_IPMI_INTERFACE)
 
 
 struct IPMIInterfaceClass {
