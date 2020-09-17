@@ -118,8 +118,9 @@ static void multi_serial_pci_realize(PCIDevice *dev, Error **errp)
     }
 }
 
+#define TYPE_PCI_SERIAL_MULTI "pci-serial-multi"
 static const VMStateDescription vmstate_pci_multi_serial = {
-    .name = "pci-serial-multi",
+    .name = TYPE_PCI_SERIAL_MULTI,
     .version_id = 1,
     .minimum_version_id = 1,
     .fields = (VMStateField[]) {
@@ -188,8 +189,9 @@ static void multi_serial_init(Object *o)
     }
 }
 
+#define TYPE_PCI_SERIAL_2X "pci-serial-2x"
 static const TypeInfo multi_2x_serial_pci_info = {
-    .name          = "pci-serial-2x",
+    .name          = TYPE_PCI_SERIAL_2X,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PCIMultiSerialState),
     .instance_init = multi_serial_init,
@@ -201,8 +203,9 @@ static const TypeInfo multi_2x_serial_pci_info = {
 };
 TYPE_INFO(multi_2x_serial_pci_info)
 
+#define TYPE_PCI_SERIAL_4X "pci-serial-4x"
 static const TypeInfo multi_4x_serial_pci_info = {
-    .name          = "pci-serial-4x",
+    .name          = TYPE_PCI_SERIAL_4X,
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PCIMultiSerialState),
     .instance_init = multi_serial_init,
