@@ -703,7 +703,7 @@ static const TypeInfo pvrdma_info = {
     .class_init = pvrdma_class_init,
     .interfaces = (InterfaceInfo[]) {
         { INTERFACE_CONVENTIONAL_PCI_DEVICE },
-        { INTERFACE_RDMA_PROVIDER },
+        { TYPE_RDMA_PROVIDER },
         { }
     }
 };

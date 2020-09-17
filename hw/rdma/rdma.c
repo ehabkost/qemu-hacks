@@ -17,7 +17,7 @@
 #include "qemu/module.h"
 
 static const TypeInfo rdma_hmp_info = {
-    .name = INTERFACE_RDMA_PROVIDER,
+    .name = TYPE_RDMA_PROVIDER,
     .parent = TYPE_INTERFACE,
     .class_size = sizeof(RdmaProviderClass),
 };
