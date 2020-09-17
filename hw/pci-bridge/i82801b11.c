@@ -78,8 +78,9 @@ err_bridge:
     pci_bridge_exitfn(d);
 }
 
+#define TYPE_I82801B11_BRIDGE "i82801b11_bridge"
 static const VMStateDescription i82801b11_bridge_dev_vmstate = {
-    .name = "i82801b11_bridge",
+    .name = TYPE_I82801B11_BRIDGE,
     .priority = MIG_PRI_PCI_BUS,
     .fields = (VMStateField[]) {
         VMSTATE_PCI_DEVICE(parent_obj, PCIBridge),
@@ -103,8 +104,9 @@ static void i82801b11_bridge_class_init(ObjectClass *klass, void *data)
     set_bit(DEVICE_CATEGORY_BRIDGE, dc->categories);
 }
 
+#define TYPE_I82801B11_BRIDGE "i82801b11-bridge"
 static const TypeInfo i82801b11_bridge_info = {
-    .name          = "i82801b11-bridge",
+    .name          = TYPE_I82801B11_BRIDGE,
     .parent        = TYPE_PCI_BRIDGE,
     .instance_size = sizeof(I82801b11Bridge),
     .class_init    = i82801b11_bridge_class_init,
