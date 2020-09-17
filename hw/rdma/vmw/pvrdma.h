@@ -50,7 +50,7 @@
 #define INTR_VEC_CMD_COMPLETION_Q    2
 
 /* HW attributes */
-#define PVRDMA_HW_NAME       "pvrdma"
+#define TYPE_PVRDMA       "pvrdma"
 #define PVRDMA_HW_VERSION    17
 #define PVRDMA_FW_VERSION    14
 
@@ -102,7 +102,7 @@ struct PVRDMADev {
 };
 typedef struct PVRDMADev PVRDMADev;
 DECLARE_INSTANCE_CHECKER(PVRDMADev, PVRDMA_DEV,
-                         PVRDMA_HW_NAME)
+                         TYPE_PVRDMA)
 
 static inline int get_reg_val(PVRDMADev *dev, hwaddr addr, uint32_t *val)
 {

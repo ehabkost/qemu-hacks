@@ -697,7 +697,7 @@ static void pvrdma_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo pvrdma_info = {
-    .name = PVRDMA_HW_NAME,
+    .name = TYPE_PVRDMA,
     .parent = TYPE_PCI_DEVICE,
     .instance_size = sizeof(PVRDMADev),
     .class_init = pvrdma_class_init,
