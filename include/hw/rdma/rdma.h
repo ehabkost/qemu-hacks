@@ -17,12 +17,12 @@
 
 #include "qom/object.h"
 
-#define INTERFACE_RDMA_PROVIDER "rdma"
+#define TYPE_RDMA_PROVIDER "rdma"
 
 typedef struct RdmaProviderClass RdmaProviderClass;
 typedef struct RdmaProvider RdmaProvider;
 DECLARE_INTERFACE_CHECKERS(RdmaProvider, RdmaProviderClass,
-                           RDMA_PROVIDER, INTERFACE_RDMA_PROVIDER)
+                           RDMA_PROVIDER, TYPE_RDMA_PROVIDER)
 
 
 struct RdmaProviderClass {

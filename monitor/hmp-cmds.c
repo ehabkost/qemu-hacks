@@ -844,7 +844,7 @@ static int hmp_info_rdma_foreach(Object *obj, void *opaque)
     RdmaProviderClass *k;
     Monitor *mon = opaque;
 
-    if (object_dynamic_cast(obj, INTERFACE_RDMA_PROVIDER)) {
+    if (object_dynamic_cast(obj, TYPE_RDMA_PROVIDER)) {
         rdma = RDMA_PROVIDER(obj);
         k = RDMA_PROVIDER_GET_CLASS(obj);
         if (k->print_statistics) {
