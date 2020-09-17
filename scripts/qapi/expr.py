@@ -143,6 +143,10 @@ def check_type(value, info, source,
     if value is None:
         return
 
+    # Type name
+    if isinstance(value, str):
+        return
+
     # Array type
     if isinstance(value, list):
         if not allow_array:
@@ -151,10 +155,6 @@ def check_type(value, info, source,
             raise QAPISemError(info,
                                "%s: array type must contain single type name" %
                                source)
-        return
-
-    # Type name
-    if isinstance(value, str):
         return
 
     # Anonymous type
