@@ -11,8 +11,6 @@
 #define QDEV_MAX_PIO 32
 
 #define TYPE_SYSTEM_BUS "System"
-DECLARE_INSTANCE_CHECKER(BusState, SYSTEM_BUS,
-                         TYPE_SYSTEM_BUS)
 
 
 #define TYPE_SYS_BUS_DEVICE "sys-bus-device"
