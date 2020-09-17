@@ -419,7 +419,7 @@ static void microchip_icicle_kit_machine_class_init(ObjectClass *oc, void *data)
 }
 
 static const TypeInfo microchip_icicle_kit_machine_typeinfo = {
-    .name       = MACHINE_TYPE_NAME("microchip-icicle-kit"),
+    .name       = TYPE_MICROCHIP_ICICLE_KIT_MACHINE,
     .parent     = TYPE_MACHINE,
     .class_init = microchip_icicle_kit_machine_class_init,
     .instance_size = sizeof(MicrochipIcicleKitState),
