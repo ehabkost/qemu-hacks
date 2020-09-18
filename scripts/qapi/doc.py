@@ -206,6 +206,7 @@ def texi_members(doc: QAPIDoc,
     if base:
         items += '@item The members of @code{%s}\n' % base.doc_type()
     for variant in variants.variants if variants else ():
+        assert isinstance(variant.type, QAPISchemaObjectType)
         when = ' when @code{%s} is @t{"%s"}%s' % (
             variants.tag_member.name, variant.name,
             texi_if(variant.ifcond, " (", ")"))
