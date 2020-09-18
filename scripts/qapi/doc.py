@@ -13,6 +13,7 @@ from .schema import (
     QAPISchema,
     QAPISchemaEntity,
     QAPISchemaEnumMember,
+    QAPISchemaEnumType,
     QAPISchemaFeature,
     QAPISchemaMember,
     QAPISchemaObjectType,
@@ -193,6 +194,7 @@ def texi_members(doc: QAPIDoc,
             desc = texi_format(section.text)
         elif variants and variants.tag_member == section.member:
             assert isinstance(section.member, QAPISchemaObjectTypeMember)
+            assert isinstance(section.member.type, QAPISchemaEnumType)
             if not section.member.type.doc_type():
                 values = section.member.type.member_names()
                 members_text = ', '.join(['@t{"%s"}' % v for v in values])
