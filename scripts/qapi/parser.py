@@ -23,6 +23,7 @@ from typing import (
     NamedTuple,
     Optional,
     Set,
+    TYPE_CHECKING,
     Type,
     TypeVar,
     Union,
@@ -31,6 +32,10 @@ from typing import (
 from .error import QAPIError, QAPISourceError, QAPISemError
 from .pragma import PragmaError
 from .source import QAPISourceInfo
+
+if TYPE_CHECKING:
+    # pylint: disable=cyclic-import
+    from .schema import QAPISchemaMember, QAPISchemaFeature
 
 
 _Value = Union[List[object], 'OrderedDict[str, object]', str, bool]
@@ -405,43 +410,43 @@ class QAPIDoc:
     """
 
     class Section:
-        def __init__(self, name=None):
+        def __init__(self, name: Optional[str] = None):
             # optional section name (argument/member or section name)
             self.name = name
             self.text = ''
 
-        def append(self, line):
+        def append(self, line: str) -> None:
             self.text += line.rstrip() + '\n'
 
     class ArgSection(Section):
-        def __init__(self, name):
+        def __init__(self, name: Optional[str] = None):
             super().__init__(name)
-            self.member = None
+            self.member: Optional['QAPISchemaMember'] = None
 
-        def connect(self, member):
+        def connect(self, member: 'QAPISchemaMember') -> None:
             self.member = member
 
-    def __init__(self, info):
+    def __init__(self, info: QAPISourceInfo):
         self.info = info
-        self.symbol = None
+        self.symbol: Optional[str] = None
         self.body = QAPIDoc.Section()
         # dict mapping parameter name to ArgSection
-        self.args = OrderedDict()
-        self.features = OrderedDict()
+        self.args: 'OrderedDict[str, QAPIDoc.ArgSection]' = OrderedDict()
+        self.features: 'OrderedDict[str, QAPIDoc.ArgSection]' = OrderedDict()
         # a list of Section
-        self.sections = []
+        self.sections: List[QAPIDoc.Section] = []
         # the current section
         self._section = self.body
         self._append_line = self._append_body_line
 
-    def has_section(self, name):
+    def has_section(self, name: str) -> bool:
         """Return True if we have a section with this name."""
         for i in self.sections:
             if i.name == name:
                 return True
         return False
 
-    def append(self, line):
+    def append(self, line: str) -> None:
         """
         Parse a comment line and add it to the documentation.
 
@@ -462,18 +467,18 @@ class QAPIDoc:
         line = line[1:]
         self._append_line(line)
 
-    def end_comment(self):
+    def end_comment(self) -> None:
         self._end_section()
 
     @classmethod
-    def _is_section_tag(cls, name):
+    def _is_section_tag(cls, name: str) -> bool:
         return name in ('Returns:', 'Since:',
                         # those are often singular or plural
                         'Note:', 'Notes:',
                         'Example:', 'Examples:',
                         'TODO:')
 
-    def _append_body_line(self, line):
+    def _append_body_line(self, line: str) -> None:
         """
         Process a line of documentation text in the body section.
 
@@ -513,7 +518,7 @@ class QAPIDoc:
             # This is a free-form documentation block
             self._append_freeform(line.strip())
 
-    def _append_args_line(self, line):
+    def _append_args_line(self, line: str) -> None:
         """
         Process a line of documentation text in an argument section.
 
@@ -546,7 +551,7 @@ class QAPIDoc:
 
         self._append_freeform(line.strip())
 
-    def _append_features_line(self, line):
+    def _append_features_line(self, line: str) -> None:
         name = line.split(' ', 1)[0]
 
         if name.startswith('@') and name.endswith(':'):
@@ -565,7 +570,7 @@ class QAPIDoc:
 
         self._append_freeform(line.strip())
 
-    def _append_various_line(self, line):
+    def _append_various_line(self, line: str) -> None:
         """
         Process a line of documentation text in an additional section.
 
@@ -591,7 +596,10 @@ class QAPIDoc:
 
         self._append_freeform(line)
 
-    def _start_symbol_section(self, symbols_dict, name):
+    def _start_symbol_section(
+            self,
+            symbols_dict: 'OrderedDict[str, QAPIDoc.ArgSection]',
+            name: str) -> None:
         # FIXME invalid names other than the empty string aren't flagged
         if not name:
             raise QAPIDocError("invalid parameter name")
@@ -602,20 +610,20 @@ class QAPIDoc:
         self._section = QAPIDoc.ArgSection(name)
         symbols_dict[name] = self._section
 
-    def _start_args_section(self, name):
+    def _start_args_section(self, name: str) -> None:
         self._start_symbol_section(self.args, name)
 
-    def _start_features_section(self, name):
+    def _start_features_section(self, name: str) -> None:
         self._start_symbol_section(self.features, name)
 
-    def _start_section(self, name=None):
+    def _start_section(self, name: Optional[str] = None) -> None:
         if name in ('Returns', 'Since') and self.has_section(name):
             raise QAPIDocError("duplicated '%s' section" % name)
         self._end_section()
         self._section = QAPIDoc.Section(name)
         self.sections.append(self._section)
 
-    def _end_section(self):
+    def _end_section(self) -> None:
         if self._section:
             text = self._section.text = self._section.text.strip()
             if self._section.name and (not text or text.isspace()):
@@ -623,34 +631,34 @@ class QAPIDoc:
                     "empty doc section '%s'" % self._section.name)
             self._section = None
 
-    def _append_freeform(self, line):
+    def _append_freeform(self, line: str) -> None:
         match = re.match(r'(@\S+:)', line)
         if match:
             raise QAPIDocError("'%s' not allowed in free-form documentation"
                                % match.group(1))
         self._section.append(line)
 
-    def connect_member(self, member):
+    def connect_member(self, member: 'QAPISchemaMember') -> None:
         if member.name not in self.args:
             # Undocumented TODO outlaw
             self.args[member.name] = QAPIDoc.ArgSection(member.name)
         self.args[member.name].connect(member)
 
-    def connect_feature(self, feature):
+    def connect_feature(self, feature: 'QAPISchemaFeature') -> None:
         if feature.name not in self.features:
             raise QAPISemError(feature.info,
                                "feature '%s' lacks documentation"
                                % feature.name)
         self.features[feature.name].connect(feature)
 
-    def check_expr(self, expr):
+    def check_expr(self, expr: 'OrderedDict[str, object]') -> None:
         if self.has_section('Returns') and 'command' not in expr:
             raise QAPISemError(self.info,
                                "'Returns:' is only valid for commands")
 
-    def check(self):
-
-        def check_args_section(args):
+    def check(self) -> None:
+        def check_args_section(
+                args: 'OrderedDict[str, QAPIDoc.ArgSection]') -> None:
             bogus = [name for name, section in args.items()
                      if not section.member]
             if bogus:
