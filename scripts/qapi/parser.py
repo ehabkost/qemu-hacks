@@ -17,7 +17,7 @@
 import os
 import re
 from collections import OrderedDict
-from typing import Type, TypeVar
+from typing import List, Type, TypeVar, cast
 
 from .error import QAPIError, QAPISourceError, QAPISemError
 from .source import QAPISourceInfo
@@ -176,14 +176,14 @@ class QAPISchemaParser:
                 raise QAPISemError(
                     info,
                     "pragma returns-whitelist must be a list of strings")
-            info.pragma.returns_whitelist = value
+            info.pragma.returns_whitelist = cast(List[str], value)
         elif name == 'name-case-whitelist':
             if (not isinstance(value, list)
                     or any([not isinstance(elt, str) for elt in value])):
                 raise QAPISemError(
                     info,
                     "pragma name-case-whitelist must be a list of strings")
-            info.pragma.name_case_whitelist = value
+            info.pragma.name_case_whitelist = cast(List[str], value)
         else:
             raise QAPISemError(info, "unknown pragma '%s'" % name)
 
