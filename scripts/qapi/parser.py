@@ -14,18 +14,35 @@
 # This work is licensed under the terms of the GNU GPL, version 2.
 # See the COPYING file in the top-level directory.
 
+
+from collections import OrderedDict
 import os
 import re
-from collections import OrderedDict
-from typing import List, Type, TypeVar, cast
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Set,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from .error import QAPIError, QAPISourceError, QAPISemError
 from .source import QAPISourceInfo
 
 
+Expression = Dict[str, Any]
+_Value = Union[List[object], 'OrderedDict[str, object]', str, bool]
+# Necessary imprecision: mypy does not (yet?) support recursive types;
+# so we must stub out that recursion with 'object'.
+# Note, we do not support numerics or null in this parser.
+
+
 class QAPIParseError(QAPISourceError):
     """Error class for all QAPI schema parsing errors."""
-
     T = TypeVar('T', bound='QAPIParseError')
 
     @classmethod
@@ -45,22 +62,25 @@ class QAPIDocError(QAPIError):
 
 class QAPISchemaParser:
 
-    def __init__(self, fname, previously_included=None, incl_info=None):
+    def __init__(self,
+                 fname: str,
+                 previously_included: Optional[Set[str]] = None,
+                 incl_info: Optional[QAPISourceInfo] = None):
         self._fname = fname
         self._included = previously_included or set()
         self._included.add(os.path.abspath(self._fname))
 
         # Lexer state (see `accept` for details):
-        self.tok = None
+        self.tok: Optional[str] = None
         self.pos = 0
         self.cursor = 0
-        self.val = None
+        self.val: Optional[Union[bool, str]] = None
         self.info = QAPISourceInfo(self._fname, parent=incl_info)
         self.line_pos = 0
 
         # Parser output:
-        self.exprs = []
-        self.docs = []
+        self.exprs: List[Expression] = []
+        self.docs: List[QAPIDoc] = []
 
         # Showtime!
         try:
@@ -76,7 +96,7 @@ class QAPISchemaParser:
             raise QAPIParseError(context, msg) from e
         self._parse()
 
-    def _parse(self):
+    def _parse(self) -> None:
         cur_doc = None
 
         # Prime the lexer:
@@ -140,7 +160,7 @@ class QAPISchemaParser:
         return QAPIParseError.make(self, msg)
 
     @classmethod
-    def reject_expr_doc(cls, doc):
+    def reject_expr_doc(cls, doc: Optional['QAPIDoc']) -> None:
         if doc and doc.symbol:
             raise QAPISemError(
                 doc.info,
@@ -148,7 +168,12 @@ class QAPISchemaParser:
                 % doc.symbol)
 
     @classmethod
-    def _include(cls, include, info, incl_fname, previously_included):
+    def _include(cls,
+                 include: str,
+                 info: QAPISourceInfo,
+                 incl_fname: str,
+                 previously_included: Set[str]
+                 ) -> Optional['QAPISchemaParser']:
         incl_abs_fname = os.path.abspath(incl_fname)
         # catch inclusion cycle
         inf = info
@@ -164,7 +189,10 @@ class QAPISchemaParser:
         return QAPISchemaParser(incl_fname, previously_included, info)
 
     @classmethod
-    def _pragma(cls, name, value, info):
+    def _pragma(cls,
+                name: str,
+                value: object,
+                info: QAPISourceInfo) -> None:
         if name == 'doc-required':
             if not isinstance(value, bool):
                 raise QAPISemError(info,
@@ -187,7 +215,7 @@ class QAPISchemaParser:
         else:
             raise QAPISemError(info, "unknown pragma '%s'" % name)
 
-    def accept(self, skip_comment=True):
+    def accept(self, skip_comment: bool = True) -> None:
         while True:
             self.tok = self.src[self.cursor]
             self.pos = self.cursor
@@ -249,8 +277,8 @@ class QAPISchemaParser:
                                  self.src[self.cursor-1:])
                 raise self._parse_error("stray '%s'" % match.group(0))
 
-    def get_members(self):
-        expr = OrderedDict()
+    def get_members(self) -> 'OrderedDict[str, object]':
+        expr: 'OrderedDict[str, object]' = OrderedDict()
         if self.tok == '}':
             self.accept()
             return expr
@@ -276,8 +304,8 @@ class QAPISchemaParser:
             if self.tok != "'":
                 raise self._parse_error("expected string")
 
-    def get_values(self):
-        expr = []
+    def get_values(self) -> List[object]:
+        expr: List[object] = []
         if self.tok == ']':
             self.accept()
             return expr
@@ -293,7 +321,8 @@ class QAPISchemaParser:
                 raise self._parse_error("expected ',' or ']'")
             self.accept()
 
-    def get_expr(self, nested):
+    def get_expr(self, nested: bool = False) -> _Value:
+        expr: _Value
         if self.tok != '{' and not nested:
             raise self._parse_error("expected '{'")
         if self.tok == '{':
@@ -310,7 +339,7 @@ class QAPISchemaParser:
                 "expected '{', '[', string, or boolean")
         return expr
 
-    def _get_doc(self, info):
+    def _get_doc(self, info: QAPISourceInfo) -> List['QAPIDoc']:
         if self.val != '##':
             raise self._parse_error(
                 "junk after '##' at start of documentation comment")
@@ -342,7 +371,7 @@ class QAPISchemaParser:
 
         raise self._parse_error("documentation comment must end with '##'")
 
-    def get_doc(self, info):
+    def get_doc(self, info: QAPISourceInfo) -> List['QAPIDoc']:
         try:
             return self._get_doc(info)
         except QAPIDocError as err:
