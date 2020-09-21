@@ -61,7 +61,15 @@ class QAPIDocError(QAPIError):
 
 
 class QAPISchemaParser:
+    """
+    Performs parsing of a QAPI schema source file.
 
+    :param fname: Path to the source file
+    :param previously_included: Set of absolute paths of previously included
+                                source files; these will not be parsed again.
+    :param incl_info: QAPISourceInfo for the parent document;
+                      Can be None for the parent document.
+    """
     def __init__(self,
                  fname: str,
                  previously_included: Optional[Set[str]] = None,
@@ -97,6 +105,10 @@ class QAPISchemaParser:
         self._parse()
 
     def _parse(self) -> None:
+        """
+        Parse the QAPI Schema Document.
+        Build self.exprs, self.docs
+        """
         cur_doc = None
 
         # Prime the lexer:
@@ -216,6 +228,32 @@ class QAPISchemaParser:
             raise QAPISemError(info, "unknown pragma '%s'" % name)
 
     def accept(self, skip_comment: bool = True) -> None:
+        """
+        Read the next lexeme.
+
+        - `tok` is the current lexeme/token type.
+          It will always be a single char in `"[]{},:'tf#"`.
+        - `pos` is the position of the first character in the lexeme.
+        - `cursor` is the position of the next character.
+        - `val` is the value of the lexeme.
+
+        Single-char lexemes:
+          LBRACE, RBRACE, COLON, COMMA, LSQB, RSQB:
+            `tok` holds the single-char value of the lexeme.
+
+        Multi-char lexemes:
+          COMMENT - `tok` is `'#'`.
+                    `val` is a string including all chars until end-of-line.
+                          (The '#' is excluded.)
+          STRING  - `tok` is `"'"`.
+                    `val` is the string, excluding the quotes.
+          TRUE    - `tok` is `"t"`. `val` is `True`.
+          FALSE   - `tok` is `"f"`. `val` is `False`.
+
+        NEWLINE and SPACE lexemes are consumed by the lexer directly.
+        `line_pos` and `info` are advanced when NEWLINE is encountered.
+        `tok` is set to `None` upon reaching EOF.
+        """
         while True:
             self.tok = self.src[self.cursor]
             self.pos = self.cursor
