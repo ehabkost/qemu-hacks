@@ -269,13 +269,6 @@ static void pci_std_vga_realize(PCIDevice *dev, Error **errp)
     }
 }
 
-static void pci_std_vga_init(Object *obj)
-{
-    /* Expose framebuffer byteorder via QOM */
-    object_property_add_bool(obj, "big-endian-framebuffer",
-                             vga_get_big_endian_fb, vga_set_big_endian_fb);
-}
-
 static void pci_secondary_vga_realize(PCIDevice *dev, Error **errp)
 {
     PCIVGAState *d = PCI_VGA(dev);
@@ -388,6 +381,10 @@ static void vga_class_init(ObjectClass *klass, void *data)
     k->class_id = PCI_CLASS_DISPLAY_VGA;
     device_class_set_props(dc, vga_pci_properties);
     dc->hotpluggable = false;
+
+    /* Expose framebuffer byteorder via QOM */
+    object_class_property_add_bool(klass, "big-endian-framebuffer",
+                                   vga_get_big_endian_fb, vga_set_big_endian_fb);
 }
 
 static void secondary_class_init(ObjectClass *klass, void *data)
@@ -405,7 +402,6 @@ static void secondary_class_init(ObjectClass *klass, void *data)
 static const TypeInfo vga_info = {
     .name          = "VGA",
     .parent        = TYPE_PCI_VGA,
-    .instance_init = pci_std_vga_init,
     .class_init    = vga_class_init,
 };
 
