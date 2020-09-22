@@ -267,15 +267,13 @@ class QAPISchemaGenDocVisitor(QAPISchemaVisitor):
                       arg_type, ret_type, gen, success_response, boxed,
                       allow_oob, allow_preconfig):
         doc = self.cur_doc
-        self._gen.add(texi_msg('Command', doc, ifcond,
-                               texi_arguments(doc,
-                                              arg_type if boxed else None)))
+        members = texi_arguments(doc, arg_type if boxed else None)
+        self._gen.add(texi_msg('Command', doc, ifcond, members))
 
     def visit_event(self, name, info, ifcond, features, arg_type, boxed):
         doc = self.cur_doc
-        self._gen.add(texi_msg('Event', doc, ifcond,
-                               texi_arguments(doc,
-                                              arg_type if boxed else None)))
+        members = texi_arguments(doc, arg_type if boxed else None)
+        self._gen.add(texi_msg('Event', doc, ifcond, members))
 
     def symbol(self, doc, entity):
         if self._gen._body:
