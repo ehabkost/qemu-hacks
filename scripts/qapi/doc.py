@@ -141,6 +141,7 @@ def texi_if(ifcond, prefix='\n', suffix='\n'):
 def texi_enum_value(value, desc, suffix):
     """Format a table of members item for an enumeration value"""
     assert isinstance(value, QAPISchemaEnumMember)
+    assert suffix == '', "Ignored suffix for texi_enum_value"
     return '@item @code{%s}\n%s%s' % (
         value.name, desc, texi_if(value.ifcond, prefix='@*'))
 
