@@ -18,8 +18,12 @@ import os
 import re
 from collections import OrderedDict
 
-from .error import QAPIParseError, QAPISemError
+from .error import QAPIError, QAPIParseError, QAPISemError
 from .source import QAPISourceInfo
+
+
+class QAPIDocError(QAPIError):
+    """Documentation parsing error."""
 
 
 class QAPISchemaParser:
@@ -265,13 +269,13 @@ class QAPISchemaParser:
                 self, "expected '{', '[', string, boolean or 'null'")
         return expr
 
-    def get_doc(self, info):
+    def _get_doc(self, info):
         if self.val != '##':
             raise QAPIParseError(
                 self, "junk after '##' at start of documentation comment")
 
         docs = []
-        cur_doc = QAPIDoc(self, info)
+        cur_doc = QAPIDoc(info)
         self.accept(False)
         while self.tok == '#':
             if self.val.startswith('##'):
@@ -292,11 +296,21 @@ class QAPISchemaParser:
                 if cur_doc.body.text:
                     cur_doc.end_comment()
                     docs.append(cur_doc)
-                    cur_doc = QAPIDoc(self, info)
+                    cur_doc = QAPIDoc(info)
             cur_doc.append(self.val)
             self.accept(False)
 
         raise QAPIParseError(self, "documentation comment must end with '##'")
+
+    def get_doc(self, info):
+        try:
+            return self._get_doc(info)
+        except QAPIDocError as err:
+            # Tie the Doc parsing error to our parsing state. The
+            # resulting error position depends on the state of the
+            # parser. It happens to be the beginning of the comment.
+            # More or less servicable, but action at a distance.
+            raise QAPIParseError(self, str(err)) from err
 
 
 class QAPIDoc:
@@ -335,12 +349,7 @@ class QAPIDoc:
         def connect(self, member):
             self.member = member
 
-    def __init__(self, parser, info):
-        # self._parser is used to report errors with QAPIParseError.  The
-        # resulting error position depends on the state of the parser.
-        # It happens to be the beginning of the comment.  More or less
-        # servicable, but action at a distance.
-        self._parser = parser
+    def __init__(self, info):
         self.info = info
         self.symbol = None
         self.body = QAPIDoc.Section()
@@ -377,7 +386,7 @@ class QAPIDoc:
             return
 
         if line[0] != ' ':
-            raise QAPIParseError(self._parser, "missing space after #")
+            raise QAPIDocError("missing space after #")
         line = line[1:]
         self._append_line(line)
 
@@ -411,11 +420,11 @@ class QAPIDoc:
         # recognized, and get silently treated as ordinary text
         if not self.symbol and not self.body.text and line.startswith('@'):
             if not line.endswith(':'):
-                raise QAPIParseError(self._parser, "line should end with ':'")
+                raise QAPIDocError("line should end with ':'")
             self.symbol = line[1:-1]
             # FIXME invalid names other than the empty string aren't flagged
             if not self.symbol:
-                raise QAPIParseError(self._parser, "invalid name")
+                raise QAPIDocError("invalid name")
         elif self.symbol:
             # This is a definition documentation block
             if name.startswith('@') and name.endswith(':'):
@@ -498,9 +507,8 @@ class QAPIDoc:
         name = line.split(' ', 1)[0]
 
         if name.startswith('@') and name.endswith(':'):
-            raise QAPIParseError(self._parser,
-                                 "'%s' can't follow '%s' section"
-                                 % (name, self.sections[0].name))
+            raise QAPIDocError("'%s' can't follow '%s' section"
+                               % (name, self.sections[0].name))
         if self._is_section_tag(name):
             line = line[len(name)+1:]
             self._start_section(name[:-1])
@@ -514,10 +522,9 @@ class QAPIDoc:
     def _start_symbol_section(self, symbols_dict, name):
         # FIXME invalid names other than the empty string aren't flagged
         if not name:
-            raise QAPIParseError(self._parser, "invalid parameter name")
+            raise QAPIDocError("invalid parameter name")
         if name in symbols_dict:
-            raise QAPIParseError(self._parser,
-                                 "'%s' parameter name duplicated" % name)
+            raise QAPIDocError("'%s' parameter name duplicated" % name)
         assert not self.sections
         self._end_section()
         self._section = QAPIDoc.ArgSection(name)
@@ -531,8 +538,7 @@ class QAPIDoc:
 
     def _start_section(self, name=None):
         if name in ('Returns', 'Since') and self.has_section(name):
-            raise QAPIParseError(self._parser,
-                                 "duplicated '%s' section" % name)
+            raise QAPIDocError("duplicated '%s' section" % name)
         self._end_section()
         self._section = QAPIDoc.Section(name)
         self.sections.append(self._section)
@@ -541,17 +547,15 @@ class QAPIDoc:
         if self._section:
             text = self._section.text = self._section.text.strip()
             if self._section.name and (not text or text.isspace()):
-                raise QAPIParseError(
-                    self._parser,
+                raise QAPIDocError(
                     "empty doc section '%s'" % self._section.name)
             self._section = None
 
     def _append_freeform(self, line):
         match = re.match(r'(@\S+:)', line)
         if match:
-            raise QAPIParseError(self._parser,
-                                 "'%s' not allowed in free-form documentation"
-                                 % match.group(1))
+            raise QAPIDocError("'%s' not allowed in free-form documentation"
+                               % match.group(1))
         self._section.append(line)
 
     def connect_member(self, member):
