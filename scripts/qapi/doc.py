@@ -8,7 +8,11 @@ import re
 from typing import Optional
 
 from .gen import QAPIGenDoc
-from .schema import QAPISchemaVisitor, QAPISchemaObjectTypeMember
+from .schema import (
+    QAPISchemaEnumMember,
+    QAPISchemaObjectTypeMember,
+    QAPISchemaVisitor,
+)
 
 MSG_FMT = """
 @deftypefn {type} {{}} {name}
@@ -136,12 +140,14 @@ def texi_if(ifcond, prefix='\n', suffix='\n'):
 
 def texi_enum_value(value, desc, suffix):
     """Format a table of members item for an enumeration value"""
+    assert isinstance(value, QAPISchemaEnumMember)
     return '@item @code{%s}\n%s%s' % (
         value.name, desc, texi_if(value.ifcond, prefix='@*'))
 
 
 def texi_member(member, desc, suffix):
     """Format a table of members item for an object type member"""
+    assert isinstance(member, QAPISchemaObjectTypeMember)
     typ = member.type.doc_type()
     membertype = ': ' + typ if typ else ''
     return '@item @code{%s%s}%s%s\n%s%s' % (
