@@ -164,7 +164,8 @@ def texi_members(doc, what, base=None, variants=None,
             desc = 'One of ' + members_text + '\n'
         else:
             desc = 'Not documented\n'
-        items += member_func(section.member, desc, suffix='')
+
+        items += member_func(section.member, desc, '')
     if base:
         items += '@item The members of @code{%s}\n' % base.doc_type()
     if variants:
@@ -174,7 +175,7 @@ def texi_members(doc, what, base=None, variants=None,
             if v.type.is_implicit():
                 assert not v.type.base and not v.type.variants
                 for m in v.type.local_members:
-                    items += member_func(m, desc='', suffix=when)
+                    items += member_func(m, '', when)
             else:
                 items += '@item The members of @code{%s}%s\n' % (
                     v.type.doc_type(), when)
