@@ -5,9 +5,10 @@
 """This script produces the documentation of a qapi schema in texinfo format"""
 
 import re
-from .gen import QAPIGenDoc
-from .schema import QAPISchemaVisitor
+from typing import Optional
 
+from .gen import QAPIGenDoc
+from .schema import QAPISchemaVisitor, QAPISchemaObjectTypeMember
 
 MSG_FMT = """
 @deftypefn {type} {{}} {name}
@@ -155,14 +156,17 @@ def texi_members(doc, what, base=None, variants=None,
     items = ''
     for section in doc.args.values():
         # TODO Drop fallbacks when undocumented members are outlawed
+        desc: Optional[str] = None
+
         if section.text:
             desc = texi_format(section.text)
-        elif (variants and variants.tag_member == section.member
-              and not section.member.type.doc_type()):
-            values = section.member.type.member_names()
-            members_text = ', '.join(['@t{"%s"}' % v for v in values])
-            desc = 'One of ' + members_text + '\n'
-        else:
+        elif variants and variants.tag_member == section.member:
+            assert isinstance(section.member, QAPISchemaObjectTypeMember)
+            if not section.member.type.doc_type():
+                values = section.member.type.member_names()
+                members_text = ', '.join(['@t{"%s"}' % v for v in values])
+                desc = 'One of ' + members_text + '\n'
+        if desc is None:
             desc = 'Not documented\n'
 
         items += member_func(section.member, desc, '')
