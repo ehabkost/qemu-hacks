@@ -5,7 +5,7 @@
 """This script produces the documentation of a qapi schema in texinfo format"""
 
 import re
-from typing import Callable, List, Optional
+from typing import List, Optional
 
 from .gen import QAPIGenDoc
 from .parser import QAPIDoc
@@ -150,24 +150,17 @@ def texi_if(ifcond: Optional[List[str]],
     return '%s@b{If:} @code{%s}%s' % (prefix, ', '.join(ifcond), suffix)
 
 
-TexiMemberCallback = Callable[[QAPISchemaMember, str, str], str]
-
-
-def texi_enum_value(value: QAPISchemaMember,
-                    desc: str,
-                    suffix: str) -> str:
+def texi_enum_value(value: QAPISchemaEnumMember,
+                    desc: str, suffix: str) -> str:
     """Format a table of members item for an enumeration value"""
-    assert isinstance(value, QAPISchemaEnumMember)
     assert suffix == '', "Ignored suffix for texi_enum_value"
     return '@item @code{%s}\n%s%s' % (
         value.name, desc, texi_if(value.ifcond, prefix='@*'))
 
 
-def texi_member(member: QAPISchemaMember,
-                desc: str,
-                suffix: str) -> str:
+def texi_object_member(member: QAPISchemaObjectTypeMember,
+                       desc: str, suffix: str) -> str:
     """Format a table of members item for an object type member"""
-    assert isinstance(member, QAPISchemaObjectTypeMember)
     typ = member.type.doc_type()
     membertype = ': ' + typ if typ else ''
     return '@item @code{%s%s}%s%s\n%s%s' % (
@@ -176,11 +169,20 @@ def texi_member(member: QAPISchemaMember,
         suffix, desc, texi_if(member.ifcond, prefix='@*'))
 
 
+def texi_member(member: QAPISchemaMember, desc: str, suffix: str) -> str:
+    """Format a table of members item for an arbitrary member type"""
+
+    if isinstance(member, QAPISchemaObjectTypeMember):
+        return texi_object_member(member, desc, suffix)
+    if isinstance(member, QAPISchemaEnumMember):
+        return texi_enum_value(member, desc, suffix)
+    raise Exception(f"Unhandled member type {type(member).__name__}")
+
+
 def texi_members(doc: QAPIDoc,
                  what: str,
                  base: Optional[QAPISchemaObjectType] = None,
-                 variants: Optional[QAPISchemaVariants] = None,
-                 member_func: TexiMemberCallback = texi_member) -> str:
+                 variants: Optional[QAPISchemaVariants] = None) -> str:
     """Format the table of members"""
     items = ''
     for section in doc.args.values():
@@ -198,7 +200,7 @@ def texi_members(doc: QAPIDoc,
         if desc is None:
             desc = 'Not documented\n'
 
-        items += member_func(section.member, desc, '')
+        items += texi_member(section.member, desc, '')
     if base:
         items += '@item The members of @code{%s}\n' % base.doc_type()
     if variants:
@@ -208,7 +210,7 @@ def texi_members(doc: QAPIDoc,
             if v.type.is_implicit():
                 assert not v.type.base and not v.type.variants
                 for m in v.type.local_members:
-                    items += member_func(m, '', when)
+                    items += texi_member(m, '', when)
             else:
                 items += '@item The members of @code{%s}%s\n' % (
                     v.type.doc_type(), when)
@@ -288,8 +290,7 @@ class QAPISchemaGenDocVisitor(QAPISchemaVisitor):
                         prefix: Optional[str]) -> None:
         doc = self.cur_doc
         self._gen.add(texi_type('Enum', doc, ifcond,
-                                texi_members(doc, 'Values',
-                                             member_func=texi_enum_value)))
+                                texi_members(doc, 'Values')))
 
     def visit_object_type(self,
                           name: str,
