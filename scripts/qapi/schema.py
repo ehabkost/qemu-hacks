@@ -20,7 +20,7 @@ from collections import OrderedDict
 from typing import Optional
 
 from .common import c_name, POINTER_SUFFIX
-from .error import QAPIError, QAPISemError
+from .error import QAPISourceError, QAPISemError
 from .expr import check_exprs
 from .parser import QAPISchemaParser
 
@@ -841,7 +841,7 @@ class QAPISchema:
         other_ent = self._entity_dict.get(ent.name)
         if other_ent:
             if other_ent.info:
-                where = QAPIError(other_ent.info, None, "previous definition")
+                where = QAPISourceError(other_ent.info, "previous definition")
                 raise QAPISemError(
                     ent.info,
                     "'%s' is already defined\n%s" % (ent.name, where))

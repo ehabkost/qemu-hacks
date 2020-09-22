@@ -45,7 +45,7 @@ def generate(schema_file: str,
     if match and match.end() != len(prefix):
         msg = "funny character '{:s}' in prefix '{:s}'".format(
             prefix[match.end()], prefix)
-        raise QAPIError('', None, msg)
+        raise QAPIError(msg)
 
     schema = QAPISchema(schema_file)
     gen_types(schema, output_dir, prefix, builtins)
