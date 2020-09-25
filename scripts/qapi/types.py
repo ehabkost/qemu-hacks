@@ -22,7 +22,7 @@ from .common import (
     gen_if,
     mcgen,
 )
-from .gen import QAPISchemaModularCVisitor, ifcontext
+from .gen import QAPISchemaModularCVisitor, QAPISchemaModuleName, ifcontext
 from .source import QAPISourceInfo
 from .schema import (
     QAPISchema,
@@ -282,7 +282,7 @@ class QAPISchemaGenTypeVisitor(QAPISchemaModularCVisitor):
 #include "qapi/util.h"
 '''))
 
-    def _begin_user_module(self, name: str) -> None:
+    def _begin_user_module(self, name: QAPISchemaModuleName) -> None:
         types = self._module_basename('qapi-types', name)
         visit = self._module_basename('qapi-visit', name)
         self._genc.preamble_add(mcgen('''

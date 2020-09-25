@@ -21,6 +21,7 @@ from .common import (
 )
 from .gen import (
     QAPISchemaModularCVisitor,
+    QAPISchemaModuleName,
     build_params,
     ifcontext,
 )
@@ -171,7 +172,7 @@ class QAPISchemaGenEventVisitor(QAPISchemaModularCVisitor):
         self._event_enum_members: List[QAPISchemaEnumMember] = []
         self._event_emit_name = c_name(prefix + 'qapi_event_emit')
 
-    def _begin_user_module(self, name: str) -> None:
+    def _begin_user_module(self, name: QAPISchemaModuleName) -> None:
         events = self._module_basename('qapi-events', name)
         types = self._module_basename('qapi-types', name)
         visit = self._module_basename('qapi-visit', name)

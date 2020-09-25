@@ -23,6 +23,7 @@ from .gen import (
     QAPIGenC,
     QAPIGenCCode,
     QAPISchemaModularCVisitor,
+    QAPISchemaModuleName,
     build_params,
     ifcontext,
 )
@@ -253,7 +254,7 @@ class QAPISchemaGenCommandVisitor(QAPISchemaModularCVisitor):
         self._regy = QAPIGenCCode(None)
         self._visited_ret_types: Dict[QAPIGenC, Set[QAPISchemaType]] = {}
 
-    def _begin_user_module(self, name: str) -> None:
+    def _begin_user_module(self, name: QAPISchemaModuleName) -> None:
         self._visited_ret_types[self._genc] = set()
         commands = self._module_basename('qapi-commands', name)
         types = self._module_basename('qapi-types', name)

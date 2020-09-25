@@ -236,6 +236,13 @@ class QAPISchemaMonolithicCVisitor(QAPISchemaVisitor):
         self._genc.write(output_dir)
         self._genh.write(output_dir)
 
+"""A QAPI module name
+
+QAPI module names are strings, but they have special meaning:
+- A './' prefix means it is not a user module
+- None means it is a builtin module
+"""
+QAPISchemaModuleName = Optional[str]
 
 class QAPISchemaModularCVisitor(QAPISchemaVisitor):
     def __init__(self,
@@ -251,23 +258,23 @@ class QAPISchemaModularCVisitor(QAPISchemaVisitor):
         self._pydoc = pydoc
         self._genc: Optional[QAPIGenC] = None
         self._genh: Optional[QAPIGenH] = None
-        self._module: Dict[Optional[str], Tuple[QAPIGenC, QAPIGenH]] = {}
+        self._module: Dict[QAPISchemaModuleName, Tuple[QAPIGenC, QAPIGenH]] = {}
         self._main_module: Optional[str] = None
 
     @staticmethod
-    def _is_user_module(name: Optional[str]) -> bool:
+    def _is_user_module(name: QAPISchemaModuleName) -> bool:
         return name is not None and not name.startswith('./')
 
     @staticmethod
-    def _is_builtin_module(name: Optional[str]) -> bool:
+    def _is_builtin_module(name: QAPISchemaModuleName) -> bool:
         return not name
 
-    def _module_dirname(self, name: Optional[str]) -> str:
+    def _module_dirname(self, name: QAPISchemaModuleName) -> str:
         if self._is_user_module(name):
             return os.path.dirname(name)
         return ''
 
-    def _module_basename(self, what: str, name: Optional[str]) -> str:
+    def _module_basename(self, what: str, name: QAPISchemaModuleName) -> str:
         ret = '' if self._is_builtin_module(name) else self._prefix
         if self._is_user_module(name):
             basename = os.path.basename(name)
@@ -279,25 +286,26 @@ class QAPISchemaModularCVisitor(QAPISchemaVisitor):
             ret += re.sub(r'-', '-' + name + '-', what)
         return ret
 
-    def _module_filename(self, what: str, name: Optional[str]) -> str:
+    def _module_filename(self, what: str, name: QAPISchemaModuleName) -> str:
         return os.path.join(self._module_dirname(name),
                             self._module_basename(what, name))
 
-    def _add_module(self, name: Optional[str], blurb: str) -> None:
+    def _add_module(self, name: QAPISchemaModuleName, blurb: str) -> None:
         basename = self._module_filename(self._what, name)
         genc = QAPIGenC(basename + '.c', blurb, self._pydoc)
         genh = QAPIGenH(basename + '.h', blurb, self._pydoc)
         self._module[name] = (genc, genh)
         self._genc, self._genh = self._module[name]
 
-    def _add_user_module(self, name: str, blurb: str) -> None:
+    def _add_user_module(self, name: QAPISchemaModuleName, blurb: str) -> None:
         assert self._is_user_module(name)
         if self._main_module is None:
             self._main_module = name
         self._add_module(name, blurb)
 
-    def _add_system_module(self, name: Optional[str], blurb: str) -> None:
-        self._add_module(name and './' + name, blurb)
+    def _add_system_module(self, name: QAPISchemaModuleName, blurb: str) -> None:
+        name = name and './' + name
+        self._add_module(name, blurb)
 
     def write(self, output_dir: str, opt_builtins: bool = False) -> None:
         for name in self._module:
@@ -310,7 +318,7 @@ class QAPISchemaModularCVisitor(QAPISchemaVisitor):
     def _begin_system_module(self, name: None) -> None:
         pass
 
-    def _begin_user_module(self, name: str) -> None:
+    def _begin_user_module(self, name: QAPISchemaModuleName) -> None:
         pass
 
     def visit_module(self, name: Optional[str]) -> None:
