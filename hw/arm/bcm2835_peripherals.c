@@ -73,7 +73,7 @@ static void bcm2835_peripherals_init(Object *obj)
 
     /* Framebuffer */
     object_initialize_child(obj, "fb", &s->fb, TYPE_BCM2835_FB);
-    object_property_add_alias(obj, "vcram-size", OBJECT(&s->fb), "vcram-size");
+    object_property_add_path_alias(obj, "vcram-size", "fb", "vcram-size");
 
     object_property_add_const_link(OBJECT(&s->fb), "dma-mr",
                                    OBJECT(&s->gpu_bus_mr));
@@ -81,8 +81,7 @@ static void bcm2835_peripherals_init(Object *obj)
     /* Property channel */
     object_initialize_child(obj, "property", &s->property,
                             TYPE_BCM2835_PROPERTY);
-    object_property_add_alias(obj, "board-rev", OBJECT(&s->property),
-                              "board-rev");
+    object_property_add_path_alias(obj, "board-rev", "property", "board-rev");
 
     object_property_add_const_link(OBJECT(&s->property), "fb",
                                    OBJECT(&s->fb));

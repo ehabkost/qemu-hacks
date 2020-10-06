@@ -60,10 +60,10 @@ static void bcm2836_init(Object *obj)
 
     object_initialize_child(obj, "peripherals", &s->peripherals,
                             TYPE_BCM2835_PERIPHERALS);
-    object_property_add_alias(obj, "board-rev", OBJECT(&s->peripherals),
-                              "board-rev");
-    object_property_add_alias(obj, "vcram-size", OBJECT(&s->peripherals),
-                              "vcram-size");
+    object_property_add_path_alias(obj, "board-rev", "peripherals",
+                                   "board-rev");
+    object_property_add_path_alias(obj, "vcram-size", "peripherals",
+                                   "vcram-size");
 }
 
 static void bcm2836_realize(DeviceState *dev, Error **errp)

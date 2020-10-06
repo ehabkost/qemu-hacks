@@ -180,7 +180,7 @@ static void nrf51_soc_init(Object *obj)
     qdev_prop_set_uint32(DEVICE(&s->cpu), "num-irq", 32);
 
     object_initialize_child(obj, "uart", &s->uart, TYPE_NRF51_UART);
-    object_property_add_alias(obj, "serial0", OBJECT(&s->uart), "chardev");
+    object_property_add_path_alias(obj, "serial0", "uart", "chardev");
 
     object_initialize_child(obj, "rng", &s->rng, TYPE_NRF51_RNG);
 

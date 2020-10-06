@@ -149,12 +149,9 @@ static void aspeed_soc_init(Object *obj)
     object_initialize_child(obj, "scu", &s->scu, typename);
     qdev_prop_set_uint32(DEVICE(&s->scu), "silicon-rev",
                          sc->silicon_rev);
-    object_property_add_alias(obj, "hw-strap1", OBJECT(&s->scu),
-                              "hw-strap1");
-    object_property_add_alias(obj, "hw-strap2", OBJECT(&s->scu),
-                              "hw-strap2");
-    object_property_add_alias(obj, "hw-prot-key", OBJECT(&s->scu),
-                              "hw-prot-key");
+    object_property_add_path_alias(obj, "hw-strap1", "scu", "hw-strap1");
+    object_property_add_path_alias(obj, "hw-strap2", "scu", "hw-strap2");
+    object_property_add_path_alias(obj, "hw-prot-key", "scu", "hw-prot-key");
 
     object_initialize_child(obj, "vic", &s->vic, TYPE_ASPEED_VIC);
 
@@ -168,7 +165,7 @@ static void aspeed_soc_init(Object *obj)
 
     snprintf(typename, sizeof(typename), "aspeed.fmc-%s", socname);
     object_initialize_child(obj, "fmc", &s->fmc, typename);
-    object_property_add_alias(obj, "num-cs", OBJECT(&s->fmc), "num-cs");
+    object_property_add_path_alias(obj, "num-cs", "fmc", "num-cs");
 
     for (i = 0; i < sc->spis_num; i++) {
         snprintf(typename, sizeof(typename), "aspeed.spi%d-%s", i + 1, socname);
@@ -182,10 +179,9 @@ static void aspeed_soc_init(Object *obj)
 
     snprintf(typename, sizeof(typename), "aspeed.sdmc-%s", socname);
     object_initialize_child(obj, "sdmc", &s->sdmc, typename);
-    object_property_add_alias(obj, "ram-size", OBJECT(&s->sdmc),
-                              "ram-size");
-    object_property_add_alias(obj, "max-ram-size", OBJECT(&s->sdmc),
-                              "max-ram-size");
+    object_property_add_path_alias(obj, "ram-size", "sdmc", "ram-size");
+    object_property_add_path_alias(obj, "max-ram-size", "sdmc",
+                                   "max-ram-size");
 
     for (i = 0; i < sc->wdts_num; i++) {
         snprintf(typename, sizeof(typename), "aspeed.wdt-%s", socname);

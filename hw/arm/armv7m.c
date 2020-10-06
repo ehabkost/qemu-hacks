@@ -137,8 +137,7 @@ static void armv7m_instance_init(Object *obj)
     memory_region_init(&s->container, obj, "armv7m-container", UINT64_MAX);
 
     object_initialize_child(obj, "nvnic", &s->nvic, TYPE_NVIC);
-    object_property_add_alias(obj, "num-irq",
-                              OBJECT(&s->nvic), "num-irq");
+    object_property_add_path_alias(obj, "num-irq", "nvnic", "num-irq");
 
     for (i = 0; i < ARRAY_SIZE(s->bitband); i++) {
         object_initialize_child(obj, "bitband[*]", &s->bitband[i],

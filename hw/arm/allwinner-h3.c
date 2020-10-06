@@ -201,10 +201,8 @@ static void allwinner_h3_init(Object *obj)
     object_initialize_child(obj, "gic", &s->gic, TYPE_ARM_GIC);
 
     object_initialize_child(obj, "timer", &s->timer, TYPE_AW_A10_PIT);
-    object_property_add_alias(obj, "clk0-freq", OBJECT(&s->timer),
-                              "clk0-freq");
-    object_property_add_alias(obj, "clk1-freq", OBJECT(&s->timer),
-                              "clk1-freq");
+    object_property_add_path_alias(obj, "clk0-freq", "timer", "clk0-freq");
+    object_property_add_path_alias(obj, "clk1-freq", "timer", "clk1-freq");
 
     object_initialize_child(obj, "ccu", &s->ccu, TYPE_AW_H3_CCU);
 
@@ -213,18 +211,15 @@ static void allwinner_h3_init(Object *obj)
     object_initialize_child(obj, "cpucfg", &s->cpucfg, TYPE_AW_CPUCFG);
 
     object_initialize_child(obj, "sid", &s->sid, TYPE_AW_SID);
-    object_property_add_alias(obj, "identifier", OBJECT(&s->sid),
-                              "identifier");
+    object_property_add_path_alias(obj, "identifier", "sid", "identifier");
 
     object_initialize_child(obj, "mmc0", &s->mmc0, TYPE_AW_SDHOST_SUN5I);
 
     object_initialize_child(obj, "emac", &s->emac, TYPE_AW_SUN8I_EMAC);
 
     object_initialize_child(obj, "dramc", &s->dramc, TYPE_AW_H3_DRAMC);
-    object_property_add_alias(obj, "ram-addr", OBJECT(&s->dramc),
-                             "ram-addr");
-    object_property_add_alias(obj, "ram-size", OBJECT(&s->dramc),
-                              "ram-size");
+    object_property_add_path_alias(obj, "ram-addr", "dramc", "ram-addr");
+    object_property_add_path_alias(obj, "ram-size", "dramc", "ram-size");
 
     object_initialize_child(obj, "rtc", &s->rtc, TYPE_AW_RTC_SUN6I);
 }

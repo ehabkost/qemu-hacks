@@ -245,8 +245,8 @@ static void npcm7xx_init(Object *obj)
 
     object_initialize_child(obj, "a9mpcore", &s->a9mpcore, TYPE_A9MPCORE_PRIV);
     object_initialize_child(obj, "gcr", &s->gcr, TYPE_NPCM7XX_GCR);
-    object_property_add_alias(obj, "power-on-straps", OBJECT(&s->gcr),
-                              "power-on-straps");
+    object_property_add_path_alias(obj, "power-on-straps", "gcr",
+                                   "power-on-straps");
     object_initialize_child(obj, "clk", &s->clk, TYPE_NPCM7XX_CLK);
     object_initialize_child(obj, "otp1", &s->key_storage,
                             TYPE_NPCM7XX_KEY_STORAGE);
