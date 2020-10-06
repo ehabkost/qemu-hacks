@@ -6931,37 +6931,42 @@ static void x86_cpu_initfn(Object *obj)
                         x86_cpu_get_feature_words,
                         NULL, NULL, (void *)cpu->filtered_features);
 
-    object_property_add_alias(obj, "sse3", obj, "pni");
-    object_property_add_alias(obj, "pclmuldq", obj, "pclmulqdq");
-    object_property_add_alias(obj, "sse4-1", obj, "sse4.1");
-    object_property_add_alias(obj, "sse4-2", obj, "sse4.2");
-    object_property_add_alias(obj, "xd", obj, "nx");
-    object_property_add_alias(obj, "ffxsr", obj, "fxsr-opt");
-    object_property_add_alias(obj, "i64", obj, "lm");
+    object_property_add_path_alias(obj, "sse3", NULL, "pni");
+    object_property_add_path_alias(obj, "pclmuldq", NULL, "pclmulqdq");
+    object_property_add_path_alias(obj, "sse4-1", NULL, "sse4.1");
+    object_property_add_path_alias(obj, "sse4-2", NULL, "sse4.2");
+    object_property_add_path_alias(obj, "xd", NULL, "nx");
+    object_property_add_path_alias(obj, "ffxsr", NULL, "fxsr-opt");
+    object_property_add_path_alias(obj, "i64", NULL, "lm");
 
-    object_property_add_alias(obj, "ds_cpl", obj, "ds-cpl");
-    object_property_add_alias(obj, "tsc_adjust", obj, "tsc-adjust");
-    object_property_add_alias(obj, "fxsr_opt", obj, "fxsr-opt");
-    object_property_add_alias(obj, "lahf_lm", obj, "lahf-lm");
-    object_property_add_alias(obj, "cmp_legacy", obj, "cmp-legacy");
-    object_property_add_alias(obj, "nodeid_msr", obj, "nodeid-msr");
-    object_property_add_alias(obj, "perfctr_core", obj, "perfctr-core");
-    object_property_add_alias(obj, "perfctr_nb", obj, "perfctr-nb");
-    object_property_add_alias(obj, "kvm_nopiodelay", obj, "kvm-nopiodelay");
-    object_property_add_alias(obj, "kvm_mmu", obj, "kvm-mmu");
-    object_property_add_alias(obj, "kvm_asyncpf", obj, "kvm-asyncpf");
-    object_property_add_alias(obj, "kvm_asyncpf_int", obj, "kvm-asyncpf-int");
-    object_property_add_alias(obj, "kvm_steal_time", obj, "kvm-steal-time");
-    object_property_add_alias(obj, "kvm_pv_eoi", obj, "kvm-pv-eoi");
-    object_property_add_alias(obj, "kvm_pv_unhalt", obj, "kvm-pv-unhalt");
-    object_property_add_alias(obj, "kvm_poll_control", obj, "kvm-poll-control");
-    object_property_add_alias(obj, "svm_lock", obj, "svm-lock");
-    object_property_add_alias(obj, "nrip_save", obj, "nrip-save");
-    object_property_add_alias(obj, "tsc_scale", obj, "tsc-scale");
-    object_property_add_alias(obj, "vmcb_clean", obj, "vmcb-clean");
-    object_property_add_alias(obj, "pause_filter", obj, "pause-filter");
-    object_property_add_alias(obj, "sse4_1", obj, "sse4.1");
-    object_property_add_alias(obj, "sse4_2", obj, "sse4.2");
+    object_property_add_path_alias(obj, "ds_cpl", NULL, "ds-cpl");
+    object_property_add_path_alias(obj, "tsc_adjust", NULL, "tsc-adjust");
+    object_property_add_path_alias(obj, "fxsr_opt", NULL, "fxsr-opt");
+    object_property_add_path_alias(obj, "lahf_lm", NULL, "lahf-lm");
+    object_property_add_path_alias(obj, "cmp_legacy", NULL, "cmp-legacy");
+    object_property_add_path_alias(obj, "nodeid_msr", NULL, "nodeid-msr");
+    object_property_add_path_alias(obj, "perfctr_core", NULL, "perfctr-core");
+    object_property_add_path_alias(obj, "perfctr_nb", NULL, "perfctr-nb");
+    object_property_add_path_alias(obj, "kvm_nopiodelay", NULL,
+                                   "kvm-nopiodelay");
+    object_property_add_path_alias(obj, "kvm_mmu", NULL, "kvm-mmu");
+    object_property_add_path_alias(obj, "kvm_asyncpf", NULL, "kvm-asyncpf");
+    object_property_add_path_alias(obj, "kvm_asyncpf_int", NULL,
+                                   "kvm-asyncpf-int");
+    object_property_add_path_alias(obj, "kvm_steal_time", NULL,
+                                   "kvm-steal-time");
+    object_property_add_path_alias(obj, "kvm_pv_eoi", NULL, "kvm-pv-eoi");
+    object_property_add_path_alias(obj, "kvm_pv_unhalt", NULL,
+                                   "kvm-pv-unhalt");
+    object_property_add_path_alias(obj, "kvm_poll_control", NULL,
+                                   "kvm-poll-control");
+    object_property_add_path_alias(obj, "svm_lock", NULL, "svm-lock");
+    object_property_add_path_alias(obj, "nrip_save", NULL, "nrip-save");
+    object_property_add_path_alias(obj, "tsc_scale", NULL, "tsc-scale");
+    object_property_add_path_alias(obj, "vmcb_clean", NULL, "vmcb-clean");
+    object_property_add_path_alias(obj, "pause_filter", NULL, "pause-filter");
+    object_property_add_path_alias(obj, "sse4_1", NULL, "sse4.1");
+    object_property_add_path_alias(obj, "sse4_2", NULL, "sse4.2");
 
     if (xcc->model) {
         x86_cpu_load_model(cpu, xcc->model);
