@@ -2138,6 +2138,12 @@ Object *object_resolve_path(const char *path, bool *ambiguous)
     return object_resolve_path_type(path, TYPE_OBJECT, ambiguous);
 }
 
+Object *object_resolve_relative_path(Object *parent, const char *path)
+{
+    g_auto(GStrv) parts = g_strsplit(path, "/", 0);
+    return object_resolve_relative_parts(parent, parts);
+}
+
 typedef struct StringProperty
 {
     char *(*get)(Object *, Error **);

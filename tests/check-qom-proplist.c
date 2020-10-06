@@ -630,6 +630,29 @@ static void test_qom_partial_path(void)
     object_unparent(cont1);
 }
 
+static void test_qom_relative_path(void)
+{
+    Object *obj1  = object_new(TYPE_DUMMY);
+    Object *obj2 = object_new(TYPE_DUMMY);
+    Object *obj3 = object_new(TYPE_DUMMY);
+
+    object_property_add_child(obj1, "obj2", obj2);
+    object_property_add_child(obj2, "obj3", obj3);
+
+    g_assert(object_resolve_relative_path(obj1, "") == obj1);
+    g_assert(object_resolve_relative_path(obj1, "/") == obj1);
+    g_assert(object_resolve_relative_path(obj1, "obj2") == obj2);
+    g_assert(object_resolve_relative_path(obj1, "/obj2///") == obj2);
+    g_assert(object_resolve_relative_path(obj1, "obj2/obj3") == obj3);
+    g_assert(object_resolve_relative_path(obj1, "obj2//obj3//") == obj3);
+
+    object_unparent(obj3);
+    object_unparent(obj2);
+    object_unref(obj3);
+    object_unref(obj2);
+    object_unref(obj1);
+}
+
 int main(int argc, char **argv)
 {
     g_test_init(&argc, &argv, NULL);
@@ -650,6 +673,7 @@ int main(int argc, char **argv)
     g_test_add_func("/qom/proplist/delchild", test_dummy_delchild);
     g_test_add_func("/qom/proplist/alias", test_qom_alias_property);
     g_test_add_func("/qom/resolve/partial", test_qom_partial_path);
+    g_test_add_func("/qom/resolve/relative", test_qom_relative_path);
 
     return g_test_run();
 }

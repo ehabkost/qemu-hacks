@@ -1532,6 +1532,17 @@ Object *object_resolve_path_type(const char *path, const char *typename,
 Object *object_resolve_path_component(Object *parent, const char *part);
 
 /**
+ * object_resolve_relative_path:
+ * @parent: the object in which to resolve the path
+ * @path: the path to resolve.
+ *
+ * This resolves a object path relative to @parent.
+ *
+ * Returns: The resolved object or NULL on path lookup failure.
+ */
+Object *object_resolve_relative_path(Object *parent, const char *path);
+
+/**
  * object_property_try_add_child:
  * @obj: the object to add a property to
  * @name: the name of the property
