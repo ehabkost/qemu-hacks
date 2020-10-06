@@ -1831,8 +1831,23 @@ ObjectProperty *object_class_property_add_uint64_ptr(ObjectClass *klass,
  * @target_obj: the object to forward property access to
  * @target_name: the name of the property on the forwarded object
  *
- * Add an alias for a property on an object.  This function will add a property
- * of the same type as the forwarded property.
+ * Add an alias for a property on an object.
+ *
+ * An alias property will:
+ *
+ * - Have the same type as the forwarded property
+ * - Forward property get/set calls to the @target_name property
+ *   in @target_obj
+ * - Resolve to the target property when resolving QOM paths
+ *   (if @target_name is a child or link property)
+ *
+ * For example, the following call::
+ *
+ *   object_property_set(obj, name, value, errp);
+ *
+ * will be translated to::
+ *
+ *   object_property_set(target_obj, target_name, value, errp)
  *
  * The caller must ensure that @target_obj stays alive as long as
  * this property exists.  In the case of a child object or an alias on the same
