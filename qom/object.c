@@ -2701,28 +2701,38 @@ typedef struct {
     char *target_name;
 } AliasProperty;
 
+/* Return target object for alias property */
+static Object *
+object_alias_property_get_target(Object *obj, AliasProperty *prop)
+{
+    return prop->target_obj;
+}
+
 static void property_get_alias(Object *obj, Visitor *v, const char *name,
                                void *opaque, Error **errp)
 {
     AliasProperty *prop = opaque;
+    Object *target_obj = object_alias_property_get_target(obj, prop);
 
-    object_property_get(prop->target_obj, prop->target_name, v, errp);
+    object_property_get(target_obj, prop->target_name, v, errp);
 }
 
 static void property_set_alias(Object *obj, Visitor *v, const char *name,
                                void *opaque, Error **errp)
 {
     AliasProperty *prop = opaque;
+    Object *target_obj = object_alias_property_get_target(obj, prop);
 
-    object_property_set(prop->target_obj, prop->target_name, v, errp);
+    object_property_set(target_obj, prop->target_name, v, errp);
 }
 
 static Object *property_resolve_alias(Object *obj, void *opaque,
                                       const char *part)
 {
     AliasProperty *prop = opaque;
+    Object *target_obj = object_alias_property_get_target(obj, prop);
 
-    return object_resolve_path_component(prop->target_obj, prop->target_name);
+    return object_resolve_path_component(target_obj, prop->target_name);
 }
 
 static void property_release_alias(Object *obj, const char *name, void *opaque)
