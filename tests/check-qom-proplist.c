@@ -573,6 +573,22 @@ static void test_dummy_delchild(void)
     object_unparent(OBJECT(dev));
 }
 
+static void test_qom_alias_property(void)
+{
+    Object *obj1  = object_new(TYPE_DUMMY);
+    Object *obj2 = object_new(TYPE_DUMMY);
+
+    object_property_add_child(obj1, "obj2", obj2);
+
+    object_property_add_alias(obj1, "aliasprop", obj2, "sv");
+    object_property_set_str(obj1, "aliasprop", "thevalue", &error_abort);
+    g_assert_cmpstr(DUMMY_OBJECT(obj2)->sv, ==, "thevalue");
+
+    object_unparent(obj2);
+    object_unref(obj2);
+    object_unref(obj1);
+}
+
 static void test_qom_partial_path(void)
 {
     Object *root  = object_get_objects_root();
@@ -632,6 +648,7 @@ int main(int argc, char **argv)
     g_test_add_func("/qom/proplist/iterator", test_dummy_iterator);
     g_test_add_func("/qom/proplist/class_iterator", test_dummy_class_iterator);
     g_test_add_func("/qom/proplist/delchild", test_dummy_delchild);
+    g_test_add_func("/qom/proplist/alias", test_qom_alias_property);
     g_test_add_func("/qom/resolve/partial", test_qom_partial_path);
 
     return g_test_run();
