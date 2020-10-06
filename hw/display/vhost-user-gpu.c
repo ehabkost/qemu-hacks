@@ -509,8 +509,8 @@ vhost_user_gpu_instance_init(Object *obj)
 
     object_initialize_child(obj, "vhost-user-backend", &g->vhost,
                             TYPE_VHOST_USER_BACKEND);
-    object_property_add_alias(obj, "chardev",
-                              OBJECT(&g->vhost), "chardev");
+    object_property_add_path_alias(obj, "chardev", "vhost-user-backend",
+                                   "chardev");
 }
 
 static void

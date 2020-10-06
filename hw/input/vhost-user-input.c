@@ -101,8 +101,8 @@ static void vhost_input_init(Object *obj)
 
     object_initialize_child(obj, "vhost-user-backend", &vhi->vhost,
                             TYPE_VHOST_USER_BACKEND);
-    object_property_add_alias(obj, "chardev",
-                              OBJECT(&vhi->vhost), "chardev");
+    object_property_add_path_alias(obj, "chardev", "vhost-user-backend",
+                                   "chardev");
 }
 
 static const TypeInfo vhost_input_info = {

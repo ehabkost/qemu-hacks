@@ -87,8 +87,8 @@ static void vhost_user_blk_pci_instance_init(Object *obj)
 
     virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
                                 TYPE_VHOST_USER_BLK);
-    object_property_add_alias(obj, "bootindex", OBJECT(&dev->vdev),
-                              "bootindex");
+    object_property_add_path_alias(obj, "bootindex", "virtio-backend",
+                                   "bootindex");
 }
 
 static const VirtioPCIDeviceTypeInfo vhost_user_blk_pci_info = {

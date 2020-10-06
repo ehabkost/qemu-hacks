@@ -33,8 +33,8 @@ static void vhost_user_gpu_pci_initfn(Object *obj)
 
     VIRTIO_GPU_PCI_BASE(obj)->vgpu = VIRTIO_GPU_BASE(&dev->vdev);
 
-    object_property_add_alias(obj, "chardev",
-                              OBJECT(&dev->vdev), "chardev");
+    object_property_add_path_alias(obj, "chardev", "virtio-backend",
+                                   "chardev");
 }
 
 static const VirtioPCIDeviceTypeInfo vhost_user_gpu_pci_info = {
