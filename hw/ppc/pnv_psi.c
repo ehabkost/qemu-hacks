@@ -484,8 +484,8 @@ static void pnv_psi_power8_instance_init(Object *obj)
     Pnv8Psi *psi8 = PNV8_PSI(obj);
 
     object_initialize_child(obj, "ics-psi", &psi8->ics, TYPE_ICS);
-    object_property_add_alias(obj, ICS_PROP_XICS, OBJECT(&psi8->ics),
-                              ICS_PROP_XICS);
+    object_property_add_path_alias(obj, ICS_PROP_XICS, "ics-psi",
+                                   ICS_PROP_XICS);
 }
 
 static const uint8_t irq_to_xivr[] = {

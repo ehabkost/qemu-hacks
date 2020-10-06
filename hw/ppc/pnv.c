@@ -1302,8 +1302,7 @@ static void pnv_chip_power9_instance_init(Object *obj)
     int i;
 
     object_initialize_child(obj, "xive", &chip9->xive, TYPE_PNV_XIVE);
-    object_property_add_alias(obj, "xive-fabric", OBJECT(&chip9->xive),
-                              "xive-fabric");
+    object_property_add_path_alias(obj, "xive-fabric", "xive", "xive-fabric");
 
     object_initialize_child(obj, "psi", &chip9->psi, TYPE_PNV9_PSI);
 

@@ -1679,8 +1679,7 @@ static void spapr_rtc_create(SpaprMachineState *spapr)
                                        sizeof(spapr->rtc), TYPE_SPAPR_RTC,
                                        &error_fatal, NULL);
     qdev_realize(DEVICE(&spapr->rtc), NULL, &error_fatal);
-    object_property_add_alias(OBJECT(spapr), "rtc-time", OBJECT(&spapr->rtc),
-                              "date");
+    object_property_add_path_alias(OBJECT(spapr), "rtc-time", "rtc", "date");
 }
 
 /* Returns whether we want to use VGA or not */
