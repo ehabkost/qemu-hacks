@@ -130,13 +130,14 @@ static void virtio_mem_pci_instance_init(Object *obj)
      */
     vmc->add_size_change_notifier(vmem, &dev->size_change_notifier);
 
-    object_property_add_alias(obj, VIRTIO_MEM_BLOCK_SIZE_PROP,
-                              OBJECT(&dev->vdev), VIRTIO_MEM_BLOCK_SIZE_PROP);
-    object_property_add_alias(obj, VIRTIO_MEM_SIZE_PROP, OBJECT(&dev->vdev),
-                              VIRTIO_MEM_SIZE_PROP);
-    object_property_add_alias(obj, VIRTIO_MEM_REQUESTED_SIZE_PROP,
-                              OBJECT(&dev->vdev),
-                              VIRTIO_MEM_REQUESTED_SIZE_PROP);
+    object_property_add_path_alias(obj, VIRTIO_MEM_BLOCK_SIZE_PROP,
+                                   "virtio-backend",
+                                   VIRTIO_MEM_BLOCK_SIZE_PROP);
+    object_property_add_path_alias(obj, VIRTIO_MEM_SIZE_PROP,
+                                   "virtio-backend", VIRTIO_MEM_SIZE_PROP);
+    object_property_add_path_alias(obj, VIRTIO_MEM_REQUESTED_SIZE_PROP,
+                                   "virtio-backend",
+                                   VIRTIO_MEM_REQUESTED_SIZE_PROP);
 }
 
 static const VirtioPCIDeviceTypeInfo virtio_mem_pci_info = {

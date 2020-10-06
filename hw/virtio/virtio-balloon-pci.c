@@ -72,11 +72,11 @@ static void virtio_balloon_pci_instance_init(Object *obj)
 
     virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
                                 TYPE_VIRTIO_BALLOON);
-    object_property_add_alias(obj, "guest-stats", OBJECT(&dev->vdev),
-                                  "guest-stats");
-    object_property_add_alias(obj, "guest-stats-polling-interval",
-                              OBJECT(&dev->vdev),
-                              "guest-stats-polling-interval");
+    object_property_add_path_alias(obj, "guest-stats", "virtio-backend",
+                                   "guest-stats");
+    object_property_add_path_alias(obj, "guest-stats-polling-interval",
+                                   "virtio-backend",
+                                   "guest-stats-polling-interval");
 }
 
 static const VirtioPCIDeviceTypeInfo virtio_balloon_pci_info = {
