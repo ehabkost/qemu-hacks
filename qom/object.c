@@ -2048,9 +2048,9 @@ Object *object_resolve_path_component(Object *parent, const char *part)
     }
 }
 
-static Object *object_resolve_abs_path(Object *parent,
-                                          char **parts,
-                                          const char *typename)
+static Object *object_resolve_relative_parts(Object *parent,
+                                             char **parts,
+                                             const char *typename)
 {
     Object *child;
 
@@ -2059,7 +2059,7 @@ static Object *object_resolve_abs_path(Object *parent,
     }
 
     if (strcmp(*parts, "") == 0) {
-        return object_resolve_abs_path(parent, parts + 1, typename);
+        return object_resolve_relative_parts(parent, parts + 1, typename);
     }
 
     child = object_resolve_path_component(parent, *parts);
@@ -2067,7 +2067,7 @@ static Object *object_resolve_abs_path(Object *parent,
         return NULL;
     }
 
-    return object_resolve_abs_path(child, parts + 1, typename);
+    return object_resolve_relative_parts(child, parts + 1, typename);
 }
 
 static Object *object_resolve_partial_path(Object *parent,
@@ -2079,7 +2079,7 @@ static Object *object_resolve_partial_path(Object *parent,
     GHashTableIter iter;
     ObjectProperty *prop;
 
-    obj = object_resolve_abs_path(parent, parts, typename);
+    obj = object_resolve_relative_parts(parent, parts, typename);
 
     g_hash_table_iter_init(&iter, parent->properties);
     while (g_hash_table_iter_next(&iter, NULL, (gpointer *)&prop)) {
@@ -2124,7 +2124,7 @@ Object *object_resolve_path_type(const char *path, const char *typename,
             *ambiguousp = ambiguous;
         }
     } else {
-        obj = object_resolve_abs_path(object_get_root(), parts + 1, typename);
+        obj = object_resolve_relative_parts(object_get_root(), parts + 1, typename);
     }
 
     g_strfreev(parts);
