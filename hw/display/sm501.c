@@ -2021,8 +2021,7 @@ static void sm501_sysbus_init(Object *o)
     qdev_prop_set_uint8(DEVICE(smm), "regshift", 2);
     qdev_prop_set_uint8(DEVICE(smm), "endianness", DEVICE_LITTLE_ENDIAN);
 
-    object_property_add_alias(o, "chardev",
-                              OBJECT(smm), "chardev");
+    object_property_add_path_alias(o, "chardev", "serial", "chardev");
 }
 
 static const TypeInfo sm501_sysbus_info = {
