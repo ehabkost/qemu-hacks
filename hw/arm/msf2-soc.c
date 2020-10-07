@@ -156,6 +156,7 @@ static void m2sxxx_soc_realize(DeviceState *dev_soc, Error **errp)
 
     for (i = 0; i < MSF2_NUM_SPIS; i++) {
         g_autofree char *bus_name = NULL;
+        g_autofree char *child_name = NULL;
 
         if (!sysbus_realize(SYS_BUS_DEVICE(&s->spi[i]), errp)) {
             return;
@@ -167,8 +168,8 @@ static void m2sxxx_soc_realize(DeviceState *dev_soc, Error **errp)
 
         /* Alias controller SPI bus to the SoC itself */
         bus_name = g_strdup_printf("spi%d", i);
-        object_property_add_alias(OBJECT(s), bus_name,
-                                  OBJECT(&s->spi[i]), "spi");
+        child_name = g_strdup_printf("spi[%d]", i);
+        object_property_add_path_alias(OBJECT(s), bus_name, child_name, "spi");
     }
 
     /* FIXME use qdev NIC properties instead of nd_table[] */
