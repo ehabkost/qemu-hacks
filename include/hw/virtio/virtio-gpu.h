@@ -162,7 +162,7 @@ struct VirtIOGPU {
 struct VhostUserGPU {
     VirtIOGPUBase parent_obj;
 
-    VhostUserBackend *vhost;
+    VhostUserBackend vhost;
     int vhost_gpu_fd; /* closed by the chardev */
     CharBackend vhost_chr;
     QemuDmaBuf dmabuf[VIRTIO_GPU_MAX_SCANOUTS];

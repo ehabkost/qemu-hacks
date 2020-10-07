@@ -396,7 +396,7 @@ vhost_user_gpu_do_set_socket(VhostUserGPU *g, Error **errp)
     if (!qemu_chr_fe_init(&g->vhost_chr, chr, errp)) {
         goto err;
     }
-    if (vhost_user_gpu_set_socket(&g->vhost->dev, sv[1]) < 0) {
+    if (vhost_user_gpu_set_socket(&g->vhost.dev, sv[1]) < 0) {
         error_setg(errp, "Failed to set vhost-user-gpu socket");
         qemu_chr_fe_deinit(&g->vhost_chr, false);
         goto err;
@@ -427,7 +427,7 @@ vhost_user_gpu_get_config(VirtIODevice *vdev, uint8_t *config_data)
 
     memset(config_data, 0, sizeof(struct virtio_gpu_config));
 
-    ret = vhost_dev_get_config(&g->vhost->dev,
+    ret = vhost_dev_get_config(&g->vhost.dev,
                                config_data, sizeof(struct virtio_gpu_config));
     if (ret) {
         error_report("vhost-user-gpu: get device config space failed");
@@ -454,7 +454,7 @@ vhost_user_gpu_set_config(VirtIODevice *vdev,
         b->virtio_config.events_read &= ~vgconfig->events_clear;
     }
 
-    ret = vhost_dev_set_config(&g->vhost->dev, config_data,
+    ret = vhost_dev_set_config(&g->vhost.dev, config_data,
                                0, sizeof(struct virtio_gpu_config),
                                VHOST_SET_CONFIG_TYPE_MASTER);
     if (ret) {
@@ -474,7 +474,7 @@ vhost_user_gpu_set_status(VirtIODevice *vdev, uint8_t val)
             error_report_err(err);
             return;
         }
-        vhost_user_backend_start(g->vhost);
+        vhost_user_backend_start(&g->vhost);
     } else {
         /* unblock any wait and stop processing */
         if (g->vhost_gpu_fd != -1) {
@@ -482,7 +482,7 @@ vhost_user_gpu_set_status(VirtIODevice *vdev, uint8_t val)
             qemu_chr_fe_deinit(&g->vhost_chr, true);
             g->vhost_gpu_fd = -1;
         }
-        vhost_user_backend_stop(g->vhost);
+        vhost_user_backend_stop(&g->vhost);
     }
 }
 
@@ -491,7 +491,7 @@ vhost_user_gpu_guest_notifier_pending(VirtIODevice *vdev, int idx)
 {
     VhostUserGPU *g = VHOST_USER_GPU(vdev);
 
-    return vhost_virtqueue_pending(&g->vhost->dev, idx);
+    return vhost_virtqueue_pending(&g->vhost.dev, idx);
 }
 
 static void
@@ -499,7 +499,7 @@ vhost_user_gpu_guest_notifier_mask(VirtIODevice *vdev, int idx, bool mask)
 {
     VhostUserGPU *g = VHOST_USER_GPU(vdev);
 
-    vhost_virtqueue_mask(&g->vhost->dev, vdev, idx, mask);
+    vhost_virtqueue_mask(&g->vhost.dev, vdev, idx, mask);
 }
 
 static void
@@ -507,17 +507,10 @@ vhost_user_gpu_instance_init(Object *obj)
 {
     VhostUserGPU *g = VHOST_USER_GPU(obj);
 
-    g->vhost = VHOST_USER_BACKEND(object_new(TYPE_VHOST_USER_BACKEND));
+    object_initialize_child(obj, "vhost-user-backend", &g->vhost,
+                            TYPE_VHOST_USER_BACKEND);
     object_property_add_alias(obj, "chardev",
-                              OBJECT(g->vhost), "chardev");
-}
-
-static void
-vhost_user_gpu_instance_finalize(Object *obj)
-{
-    VhostUserGPU *g = VHOST_USER_GPU(obj);
-
-    object_unref(OBJECT(g->vhost));
+                              OBJECT(&g->vhost), "chardev");
 }
 
 static void
@@ -527,7 +520,7 @@ vhost_user_gpu_reset(VirtIODevice *vdev)
 
     virtio_gpu_base_reset(VIRTIO_GPU_BASE(vdev));
 
-    vhost_user_backend_stop(g->vhost);
+    vhost_user_backend_stop(&g->vhost);
 }
 
 static int
@@ -547,12 +540,12 @@ vhost_user_gpu_device_realize(DeviceState *qdev, Error **errp)
     VhostUserGPU *g = VHOST_USER_GPU(qdev);
     VirtIODevice *vdev = VIRTIO_DEVICE(g);
 
-    vhost_dev_set_config_notifier(&g->vhost->dev, &config_ops);
-    if (vhost_user_backend_dev_init(g->vhost, vdev, 2, errp) < 0) {
+    vhost_dev_set_config_notifier(&g->vhost.dev, &config_ops);
+    if (vhost_user_backend_dev_init(&g->vhost, vdev, 2, errp) < 0) {
         return;
     }
 
-    if (virtio_has_feature(g->vhost->dev.features, VIRTIO_GPU_F_VIRGL)) {
+    if (virtio_has_feature(g->vhost.dev.features, VIRTIO_GPU_F_VIRGL)) {
         g->parent_obj.conf.flags |= 1 << VIRTIO_GPU_FLAG_VIRGL_ENABLED;
     }
 
@@ -593,7 +586,6 @@ static const TypeInfo vhost_user_gpu_info = {
     .parent = TYPE_VIRTIO_GPU_BASE,
     .instance_size = sizeof(VhostUserGPU),
     .instance_init = vhost_user_gpu_instance_init,
-    .instance_finalize = vhost_user_gpu_instance_finalize,
     .class_init = vhost_user_gpu_class_init,
 };
 
