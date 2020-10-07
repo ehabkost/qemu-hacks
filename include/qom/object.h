@@ -1885,6 +1885,25 @@ object_property_add_path_alias(Object *obj, const char *name,
 
 
 /**
+ * object_class_property_add_alias:
+ * @oc: the class to add a property to
+ * @name: the name of the property
+ * @target_class: the class the target object is expected to belong to
+ * @target_path: path to the object to forward property access to
+ * @target_name: the name of the property on the forwarded object
+ *
+ * Similar to object_property_add_path_alias(), but add a class property
+ * that will be present in all instances of @oc.
+ *
+ * Returns: The newly added property.
+ */
+ObjectProperty *
+object_class_property_add_alias(ObjectClass *oc, const char *name,
+                                ObjectClass *target_class,
+                                const char *target_path,
+                                const char *target_name);
+
+/**
  * object_property_add_const_link:
  * @obj: the object to add a property to
  * @name: the name of the property

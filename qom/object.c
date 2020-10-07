@@ -2812,6 +2812,48 @@ object_property_add_path_alias(Object *obj, const char *name,
     return object_property_add_alias_full(obj, name, NULL, parts, target_name);
 }
 
+ObjectProperty *
+object_class_property_add_alias(ObjectClass *oc, const char *name,
+                                ObjectClass *target_class,
+                                const char *target_path,
+                                const char *target_name);
+{
+    const char *path = target_path ?: "";
+    char **parts = g_strsplit(path, "/", 0);
+    AliasProperty *prop;
+    ObjectProperty *op;
+    ObjectProperty *target_prop;
+    g_autofree char *prop_type = NULL;
+
+    prop = g_malloc0(sizeof(*prop));
+    prop->target_parts = parts;
+    prop->target_name = g_strdup(target_name);
+
+    target_prop = object_class_property_find_err(target_class, target_name,
+                                                 &error_abort);
+
+    if (object_property_is_child(target_prop)) {
+        prop_type = g_strdup_printf("link%s",
+                                    target_prop->type + strlen("child"));
+    } else {
+        prop_type = g_strdup(target_prop->type);
+    }
+
+    op = object_class_property_add(oc, name, prop_type,
+                                   property_get_alias,
+                                   property_set_alias,
+                                   NULL,
+                                   prop);
+    op->resolve = property_resolve_alias;
+    if (target_prop->defval) {
+        op->defval = qobject_ref(target_prop->defval);
+    }
+
+    object_class_property_set_description(oc, op->name,
+                                          target_prop->description);
+    return op;
+}
+
 void object_property_set_description(Object *obj, const char *name,
                                      const char *description)
 {
