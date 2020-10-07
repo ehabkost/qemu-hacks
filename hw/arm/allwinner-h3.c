@@ -351,8 +351,7 @@ static void allwinner_h3_realize(DeviceState *dev, Error **errp)
     sysbus_connect_irq(SYS_BUS_DEVICE(&s->mmc0), 0,
                        qdev_get_gpio_in(DEVICE(&s->gic), AW_H3_GIC_SPI_MMC0));
 
-    object_property_add_alias(OBJECT(s), "sd-bus", OBJECT(&s->mmc0),
-                              "sd-bus");
+    object_property_add_path_alias(OBJECT(s), "sd-bus", "mmc0", "sd-bus");
 
     /* EMAC */
     /* FIXME use qdev NIC properties instead of nd_table[] */

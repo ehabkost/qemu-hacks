@@ -84,9 +84,7 @@ static void bcm2836_realize(DeviceState *dev, Error **errp)
         return;
     }
 
-    object_property_add_alias(OBJECT(s), "sd-bus", OBJECT(&s->peripherals),
-                              "sd-bus");
-
+    object_property_add_path_alias(obj, "sd-bus", "peripherals", "sd-bus");
     sysbus_mmio_map_overlap(SYS_BUS_DEVICE(&s->peripherals), 0,
                             info->peri_base, 1);
 

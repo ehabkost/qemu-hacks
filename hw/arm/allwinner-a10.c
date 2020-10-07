@@ -160,8 +160,7 @@ static void aw_a10_realize(DeviceState *dev, Error **errp)
     sysbus_realize(SYS_BUS_DEVICE(&s->mmc0), &error_fatal);
     sysbus_mmio_map(SYS_BUS_DEVICE(&s->mmc0), 0, AW_A10_MMC0_BASE);
     sysbus_connect_irq(SYS_BUS_DEVICE(&s->mmc0), 0, qdev_get_gpio_in(dev, 32));
-    object_property_add_alias(OBJECT(s), "sd-bus", OBJECT(&s->mmc0),
-                              "sd-bus");
+    object_property_add_path_alias(OBJECT(s), "sd-bus", "mmc0", "sd-bus");
 
     /* RTC */
     sysbus_realize(SYS_BUS_DEVICE(&s->rtc), &error_fatal);
