@@ -495,6 +495,7 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
         g_autofree char *bus_name = NULL;
         SysBusDevice *sbd = SYS_BUS_DEVICE(&s->sdhci[i]);
         Object *sdhci = OBJECT(&s->sdhci[i]);
+        g_autofree char *child_name = g_strdup_printf("sdhci[%d]", i);
 
         /* Compatible with:
          * - SD Host Controller Specification Version 3.00
@@ -519,11 +520,13 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
 
         /* Alias controller SD bus to the SoC itself */
         bus_name = g_strdup_printf("sd-bus%d", i);
-        object_property_add_alias(OBJECT(s), bus_name, sdhci, "sd-bus");
+        object_property_add_path_alias(OBJECT(s), bus_name,
+                                       child_name, "sd-bus");
     }
 
     for (i = 0; i < XLNX_ZYNQMP_NUM_SPIS; i++) {
         g_autofree char *bus_name = NULL;
+        g_autofree char *child_name = g_strdup_printf("spi[%d]", i);
 
         if (!sysbus_realize(SYS_BUS_DEVICE(&s->spi[i]), errp)) {
             return;
@@ -535,8 +538,7 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
 
         /* Alias controller SPI bus to the SoC itself */
         bus_name = g_strdup_printf("spi%d", i);
-        object_property_add_alias(OBJECT(s), bus_name,
-                                  OBJECT(&s->spi[i]), "spi0");
+        object_property_add_path_alias(OBJECT(s), bus_name, child_name, "spi0");
     }
 
     if (!sysbus_realize(SYS_BUS_DEVICE(&s->qspi), errp)) {
@@ -553,8 +555,7 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
         /* Alias controller SPI bus to the SoC itself */
         bus_name = g_strdup_printf("qspi%d", i);
         target_bus = g_strdup_printf("spi%d", i);
-        object_property_add_alias(OBJECT(s), bus_name,
-                                  OBJECT(&s->qspi), target_bus);
+        object_property_add_path_alias(OBJECT(s), bus_name, "qspi", target_bus);
     }
 
     if (!sysbus_realize(SYS_BUS_DEVICE(&s->dp), errp)) {
