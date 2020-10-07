@@ -1011,7 +1011,6 @@ static void mac_via_reset(DeviceState *dev)
 static void mac_via_realize(DeviceState *dev, Error **errp)
 {
     MacVIAState *m = MAC_VIA(dev);
-    MOS6522State *ms;
     ADBBusState *adb_bus = &m->adb_bus;
     struct tm tm;
     int ret;
@@ -1024,12 +1023,10 @@ static void mac_via_realize(DeviceState *dev, Error **errp)
                             TYPE_MOS6522_Q800_VIA2);
 
     /* Pass through mos6522 output IRQs */
-    ms = MOS6522(&m->mos6522_via1);
-    object_property_add_alias(OBJECT(dev), "irq[0]", OBJECT(ms),
-                              SYSBUS_DEVICE_GPIO_IRQ "[0]");
-    ms = MOS6522(&m->mos6522_via2);
-    object_property_add_alias(OBJECT(dev), "irq[1]", OBJECT(ms),
-                              SYSBUS_DEVICE_GPIO_IRQ "[0]");
+    object_property_add_path_alias(OBJECT(dev), "irq[0]",
+                                   "via1", SYSBUS_DEVICE_GPIO_IRQ "[0]");
+    object_property_add_path_alias(OBJECT(dev), "irq[1]",
+                                   "via2", SYSBUS_DEVICE_GPIO_IRQ "[0]");
 
     sysbus_realize(SYS_BUS_DEVICE(&m->mos6522_via1), &error_abort);
     sysbus_realize(SYS_BUS_DEVICE(&m->mos6522_via2), &error_abort);
