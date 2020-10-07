@@ -492,7 +492,7 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
     sysbus_connect_irq(SYS_BUS_DEVICE(&s->sata), 0, gic_spi[SATA_INTR]);
 
     for (i = 0; i < XLNX_ZYNQMP_NUM_SDHCI; i++) {
-        char *bus_name;
+        g_autofree char *bus_name = NULL;
         SysBusDevice *sbd = SYS_BUS_DEVICE(&s->sdhci[i]);
         Object *sdhci = OBJECT(&s->sdhci[i]);
 
@@ -520,11 +520,10 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
         /* Alias controller SD bus to the SoC itself */
         bus_name = g_strdup_printf("sd-bus%d", i);
         object_property_add_alias(OBJECT(s), bus_name, sdhci, "sd-bus");
-        g_free(bus_name);
     }
 
     for (i = 0; i < XLNX_ZYNQMP_NUM_SPIS; i++) {
-        gchar *bus_name;
+        g_autofree char *bus_name = NULL;
 
         if (!sysbus_realize(SYS_BUS_DEVICE(&s->spi[i]), errp)) {
             return;
@@ -538,7 +537,6 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
         bus_name = g_strdup_printf("spi%d", i);
         object_property_add_alias(OBJECT(s), bus_name,
                                   OBJECT(&s->spi[i]), "spi0");
-        g_free(bus_name);
     }
 
     if (!sysbus_realize(SYS_BUS_DEVICE(&s->qspi), errp)) {
@@ -549,16 +547,14 @@ static void xlnx_zynqmp_realize(DeviceState *dev, Error **errp)
     sysbus_connect_irq(SYS_BUS_DEVICE(&s->qspi), 0, gic_spi[QSPI_IRQ]);
 
     for (i = 0; i < XLNX_ZYNQMP_NUM_QSPI_BUS; i++) {
-        gchar *bus_name;
-        gchar *target_bus;
+        g_autofree char *bus_name = NULL;
+        g_autofree char *target_bus = NULL;
 
         /* Alias controller SPI bus to the SoC itself */
         bus_name = g_strdup_printf("qspi%d", i);
         target_bus = g_strdup_printf("spi%d", i);
         object_property_add_alias(OBJECT(s), bus_name,
                                   OBJECT(&s->qspi), target_bus);
-        g_free(bus_name);
-        g_free(target_bus);
     }
 
     if (!sysbus_realize(SYS_BUS_DEVICE(&s->dp), errp)) {
