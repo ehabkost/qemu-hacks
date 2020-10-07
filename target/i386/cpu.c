@@ -6931,43 +6931,6 @@ static void x86_cpu_initfn(Object *obj)
                         x86_cpu_get_feature_words,
                         NULL, NULL, (void *)cpu->filtered_features);
 
-    object_property_add_path_alias(obj, "sse3", NULL, "pni");
-    object_property_add_path_alias(obj, "pclmuldq", NULL, "pclmulqdq");
-    object_property_add_path_alias(obj, "sse4-1", NULL, "sse4.1");
-    object_property_add_path_alias(obj, "sse4-2", NULL, "sse4.2");
-    object_property_add_path_alias(obj, "xd", NULL, "nx");
-    object_property_add_path_alias(obj, "ffxsr", NULL, "fxsr-opt");
-    object_property_add_path_alias(obj, "i64", NULL, "lm");
-
-    object_property_add_path_alias(obj, "ds_cpl", NULL, "ds-cpl");
-    object_property_add_path_alias(obj, "tsc_adjust", NULL, "tsc-adjust");
-    object_property_add_path_alias(obj, "fxsr_opt", NULL, "fxsr-opt");
-    object_property_add_path_alias(obj, "lahf_lm", NULL, "lahf-lm");
-    object_property_add_path_alias(obj, "cmp_legacy", NULL, "cmp-legacy");
-    object_property_add_path_alias(obj, "nodeid_msr", NULL, "nodeid-msr");
-    object_property_add_path_alias(obj, "perfctr_core", NULL, "perfctr-core");
-    object_property_add_path_alias(obj, "perfctr_nb", NULL, "perfctr-nb");
-    object_property_add_path_alias(obj, "kvm_nopiodelay", NULL,
-                                   "kvm-nopiodelay");
-    object_property_add_path_alias(obj, "kvm_mmu", NULL, "kvm-mmu");
-    object_property_add_path_alias(obj, "kvm_asyncpf", NULL, "kvm-asyncpf");
-    object_property_add_path_alias(obj, "kvm_asyncpf_int", NULL,
-                                   "kvm-asyncpf-int");
-    object_property_add_path_alias(obj, "kvm_steal_time", NULL,
-                                   "kvm-steal-time");
-    object_property_add_path_alias(obj, "kvm_pv_eoi", NULL, "kvm-pv-eoi");
-    object_property_add_path_alias(obj, "kvm_pv_unhalt", NULL,
-                                   "kvm-pv-unhalt");
-    object_property_add_path_alias(obj, "kvm_poll_control", NULL,
-                                   "kvm-poll-control");
-    object_property_add_path_alias(obj, "svm_lock", NULL, "svm-lock");
-    object_property_add_path_alias(obj, "nrip_save", NULL, "nrip-save");
-    object_property_add_path_alias(obj, "tsc_scale", NULL, "tsc-scale");
-    object_property_add_path_alias(obj, "vmcb_clean", NULL, "vmcb-clean");
-    object_property_add_path_alias(obj, "pause_filter", NULL, "pause-filter");
-    object_property_add_path_alias(obj, "sse4_1", NULL, "sse4.1");
-    object_property_add_path_alias(obj, "sse4_2", NULL, "sse4.2");
-
     if (xcc->model) {
         x86_cpu_load_model(cpu, xcc->model);
     }
@@ -7317,6 +7280,68 @@ static void x86_cpu_common_class_init(ObjectClass *oc, void *data)
             x86_cpu_register_feature_bit_props(xcc, w, bitnr);
         }
     }
+
+    object_class_property_add_alias(oc, "sse3",
+                                    oc, NULL, "pni");
+    object_class_property_add_alias(oc, "pclmuldq",
+                                    oc, NULL, "pclmulqdq");
+    object_class_property_add_alias(oc, "sse4-1",
+                                    oc, NULL, "sse4.1");
+    object_class_property_add_alias(oc, "sse4-2",
+                                    oc, NULL, "sse4.2");
+    object_class_property_add_alias(oc, "xd",
+                                    oc, NULL, "nx");
+    object_class_property_add_alias(oc, "ffxsr",
+                                    oc, NULL, "fxsr-opt");
+    object_class_property_add_alias(oc, "i64",
+                                    oc, NULL, "lm");
+
+    object_class_property_add_alias(oc, "ds_cpl",
+                                    oc, NULL, "ds-cpl");
+    object_class_property_add_alias(oc, "tsc_adjust",
+                                    oc, NULL, "tsc-adjust");
+    object_class_property_add_alias(oc, "fxsr_opt",
+                                    oc, NULL, "fxsr-opt");
+    object_class_property_add_alias(oc, "lahf_lm",
+                                    oc, NULL, "lahf-lm");
+    object_class_property_add_alias(oc, "cmp_legacy",
+                                    oc, NULL, "cmp-legacy");
+    object_class_property_add_alias(oc, "nodeid_msr",
+                                    oc, NULL, "nodeid-msr");
+    object_class_property_add_alias(oc, "perfctr_core",
+                                    oc, NULL, "perfctr-core");
+    object_class_property_add_alias(oc, "perfctr_nb",
+                                    oc, NULL, "perfctr-nb");
+    object_class_property_add_alias(oc, "kvm_nopiodelay",
+                                    oc, NULL, "kvm-nopiodelay");
+    object_class_property_add_alias(oc, "kvm_mmu",
+                                    oc, NULL, "kvm-mmu");
+    object_class_property_add_alias(oc, "kvm_asyncpf",
+                                    oc, NULL, "kvm-asyncpf");
+    object_class_property_add_alias(oc, "kvm_asyncpf_int",
+                                    oc, NULL, "kvm-asyncpf-int");
+    object_class_property_add_alias(oc, "kvm_steal_time",
+                                    oc, NULL, "kvm-steal-time");
+    object_class_property_add_alias(oc, "kvm_pv_eoi",
+                                    oc, NULL, "kvm-pv-eoi");
+    object_class_property_add_alias(oc, "kvm_pv_unhalt",
+                                    oc, NULL, "kvm-pv-unhalt");
+    object_class_property_add_alias(oc, "kvm_poll_control",
+                                    oc, NULL, "kvm-poll-control");
+    object_class_property_add_alias(oc, "svm_lock",
+                                    oc, NULL, "svm-lock");
+    object_class_property_add_alias(oc, "nrip_save",
+                                    oc, NULL, "nrip-save");
+    object_class_property_add_alias(oc, "tsc_scale",
+                                    oc, NULL, "tsc-scale");
+    object_class_property_add_alias(oc, "vmcb_clean",
+                                    oc, NULL, "vmcb-clean");
+    object_class_property_add_alias(oc, "pause_filter",
+                                    oc, NULL, "pause-filter");
+    object_class_property_add_alias(oc, "sse4_1",
+                                    oc, NULL, "sse4.1");
+    object_class_property_add_alias(oc, "sse4_2",
+                                    oc, NULL, "sse4.2");
 }
 
 static const TypeInfo x86_cpu_type_info = {
