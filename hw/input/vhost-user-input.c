@@ -27,9 +27,9 @@ static void vhost_input_realize(DeviceState *dev, Error **errp)
     VirtIOInput *vinput = VIRTIO_INPUT(dev);
     VirtIODevice *vdev = VIRTIO_DEVICE(dev);
 
-    vhost_dev_set_config_notifier(&vhi->vhost->dev, &config_ops);
+    vhost_dev_set_config_notifier(&vhi->vhost.dev, &config_ops);
     vinput->cfg_size = sizeof_field(virtio_input_config, u);
-    if (vhost_user_backend_dev_init(vhi->vhost, vdev, 2, errp) == -1) {
+    if (vhost_user_backend_dev_init(&vhi->vhost, vdev, 2, errp) == -1) {
         return;
     }
 }
@@ -39,9 +39,9 @@ static void vhost_input_change_active(VirtIOInput *vinput)
     VHostUserInput *vhi = VHOST_USER_INPUT(vinput);
 
     if (vinput->active) {
-        vhost_user_backend_start(vhi->vhost);
+        vhost_user_backend_start(&vhi->vhost);
     } else {
-        vhost_user_backend_stop(vhi->vhost);
+        vhost_user_backend_stop(&vhi->vhost);
     }
 }
 
@@ -53,7 +53,7 @@ static void vhost_input_get_config(VirtIODevice *vdev, uint8_t *config_data)
 
     memset(config_data, 0, vinput->cfg_size);
 
-    ret = vhost_dev_get_config(&vhi->vhost->dev, config_data, vinput->cfg_size);
+    ret = vhost_dev_get_config(&vhi->vhost.dev, config_data, vinput->cfg_size);
     if (ret) {
         error_report("vhost-user-input: get device config space failed");
         return;
@@ -66,7 +66,7 @@ static void vhost_input_set_config(VirtIODevice *vdev,
     VHostUserInput *vhi = VHOST_USER_INPUT(vdev);
     int ret;
 
-    ret = vhost_dev_set_config(&vhi->vhost->dev, config_data,
+    ret = vhost_dev_set_config(&vhi->vhost.dev, config_data,
                                0, sizeof(virtio_input_config),
                                VHOST_SET_CONFIG_TYPE_MASTER);
     if (ret) {
@@ -99,16 +99,10 @@ static void vhost_input_init(Object *obj)
 {
     VHostUserInput *vhi = VHOST_USER_INPUT(obj);
 
-    vhi->vhost = VHOST_USER_BACKEND(object_new(TYPE_VHOST_USER_BACKEND));
+    object_initialize_child(obj, "vhost-user-backend", &vhi->vhost,
+                            TYPE_VHOST_USER_BACKEND);
     object_property_add_alias(obj, "chardev",
-                              OBJECT(vhi->vhost), "chardev");
-}
-
-static void vhost_input_finalize(Object *obj)
-{
-    VHostUserInput *vhi = VHOST_USER_INPUT(obj);
-
-    object_unref(OBJECT(vhi->vhost));
+                              OBJECT(&vhi->vhost), "chardev");
 }
 
 static const TypeInfo vhost_input_info = {
@@ -116,7 +110,6 @@ static const TypeInfo vhost_input_info = {
     .parent        = TYPE_VIRTIO_INPUT,
     .instance_size = sizeof(VHostUserInput),
     .instance_init = vhost_input_init,
-    .instance_finalize = vhost_input_finalize,
     .class_init    = vhost_input_class_init,
 };
 

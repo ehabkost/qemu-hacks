@@ -98,7 +98,7 @@ struct VirtIOInputHost {
 struct VHostUserInput {
     VirtIOInput                       parent_obj;
 
-    VhostUserBackend                  *vhost;
+    VhostUserBackend                  vhost;
 };
 
 void virtio_input_send(VirtIOInput *vinput, virtio_input_event *event);
