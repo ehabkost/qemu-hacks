@@ -577,14 +577,32 @@ static void test_qom_alias_property(void)
 {
     Object *obj1  = object_new(TYPE_DUMMY);
     Object *obj2 = object_new(TYPE_DUMMY);
+    Object *obj3 = object_new(TYPE_DUMMY);
 
     object_property_add_child(obj1, "obj2", obj2);
+    object_property_add_child(obj2, "obj3", obj3);
 
     object_property_add_alias(obj1, "aliasprop", obj2, "sv");
     object_property_set_str(obj1, "aliasprop", "thevalue", &error_abort);
     g_assert_cmpstr(DUMMY_OBJECT(obj2)->sv, ==, "thevalue");
 
+    object_property_add_path_alias(obj1, "alias0", NULL, "sv");
+    object_property_set_str(obj1, "alias0", "value0", &error_abort);
+    g_assert_cmpstr(DUMMY_OBJECT(obj1)->sv, ==, "value0");
+
+    object_property_add_path_alias(obj1, "alias1", "", "sv");
+    object_property_add_path_alias(obj1, "alias2", "obj2", "sv");
+    object_property_add_path_alias(obj1, "alias3", "obj2/obj3", "sv");
+    object_property_set_str(obj1, "alias1", "value1", &error_abort);
+    object_property_set_str(obj1, "alias2", "value2", &error_abort);
+    object_property_set_str(obj1, "alias3", "value3", &error_abort);
+    g_assert_cmpstr(DUMMY_OBJECT(obj1)->sv, ==, "value1");
+    g_assert_cmpstr(DUMMY_OBJECT(obj2)->sv, ==, "value2");
+    g_assert_cmpstr(DUMMY_OBJECT(obj3)->sv, ==, "value3");
+
+    object_unparent(obj3);
     object_unparent(obj2);
+    object_unref(obj3);
     object_unref(obj2);
     object_unref(obj1);
 }

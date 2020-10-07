@@ -2697,7 +2697,11 @@ object_class_property_add_uint64_ptr(ObjectClass *klass, const char *name,
 }
 
 typedef struct {
+    /* Target object.  if NULL, target_parts must be set */
     Object *target_obj;
+    /* Target object path, relative to the source object */
+    char **target_parts;
+    /* Target property name */
     char *target_name;
 } AliasProperty;
 
@@ -2705,7 +2709,14 @@ typedef struct {
 static Object *
 object_alias_property_get_target(Object *obj, AliasProperty *prop)
 {
-    return prop->target_obj;
+    Object *target = obj;
+    if (prop->target_obj) {
+        target = prop->target_obj;
+    }
+    if (prop->target_parts) {
+        target = object_resolve_relative_parts(obj, prop->target_parts);
+    }
+    return target;
 }
 
 static void property_get_alias(Object *obj, Visitor *v, const char *name,
@@ -2740,18 +2751,26 @@ static void property_release_alias(Object *obj, const char *name, void *opaque)
     AliasProperty *prop = opaque;
 
     g_free(prop->target_name);
+    g_strfreev(prop->target_parts);
     g_free(prop);
 }
 
-ObjectProperty *
-object_property_add_alias(Object *obj, const char *name,
-                          Object *target_obj, const char *target_name)
+static ObjectProperty *
+object_property_add_alias_full(Object *obj, const char *name,
+                               Object *target_obj, char **target_parts,
+                               const char *target_name)
 {
     AliasProperty *prop;
     ObjectProperty *op;
     ObjectProperty *target_prop;
     g_autofree char *prop_type = NULL;
 
+    prop = g_malloc(sizeof(*prop));
+    prop->target_obj = target_obj;
+    prop->target_parts = target_parts;
+    prop->target_name = g_strdup(target_name);
+
+    target_obj = object_alias_property_get_target(obj, prop);
     target_prop = object_property_find_err(target_obj, target_name,
                                            &error_abort);
 
@@ -2761,10 +2780,6 @@ object_property_add_alias(Object *obj, const char *name,
     } else {
         prop_type = g_strdup(target_prop->type);
     }
-
-    prop = g_malloc(sizeof(*prop));
-    prop->target_obj = target_obj;
-    prop->target_name = g_strdup(target_name);
 
     op = object_property_add(obj, name, prop_type,
                              property_get_alias,
@@ -2779,6 +2794,22 @@ object_property_add_alias(Object *obj, const char *name,
     object_property_set_description(obj, op->name,
                                     target_prop->description);
     return op;
+}
+
+ObjectProperty *
+object_property_add_alias(Object *obj, const char *name,
+                          Object *target_obj, const char *target_name)
+{
+    return object_property_add_alias_full(obj, name, target_obj, NULL, target_name);
+}
+
+ObjectProperty *
+object_property_add_path_alias(Object *obj, const char *name,
+                               const char *target_path, const char *target_name)
+{
+    const char *path = target_path ?: "";
+    char **parts = g_strsplit(path, "/", 0);
+    return object_property_add_alias_full(obj, name, NULL, parts, target_name);
 }
 
 void object_property_set_description(Object *obj, const char *name,

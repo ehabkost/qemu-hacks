@@ -1831,13 +1831,38 @@ ObjectProperty *object_class_property_add_uint64_ptr(ObjectClass *klass,
  * @target_obj: the object to forward property access to
  * @target_name: the name of the property on the forwarded object
  *
+ * Add an alias for a property on an object, using a object pointer as argument.
+ *
+ * This function is similar to object_property_add_path_alias(), but
+ * takes an #Object pointer as argument instead of an object path.
+ *
+ * Using object_property_add_path_alias() is preferred.
+ *
+ * The caller must ensure that <code>@target_obj</code> stays alive as long as
+ * this property exists.  In the case of a child object or an alias on the same
+ * object this will be the case.  For aliases to other objects the caller is
+ * responsible for taking a reference.
+ *
+ * Returns: The newly added property on success, or %NULL on failure.
+ */
+ObjectProperty *
+object_property_add_alias(Object *obj, const char *name,
+                          Object *target_obj, const char *target_name);
+
+/**
+ * object_property_add_path_alias:
+ * @obj: the object to add a property to
+ * @name: the name of the property
+ * @target_path: path to the object to forward property access to
+ * @target_name: the name of the property on the forwarded object
+ *
  * Add an alias for a property on an object.
  *
  * An alias property will:
  *
  * - Have the same type as the forwarded property
  * - Forward property get/set calls to the @target_name property
- *   in @target_obj
+ *   in the target object
  * - Resolve to the target property when resolving QOM paths
  *   (if @target_name is a child or link property)
  *
@@ -1847,17 +1872,17 @@ ObjectProperty *object_class_property_add_uint64_ptr(ObjectClass *klass,
  *
  * will be translated to::
  *
+ *   target_obj = object_resolve_relative_path(obj, target_path)
  *   object_property_set(target_obj, target_name, value, errp)
  *
- * The caller must ensure that @target_obj stays alive as long as
- * this property exists.  In the case of a child object or an alias on the same
- * object this will be the case.  For aliases to other objects the caller is
- * responsible for taking a reference.
+ * If @target_path is NULL, @obj will be used as target.
  *
  * Returns: The newly added property on success, or %NULL on failure.
  */
-ObjectProperty *object_property_add_alias(Object *obj, const char *name,
-                               Object *target_obj, const char *target_name);
+ObjectProperty *
+object_property_add_path_alias(Object *obj, const char *name,
+                               const char *target_path, const char *target_name);
+
 
 /**
  * object_property_add_const_link:
